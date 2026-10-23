@@ -1,0 +1,12 @@
+[project]
+name = "burrito-socket-capture"
+version = "0.1.0"
+description = "WebSocket packet capture and protocol decoding for the Haunted Room H5 game"
+readme = "docs/README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "playwright>=1.60.0",
+]
+
+[tool.uv]
+package = false
