@@ -67,7 +67,7 @@ Nằm trong broadcast feed (module `0x13` cmd `0x0004`), mỗi entry là repeate
 Trích xuất JSON:
 
 ```bash
-uv run python tools/socket_log/socket_decode.py .tmp/socket-capture/run-mine1 mine-events
+uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/run-mine1 mine-events
 ```
 
 ## State khu mỏ (module 0x48 — ĐÃ PARSE ĐẦY ĐỦ 2026-10-23)
@@ -116,7 +116,7 @@ State **không chứa tên player/guild** — chỉ có id; tên lấy qua `0x0d
 
 Slot 9001–9003 **[x chốt 2026-10-23] = bộ claimer của guild chủ điểm**: 3 acc **cùng 1 guild**
 (rule game) và guild đó = guild claim `f4` của tile — nhận diện người claim ngay từ state mà không
-cần `0x24/0x0035`. `mine_report.py` đối chiếu cả 2 phía, lệch thì đưa vào `errors` (chi tiết
+cần `0x24/0x0035`. `mine_socket/report.py` đối chiếu cả 2 phía, lệch thì đưa vào `errors` (chi tiết
 `docs/MINE_STRUCTURE.md` mục 2).
 
 Đối chiếu chéo đã xác minh: tile 6053 chứa đúng 3 player id như feed lịch sử `0x001b`;
@@ -126,7 +126,7 @@ acc chính (HuAsura, id 51921435, guild HUNTERS) nằm ở tile 7057 slot 10 —
 Trích xuất JSON đầy đủ:
 
 ```bash
-uv run python tools/socket_log/socket_decode.py <capture_dir> mine-state > mine-state.json
+uv run python tools/socket_log/mine_socket/decode.py <capture_dir> mine-state > mine-state.json
 ```
 
 ## Listener chạy dài hạn (ĐÃ LÀM — 2026-10-22; nâng cấp live push 2026-10-23)
@@ -150,7 +150,7 @@ page có sẵn của persistent profile), rồi đọc response `0x0020` như b�
 bị ảnh hưởng (đã chạy 180s sạch). Đã verify 2026-10-23: 195/195 người trong mỏ có tên,
 không ai chiếm >1 slot (live + offline đều xác nhận quy tắc 1 user = 1 slot).
 
-**Bước tổng hợp (parse lần 2, tách riêng):** `tools/socket_log/mine_report.py` đọc 5 stream raw →
+**Bước tổng hợp (parse lần 2, tách riêng):** `tools/socket_log/mine_socket/report.py` đọc 5 stream raw →
 rebuild world mới nhất (snapshot + delta theo `logged_at`, snapshot ≥32 tile mới reset map) →
 nhóm tile: trong sector sort theo pos, **cắt chunk 4 = 1 mỏ phụ (`sub` 1..n, điểm 1–4)** — sector là
 dãy id liên tiếp nên KHÔNG tách mỏ bằng gap id; **id cao nhất của mỏ phụ = level trên**, 3 điểm còn
@@ -167,7 +167,7 @@ uv run python tools/socket_log/mine_logger.py --profile .tmp/m535
 uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --duration 300   # tự dừng sau 5 phút
 uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --snapshot --dir .tmp/mine-events-$(date +%Y%m%d-%H%M%S)  # một-off vào folder timestamp
 uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
-uv run python tools/socket_log/mine_report.py --dir .tmp/mine-events   # tổng hợp 1 folder -> mine-report.json
+uv run python tools/socket_log/mine_socket/report.py --dir .tmp/mine-events   # tổng hợp 1 folder -> mine-report.json
 ```
 
 ```bash

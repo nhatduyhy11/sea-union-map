@@ -18,8 +18,8 @@ is the point's `claim` guild) and `users` (slots 1-12). Rule violations land in
 "errors"; a player sitting in more than one slot goes under "warnings".
 
 Usage:
-    uv run python tools/socket_log/mine_report.py
-    uv run python tools/socket_log/mine_report.py --dir .tmp/mine-events --json out.json
+    uv run python tools/socket_log/mine_socket/report.py
+    uv run python tools/socket_log/mine_socket/report.py --dir .tmp/mine-events --json out.json
 """
 
 import argparse
@@ -28,8 +28,6 @@ import datetime
 import json
 import pathlib
 import sys
-
-sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # player/guild names are CJK-safe here
 
 SECTOR_MIN, SECTOR_MAX = 2, 7  # sector 1 = single 124-slot mega tile, out of scope
 SLOTS_PER_POINT = 15  # 12 regular slots (1-12) + 3 claimer slots (9001-9003)
@@ -264,6 +262,7 @@ def main() -> None:
     parser.add_argument("--json", type=pathlib.Path, default=None, help="Output path (default <dir>/mine-report.json)")
     args = parser.parse_args()
 
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # player/guild names are CJK-safe here
     report = build_report(args.dir)
     out_path = args.json or (args.dir / "mine-report.json")
     out_path.write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")

@@ -33,7 +33,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 | Slot | Số lượng | UI (view zoomin) |
 | --- | --- | --- |
 | 1–12 | 12 | Máy đào nhỏ có **tên player** đứng cạnh (zoomin hiện đủ 12 tên ở 7057) |
-| 9001 / 9002 / 9003 | 3 | **[x CHỐT 2026-10-23] slot claimer của điểm** ("Máy Đào Chính"): vẫn chứa player id trong state nhưng **không label tên**. Rule game: 3 acc này **phải cùng 1 guild** và guild đó **= guild đang claim điểm (`f4`)** — bot nhận diện guild chủ điểm ngay từ state, không cần request `0x24/0x0035`; lệch guild = data lỗi, `mine_report.py` đưa vào mục `errors` |
+| 9001 / 9002 / 9003 | 3 | **[x CHỐT 2026-10-23] slot claimer của điểm** ("Máy Đào Chính"): vẫn chứa player id trong state nhưng **không label tên**. Rule game: 3 acc này **phải cùng 1 guild** và guild đó **= guild đang claim điểm (`f4`)** — bot nhận diện guild chủ điểm ngay từ state, không cần request `0x24/0x0035`; lệch guild = data lỗi, `mine_socket/report.py` đưa vào mục `errors` |
 
 - Sector 1 là ngoại lệ: 1 tile, slot 1–124, không có slot đặc biệt.
 - Slot có player id = 0 là slot trống. Slot **đang đào** mang cặp timestamp ~60 phút (`f5`).
@@ -84,7 +84,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
   (không click) thì KHÔNG có tên nào; bot phải tự bắn `0x0d/0x001f` theo id —
   `mine_logger.py` đã làm sẵn (inject frame, 60 id/request, verify 195/195 người có tên 2026-10-23).
 - **3 slot 9001–9003 của mỗi điểm = bộ claimer của guild chủ điểm**: 3 acc cùng 1 guild (rule game),
-  guild đó = guild claim `f4` — xác minh được người claim ngay từ state; `mine_report.py` đối chiếu
+  guild đó = guild claim `f4` — xác minh được người claim ngay từ state; `mine_socket/report.py` đối chiếu
   cả 2 phía (đồng bộ giữa 3 claimer, và giữa claimer ↔ `f4`), vi phạm thì đưa vào `errors`.
 - State mỏ tự cập nhật realtime qua `0x48/0x0008` + `0x48/0x0002` một phần — giữ session là có state tươi.
 - **Quy tắc đã xác minh trên data:** 1 user chỉ chiếm đúng 1 slot (195 người = 195 slot, live check);
@@ -95,7 +95,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 
 - [x] Sửa `mine_logger.py`: nghe `0x13/0x0004`+`0x13/0x0007`, ghi state/delta/brief ra JSONL, **inject
   `0x0d/0x001f` fetch tên chủ động** — chi tiết mục Listener `SOCKET_PROTOCOL.md` (2026-10-23).
-- [x] Bước tổng hợp: `tools/socket_log/mine_report.py` — sector → mỏ (chunk 4 tile theo thứ tự id) →
+- [x] Bước tổng hợp: `tools/socket_log/mine_socket/report.py` — sector → mỏ (chunk 4 tile theo thứ tự id) →
   điểm 1–4 → user (id/tên/guild) + claim/unclaimed + cảnh báo. Output `mine-report.json` + cây text.
   Lưu ý: **mỏ được cắt theo chunk 4 trong dãy id sort tăng dần của sector** (sector là dãy liên tục),
   điểm 4 luôn là tile có id lớn nhất + level trên — khớp 16/16 mỏ.
@@ -113,8 +113,8 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
   state — tầng = **số mốc trong slot `f5`** (mục 4), chuỗi thắng = **`f7` {slot: N}** (mục 4).
   Popup render từ `0x48/0x0007` + briefs, KHÔNG sinh request riêng (verify run-s7-lv8-v3).
   Decode recipe + UI navigation + backlog: `docs/planning/2026-10-23-mine-streak-debuff-decode.md`.
-- [ ] Đưa streak (`f7`) + tầng debuff (số mốc `f5` của slot) vào `mine_report.py` khi cần —
-  `parse_tile` hiện đang bỏ `f5` (giữ mỗi id/slot), `f6`–`f9` bỏ hoàn toàn
+- [ ] Đưa streak (`f7`) + tầng debuff (số mốc `f5` của slot) vào `mine_socket/report.py` khi cần —
+  `parse_tile` (mine_socket/protocol.py) hiện đang bỏ `f5` (giữ mỗi id/slot), `f6`–`f9` bỏ hoàn toàn
   (đã probe xác nhận: `f7` = {slot: streak}, `f8−f9` = 3600s trên tile 1060/4044/6052).
 - [ ] Chạy listener dài (~1 giờ+) xác nhận mọi loại thay đổi mỏ đều qua broadcast type 150.
 - [ ] ts mốc 05:23:35 "tương lai" ở run-050330 — kiểm tra lại cờ [start, end] vs window đặt trước.
