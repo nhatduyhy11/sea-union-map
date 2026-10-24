@@ -48,6 +48,9 @@ export interface Player {
   id: string;
   name: string;
   faction: string;
+  // Guild name from the player brief (0x0d/0x001f f11); the faction board
+  // aggregates players by it. Demo data fills it, crawled data may not.
+  guild?: string;
 }
 
 export interface Contribution {
@@ -62,6 +65,28 @@ export interface LeaderboardPlayer extends Player {
   score: number;
   nodes: number;
   allocations: Contribution[];
+}
+
+export interface GuildScore {
+  guild: string;
+  score: number;
+  players: number;
+}
+
+// "BXH Phe" entry: the faction's score is the sum of its member guilds'
+// totals (see SEA_STRUCTURE.md §3.2), islands = owned nodes ("Chiếm đảo").
+export interface FactionBoardEntry extends Faction {
+  score: number;
+  islands: number;
+  guilds: GuildScore[];
+}
+
+// "Cứ điểm" board entry: one node ranked by the points all factions poured
+// into it, with the per-faction breakdown ready for the expanded row.
+export interface NodeBoardEntry {
+  island: Island;
+  total: number;
+  scores: FactionScore[];
 }
 
 export interface Attacker extends Contribution {
