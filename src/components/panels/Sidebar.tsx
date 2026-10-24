@@ -2,7 +2,12 @@ import { Compass, Flag, RotateCcw, Trophy } from "lucide-react";
 import { NodeDetails } from "./NodeDetails";
 import { Leaderboard } from "./Leaderboard";
 import styles from "./Sidebar.module.css";
-import type { LeaderboardPlayer, NodeDetailData } from "../../types";
+import type {
+  FactionBoardEntry,
+  LeaderboardPlayer,
+  NodeBoardEntry,
+  NodeDetailData,
+} from "../../types";
 import type { TacticalMapTab } from "../../hooks/useTacticalMap";
 
 export interface SidebarProps {
@@ -10,6 +15,8 @@ export interface SidebarProps {
   details: NodeDetailData | null;
   pinned: boolean;
   leaderboard: LeaderboardPlayer[];
+  factionBoard: FactionBoardEntry[];
+  nodeBoard: NodeBoardEntry[];
   onTabChange: (tab: TacticalMapTab) => void;
   onCloseIsland: () => void;
   onTogglePin: (id: string) => void;
@@ -22,6 +29,8 @@ export function Sidebar({
   details,
   pinned,
   leaderboard,
+  factionBoard,
+  nodeBoard,
   onTabChange,
   onCloseIsland,
   onTogglePin,
@@ -45,7 +54,12 @@ export function Sidebar({
         </button>
       </div>
       {tab === "ranking" ? (
-        <Leaderboard players={leaderboard} onFocusIsland={onFocusIsland} />
+        <Leaderboard
+          players={leaderboard}
+          factions={factionBoard}
+          nodes={nodeBoard}
+          onFocusIsland={onFocusIsland}
+        />
       ) : details ? (
         <NodeDetails
           details={details}
