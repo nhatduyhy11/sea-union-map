@@ -129,6 +129,28 @@ Trích xuất JSON đầy đủ:
 uv run python tools/socket_log/mine_socket/decode.py <capture_dir> mine-state > mine-state.json
 ```
 
+## Event Tranh Bá Tứ Hải / Sea Union (POC capture 2026-10-24)
+
+> Capture mẫu: `.tmp/socket-capture/sea-20261024-100433` (pre-war, profile `pmain`).
+> Spec phân tích + NEED_CONFIRM: `docs/SEA_PACKET_ANALYSE.md`; coords/flow:
+> `docs/planning/2026-10-24-sea-capture.md`.
+
+- Mở battle map: client gửi `0x72/0x000b` (rỗng) → server đẩy **`0x72/0x000c` ~23KB =
+  full map state**: `f2` ×89 = {f1: **node id 1..89**, f2: owner faction} (id 1..4 =
+  4 base, có owner sẵn), `f3` ×4 phe {f1: id, f4: chủ phe, f2: packed member ids},
+  `f4` ×115 guild roster {f1: guild id, f2: repeated player ids}.
+- Mở node (click đảo): `0x72/0x0011` `{f1: node id}` → `0x72/0x0012` `{f2: {f4:
+  1001..1009 art/boss class, f1: id, f2: 4×{f1: faction, f2: Điểm ST của phe tại node},
+  f3}}` + `0x72/0x003e {f1}` → `0x003f` (per-node status, toàn 0 pre-war).
+- Leaderboard sea: `0x0c/0x0002` `{f1: board, f2: node}` → `0x0c/0x0003`. Board:
+  **116** = BXH phe, **117** = BXH điểm (f2=0), **118** = node leaderboard (f2=node id).
+  Kèm `0x0d/0x001f→0x0020` fetch tên (như event mỏ).
+- Tổng quan phe: `0x72/0x0024→0x0025` ×4.
+- Config client node = bảng `CampGVGLO` (89 row, id trùng server id, `_name` mang
+  display id "1-23" + tên) — bóc từ bundle `assets/main/index.<hash>.js` qua
+  `window.__require` khi boot headless (hướng dẫn `SEA_PACKET_ANALYSE.md` §4).
+- Heartbeat/ping sea giống mỏ (8B `000672…` / 6B `000402…`, seq tăng).
+
 ## Listener chạy dài hạn (ĐÃ LÀM — 2026-10-22; nâng cấp live push 2026-10-23)
 
 `tools/socket_log/mine_logger.py`: giữ session mở vô hạn, tự reload page khi game socket đứt

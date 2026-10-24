@@ -39,13 +39,14 @@ Thin entry import từ `socket_capture`: `FrameWriter, attach_capture, parse_ste
 | `battle-map` | `click:320,295` trung tâm lobby → `shot:6-battle-map` |
 | `nodes` | `node_steps` × 4 node default-view: 232,322; 404,322; 318,388; 318,468 (mỗi vòng có `shot:probe-nNN-closed` làm bằng chứng close). **Không phải node:** đền trung tâm 310,225 (mở popup "Chi tiết / Hiệu suất của phe ta"); đảo cuối cột 318,570 (click không sinh WS frame — nghi base phe nam, PROJECT_INTENT §4.1). `DETAIL_CLOSE="318,560"` = click vùng đen dưới popup (chủ dự án chỉ; `(80,620)` cũ bị element mờ nuốt click — probe 20261024-095825: popup đứng nguyên). Bài học: chạy 093346/094110 mọi shot sau n01 đều là popup kẹt của n01, không phải detail từng node |
 | `map-pan` | 2 lần `scroll:320,400,600,0` + shots — wheel trên canvas là **zoom out** (chạy 2026-10-24: thu map, lộ thêm node; wheel thứ 2 clamp — pan-1 == pan-2) |
-| `nodes-2` | `node_steps` × 13 vị trí đảo trong view zoom (tọa độ từ `6-map-pan-1`). Chạy 20261024-100433: **14/17 vị trí gửi request mở node**, mỗi node một id riêng trong request 10B `0008 0c00 <seq> 0876 10<id>` (118 = nghi map id; id node: n01→8, n12→53, n17→70, n22→82…); detail shot xác nhận khác nhau ("1-23Đảo Câu Cá" vs "1-10Đảo Sông Biên"…). Không ăn: n20 (262,562), n21 (372,562), n23 (365,635) — nghi base/không phải node |
+| `nodes-2` | `node_steps` × 13 vị trí đảo trong view zoom (tọa độ từ `6-map-pan-1`). Chạy 20261024-100433: **14/17 vị trí ăn** (n20/n21/n23 không sinh request). [Sửa 2026-10-24 sau decode] request 10B `0876 10<id>` không phải "mở node" mà là **node leaderboard** (`0x0c/0x0002 {f1:118, f2:<node id>}`, bắn ở mark `nXX-board`); mở node thật = `0x72/0x0011 {f1:<id>}`. id trùng bảng config `CampGVGLO` (89 node) — chi tiết `docs/SEA_PACKET_ANALYSE.md` |
 
-### 3. Docs sau capture
+### 3. Docs sau capture — XONG 2026-10-24
 
-- `docs/planning/2026-10-24-sea-capture.md`: tọa độ đã dùng, gì hoạt động/ge gì, kết quả correlation.
-- Correlation: lọc `index.jsonl` theo cửa sổ `stage:<name>` → `uv run python tools/socket_log/socket_decode.py <out> <seq>` từng frame — trả lời "thao tác nào sinh module/cmd nào, state nào nằm trong login push".
-- Cập nhật `docs/SOCKET_PROTOCOL.md` (mục sea, trạng thái POC) + lật ghi chú "chưa có capture" trong `SEA_STRUCTURE.md` khi đã prove.
+- [x] `docs/planning/2026-10-24-sea-capture.md` — coords, hệ quả từng bug (stale chrome, popup kẹt, zoom clamp), decode frame sea.
+- [x] Correlation `index.jsonl` per stage — module sea: 0x72 (map/node/faction), 0x0c (leaderboard).
+- [x] `docs/SEA_PACKET_ANALYSE.md` (mới) — **spec phase phân tích packet**: list node 1..89 lấy từ `0x72/0x000c` (không cần zoom-click), config `CampGVGLO` join thẳng `src/data/map-layout.ts`, request payload thẳng per-node, NEED_CONFIRM riêng mục.
+- [ ] Cập nhật `docs/SOCKET_PROTOCOL.md` mục sea + lật ghi chú "chưa có capture" trong `SEA_STRUCTURE.md`.
 
 ## Vòng lặp chạy/verify
 

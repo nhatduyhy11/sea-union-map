@@ -3,9 +3,10 @@
 > Mô tả nghiệp vụ do chủ dự án truyền đạt (2026-10-24) đối chiếu với ảnh in-game
 > `docs/assets/sea-socket/` (chụp 2026-10-24, trước giờ khai chiến 10/26 10:00).
 > Đây là spec cho crawler Playwright (tầng `tools/socket_log/`) và nguồn dữ liệu
-> thay mock cho UI `src/`. **Chưa đối chiếu protocol WS** — event này chưa có
-> capture nào; framing và phương pháp xác minh xem `docs/SOCKET_PROTOCOL.md`
-> (đã POC trên event mỏ, quy trình tái sử dụng được).
+> thay mock cho UI `src/`. **[Cập nhật 2026-10-24] Đã có capture POC + decode sơ bộ
+> protocol** — xem `docs/SEA_PACKET_ANALYSE.md` (packet + config node) và
+> `docs/planning/2026-10-24-sea-capture.md` (coords/flow chạy thật); framing chung
+> `docs/SOCKET_PROTOCOL.md`.
 > Chủ dự án đã xác nhận mô tả khớp (2026-10-24): phe acc + cửa sổ giờ đã chốt
 > (mục 1, mục 7); các câu hỏi phụ tạm skip.
 
