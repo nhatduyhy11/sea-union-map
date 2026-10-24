@@ -53,7 +53,8 @@ Thứ tự thao tác = thứ tự chủ dự án mô tả; mỗi bước có ả
 
 Ghi chú triển khai (chưa làm): bước 7 cần xử lý 2 trạng thái (chưa mở / đang mở).
 Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_log/socket_capture.py`
-(`click:X,Y`, `scroll:X,Y,DX,DY`, `shot:NAME`, `sleep:S`, `mark:LABEL`) đủ để chạy.
+(`click:X,Y`, `scroll:X,Y,DX,DY[,N]`, `seek:…`, `expect:…`, `shot:NAME`, `sleep:S`,
+`mark:LABEL`) đủ để chạy; bước 3→4 dùng `seek` vì list event xoay vòng theo ngày.
 
 ## 3. Màn hình và dữ liệu tương ứng
 
