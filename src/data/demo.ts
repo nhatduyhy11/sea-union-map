@@ -19,6 +19,8 @@ const playerNames = [
   "Sabo",
   "Jinbe",
 ];
+// Chỉ là seed để sinh node-board rows (contributions); mọi consumer khác
+// derive lại player từ đó (playersFromContributions) như data crawl thật.
 // Two guilds per faction (2+1 members) so the faction board has a
 // non-trivial guild ranking to show.
 const guildsByFaction = [
@@ -187,7 +189,9 @@ export const contributions: Contribution[] = islands
       .map((player, p) => ({
         nodeId: node.id,
         playerId: player.id,
+        name: player.name,
         faction: player.faction,
+        guild: player.guild,
         score:
           (((index * 17 + p * 11) % 9) + 1) *
           1250 *

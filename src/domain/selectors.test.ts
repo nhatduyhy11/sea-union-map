@@ -5,11 +5,12 @@ import {
   buildLeaderboard,
   buildNodeBoard,
   nodeDetails,
+  playersFromContributions,
   scoresForNode,
   searchIslands,
 } from "./selectors";
 import { buildMapEdges, buildMapNodes } from "./mapGraph";
-import type { Contribution, Faction, Island, Player } from "../types";
+import type { Contribution, Faction, Island } from "../types";
 
 const factions: Faction[] = [
   { id: "a", name: "A", color: "#123456" },
@@ -35,20 +36,34 @@ const islands: Island[] = [
     claimThreshold: 1,
   },
 ];
-const players: Player[] = [
-  { id: "p1", name: "One", faction: "a" },
-  { id: "p2", name: "Two", faction: "b" },
-  { id: "p3", name: "Three", faction: "a", guild: "G" },
-];
 const contributions: Contribution[] = [
-  { nodeId: "1-1", playerId: "p1", faction: "a", score: 100 },
-  { nodeId: "2-1", playerId: "p1", faction: "a", score: 300 },
-  { nodeId: "1-1", playerId: "p2", faction: "b", score: 200 },
-  { nodeId: "2-1", playerId: "p3", faction: "a", score: 50 },
+  { nodeId: "1-1", playerId: "p1", name: "One", faction: "a", score: 100 },
+  { nodeId: "2-1", playerId: "p1", name: "One", faction: "a", score: 300 },
+  { nodeId: "1-1", playerId: "p2", name: "Two", faction: "b", score: 200 },
+  {
+    nodeId: "2-1",
+    playerId: "p3",
+    name: "Three",
+    faction: "a",
+    guild: "G",
+    score: 50,
+  },
 ];
 
+test("Node-board rows are the single source of player identity", () => {
+  const players = playersFromContributions(contributions);
+  assert.deepEqual(
+    players.map((p) => [p.id, p.name, p.faction, p.guild]),
+    [
+      ["p1", "One", "a", undefined],
+      ["p2", "Two", "b", undefined],
+      ["p3", "Three", "a", "G"],
+    ]
+  );
+});
+
 test("Queries prepare detail and allocation data without mutating the source", () => {
-  const details = nodeDetails("1-1", islands, contributions, players, factions);
+  const details = nodeDetails("1-1", islands, contributions, factions);
   assert.ok(details);
   assert.equal(details.total, 300);
   assert.equal(details.attackers[0]?.player?.name, "Two");
@@ -57,11 +72,8 @@ test("Queries prepare detail and allocation data without mutating the source", (
     scoresForNode("missing", contributions, factions).map((f) => f.score),
     [0, 0]
   );
-  assert.equal(
-    nodeDetails("missing", islands, contributions, players, factions),
-    null
-  );
-  const board = buildLeaderboard(players, contributions, factions);
+  assert.equal(nodeDetails("missing", islands, contributions, factions), null);
+  const board = buildLeaderboard(contributions, factions);
   assert.equal(board[0].id, "p1");
   assert.equal(board[0].score, 400);
   assert.equal(board[0].nodes, 2);
@@ -75,7 +87,6 @@ test("Queries prepare detail and allocation data without mutating the source", (
     "1-1",
     islands,
     contributions,
-    players,
     factions,
     new Map([["1-1", new Set(["b"])]])
   );
@@ -83,7 +94,7 @@ test("Queries prepare detail and allocation data without mutating the source", (
   assert.equal(flagged?.scores.find((f) => f.id === "b")?.connected, true);
 });
 test("Faction board ranks by guild totals and owned islands", () => {
-  const board = buildFactionBoard(players, contributions, factions, islands);
+  const board = buildFactionBoard(contributions, factions, islands);
   assert.equal(board[0].id, "a");
   assert.equal(board[0].score, 450);
   assert.equal(board[0].islands, 1);

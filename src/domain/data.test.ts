@@ -1,10 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { islands, routes, contributions, players } from "../data/demo";
+import { islands, routes, contributions } from "../data/demo";
 import { factions } from "../data/factions";
-import { buildLeaderboard, scoresForNode as computeScores } from "./selectors";
+import {
+  buildLeaderboard,
+  playersFromContributions,
+  scoresForNode as computeScores,
+} from "./selectors";
 
-const leaderboard = buildLeaderboard(players, contributions, factions);
+const leaderboard = buildLeaderboard(contributions, factions);
+const players = playersFromContributions(contributions);
 const scoresForNode = (id: string) =>
   computeScores(id, contributions, factions);
 const at = (id: string) => {

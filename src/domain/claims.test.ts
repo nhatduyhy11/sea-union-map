@@ -22,6 +22,7 @@ const chain = (ids: string[]): Route[] =>
 const c = (nodeId: string, faction: string, score: number): Contribution => ({
   nodeId,
   playerId: `${faction}@${nodeId}`,
+  name: `${faction}@${nodeId}`,
   faction,
   score,
 });

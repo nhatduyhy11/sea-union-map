@@ -44,6 +44,9 @@ export interface Route {
   target: string;
 }
 
+// Player identity — derived from node-board rows (playersFromContributions),
+// never a separate source: crawled data only knows players through the
+// per-node leaderboards.
 export interface Player {
   id: string;
   name: string;
@@ -53,10 +56,15 @@ export interface Player {
   guild?: string;
 }
 
+// One row of a node's player leaderboard (SEA_STRUCTURE.md §3.7, top-N per
+// node — N đủ lớn để giữ mọi player có impact). Identity đi cùng dòng, nên mọi
+// thống kê (BXH cá nhân top-K, BXH phe, guild) đều derive từ các dòng này.
 export interface Contribution {
   nodeId: string;
   playerId: string;
+  name: string;
   faction: string;
+  guild?: string;
   score: number;
 }
 

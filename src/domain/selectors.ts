@@ -37,12 +37,26 @@ export function playerAllocations(
     .sort((a, b) => b.score - a.score);
 }
 
+// The player universe is the union of every node leaderboard (top-N per node).
+// First row wins on identity — crawl rows of one player describe the same
+// person, dedupe only picks who reported it first.
+export function playersFromContributions(
+  contributions: Contribution[]
+): Player[] {
+  const seen = new Map<string, Player>();
+  for (const { playerId, name, faction, guild } of contributions)
+    if (!seen.has(playerId))
+      seen.set(playerId, { id: playerId, name, faction, guild });
+  return [...seen.values()];
+}
+
+// Global player board (game's "BXH điểm", top-K): mỗi player là tổng Điểm ST
+// qua các dòng node-board của hắn — xấp xỉ BXH in-game vì N từng node ≥ K.
 export function buildLeaderboard(
-  players: Player[],
   contributions: Contribution[],
   factions: Faction[]
 ): LeaderboardPlayer[] {
-  return players
+  return playersFromContributions(contributions)
     .map((player) => {
       const allocations = playerAllocations(player.id, contributions);
       return {
@@ -79,20 +93,17 @@ export function buildNodeBoard(
 // Faction board ("BXH Phe"): the faction's total is the sum of its member
 // guilds' totals — players without a guild pool under a shared fallback row.
 export function buildFactionBoard(
-  players: Player[],
   contributions: Contribution[],
   factions: Faction[],
   islands: Island[]
 ): FactionBoardEntry[] {
-  const scoreByPlayer = new Map(
-    players.map((player) => [
-      player.id,
-      playerAllocations(player.id, contributions).reduce(
-        (total, entry) => total + entry.score,
-        0
-      ),
-    ])
-  );
+  const players = playersFromContributions(contributions);
+  const scoreByPlayer = new Map<string, number>();
+  for (const entry of contributions)
+    scoreByPlayer.set(
+      entry.playerId,
+      (scoreByPlayer.get(entry.playerId) ?? 0) + entry.score
+    );
   return factions
     .map((faction) => {
       const members = players.filter((player) => player.faction === faction.id);
@@ -124,7 +135,6 @@ export function nodeDetails(
   nodeId: string | null,
   islands: Island[],
   contributions: Contribution[],
-  players: Player[],
   factions: Faction[],
   connectedByNode?: Map<string, Set<string>>
 ): NodeDetailData | null {
@@ -143,7 +153,12 @@ export function nodeDetails(
     .sort((a, b) => b.score - a.score)
     .map((entry) => ({
       ...entry,
-      player: players.find((player) => player.id === entry.playerId),
+      player: {
+        id: entry.playerId,
+        name: entry.name,
+        faction: entry.faction,
+        guild: entry.guild,
+      },
       factionInfo: factions.find((faction) => faction.id === entry.faction),
     }));
   return {

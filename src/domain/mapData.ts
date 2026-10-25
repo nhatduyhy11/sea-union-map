@@ -1,4 +1,4 @@
-import { islands, routes, contributions, players } from "../data/demo";
+import { islands, routes, contributions } from "../data/demo";
 import { factions } from "../data/factions";
 import { deriveClaims } from "./claims";
 import {
@@ -22,9 +22,8 @@ export const ownedIslands: Island[] = islands.map((node) => ({
   ...node,
   owner: claims.ownerByNode.get(node.id) ?? null,
 }));
-export const leaderboard = buildLeaderboard(players, contributions, factions);
+export const leaderboard = buildLeaderboard(contributions, factions);
 export const factionBoard = buildFactionBoard(
-  players,
   contributions,
   factions,
   ownedIslands

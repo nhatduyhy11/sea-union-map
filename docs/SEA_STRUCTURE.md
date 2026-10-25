@@ -86,9 +86,17 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   "XH Phe | XH điểm" — cần chụp lại lúc khai chiến để đối chiếu.
 - UI frontend dựng đúng cấu trúc này: `Leaderboard.tsx` 3 tab (Cứ điểm / Cá nhân /
   Phe), tab Phe có sub-tab Chung + 4 phe (`buildFactionBoard` +
-  `buildNodeBoard` trong `src/domain/selectors.ts`); guild theo player lấy từ
-  brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm" phía frontend là diễn giải
-  (node xếp theo tổng Điểm ST) — chưa có ảnh game, xem mục 7.
+  `buildNodeBoard` trong `src/domain/selectors.ts`).
+- **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
+  cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
+  trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K
+  đủ bắt mọi player có impact). `Contribution` = 1 dòng node leaderboard mang
+  sẵn tên/phe/guild; BXH cá nhân (top-K), BXH phe, thống kê theo guild/faction
+  đều quy về từ đó (`playersFromContributions` / `buildLeaderboard` /
+  `buildFactionBoard` / `buildNodeBoard` trong `src/domain/selectors.ts`);
+  guild theo player lấy từ brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm"
+  phía frontend là diễn giải (node xếp theo tổng Điểm ST) — chưa có ảnh game,
+  xem mục 7.
 - Đây là leaderboard **theo phe** ("chung") như intent §6.
 
 ### 3.3. BXH điểm — `4-leaderboard-player.png` (bảng xếp hạng cá nhân)
@@ -184,7 +192,8 @@ từng node.
 | Tên node thật (`1-23 Đảo Câu Cá`…) | thay tên mock (demo chưa transcribe tên)                                        |
 | Điểm chiếm đóng tối thiểu          | `claimThreshold` (đang equalize = 1)                                            |
 | Điểm phe/player tại node, sở hữu   | `NodeStats` + `src/domain/claims.ts` (derive ownership)                         |
-| Điểm ST tổng player                | leaderboard `src/domain/selectors.ts`                                           |
+| Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — nguồn duy nhất của mọi thống kê           |
+| Điểm ST tổng player (BXH top-K)    | `buildLeaderboard(contributions)` — gộp node rows, xấp xỉ BXH in-game           |
 | BXH Phe (điểm phe = tổng guild)    | `buildFactionBoard` `src/domain/selectors.ts` → tab "BXH Phe" `Leaderboard.tsx` |
 | Guild theo player (brief f11)      | `Player.guild` — demo fill tay, crawl qua `0x0d/0x001f`                         |
 | Phe + thành viên + tổng điểm       | `src/data/factions.ts`                                                          |

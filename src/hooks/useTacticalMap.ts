@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { routes, contributions, players } from "../data/demo";
+import { routes, contributions } from "../data/demo";
 import { factions } from "../data/factions";
 import { nodeDetails, searchIslands } from "../domain/selectors";
 import { buildMapEdges, buildMapNodes } from "../domain/mapGraph";
@@ -78,7 +78,6 @@ export function useTacticalMap() {
         selected,
         ownedIslands,
         contributions,
-        players,
         factions,
         claims.connectedByNode
       ),
