@@ -21,7 +21,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 
 - `response.cmd = request.cmd + 1`; `response.ssid` = `request.seq` của request tương ứng.
 - **[2026-10-25] Header response là 8 byte, không phải 7** — bóc từ `SocketMgr.onMessageParser`
-  trong bundle `assets/main/index.<hash>.js`: byte[2]=ssid, [3]=fragIdx, [4]=fragCount
+  trong bundle (chi tiết: `BXH_RANKING_ANALYSE.md` §4): byte[2]=ssid, [3]=fragIdx, [4]=fragCount
   (>1 = gói rời, client ghép theo fragIdx), [7]=**compress flag: 1 = body QuickLZ**
   (trước đây hiểu nhầm "status=00"). Frame nén đầu tiên gặp: `0x0c/0x0003` leaderboard.
   Decode frame nén: `tools/socket_log/game_proto_decode.py`.
@@ -40,7 +40,8 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 | 0x1f | 0x0007 | **Leaderboard PvP mỏ** (push lúc login): entry = {f2: rank, f3: score, f1: profile đầy đủ nhúng (power, skins, avatar, blob config f17)} |
 | 0x1f | 0x000a→0x000b | **Lịch sử đánh nhau ở mỏ** (trước nay nhầm "visit log"): entry = {f1: attacker, f2: defender, f3: ts, f5: battle id, f4: **bên thắng (1=attacker, 2=defender)**, f7/f6: JSON `{"rKey","pKey"}` rating attacker/defender, f9: profile defender nhúng}. Verify: HuAsura đánh OLNaji 2 lần đều f4=2 (thua) |
 | 0x65 | 0x0009, 0x000c | Capture 2026-10-23: 0x9 = summary lượt đánh (nhóm 3 fighter {f1: id, f3: cờ thắng, f2: ?} + f3 = id winner); 0xc = list guild {f4: id chủ guild, f3 repeated: {f1: id thành viên, f2–f6: stat}} — chưa map đủ |
-| 0x0d | 0x001f→0x0020 | **Player brief** — request `f1`=packed player ids; response: f1=id, f2=tên, f4=power?, f33=avatar id, f11=guild nhúng (tên + mô tả), f15=server. **Đây là nguồn id→tên**. [2026-10-25] Schema thật từ bundle: `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` (name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel…) — decode qua `tools/socket_log/game_proto_decode.py briefs` |
+| 0x0d | 0x001f→0x0020 | **Player brief** — request `f1`=packed player ids; response: f1=id, f2=tên, f4=power?, f33=avatar id, f11=guild nhúng (tên + mô tả), f15=server. **Đây là nguồn id→tên**. [2026-10-25] Schema thật từ bundle: `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` (name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel…, xem `BXH_RANKING_ANALYSE.md` §3.4) |
+| 0x0c | 0x0002→0x0003 | **BXH home (Ranking)** — request `{f1: rankType, f2: rankSubType}`; rankType: 7=Lực Chiến, 8=Ái (mặc định), 19=Guild; sea 116/117/118. Response **QuickLZ-nén**, đúng **top 100 + selfRank**, không pagination (chi tiết: `BXH_RANKING_ANALYSE.md`) |
 | 0x0d | 0x0019→0x001a | **Player full profile** (bấm vào 1 player/máy): heroes, items, power… popup "Mỏ Quặng LvX" |
 | 0x24 | 0x0035→0x0036 | **Guild brief** — request f1=guild id (dạng f4 của tile: 5170010…); response f3={f2=tên, f11=server, f10/f3=số thành viên…}. Dùng khi mở minimap overview |
 | 0x24 | 0x0033→0x0034 | **Guild detail**: f2=tên, f14=mô tả, f9/f8=id chủ guild, f13/f16=power, f26=log {thành viên, ts gia nhập}, f24=cửa sổ season guild, f1=id dạng f4 |
