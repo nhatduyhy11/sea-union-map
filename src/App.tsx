@@ -43,6 +43,8 @@ export function App() {
           details={map.details}
           pinned={map.details ? map.pinned.has(map.details.island.id) : false}
           leaderboard={map.leaderboard}
+          factionBoard={map.factionBoard}
+          nodeBoard={map.nodeBoard}
           onTabChange={actions.setTab}
           onCloseIsland={actions.closeIsland}
           onTogglePin={actions.togglePin}

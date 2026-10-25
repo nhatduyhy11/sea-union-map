@@ -1,7 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  buildFactionBoard,
   buildLeaderboard,
+  buildNodeBoard,
   nodeDetails,
   scoresForNode,
   searchIslands,
@@ -36,11 +38,13 @@ const islands: Island[] = [
 const players: Player[] = [
   { id: "p1", name: "One", faction: "a" },
   { id: "p2", name: "Two", faction: "b" },
+  { id: "p3", name: "Three", faction: "a", guild: "G" },
 ];
 const contributions: Contribution[] = [
   { nodeId: "1-1", playerId: "p1", faction: "a", score: 100 },
   { nodeId: "2-1", playerId: "p1", faction: "a", score: 300 },
   { nodeId: "1-1", playerId: "p2", faction: "b", score: 200 },
+  { nodeId: "2-1", playerId: "p3", faction: "a", score: 50 },
 ];
 
 test("Queries prepare detail and allocation data without mutating the source", () => {
@@ -77,6 +81,39 @@ test("Queries prepare detail and allocation data without mutating the source", (
   );
   assert.equal(flagged?.scores.find((f) => f.id === "a")?.connected, false);
   assert.equal(flagged?.scores.find((f) => f.id === "b")?.connected, true);
+});
+test("Faction board ranks by guild totals and owned islands", () => {
+  const board = buildFactionBoard(players, contributions, factions, islands);
+  assert.equal(board[0].id, "a");
+  assert.equal(board[0].score, 450);
+  assert.equal(board[0].islands, 1);
+  // Guild rows sort by score; players without a guild share the fallback.
+  assert.deepEqual(
+    board[0].guilds.map((g) => [g.guild, g.score, g.players]),
+    [
+      ["Không guild", 400, 1],
+      ["G", 50, 1],
+    ]
+  );
+  assert.equal(
+    board[0].guilds.reduce((sum, g) => sum + g.score, 0),
+    board[0].score
+  );
+  assert.equal(board[1].id, "b");
+  assert.equal(board[1].islands, 1);
+  assert.equal(board[1].score, 200);
+});
+test("Node board ranks islands by total points with faction breakdowns", () => {
+  const board = buildNodeBoard(islands, contributions, factions);
+  assert.deepEqual(
+    board.map((entry) => [entry.island.id, entry.total]),
+    [
+      ["2-1", 350],
+      ["1-1", 300],
+    ]
+  );
+  assert.equal(board[0].scores.find((f) => f.id === "a")?.score, 350);
+  assert.equal(board[0].scores.find((f) => f.id === "b")?.score, 0);
 });
 test("Search handles whitespace, casing, indexes, empty queries and result limits", () => {
   assert.deepEqual(searchIslands("   ", islands), []);

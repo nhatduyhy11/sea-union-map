@@ -1,7 +1,12 @@
 import { islands, routes, contributions, players } from "../data/demo";
 import { factions } from "../data/factions";
 import { deriveClaims } from "./claims";
-import { buildLeaderboard, scoresForNode } from "./selectors";
+import {
+  buildFactionBoard,
+  buildLeaderboard,
+  buildNodeBoard,
+  scoresForNode,
+} from "./selectors";
 import type { FactionScore, Island } from "../types";
 
 export const scoresByNode = new Map<string, FactionScore[]>(
@@ -18,4 +23,11 @@ export const ownedIslands: Island[] = islands.map((node) => ({
   owner: claims.ownerByNode.get(node.id) ?? null,
 }));
 export const leaderboard = buildLeaderboard(players, contributions, factions);
+export const factionBoard = buildFactionBoard(
+  players,
+  contributions,
+  factions,
+  ownedIslands
+);
+export const nodeBoard = buildNodeBoard(islands, contributions, factions);
 export const baseCount = islands.filter((node) => node.base).length;

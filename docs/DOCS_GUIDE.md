@@ -10,7 +10,10 @@
 | -------------------------------------- | ---------------------------------------------------------------------------- | -------------------------------------------------------- |
 | [PROJECT_INTENT.md](PROJECT_INTENT.md) | Mục tiêu sản phẩm, nhu cầu, ràng buộc và phạm vi mong muốn                   | Khi chủ dự án bổ sung hoặc thay đổi yêu cầu              |
 | [docs/CLAIM_RULES.md](CLAIM_RULES.md)  | Quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, tạm ngắt, derive ownership | Khi chủ dự án bổ sung hoặc thay đổi rule                 |
+| [docs/SEA_STRUCTURE.md](SEA_STRUCTURE.md) | Cấu trúc event Tranh Bá Tứ Hải: luồng điều hướng, màn hình, dữ liệu node, quy tắc crawl | Khi mô tả event thay đổi hoặc crawl xác nhận thêm dữ liệu |
 | [docs/RESEARCH.md](docs/RESEARCH.md)   | Kết quả tìm hiểu, nguồn tham khảo, quyết định công nghệ và đề xuất kỹ thuật  | Khi tìm hiểu giải pháp hoặc chốt/thay đổi hướng kỹ thuật |
+| [docs/SOCKET_PROTOCOL.md](SOCKET_PROTOCOL.md) | Tham chiếu protocol WS: framing, module/cmd, kết quả decode            | Khi decode thêm module/cmd hoặc chốt một nghi vấn        |
+| [docs/MINE_STRUCTURE.md](MINE_STRUCTURE.md) | Cấu trúc event mỏ (Khai Thác Guild): map UI ↔ protocol                  | Khi capture mới xác minh thêm field                      |
 | [specs/](specs/)                       | Ảnh tham chiếu từ game, làm căn cứ cho map và dữ liệu điểm                   | Khi có thêm ảnh hoặc cập nhật nguồn từ game              |
 | [DOCS_GUIDE.md](DOCS_GUIDE.md)         | Chỉ dẫn đọc và tổ chức tài liệu                                              | Khi thêm, chuyển hoặc đổi vai trò tài liệu               |
 | [NEED_CONFIRM.md](NEED_CONFIRM.md)     | Câu hỏi cần chủ dự án xác nhận, trạng thái và phương án tạm                  | Ghi câu hỏi trước khi hỏi; cập nhật khi có câu trả lời   |
@@ -24,7 +27,9 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 2. Đọc `PROJECT_INTENT.md` để hiểu mục tiêu và phạm vi.
 3. Đọc `docs/RESEARCH.md` khi làm việc với giải pháp kỹ thuật.
 4. Đọc `docs/CLAIM_RULES.md` khi làm việc với ownership, điểm claim hoặc dữ liệu demo.
-5. Xem các ảnh được liên kết khi công việc liên quan tới bố cục map hoặc dữ liệu game.
+5. Đọc `docs/SEA_STRUCTURE.md` khi làm việc với event Tranh Bá Tứ Hải (crawl dữ liệu hoặc feed UI).
+6. Đọc `docs/SOCKET_PROTOCOL.md` / `docs/MINE_STRUCTURE.md` khi làm việc với tầng bắt socket và decode.
+7. Xem các ảnh được liên kết khi công việc liên quan tới bố cục map hoặc dữ liệu game.
 
 ## Cách ghi nội dung mới
 

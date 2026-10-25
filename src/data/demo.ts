@@ -19,10 +19,19 @@ const playerNames = [
   "Sabo",
   "Jinbe",
 ];
+// Two guilds per faction (2+1 members) so the faction board has a
+// non-trivial guild ranking to show.
+const guildsByFaction = [
+  ["Mũ Rơm", "Xương Hải"],
+  ["Bạo Quốc", "Kim Cương"],
+  ["Mặt Trời", "Hỏa Long"],
+  ["Sư Trắng", "Sương Mù"],
+];
 export const players: Player[] = playerNames.map((name, index) => ({
   id: `p${index}`,
   name,
   faction: factions[index % 4].id,
+  guild: guildsByFaction[index % 4]?.[Math.floor(index / 4) % 2],
 }));
 export const islands: Island[] = layoutNodes.map((node, index) => ({
   ...node,

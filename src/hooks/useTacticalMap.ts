@@ -6,6 +6,8 @@ import { buildMapEdges, buildMapNodes } from "../domain/mapGraph";
 import {
   scoresByNode,
   leaderboard,
+  factionBoard,
+  nodeBoard,
   baseCount,
   ownedIslands,
   claims,
@@ -88,6 +90,8 @@ export function useTacticalMap() {
     edges,
     factions,
     leaderboard,
+    factionBoard,
+    nodeBoard,
     baseCount,
     islandCount: ownedIslands.length - baseCount,
     details,
