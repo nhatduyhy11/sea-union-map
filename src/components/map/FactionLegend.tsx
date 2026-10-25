@@ -1,22 +1,15 @@
+import { factions } from "../../data/factions";
+import { selectFaction } from "../../stores/commands";
+import { useMapView } from "../../stores/mapView";
 import styles from "./FactionLegend.module.css";
-import type { Faction } from "../../types";
 
-export interface FactionLegendProps {
-  factions: Faction[];
-  filter: string;
-  onSelectFaction: (id: string) => void;
-}
-
-export function FactionLegend({
-  factions,
-  filter,
-  onSelectFaction,
-}: FactionLegendProps) {
+export function FactionLegend() {
+  const filter = useMapView((state) => state.filter);
   return (
     <footer className={styles.legend}>
       <button
         className={filter === "all" ? styles.chosen : ""}
-        onClick={() => onSelectFaction("all")}
+        onClick={() => selectFaction("all")}
       >
         Tất cả
       </button>
@@ -24,7 +17,7 @@ export function FactionLegend({
         <button
           key={faction.id}
           className={filter === faction.id ? styles.chosen : ""}
-          onClick={() => onSelectFaction(faction.id)}
+          onClick={() => selectFaction(faction.id)}
         >
           <i style={{ background: faction.color }} />
           {faction.name}
@@ -32,7 +25,7 @@ export function FactionLegend({
       ))}
       <button
         className={`${styles.neutral} ${filter === "neutral" ? styles.chosen : ""}`}
-        onClick={() => onSelectFaction("neutral")}
+        onClick={() => selectFaction("neutral")}
       >
         <i />
         Trung lập

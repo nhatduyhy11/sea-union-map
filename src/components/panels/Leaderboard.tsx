@@ -1,8 +1,12 @@
 import { ChevronRight, Users } from "lucide-react";
 import { compact, number } from "../../utils/format";
 import { PlayerIdentity } from "../shared/PlayerIdentity";
+import { useFocusIsland } from "../../hooks/useFocusIsland";
+import { factionBoard, leaderboard, nodeBoard } from "../../domain/mapData";
+import { selectFaction } from "../../stores/commands";
+import { useMapView } from "../../stores/mapView";
+import { usePanel } from "../../stores/panel";
 import styles from "./Leaderboard.module.css";
-import type { RankingBoard } from "../../hooks/useTacticalMap";
 import type {
   FactionBoardEntry,
   FactionScore,
@@ -11,64 +15,48 @@ import type {
   NodeBoardEntry,
 } from "../../types";
 
-export interface LeaderboardProps {
-  board: RankingBoard;
-  players: LeaderboardPlayer[];
-  factions: FactionBoardEntry[];
-  nodes: NodeBoardEntry[];
-  // Filter phe của canvas legend — dùng chung làm sub-tab của BXH Phe nên
-  // chọn phe ở panel cũng lọc map (và ngược lại). "all"/"neutral" = tab Chung.
-  factionFocus: string;
-  onBoardChange: (board: RankingBoard) => void;
-  onSelectFaction: (id: string) => void;
-  onFocusIsland: (id: string) => void;
-}
-
 // Mirrors the in-game BXH screen (SEA_STRUCTURE.md §3.2): 3 tab với thứ tự UI
 // Phe → Cá nhân → Cứ điểm (game để Cứ điểm trước — owner muốn Phe lên đầu vì
 // là aggregate chính); tab Phe chia "chung" + một sub-tab mỗi phe.
-export function Leaderboard({
-  board,
-  players,
-  factions,
-  nodes,
-  factionFocus,
-  onBoardChange,
-  onSelectFaction,
-  onFocusIsland,
-}: LeaderboardProps) {
+export function Leaderboard() {
+  const board = usePanel((state) => state.board);
+  const setBoard = usePanel((state) => state.setBoard);
+  // Filter phe của canvas legend — dùng chung làm sub-tab của BXH Phe nên
+  // chọn phe ở panel cũng lọc map (và ngược lại). "all"/"neutral" = tab Chung.
+  const factionFocus = useMapView((state) => state.filter);
+  const focusIsland = useFocusIsland();
   return (
     <div className={`${styles.detail} ${styles.ranking}`}>
       <div className={styles.boardTabs}>
         <button
           className={board === "faction" ? styles.selected : ""}
-          onClick={() => onBoardChange("faction")}
+          onClick={() => setBoard("faction")}
         >
           Phe
         </button>
         <button
           className={board === "player" ? styles.selected : ""}
-          onClick={() => onBoardChange("player")}
+          onClick={() => setBoard("player")}
         >
           Cá nhân
         </button>
         <button
           className={board === "node" ? styles.selected : ""}
-          onClick={() => onBoardChange("node")}
+          onClick={() => setBoard("node")}
         >
           Cứ điểm
         </button>
       </div>
       {board === "faction" ? (
         <FactionBoard
-          factions={factions}
+          factions={factionBoard}
           focus={factionFocus}
-          onSelect={onSelectFaction}
+          onSelect={selectFaction}
         />
       ) : board === "player" ? (
-        <PlayerBoard players={players} onFocusIsland={onFocusIsland} />
+        <PlayerBoard players={leaderboard} onFocusIsland={focusIsland} />
       ) : (
-        <NodeBoard nodes={nodes} onFocusIsland={onFocusIsland} />
+        <NodeBoard nodes={nodeBoard} onFocusIsland={focusIsland} />
       )}
     </div>
   );

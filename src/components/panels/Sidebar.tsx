@@ -1,83 +1,45 @@
 import { Compass, Flag, RotateCcw, Trophy } from "lucide-react";
 import { NodeDetails } from "./NodeDetails";
 import { Leaderboard } from "./Leaderboard";
+import { useNodeDetails } from "../../hooks/useNodeDetails";
+import { useSelection } from "../../stores/selection";
+import { usePanel } from "../../stores/panel";
 import styles from "./Sidebar.module.css";
-import type {
-  FactionBoardEntry,
-  LeaderboardPlayer,
-  NodeBoardEntry,
-  NodeDetailData,
-} from "../../types";
-import type { RankingBoard, TacticalMapTab } from "../../hooks/useTacticalMap";
 
-export interface SidebarProps {
-  tab: TacticalMapTab;
-  details: NodeDetailData | null;
-  pinned: boolean;
-  leaderboard: LeaderboardPlayer[];
-  factionBoard: FactionBoardEntry[];
-  nodeBoard: NodeBoardEntry[];
-  filter: string;
-  board: RankingBoard;
-  onTabChange: (tab: TacticalMapTab) => void;
-  onBoardChange: (board: RankingBoard) => void;
-  onSelectFaction: (id: string) => void;
-  onCloseIsland: () => void;
-  onTogglePin: (id: string) => void;
-  onFocusIsland: (id: string) => void;
-  onClearPins: () => void;
-}
-
-export function Sidebar({
-  tab,
-  details,
-  pinned,
-  leaderboard,
-  factionBoard,
-  nodeBoard,
-  filter,
-  board,
-  onTabChange,
-  onBoardChange,
-  onSelectFaction,
-  onCloseIsland,
-  onTogglePin,
-  onFocusIsland,
-  onClearPins,
-}: SidebarProps) {
+// Panel tự đọc stores thay vì nhận props: tab & board (panel), chi tiết đảo
+// & ghim (selection), lọc phe (mapView — Leaderboard tự subscribe).
+export function Sidebar() {
+  const tab = usePanel((state) => state.tab);
+  const setTab = usePanel((state) => state.setTab);
+  const details = useNodeDetails();
+  const pinned = useSelection((state) => state.pinned);
+  const close = useSelection((state) => state.close);
+  const togglePin = useSelection((state) => state.togglePin);
+  const clearPins = useSelection((state) => state.clearPins);
   return (
     <aside className={styles.sidebar}>
       <div className={styles.tabs}>
         <button
           className={tab === "node" ? styles.selected : ""}
-          onClick={() => onTabChange("node")}
+          onClick={() => setTab("node")}
         >
           <Flag size={15} /> Cứ điểm
         </button>
         <button
           className={tab === "ranking" ? styles.selected : ""}
-          onClick={() => onTabChange("ranking")}
+          onClick={() => setTab("ranking")}
         >
           <Trophy size={15} /> Xếp hạng
         </button>
       </div>
       {tab === "ranking" ? (
-        <Leaderboard
-          board={board}
-          players={leaderboard}
-          factions={factionBoard}
-          nodes={nodeBoard}
-          factionFocus={filter}
-          onBoardChange={onBoardChange}
-          onSelectFaction={onSelectFaction}
-          onFocusIsland={onFocusIsland}
-        />
+        <Leaderboard />
       ) : details ? (
         <NodeDetails
           details={details}
-          pinned={pinned}
-          onClose={onCloseIsland}
-          onTogglePin={onTogglePin}
+          pinned={pinned.has(details.island.id)}
+          onClose={close}
+          onTogglePin={togglePin}
         />
       ) : (
         <div className={styles.empty}>
@@ -93,7 +55,7 @@ export function Sidebar({
         <button
           title="Bỏ tất cả ghim"
           aria-label="Bỏ tất cả ghim"
-          onClick={onClearPins}
+          onClick={clearPins}
         >
           <RotateCcw size={14} />
         </button>

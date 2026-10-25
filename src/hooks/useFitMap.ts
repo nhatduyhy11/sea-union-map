@@ -7,7 +7,7 @@ import type { AppNode } from "../types";
 export const FIT_VIEW_OPTIONS = { padding: 0.15, duration: 500 } as const;
 
 // Fit toàn cảnh — consumed directly by the fixed set of components with a fit
-// button (NavigationRail, MapToolbar), not threaded through useTacticalMap.
+// button (NavigationRail, MapToolbar), not routed through any store.
 export function useFitMap() {
   const { fitView } = useReactFlow<AppNode, Edge>();
   return useCallback(() => fitView(FIT_VIEW_OPTIONS), [fitView]);

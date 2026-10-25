@@ -1,18 +1,10 @@
+import { baseCount, ownedIslands } from "../../domain/mapData";
+import { useMapView } from "../../stores/mapView";
 import styles from "./MapHeading.module.css";
 
-export interface MapHeadingProps {
-  islandCount: number;
-  baseCount: number;
-  debug: boolean;
-  onToggleDebug: () => void;
-}
-
-export function MapHeading({
-  islandCount,
-  baseCount,
-  debug,
-  onToggleDebug,
-}: MapHeadingProps) {
+export function MapHeading() {
+  const debug = useMapView((state) => state.debug);
+  const toggleDebug = useMapView((state) => state.toggleDebug);
   return (
     <div className={styles.mapHeading}>
       <div>
@@ -27,7 +19,7 @@ export function MapHeading({
         {import.meta.env.DEV && (
           <button
             className={`${styles.debugToggle} ${debug ? styles.debugOn : ""}`}
-            onClick={onToggleDebug}
+            onClick={toggleDebug}
             aria-pressed={debug}
             title="Hiện tâm node + đường dash ngang qua node 4 và đường dọc qua các cứ điểm trục giữa"
           >
@@ -35,7 +27,8 @@ export function MapHeading({
           </button>
         )}
         <div className={styles.mapCount}>
-          <b>{islandCount}</b> cứ điểm <span>·</span> <b>{baseCount}</b> căn cứ
+          <b>{ownedIslands.length - baseCount}</b> cứ điểm <span>·</span>{" "}
+          <b>{baseCount}</b> căn cứ
         </div>
       </div>
     </div>

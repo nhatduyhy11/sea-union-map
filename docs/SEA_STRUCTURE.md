@@ -89,7 +89,8 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
   Chung + 4 phe. Chọn phe ở legend đáy canvas thì panel bên phải tự sang tab
   Xếp hạng + mở đúng sub-tab phe đó — filter phe là 1 state chung
-  (`useTacticalMap.selectFaction`), nên chọn ngược từ sub-tab phe cũng lọc map.
+  (`selectFaction` trong `src/stores/commands.ts`), nên chọn ngược từ sub-tab
+  phe cũng lọc map.
 - **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
   cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
   trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K

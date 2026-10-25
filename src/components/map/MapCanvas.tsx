@@ -1,16 +1,11 @@
-import {
-  ReactFlow,
-  Background,
-  Controls,
-  useStore,
-  type Edge,
-} from "@xyflow/react";
+import { ReactFlow, Background, Controls, useStore } from "@xyflow/react";
 import { mapBounds, layoutNodes } from "../../data/map-layout";
 import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
+import { useMapGraph } from "../../hooks/useMapGraph";
+import { useMapView } from "../../stores/mapView";
 import { IslandNode } from "./IslandNode";
 import { RouteEdge } from "./RouteEdge";
 import styles from "./MapCanvas.module.css";
-import type { AppNode } from "../../types";
 
 const nodeTypes = { island: IslandNode };
 const edgeTypes = { route: RouteEdge };
@@ -61,13 +56,9 @@ function ZoomLabel() {
   return <div className={styles.zoomLabel}>{Math.round(zoom * 100)}%</div>;
 }
 
-export interface MapCanvasProps {
-  nodes: AppNode[];
-  edges: Edge[];
-  debug: boolean;
-}
-
-export function MapCanvas({ nodes, edges, debug }: MapCanvasProps) {
+export function MapCanvas() {
+  const { nodes, edges } = useMapGraph();
+  const debug = useMapView((state) => state.debug);
   return (
     <div className={styles.mapCanvas}>
       <ReactFlow

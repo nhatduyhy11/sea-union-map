@@ -30,18 +30,19 @@ Tên đảo dùng index; tên, boss, phe sở hữu và điểm vẫn là dữ l
 ## Tổ chức code
 
 - `src/main.tsx`: khởi tạo React và nạp CSS.
-- `src/App.tsx`: bố cục ứng dụng và nối props/callback giữa các vùng UI.
+- `src/App.tsx`: bố cục ứng dụng — thuần layout, component tự nối store nên không threaded props.
 - `src/components/layout/`: header và thanh điều hướng.
 - `src/components/map/`: map, custom node/edge, toolbar, bảng điểm nhỏ và chú giải.
 - `src/components/panels/`: panel cứ điểm, bảng điểm phe, player và leaderboard.
 - `src/components/shared/`: UI dùng chung.
-- `src/hooks/useTacticalMap.ts`: state, ghim/lọc/chọn đảo, tìm kiếm và thao tác viewport.
+- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc phe, điểm toàn map, debug), `panel` (tab, sub-tab BXH, ô tìm kiếm), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `selectFaction`).
+- `src/hooks/`: derived data và command cần instance React Flow — `useMapGraph` (nodes/edges), `useNodeDetails`, `useIslandMatches`, `useFocusIsland`, `useFitMap`.
 - `src/domain/`: hàm thuần tính điểm, truy vấn chi tiết, tìm kiếm và chuyển dữ liệu sang model React Flow; kèm test.
 - `src/data/`: bố cục theo ảnh, định nghĩa phe và fixture demo.
 - `src/types.ts`: định nghĩa kiểu dữ liệu (model, props, React Flow node data).
 - `src/utils/format.ts`: định dạng số để hiển thị.
 - `src/style.css`: global CSS reset, typography, scrollbar và React Flow styles; UI dùng CSS Modules co-located theo từng component.
 
-UI nhận dữ liệu đã chuẩn bị qua props; hook nối dữ liệu với logic tương tác. Domain không import React hoặc component. Các callback được giữ ổn định trong hook; điểm và leaderboard không tính lại theo mỗi thao tác pan/zoom.
+UI nhận dữ liệu đã chuẩn bị qua props; component subscribe store theo slice nên mỗi tương tác chỉ re-render vùng liên quan. Command chạm nhiều store nằm ở `stores/commands.ts`; command cần camera (focus/fit) là hook vì cần instance React Flow. Domain không import React, component hay store. Derived data (nodes/edges, chi tiết đảo, kết quả tìm kiếm) memo theo state đầu vào; điểm và leaderboard không tính lại theo mỗi thao tác pan/zoom.
 
 Câu hỏi cần chủ dự án xác nhận được ghi vào [NEED_CONFIRM.md](NEED_CONFIRM.md) trước khi hỏi.
