@@ -84,9 +84,12 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   5 sub-tab đáy màn: **"chung" + 4 phe** — chọn 1 phe chỉ hiện các guild trong phe đó
   kèm điểm tổng. Ảnh chụp 2026-10-24 (pre-war) chỉ thấy 2 tab đáy màn
   "XH Phe | XH điểm" — cần chụp lại lúc khai chiến để đối chiếu.
-- UI frontend dựng đúng cấu trúc này: `Leaderboard.tsx` 3 tab (Cứ điểm / Cá nhân /
-  Phe), tab Phe có sub-tab Chung + 4 phe (`buildFactionBoard` +
-  `buildNodeBoard` trong `src/domain/selectors.ts`).
+- UI frontend dựng cấu trúc này với **thứ tự tab riêng của mình** [chủ dự án
+  2026-10-25]: `Leaderboard.tsx` 3 tab **Phe → Cá nhân → Cứ điểm** (game để Cứ
+  điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
+  Chung + 4 phe. Chọn phe ở legend đáy canvas thì panel bên phải tự sang tab
+  Xếp hạng + mở đúng sub-tab phe đó — filter phe là 1 state chung
+  (`useTacticalMap.selectFaction`), nên chọn ngược từ sub-tab phe cũng lọc map.
 - **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
   cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
   trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K

@@ -15,6 +15,9 @@ import {
 import { useIslandSelection } from "./useIslandSelection";
 
 export type TacticalMapTab = "node" | "ranking";
+// Top tabs của bảng xếp hạng — thứ tự UI: Phe trước (aggregate chính),
+// rồi Cá nhân, Cứ điểm.
+export type RankingBoard = "faction" | "player" | "node";
 
 export function useTacticalMap() {
   const {
@@ -29,6 +32,7 @@ export function useTacticalMap() {
   const [showAll, setShowAll] = useState(false);
   const [filter, setFilter] = useState("all");
   const [tab, setTab] = useState<TacticalMapTab>("node");
+  const [board, setBoard] = useState<RankingBoard>("faction");
   const [debug, setDebug] = useState(false);
   const [query, setQuery] = useState("");
   const matches = useMemo(() => searchIslands(query, ownedIslands), [query]);
@@ -41,10 +45,14 @@ export function useTacticalMap() {
     [open]
   );
   const closeIsland = close;
-  const selectFaction = useCallback(
-    (id: string) => setFilter((previous) => (previous === id ? "all" : id)),
-    []
-  );
+  // Filter phe ở legend đáy canvas là nguồn chân lý duy nhất: panel ranking
+  // đọc cùng state nên sub-tab phe ở BXH Phe cũng lọc ngược canvas. Chọn phe
+  // ở legend đồng thời kéo panel sang ranking, mở đúng tab phe đó.
+  const selectFaction = useCallback((id: string) => {
+    setFilter((previous) => (previous === id ? "all" : id));
+    setTab("ranking");
+    setBoard("faction");
+  }, []);
   const toggleDebug = useCallback(() => setDebug((value) => !value), []);
   // focusNode chỉ mở node + dời camera; reset tab + dọn ô tìm kiếm thuộc
   // panel/search state, nên được compose ở đây nơi tab & query sống.
@@ -99,6 +107,7 @@ export function useTacticalMap() {
     filter,
     debug,
     tab,
+    board,
     query,
     matches,
     actions: {
@@ -111,6 +120,7 @@ export function useTacticalMap() {
       focusIsland,
       setShowAll,
       setTab,
+      setBoard,
       setQuery,
     },
   };

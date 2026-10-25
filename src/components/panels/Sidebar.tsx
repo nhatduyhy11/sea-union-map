@@ -8,7 +8,7 @@ import type {
   NodeBoardEntry,
   NodeDetailData,
 } from "../../types";
-import type { TacticalMapTab } from "../../hooks/useTacticalMap";
+import type { RankingBoard, TacticalMapTab } from "../../hooks/useTacticalMap";
 
 export interface SidebarProps {
   tab: TacticalMapTab;
@@ -17,7 +17,11 @@ export interface SidebarProps {
   leaderboard: LeaderboardPlayer[];
   factionBoard: FactionBoardEntry[];
   nodeBoard: NodeBoardEntry[];
+  filter: string;
+  board: RankingBoard;
   onTabChange: (tab: TacticalMapTab) => void;
+  onBoardChange: (board: RankingBoard) => void;
+  onSelectFaction: (id: string) => void;
   onCloseIsland: () => void;
   onTogglePin: (id: string) => void;
   onFocusIsland: (id: string) => void;
@@ -31,7 +35,11 @@ export function Sidebar({
   leaderboard,
   factionBoard,
   nodeBoard,
+  filter,
+  board,
   onTabChange,
+  onBoardChange,
+  onSelectFaction,
   onCloseIsland,
   onTogglePin,
   onFocusIsland,
@@ -55,9 +63,13 @@ export function Sidebar({
       </div>
       {tab === "ranking" ? (
         <Leaderboard
+          board={board}
           players={leaderboard}
           factions={factionBoard}
           nodes={nodeBoard}
+          factionFocus={filter}
+          onBoardChange={onBoardChange}
+          onSelectFaction={onSelectFaction}
           onFocusIsland={onFocusIsland}
         />
       ) : details ? (

@@ -1,8 +1,8 @@
-import { useState } from "react";
 import { ChevronRight, Users } from "lucide-react";
 import { compact, number } from "../../utils/format";
 import { PlayerIdentity } from "../shared/PlayerIdentity";
 import styles from "./Leaderboard.module.css";
+import type { RankingBoard } from "../../hooks/useTacticalMap";
 import type {
   FactionBoardEntry,
   FactionScore,
@@ -12,52 +12,63 @@ import type {
 } from "../../types";
 
 export interface LeaderboardProps {
+  board: RankingBoard;
   players: LeaderboardPlayer[];
   factions: FactionBoardEntry[];
   nodes: NodeBoardEntry[];
+  // Filter phe của canvas legend — dùng chung làm sub-tab của BXH Phe nên
+  // chọn phe ở panel cũng lọc map (và ngược lại). "all"/"neutral" = tab Chung.
+  factionFocus: string;
+  onBoardChange: (board: RankingBoard) => void;
+  onSelectFaction: (id: string) => void;
   onFocusIsland: (id: string) => void;
 }
 
-// Mirrors the in-game BXH screen: "Cứ điểm | Xếp hạng cá nhân | Xếp hạng phe"
-// top tabs, and the phe tab splits into "chung" + one sub-tab per faction
-// (SEA_STRUCTURE.md §3.2).
-type Board = "node" | "player" | "faction";
-
+// Mirrors the in-game BXH screen (SEA_STRUCTURE.md §3.2): 3 tab với thứ tự UI
+// Phe → Cá nhân → Cứ điểm (game để Cứ điểm trước — owner muốn Phe lên đầu vì
+// là aggregate chính); tab Phe chia "chung" + một sub-tab mỗi phe.
 export function Leaderboard({
+  board,
   players,
   factions,
   nodes,
+  factionFocus,
+  onBoardChange,
+  onSelectFaction,
   onFocusIsland,
 }: LeaderboardProps) {
-  const [board, setBoard] = useState<Board>("faction");
   return (
     <div className={`${styles.detail} ${styles.ranking}`}>
       <div className={styles.boardTabs}>
         <button
-          className={board === "node" ? styles.selected : ""}
-          onClick={() => setBoard("node")}
+          className={board === "faction" ? styles.selected : ""}
+          onClick={() => onBoardChange("faction")}
         >
-          Cứ điểm
+          Phe
         </button>
         <button
           className={board === "player" ? styles.selected : ""}
-          onClick={() => setBoard("player")}
+          onClick={() => onBoardChange("player")}
         >
           Cá nhân
         </button>
         <button
-          className={board === "faction" ? styles.selected : ""}
-          onClick={() => setBoard("faction")}
+          className={board === "node" ? styles.selected : ""}
+          onClick={() => onBoardChange("node")}
         >
-          Phe
+          Cứ điểm
         </button>
       </div>
-      {board === "node" ? (
-        <NodeBoard nodes={nodes} onFocusIsland={onFocusIsland} />
+      {board === "faction" ? (
+        <FactionBoard
+          factions={factions}
+          focus={factionFocus}
+          onSelect={onSelectFaction}
+        />
       ) : board === "player" ? (
         <PlayerBoard players={players} onFocusIsland={onFocusIsland} />
       ) : (
-        <FactionBoard factions={factions} />
+        <NodeBoard nodes={nodes} onFocusIsland={onFocusIsland} />
       )}
     </div>
   );
@@ -126,7 +137,7 @@ function PlayerBoard({
     <>
       <div className={styles.eyebrow}>TOÀN CHIẾN TRƯỜNG</div>
       <h2>Xếp hạng cá nhân</h2>
-      <p>Tổng điểm mẫu trên tất cả cứ điểm.</p>
+      <p>Tổng Điểm ST gộp từ BXH từng cứ điểm (top-N mỗi node).</p>
       {players.map((player, index) => (
         <details key={player.id} className={styles.item}>
           <summary className={styles.summary}>
@@ -156,10 +167,19 @@ function PlayerBoard({
   );
 }
 
-function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
+function FactionBoard({
+  factions,
+  focus,
+  onSelect,
+}: {
+  factions: FactionBoardEntry[];
+  focus: string;
+  onSelect: (id: string) => void;
+}) {
   // Sub-tabs mirror the game's bottom row: "chung" + one tab per faction.
-  const [selected, setSelected] = useState<string>("all");
-  const faction = factions.find((entry) => entry.id === selected);
+  // Selection = filter của canvas legend; chọn lại phe đang chọn (hoặc chọn
+  // khi filter là neutral) quay về Chung qua toggle của onSelect.
+  const faction = factions.find((entry) => entry.id === focus);
   return (
     <>
       <div className={styles.eyebrow}>TOÀN CHIẾN TRƯỜNG</div>
@@ -167,16 +187,16 @@ function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
       <p>Điểm phe là tổng Điểm ST của các guild thành viên.</p>
       <div className={styles.subTabs}>
         <button
-          className={selected === "all" ? styles.selected : ""}
-          onClick={() => setSelected("all")}
+          className={faction ? "" : styles.selected}
+          onClick={() => onSelect(focus)}
         >
           Chung
         </button>
         {factions.map((entry) => (
           <button
             key={entry.id}
-            className={selected === entry.id ? styles.selected : ""}
-            onClick={() => setSelected(entry.id)}
+            className={faction?.id === entry.id ? styles.selected : ""}
+            onClick={() => onSelect(entry.id)}
           >
             {entry.short ?? entry.name}
           </button>

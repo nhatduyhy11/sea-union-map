@@ -45,7 +45,11 @@ export function App() {
           leaderboard={map.leaderboard}
           factionBoard={map.factionBoard}
           nodeBoard={map.nodeBoard}
+          filter={map.filter}
+          board={map.board}
           onTabChange={actions.setTab}
+          onBoardChange={actions.setBoard}
+          onSelectFaction={actions.selectFaction}
           onCloseIsland={actions.closeIsland}
           onTogglePin={actions.togglePin}
           onFocusIsland={actions.focusIsland}
