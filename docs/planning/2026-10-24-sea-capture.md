@@ -147,6 +147,24 @@ BXH phe 4 hàng (additionInfo đủ `fightCap/president/cityNum/guilds/vicePresi
 top-200; 24 node board có data (332 hàng), 65 board rỗng (node không chủ, không ai
 đóng góp); 243 brief người chơi. Chuẩn hoá dataset so sánh: `.tmp/sea-crawl/sea-crawl-v4`.
 
+### 6.8. Adapter crawl → UI đã lên sóng (2026-10-26)
+
+`sea_config_extract.py` bóc lại CampGVG (dump /tmp cũ đã mất; bài học: store shell
+sinh sớm — phải poll tới khi có data row, `_length > 0`). `sea_to_ui.py` join
+crawl + CampGVG → `src/data/sea-live.ts`; `mapData.ts` có công tắc `LIVE`.
+
+- **Join id**: prefix display id trong `_name` ("1-23Đảo Câu Cá") == layout id
+  `map-layout.ts`; base (CampGVG type 1) nối qua tên — hướng xác định từ
+  specs/map-{base,mid,right}.PNG: 1 Vịnh Thao Thiết=Đông, 2 Long Khư U Ám=Nam,
+  3 Thần Tự Lấp Lánh=Bắc, 4 Thánh Đảo Lạnh Giá=Tây (NEED_CONFIRM 6 xong).
+- **Owner**: live lấy thẳng owner server (snapshot), claim rule chỉ tính
+  connectivity (`deriveConnected` mới trong claims.ts) — NEED_CONFIRM 6 phần
+  "tự đối chiếu" khép lại.
+- Verify UI: node 1-23 = game 8 hiện 2.307.224 tổng, top-1 VNChiến 850.529
+  (khớp run GUI 14:29 từng chữ); game 63 → "1-11Đảo Lều Trại" khớp §1.2.
+- Lệch số đã biết (board top-20, BXH top-200, boss chưa map…) liệt kê +
+  phương án fix trong `docs/STATS_MISMATCH.md` — handoff cho phase sau.
+
 ### 6.7. Finding dữ liệu: pool "Điểm ST" node dao động, board theo người chơi ổn định
 
 - **Pool Điểm ST per node (f2 trong `0x0012`) FLUCTUATE**: node 64 phe 3 từ 21.8M

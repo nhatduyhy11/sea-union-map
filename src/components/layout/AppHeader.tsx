@@ -1,4 +1,5 @@
 import { Anchor } from "lucide-react";
+import { LIVE } from "../../domain/mapData";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
@@ -20,7 +21,7 @@ export function AppHeader() {
       <span className={styles.title}>Bản đồ chiến thuật</span>
       <div className={styles.right}>
         <span className={styles.demoBadge}>
-          <i /> DEMO / DỮ LIỆU MẪU
+          <i /> {LIVE ? "LIVE · DỮ LIỆU CRAWL" : "DEMO / DỮ LIỆU MẪU"}
         </span>
         <span className={styles.version}>PHASE 01</span>
       </div>

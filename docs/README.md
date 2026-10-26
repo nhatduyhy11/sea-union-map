@@ -17,6 +17,8 @@ Tầng dùng chung (reused bởi mọi event logger):
 | `ws_logger.py`      | Core runner dùng chung: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`) |
 | `sea_capture.py`    | Walkthrough GUI event Tranh Bá Tứ Hải: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước                                            |
 | `sea_crawler.py`    | Crawler payload-driven SEA: mở map 1 lần lấy snapshot 89 node, rồi inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game       |
+| `sea_config_extract.py` | Bóc bảng config client (CampGVG…) headless không cần login: boot page game, dump `window.__require(<TABLE>).store` ra JSON                                              |
+| `sea_to_ui.py`      | Adapter crawl → UI: join crawl JSONL + CampGVG thành `src/data/sea-live.ts` (islands/contributions/routes); lệch số được ghi ở `docs/STATS_MISMATCH.md`                      |
 | `game_proto_decode.py` | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
 | `logger_args.py`    | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
 | `process_guard.py`  | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |

@@ -1,6 +1,7 @@
-import { islands, routes, contributions } from "../data/demo";
+import { islands as demoIslands, routes as demoRoutes, contributions as demoContributions } from "../data/demo";
+import { islands as liveIslands, contributions as liveContributions } from "../data/sea-live";
 import { factions } from "../data/factions";
-import { deriveClaims } from "./claims";
+import { deriveClaims, deriveConnected, type ClaimState } from "./claims";
 import {
   buildFactionBoard,
   buildLeaderboard,
@@ -10,19 +11,45 @@ import {
 } from "./selectors";
 import type { FactionScore, Island } from "../types";
 
+// Nguồn dữ liệu: crawl thật từ sea_crawler (sea-live.json — regenerate bằng
+// tools/socket_log/sea_to_ui.py; join JSON → islands/contributions nằm ở
+// src/data/sea-live.ts). Đặt false để xem lại dữ liệu demo.
+export const LIVE = true;
+
+const islands = LIVE ? liveIslands : demoIslands;
+export const contributions = LIVE ? liveContributions : demoContributions;
+export const routes = demoRoutes;
+
 export const scoresByNode = new Map<string, FactionScore[]>(
   islands.map((node) => [
     node.id,
     scoresForNode(node.id, contributions, factions),
   ])
 );
-// Owner comes from the claim rule, so the demo data never stores it for
-// non-base nodes; the map panels all read these islands instead.
-export const claims = deriveClaims(islands, routes, contributions);
-export const ownedIslands: Island[] = islands.map((node) => ({
-  ...node,
-  owner: claims.ownerByNode.get(node.id) ?? null,
-}));
+
+// Live: owner là truth từ server snapshot (0x72/0x000c) — claim rule chỉ còn
+// tính connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
+// Demo: owner derive từ claim rule nên demo data không lưu owner.
+export const claims: ClaimState = LIVE
+  ? liveClaims()
+  : deriveClaims(islands, routes, contributions);
+
+function liveClaims(): ClaimState {
+  const owners = new Map(
+    islands.map((node) => [node.id, node.owner] as const)
+  );
+  return {
+    ownerByNode: owners,
+    connectedByNode: deriveConnected(islands, routes, owners),
+  };
+}
+
+export const ownedIslands: Island[] = LIVE
+  ? islands
+  : islands.map((node) => ({
+      ...node,
+      owner: claims.ownerByNode.get(node.id) ?? null,
+    }));
 export const leaderboard = buildLeaderboard(contributions, factions);
 export const factionBoard = buildFactionBoard(
   contributions,
