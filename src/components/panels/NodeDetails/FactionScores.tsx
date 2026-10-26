@@ -1,6 +1,6 @@
-import { number } from "../../utils/format";
+import { number } from "../../../utils/format";
 import styles from "./FactionScores.module.css";
-import type { FactionScore } from "../../types";
+import type { FactionScore } from "../../../types";
 
 export interface FactionScoresProps {
   scores: FactionScore[];
