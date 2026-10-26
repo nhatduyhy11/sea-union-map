@@ -14,7 +14,7 @@ Mở URL local Vite in ra. `npm run build` tạo bản static trong `dist/`; `np
 - Kéo nền để pan, cuộn/pinch để zoom, nút **Toàn cảnh** để fit map.
 - Hover hoặc focus đảo để xem điểm bốn phe; click icon mở panel chi tiết.
 - Nút ghim từng đảo giữ bảng điểm; **Điểm toàn map** hiện mọi bảng. Tắt tùy chọn chung vẫn giữ các đảo được ghim riêng.
-- Lọc phe làm mờ các đảo khác, không thay đổi bố cục.
+- Lọc canvas theo guild hoặc thành viên trực tiếp từ BXH (xem [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md)); legend chân map hiển thị màu phe.
 - Tìm ID/tên đảo để tới đảo; tab xếp hạng mở phân bố điểm của từng player và liên kết tới cứ điểm.
 
 ## Map theo ảnh đầy đủ
@@ -35,7 +35,7 @@ Tên đảo dùng index; tên, boss, phe sở hữu và điểm vẫn là dữ l
 - `src/components/map/`: map, custom node/edge, toolbar, bảng điểm nhỏ và chú giải.
 - `src/components/panels/`: panel cứ điểm, bảng điểm phe, player và leaderboard.
 - `src/components/shared/`: UI dùng chung.
-- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc phe, điểm toàn map, debug), `panel` (tab, sub-tab BXH, ô tìm kiếm), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `selectFaction`).
+- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc guild/player, điểm toàn map, debug), `panel` (tab, sub-tab BXH, filterMode, accordion expansion), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `setFilterMode`, `resetRankingView`). Chi tiết mô hình tương tác tại [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md).
 - `src/hooks/`: derived data và command cần instance React Flow — `useMapGraph` (nodes/edges), `useNodeDetails`, `useIslandMatches`, `useFocusIsland`, `useFitMap`.
 - `src/domain/`: hàm thuần tính điểm, truy vấn chi tiết, tìm kiếm và chuyển dữ liệu sang model React Flow; kèm test.
 - `src/data/`: bố cục theo ảnh, định nghĩa phe và fixture demo.

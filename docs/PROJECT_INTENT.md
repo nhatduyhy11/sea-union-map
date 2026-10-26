@@ -2,7 +2,7 @@
 
 ## 1. Trạng thái của tài liệu
 
-Đây là bản tổ chức lại mục tiêu, nhu cầu và ràng buộc của chủ dự án, được cập nhật khi có mô tả mới. Đã triển khai demo sơ phase 1; cách chạy và giới hạn demo nằm trong [README.md](README.md). Quyết định công nghệ và hướng triển khai được ghi tại [docs/RESEARCH.md](docs/RESEARCH.md); những phần chưa được mô tả được để mở.
+Đây là bản tổ chức lại mục tiêu, nhu cầu và ràng buộc của chủ dự án, được cập nhật khi có mô tả mới. Bố cục map, cách chạy và tổ chức code nằm trong [README.md](../README.md); những phần chưa được mô tả được để mở.
 
 ## 2. Mục tiêu
 
@@ -116,7 +116,7 @@ Các chi tiết về giao diện, cách nhập dữ liệu, mô hình dữ liệ
 
 ### 9.3. Phạm vi demo đã được yêu cầu
 
-- Chủ dự án yêu cầu dựng demo sơ dựa trên intent và research hiện có.
+- Chủ dự án yêu cầu dựng demo sơ dựa trên intent và quyết định công nghệ ban đầu.
 - Cho phép đánh số đảo tạm bằng index theo dạng `d-dd`; ID và đường nối chính xác sẽ bổ sung sau khi có ảnh map đầy đủ.
 - Những lựa chọn giao diện và tương tác trong demo là phương án thử nghiệm để xem và phản hồi, chưa được coi là yêu cầu cuối cùng.
 

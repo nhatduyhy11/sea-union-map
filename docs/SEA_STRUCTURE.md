@@ -86,10 +86,8 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
 - UI frontend dựng cấu trúc này với **thứ tự tab riêng của mình** [chủ dự án
   2026-10-25]: `Leaderboard.tsx` 3 tab **Phe → Cá nhân → Cứ điểm** (game để Cứ
   điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
-  Chung + 4 phe. Chọn phe ở legend đáy canvas thì panel bên phải tự sang tab
-  Xếp hạng + mở đúng sub-tab phe đó — filter phe là 1 state chung
-  (`selectFaction` trong `src/stores/commands.ts`), nên chọn ngược từ sub-tab
-  phe cũng lọc map.
+  Chung + 4 phe. **Mô hình tương tác, cơ chế Filter mode và quy tắc lọc canvas theo guild/thành viên**
+  (thay thế hoàn toàn việc lọc theo phe cũ) được đặc tả chi tiết tại [docs/LEADERBOARD_SPECS.md](LEADERBOARD_SPECS.md).
 - **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
   cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
   trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K

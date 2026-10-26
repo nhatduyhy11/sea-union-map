@@ -1,20 +1,26 @@
 # STATS_MISMATCH — số liệu UI lệch so với game (backlog handoff)
 
-> Trạng thái chốt 2026-10-26: UI (`src/data/sea-live.ts`) tổng điểm từ **node-board
+> Trạng thái chốt 2026-10-26: UI (`src/data/sea-live.json`) tổng điểm từ **node-board
 > rows** (đúng semantic hiện có của `src/domain/selectors.ts`), chấp nhận lệch với
 > số server ở những chỗ ghi dưới đây. Đây là note bàn giao: ai pick up việc "khớp
 > số 100%" bắt đầu từ đây, không cần đào lại capture.
 
 ## Luồng dữ liệu hiện tại
 
+Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join):
+[`DATA_PIPELINE.md`](DATA_PIPELINE.md).
+
 ```
 sea_crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
 sea_config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
-sea_to_ui.py → src/data/sea-live.ts     (join layout qua prefix display id)
+sea_to_ui.py → src/data/sea-live.json   (thuần data, không sinh code)
+src/data/sea-live.ts                    (adapter join layout qua prefix display id)
 src/domain/mapData.ts (LIVE = true)     (derive owner/BXH/filter từ contributions)
 ```
 
-Regenerate sau mỗi lần crawl mới:
+Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live-dev.json`
+— gitignored, FE dev fetch lúc runtime; thêm `--out src/data/sea-live.json`
+để bake snapshot chính thức vào build):
 
 ```bash
 uv run python tools/socket_log/sea_config_extract.py --table CampGVGLO --out .tmp/sea-crawl/campgvglo.json
