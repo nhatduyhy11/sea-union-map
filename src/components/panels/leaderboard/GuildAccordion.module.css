@@ -1,0 +1,112 @@
+/* Guild row: button (filter mode) / summary (free mode) dùng chung layout. */
+.guildToggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 7px 4px;
+  font-size: 10px;
+  color: #5d707b;
+  border-radius: 4px;
+  text-align: left;
+}
+
+summary.guildToggle {
+  cursor: pointer;
+  list-style: none;
+}
+
+summary.guildToggle::-webkit-details-marker {
+  display: none;
+}
+
+button.guildToggle:hover {
+  color: #0d8a65;
+}
+
+.guildToggle b {
+  margin-left: auto;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.guildToggle > svg {
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.guildActive {
+  color: #2c3941;
+}
+
+.guildActive b {
+  font-weight: 500;
+}
+
+.chevronOpen {
+  transform: rotate(90deg);
+}
+
+.guildLabel {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.guildLabel small {
+  color: #8496a1;
+  white-space: nowrap;
+}
+
+.guildDetails {
+  display: block;
+}
+
+.guildDetails[open] > .guildToggle > svg {
+  transform: rotate(90deg);
+}
+
+.memberList {
+  margin: 3px 0 6px;
+  padding: 4px 6px;
+  background: #ffffff;
+  border-radius: 4px;
+}
+
+.memberRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 4px;
+  font-size: 10px;
+  color: #5d707b;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.memberRow > div {
+  flex: 1;
+  min-width: 0;
+}
+
+button.memberRow:hover {
+  color: #0d8a65;
+}
+
+.memberSelected {
+  color: #2c3941;
+}
+
+.memberSelected b {
+  font-weight: 500;
+}
+
+/* Free mode: member chỉ hiển thị — không affordance tương tác. */
+.memberInert {
+  padding-left: 0;
+  padding-right: 0;
+  background: transparent;
+}
