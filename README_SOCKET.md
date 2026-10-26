@@ -101,10 +101,10 @@ không cần login.
 ## Docs
 
 - [`docs/SOCKET_PROTOCOL.md`](docs/SOCKET_PROTOCOL.md) — reference protocol WS (framing, module/cmd, decode)
-- [`docs/MINE_STRUCTURE.md`](docs/MINE_STRUCTURE.md) — cấu trúc world mỏ: map UI ↔ protocol
+- [`docs/mine_docs/MINE_STRUCTURE.md`](docs/mine_docs/MINE_STRUCTURE.md) — cấu trúc world mỏ: map UI ↔ protocol (kèm [`docs/mine_docs/BACKLOG_MINE.md`](docs/mine_docs/BACKLOG_MINE.md))
 - [`docs/SEA_STRUCTURE.md`](docs/SEA_STRUCTURE.md) — cấu trúc event Tranh Bá Tứ Hải: map UI ↔ protocol
 - [`docs/DATA_PIPELINE.md`](docs/DATA_PIPELINE.md) — luồng crawl → UI, issue format dump `.ts` vs JSON tĩnh
 - [`docs/STATS_MISMATCH.md`](docs/STATS_MISMATCH.md) — các lệch số UI vs game đã biết (backlog handoff)
-- `docs/planning/` — research notes còn tồn động (socket research, leaderboard WS, conventions)
+- `docs/planning/` — research notes và run capture (socket step learn, sea capture)
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol
-- [`BACKLOG.md`](BACKLOG.md) — các việc đã nhận biết chưa làm (crawler entry flaky, watermark background, guild id, thứ tự tab, BXH Phe sort theo lực chiến, node trung lập mờ sẵn…)
+- [`BACKLOG.md`](BACKLOG.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI

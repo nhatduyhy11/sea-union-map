@@ -89,7 +89,7 @@ uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/run-min
   popup Lịch Sử đang TRỐNG (POC 2026-10-22); khi có entry, popup fetch brief theo id.
 - **Click vào 1 mỏ (zoomin):** `0x48/0x0006→0x0007` (chi tiết 4 điểm, slot mang chuỗi phiên đào),
   `0x48/0x0015→0x0016` (rỗng), và brief `59 id` = toàn bộ người của mỏ — **tên không lazy theo điểm**
-  (chi tiết: `docs/MINE_STRUCTURE.md` mục 5).
+  (chi tiết: `docs/mine_docs/MINE_STRUCTURE.md` mục 5).
 - **Sự kiện live chạy trên `0x13/0x0007`** — `0x0004` chỉ là replay lúc login; kèm theo đó server
   đẩy delta tile qua `0x48/0x0008`. ts trong event là UTC thật (đối chiếu wall-clock lệch <1s).
 - Cross-check UI ↔ protocol: countdown "Mua giải tổng kết sau 60:04:31" trên màn mỏ khớp
@@ -103,7 +103,7 @@ Summary: f1=7057 (pos acc đang đứng), f2=10 (**số slot của acc** — kh�
 f4=4500, f8=51520, f9={30000015, 3, 525}, f6/f7/f10 = timestamp (f6 ≈ thời điểm login).
 
 Mỗi tile — **65 tile = 64 điểm mỏ + 1 mỏ phẳng sector 1; 1084 slot = 64×15 + 124**
-(cấu trúc world chi tiết xem `docs/MINE_STRUCTURE.md`):
+(cấu trúc world chi tiết xem `docs/mine_docs/MINE_STRUCTURE.md`):
 
 | Field | Ý nghĩa |
 | --- | --- |
@@ -122,7 +122,7 @@ State **không chứa tên player/guild** — chỉ có id; tên lấy qua `0x0d
 Slot 9001–9003 **[x chốt 2026-10-23] = bộ claimer của guild chủ điểm**: 3 acc **cùng 1 guild**
 (rule game) và guild đó = guild claim `f4` của tile — nhận diện người claim ngay từ state mà không
 cần `0x24/0x0035`. `mine_socket/report.py` đối chiếu cả 2 phía, lệch thì đưa vào `errors` (chi tiết
-`docs/MINE_STRUCTURE.md` mục 2).
+`docs/mine_docs/MINE_STRUCTURE.md` mục 2).
 
 Đối chiếu chéo đã xác minh: tile 6053 chứa đúng 3 player id như feed lịch sử `0x001b`;
 acc chính (HuAsura, id 51921435, guild HUNTERS) nằm ở tile 7057 slot 10 — khớp UI
@@ -209,7 +209,7 @@ uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --webhook http
   của mỏ đều đi qua broadcast type 150 (live đã thấy: action `9001` rồi `12` cách 6s trên
   `0x13/0x0007`).
 - [ ] Map `action` 1–12, `9001/9002/9003` và template 28000 (đối chiếu localization trong JS bundle nếu cần).
-- [ ] Giải f6, f8/f9 — xem open items cuối `docs/MINE_STRUCTURE.md`
+- [ ] Giải f6, f8/f9 — xem open items cuối `docs/mine_docs/MINE_STRUCTURE.md`
   (nghi vấn "lazy name" + owner guild + slot 9001–9003 đã giải xong 2026-10-23: tên fetch nguyên mỏ
   lúc zoomin; **f4 = id guild chủ điểm**, tra tên qua `0x24/0x0035→0x0036`;
   **slot 9001–9003 = bộ claimer của guild chủ điểm** — 3 acc cùng guild, trùng guild claim `f4`).

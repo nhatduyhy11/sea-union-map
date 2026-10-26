@@ -47,7 +47,7 @@ tile `f6` = `{9001|9002: 0}` trên vài tile (chưa giải); `f8/f9` = cặp ts 
   f4: bên thắng (1=attacker, 2=defender), f7/f6: {"rKey","pKey"} rating}` — streak tăng khi
   defender thắng. Verify: HuAsura đánh OLNaji 2 lần, f4=2 cả 2 → OLNaji streak giữ/±.
 - `0x1f/0x0007` leaderboard, `0x65/0x0009+0x000c` (round summary / list guild) — đã ghi
-  trong `SOCKET_PROTOCOL.md` bảng module, chưa map đủ.
+  trong [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md) bảng module, chưa map đủ.
 
 ## 4. UI navigation để lấy data (socket_capture.py, cửa sổ 640x720)
 
@@ -62,7 +62,7 @@ click(345,285) = zoomin mỏ (sàn của mình) → click(163,63) = minimap → 
   Click dòng 2 (320,371) = HUNTERS lv8 = 7054 (đích của 战神/HU.BON).
 - Click điểm trên overview → **nhảy thẳng vào sàn đó**, click máy giữa sàn (345,285) → popup.
 
-## 5. Backlog (làm sau — chưa có trong code)
+## 5. Backlog (chính thức theo dõi tại [`BACKLOG_MINE.md`](BACKLOG_MINE.md))
 
 - [ ] `mine_logger.parse_tile`: giữ thêm `f7` (dict slot→streak) và `f5` (chain ts, hoặc
   đã suy ra `tiers` + `next_expiry`) — hiện chỉ giữ id/slot_no của slot, `f6`–`f9` bỏ hết.

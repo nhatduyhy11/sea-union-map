@@ -14,7 +14,8 @@
 | [docs/DATA_PIPELINE.md](DATA_PIPELINE.md) | Luồng pipeline từ crawl WS → JSON → adapter live UI                  | Khi thay đổi luồng xử lý dữ liệu hoặc cơ chế live/fallback |
 | [docs/LEADERBOARD_SPECS.md](LEADERBOARD_SPECS.md) | Đặc tả BXH, cơ chế lọc guild/player canvas, filter mode và tương tác UI/UX | Khi thay đổi cơ chế lọc bản đồ hoặc tương tác BXH |
 | [docs/SOCKET_PROTOCOL.md](SOCKET_PROTOCOL.md) | Tham chiếu protocol WS: framing, module/cmd, kết quả decode            | Khi decode thêm module/cmd hoặc chốt một nghi vấn        |
-| [docs/MINE_STRUCTURE.md](MINE_STRUCTURE.md) | Cấu trúc event mỏ (Khai Thác Guild): map UI ↔ protocol                  | Khi capture mới xác minh thêm field                      |
+| [docs/mine_docs/MINE_STRUCTURE.md](mine_docs/MINE_STRUCTURE.md) | Cấu trúc event mỏ (Khai Thác Guild): map UI ↔ protocol                  | Khi capture mới xác minh thêm field                      |
+| [docs/mine_docs/BACKLOG_MINE.md](mine_docs/BACKLOG_MINE.md) | Backlog nhánh phụ Khai Thác Guild: parser streak/debuff, report mỏ      | Khi phát hiện việc cần làm ở nhánh mỏ                    |
 | [specs/](specs/)                       | Ảnh tham chiếu từ game, làm căn cứ cho map và dữ liệu điểm                   | Khi có thêm ảnh hoặc cập nhật nguồn từ game              |
 | [DOCS_GUIDE.md](DOCS_GUIDE.md)         | Chỉ dẫn đọc và tổ chức tài liệu                                              | Khi thêm, chuyển hoặc đổi vai trò tài liệu               |
 | [NEED_CONFIRM.md](NEED_CONFIRM.md)     | Câu hỏi cần chủ dự án xác nhận, trạng thái và phương án tạm                  | Ghi câu hỏi trước khi hỏi; cập nhật khi có câu trả lời   |
@@ -30,7 +31,7 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 3. Đọc `README.md` / `docs/DATA_PIPELINE.md` / `docs/LEADERBOARD_SPECS.md` khi làm việc với giao diện web, map hoặc luồng dữ liệu.
 4. Đọc `docs/CLAIM_RULES.md` khi làm việc với ownership, điểm claim hoặc dữ liệu demo.
 5. Đọc `docs/SEA_STRUCTURE.md` khi làm việc với event Tranh Bá Tứ Hải (crawl dữ liệu hoặc feed UI).
-6. Đọc `docs/SOCKET_PROTOCOL.md` / `docs/MINE_STRUCTURE.md` khi làm việc với tầng bắt socket và decode.
+6. Đọc `docs/SOCKET_PROTOCOL.md` / `docs/mine_docs/MINE_STRUCTURE.md` khi làm việc với tầng bắt socket và decode.
 7. Xem các ảnh được liên kết khi công việc liên quan tới bố cục map hoặc dữ liệu game.
 
 ## Cách ghi nội dung mới

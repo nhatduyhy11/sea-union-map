@@ -150,3 +150,12 @@ Phát hiện 2026-10-26 khi rà lại docs pipeline (`README_SOCKET.md`,
     1 lần rồi reuse.
   - `DATA_PIPELINE.md`: cập nhật sơ đồ luồng + ranh giới vai trò từng tool
     theo arrangement mới.
+
+---
+
+## Nhánh phụ: Khai Thác Guild (Mine)
+
+Các việc tồn đọng thuộc nhánh Khai Thác Guild (module `0x48`, logger, report, streak/debuff) có mức ưu tiên thấp hơn và được quản lý riêng tại:
+👉 [`docs/mine_docs/BACKLOG_MINE.md`](mine_docs/BACKLOG_MINE.md).
+
+
