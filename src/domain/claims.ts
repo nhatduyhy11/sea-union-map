@@ -12,11 +12,7 @@ export interface ClaimState {
   connectedByNode: Map<string, Set<string>>;
 }
 
-export function deriveClaims(
-  islands: Island[],
-  routes: Route[],
-  contributions: Contribution[]
-): ClaimState {
+function buildAdjacency(routes: Route[]): Map<string, string[]> {
   const adjacency = new Map<string, string[]>();
   const link = (from: string, to: string) => {
     const list = adjacency.get(from);
@@ -27,6 +23,51 @@ export function deriveClaims(
     link(source, target);
     link(target, source);
   }
+  return adjacency;
+}
+
+function reachConnected(
+  adjacency: Map<string, string[]>,
+  baseOf: Map<string, string>,
+  owners: Map<string, string | null>
+): Map<string, Set<string>> {
+  const connected = new Map<string, Set<string>>();
+  for (const [faction, base] of baseOf) {
+    const reached = new Set<string>([base]);
+    const frontier = [base];
+    for (let head = 0; head < frontier.length; head++) {
+      for (const next of adjacency.get(frontier[head] as string) ?? []) {
+        if (reached.has(next)) continue;
+        reached.add(next);
+        if (owners.get(next) === faction) frontier.push(next);
+      }
+    }
+    connected.set(faction, reached);
+  }
+  return connected;
+}
+
+// Connectivity for a fixed owner map (live crawl): phe tới được node khi
+// chuỗi node phe đó OWN (theo server) nối base tới nó — không chạy contest.
+export function deriveConnected(
+  islands: Island[],
+  routes: Route[],
+  owners: Map<string, string | null>
+): Map<string, Set<string>> {
+  const baseOf = new Map(
+    islands
+      .filter((node) => node.base && node.owner)
+      .map((node) => [node.owner as string, node.id])
+  );
+  return reachConnected(buildAdjacency(routes), baseOf, owners);
+}
+
+export function deriveClaims(
+  islands: Island[],
+  routes: Route[],
+  contributions: Contribution[]
+): ClaimState {
+  const adjacency = buildAdjacency(routes);
   const byNode = new Map<string, Contribution[]>();
   for (const entry of contributions) {
     const list = byNode.get(entry.nodeId);
@@ -45,22 +86,8 @@ export function deriveClaims(
   // Factions reachable from their base, expanding only through own nodes —
   // every entered node counts as connected, owned ones relay further. Returns
   // per-faction sets; the published state inverts them to per-node sets.
-  const reach = (owners: Map<string, string | null>) => {
-    const connected = new Map<string, Set<string>>();
-    for (const [faction, base] of baseOf) {
-      const reached = new Set<string>([base]);
-      const frontier = [base];
-      for (let head = 0; head < frontier.length; head++) {
-        for (const next of adjacency.get(frontier[head] as string) ?? []) {
-          if (reached.has(next)) continue;
-          reached.add(next);
-          if (owners.get(next) === faction) frontier.push(next);
-        }
-      }
-      connected.set(faction, reached);
-    }
-    return connected;
-  };
+  const reach = (owners: Map<string, string | null>) =>
+    reachConnected(adjacency, baseOf, owners);
   const byNodeView = (perFaction: Map<string, Set<string>>) => {
     const byNode = new Map(islands.map((node) => [node.id, new Set<string>()]));
     for (const [faction, nodes] of perFaction)

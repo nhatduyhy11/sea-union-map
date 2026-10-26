@@ -1,11 +1,11 @@
 import { useMemo } from "react";
-import { routes } from "../data/demo";
 import { factions } from "../data/factions";
 import { buildMapEdges, buildMapNodes, matchNodeIds } from "../domain/mapGraph";
 import {
   nodeIdsByGuild,
   nodeIdsByPlayer,
   ownedIslands,
+  routes,
   scoresByNode,
 } from "../domain/mapData";
 import { openIsland } from "../stores/commands";
