@@ -79,11 +79,10 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   Tổng Nhận Liệu đều 0.
 - **Điểm của phe = tổng điểm của các guild trong phe đó** [chủ dự án xác nhận
   2026-10-24]: BXH Phe xếp theo tổng Điểm ST quy góp từ từng guild thành viên.
-- **Cấu trúc màn BXH lúc war** [chủ dự án mô tả 2026-10-24 — ảnh pre-war chưa thấy]:
-  3 tab **"Cứ điểm | Xếp hạng cá nhân | Xếp hạng phe"**; tab Xếp hạng phe chia thêm
-  5 sub-tab đáy màn: **"chung" + 4 phe** — chọn 1 phe chỉ hiện các guild trong phe đó
-  kèm điểm tổng. Ảnh chụp 2026-10-24 (pre-war) chỉ thấy 2 tab đáy màn
-  "XH Phe | XH điểm" — cần chụp lại lúc khai chiến để đối chiếu.
+- **Màn BXH trong game chỉ có 2 tab** "XH Phe | XH điểm" — kể cả lúc war [capture
+  war-day 2026-10-26 + chủ dự án xác nhận]. Cấu trúc 3 tab **"Cứ điểm | Cá nhân |
+  Phe"** + sub-tab "chung + 4 phe" là **bước tổng hợp phía UI frontend**
+  (`Leaderboard.tsx`), không phải của game.
 - UI frontend dựng cấu trúc này với **thứ tự tab riêng của mình** [chủ dự án
   2026-10-25]: `Leaderboard.tsx` 3 tab **Phe → Cá nhân → Cứ điểm** (game để Cứ
   điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
@@ -214,9 +213,10 @@ từng node.
 - 4 số stat trên banner mỗi phe; tác dụng icon swap (↔) trong node detail.
 - Tổng số node + pattern pan — crawler tự quét đủ map, không cần chốt trước.
 - Ý nghĩa "Hiệu suất sản xuất: 12/h"; node detail khi battle đang mở; header BXH Phe là rank 1 hay phe đang chọn.
-- BXH Phe khi battle mở: dòng guild hiện thế nào (list phẳng theo guild hay vẫn 4 dòng
-  phe rồi mới đôn guild), cột "Tổng Nhận Liệu" tính theo phe hay guild — §3.2.
-- Màn BXH lúc war: xác nhận 3 tab "Cứ điểm | Xếp hạng cá nhân | Xếp hạng phe" +
-  5 sub-tab phe (chung + 4 phe); nội dung thật của tab "Cứ điểm" (xếp node theo gì,
-  có BXH player từng node nhúng không) — §3.2, chụp lại lúc khai chiến.
+- ~~BXH Phe khi battle mở~~ **[chốt 2026-10-26, shot `4-leaderboard-faction`]**: vẫn
+  list phẳng 4 dòng phe (không đôn guild), cột giữ nguyên Chiếm đảo + Tổng Nhiên Liệu.
+  Guild + Tổng điểm ST riêng nằm ở "Tổng quan phe" (mỗi guild 1 dòng — shot `5-faction-1`).
+- ~~Màn BXH lúc war~~ **[chốt 2026-10-26]**: game chỉ 2 tab "XH Phe | XH điểm" cả
+  khi war (capture 20261026-142917); 3-tab + sub-tab là tổng hợp phía UI mình — §3.2.
+  Câu hỏi "Cứ điểm xếp theo gì" không còn áp dụng cho game — do frontend tự định nghĩa.
 - Các nút phụ (Thưởng / Nhiệm Vụ / Báo Cáo / Bản đồ / Mô tả…) — ngoài phạm vi crawl hiện tại.
