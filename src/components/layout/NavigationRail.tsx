@@ -1,11 +1,10 @@
 import { Map, Trophy, Compass } from "lucide-react";
 import { useFitMap } from "../../hooks/useFitMap";
-import { usePanel } from "../../stores/panel";
+import { setPanelTab } from "../../stores/commands";
 import styles from "./NavigationRail.module.css";
 
 export function NavigationRail() {
   const fitMap = useFitMap();
-  const setTab = usePanel((state) => state.setTab);
   return (
     <nav className={styles.rail}>
       <button
@@ -19,7 +18,7 @@ export function NavigationRail() {
       <button
         title="Bảng xếp hạng"
         aria-label="Bảng xếp hạng"
-        onClick={() => setTab("ranking")}
+        onClick={() => setPanelTab("ranking")}
       >
         <Trophy />
       </button>
