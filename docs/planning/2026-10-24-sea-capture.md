@@ -85,12 +85,27 @@ thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi pay
 → **Crawler kế tiếp = vòng lặp ids 1..89** (snapshot `0x000b` lấy enum + owner,
 `0x0011` + board `118` per node theo chu kỳ), zero GUI interaction.
 
-### 6.2. QuickLZ: một số response nén (status flag `01`)
+### 6.2. Codec nén: header xác nhận, match encoding CHƯA giải được (2026-10-26)
 
-Header R 8B `seq|flags|module|cmd|status` — status `01` = payload QuickLZ-compressed:
-board node 8 #404R 352B không parse được (`<unparseable>`), trong khi names #406R
-status `00` là protobuf thuần. Khớp commit `f61dd7a`. Crawler cần bước decompress
-trước khi decode board/phe snapshot.
+Header R 8B `seq|flags|module|cmd|compress` — compress `01` = body nén (27 frame trong
+run). Body `0x47` (12 frame, mọi board có data + 2 push `0x12`) self-validate:
+`[flags:1][comp_size:4 LE == body len][raw_size:4 LE][stream][crc32:4]` — ví dụ #404R
+352B → 708 raw, crc `0x12818e1`. Đã xác nhận bằng decode thật:
+- control word 32-bit LE, bit LSB-first, 1 bit/op;
+- literal = bit 0 → copy 1 byte — 31 literal đầu của #404 ra nguyên văn protobuf
+  (`08 00 1a 20 08 01 22 0c {"campId":3} 11 <fixed64> 18 ba`) khớp cấu trúc board.
+Chưa giải: **match encoding** (m = LE16 sau bit 1). Đã loại trừ hệ thống: off=(m>>k)+1
+và off=(m&mask)+1 với k ∈ 4..12, len = phần còn lại + 2/3/4, ext byte khi nib 0/15
+(b3/b0/b17/b18), fetch 1 hay 2 bit/match — CRC32 oracle không ăn combo nào (3 match
+bắt buộc phải cùng một split giải hợp lệ:
+`0x00a0` chỉ hợp lệ với off ≤ 31; `0x281b` off ≤ 39; `0x13b9` off ≤ 55 — cùng một
+split phải giải được cả ba).
+
+→ **Kế hoạch**: sau maintenance, dùng headless boot page (như §4 CampGVGLO) gọi
+decompressor của client trên chính bytes đã capture → có cặp (nén, raw) ground truth
+→ port sang python + verify bằng CRC. Đến lúc đó bỏ qua frame `compress=01`, chỉ dùng
+frame `00` (snapshot `0x72/0x000c`, `0x72/0x0012`, name lookup `0x0d/0x0020` — đủ
+owner 89 node + điểm phe theo node).
 
 ### 6.3. BXH game = 2 tab [chủ dự án xác nhận 2026-10-26]
 
