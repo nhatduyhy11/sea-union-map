@@ -2,15 +2,15 @@ import { Compass, Flag, RotateCcw, Trophy } from "lucide-react";
 import { NodeDetails } from "./NodeDetails";
 import { Leaderboard } from "./Leaderboard";
 import { useNodeDetails } from "../../hooks/useNodeDetails";
+import { setPanelTab } from "../../stores/commands";
 import { useSelection } from "../../stores/selection";
 import { usePanel } from "../../stores/panel";
 import styles from "./Sidebar.module.css";
 
 // Panel tự đọc stores thay vì nhận props: tab & board (panel), chi tiết đảo
-// & ghim (selection), lọc phe (mapView — Leaderboard tự subscribe).
+// & ghim (selection), lọc guild/player (mapView — Leaderboard tự subscribe).
 export function Sidebar() {
   const tab = usePanel((state) => state.tab);
-  const setTab = usePanel((state) => state.setTab);
   const details = useNodeDetails();
   const pinned = useSelection((state) => state.pinned);
   const close = useSelection((state) => state.close);
@@ -21,13 +21,13 @@ export function Sidebar() {
       <div className={styles.tabs}>
         <button
           className={tab === "node" ? styles.selected : ""}
-          onClick={() => setTab("node")}
+          onClick={() => setPanelTab("node")}
         >
           <Flag size={15} /> Cứ điểm
         </button>
         <button
           className={tab === "ranking" ? styles.selected : ""}
-          onClick={() => setTab("ranking")}
+          onClick={() => setPanelTab("ranking")}
         >
           <Trophy size={15} /> Xếp hạng
         </button>

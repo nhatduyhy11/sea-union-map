@@ -1,35 +1,17 @@
 import { factions } from "../../data/factions";
-import { selectFaction } from "../../stores/commands";
-import { useMapView } from "../../stores/mapView";
 import styles from "./FactionLegend.module.css";
 
+// Legend chỉ đọc: swatch màu + label các phe để đối chiếu màu node trên
+// canvas. Không còn hành vi filter — filter guild/player điều khiển từ BXH.
 export function FactionLegend() {
-  const filter = useMapView((state) => state.filter);
   return (
     <footer className={styles.legend}>
-      <button
-        className={filter === "all" ? styles.chosen : ""}
-        onClick={() => selectFaction("all")}
-      >
-        Tất cả
-      </button>
       {factions.map((faction) => (
-        <button
-          key={faction.id}
-          className={filter === faction.id ? styles.chosen : ""}
-          onClick={() => selectFaction(faction.id)}
-        >
+        <span key={faction.id} className={styles.entry}>
           <i style={{ background: faction.color }} />
           {faction.name}
-        </button>
+        </span>
       ))}
-      <button
-        className={`${styles.neutral} ${filter === "neutral" ? styles.chosen : ""}`}
-        onClick={() => selectFaction("neutral")}
-      >
-        <i />
-        Trung lập
-      </button>
       <span className={styles.legendHelp}>Kéo để di chuyển · Cuộn để zoom</span>
     </footer>
   );

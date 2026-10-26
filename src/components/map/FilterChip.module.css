@@ -1,0 +1,32 @@
+.chip {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 1px solid #d3dde1;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 1px 4px rgb(31 45 52 / 0.12);
+  font-size: 11px;
+  color: #2c3941;
+  pointer-events: auto;
+}
+
+.chip button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  color: #7d8f9a;
+}
+
+.chip button:hover {
+  background: #e8eef0;
+  color: #2c3941;
+}

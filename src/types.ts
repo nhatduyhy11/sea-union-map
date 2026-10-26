@@ -79,6 +79,24 @@ export interface GuildScore {
   guild: string;
   score: number;
   players: number;
+  // Số đảo guild có đóng góp — metadata của guild row ở BXH Phe.
+  nodes: number;
+  // Thành viên sort theo điểm — dữ liệu cho drill-down guild → thành viên.
+  members: GuildMember[];
+}
+
+export interface GuildMember {
+  id: string;
+  name: string;
+  score: number;
+  nodes: number;
+}
+
+// Filter canvas theo guild/player — null = all. Guild dùng tên làm id
+// ("Không guild" gộp mọi player không guild, khớp cách bucket ở BXH Phe).
+export interface MapFilter {
+  kind: "guild" | "player";
+  id: string;
 }
 
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'

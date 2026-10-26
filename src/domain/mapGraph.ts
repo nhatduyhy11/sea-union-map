@@ -6,6 +6,7 @@ import type {
   FactionScore,
   Island,
   LayoutNode,
+  MapFilter,
   Route,
 } from "../types";
 
@@ -22,13 +23,26 @@ export interface MapGraphState {
   selected: string | null;
   pinned: Set<string>;
   showAll: boolean;
-  filter: string;
+  // Node ids được filter guild/player highlight; null = all (không dim gì).
+  matched: Set<string> | null;
   debug?: boolean;
 }
 
 export interface MapGraphActions {
   openIsland: (id: string) => void;
   togglePin: (id: string) => void;
+}
+
+// Filter guild/player → tập node được highlight (node có đóng góp của
+// guild/player đó). Trả null khi không filter; guild/player lạ → tập rỗng.
+export function matchNodeIds(
+  filter: MapFilter | null,
+  nodeIdsByGuild: Map<string, Set<string>>,
+  nodeIdsByPlayer: Map<string, Set<string>>
+): Set<string> | null {
+  if (!filter) return null;
+  const index = filter.kind === "guild" ? nodeIdsByGuild : nodeIdsByPlayer;
+  return index.get(filter.id) ?? new Set();
 }
 
 export function buildMapNodes(
@@ -38,8 +52,6 @@ export function buildMapNodes(
   state: MapGraphState,
   actions: MapGraphActions
 ): AppNode[] {
-  // Filter "neutral" targets islands without an owner instead of a faction id.
-  const filterOwner = state.filter === "neutral" ? null : state.filter;
   return islands.map((island) => ({
     id: island.id,
     type: "island" as const,
@@ -57,7 +69,7 @@ export function buildMapNodes(
       pinned: state.pinned.has(island.id),
       showAll: state.showAll,
       active: island.id === state.selected,
-      dim: state.filter !== "all" && island.owner !== filterOwner,
+      dim: state.matched !== null && !state.matched.has(island.id),
       debug: state.debug,
       open: actions.openIsland,
       pin: actions.togglePin,
@@ -68,14 +80,10 @@ export function buildMapNodes(
 export function buildMapEdges(
   routes: Route[],
   islands: Island[],
-  factions: Faction[],
-  filter = "all"
+  factions: Faction[]
 ): Edge[] {
   const byId = new Map(islands.map((island) => [island.id, island]));
-  // Edges only react to a faction filter; "neutral" highlights nodes only, so
-  // its routes (and the "all" view) keep the resting style.
-  const highlightFaction =
-    filter !== "all" && filter !== "neutral" ? filter : null;
+  // Edges luôn resting — filter không highlight edge (chỉ node dim/sáng).
   return routes.map((route) => {
     const source = byId.get(route.source);
     const target = byId.get(route.target);
@@ -87,8 +95,6 @@ export function buildMapEdges(
     // dashed in every view.
     const neutralLink =
       source && target && (!source.owner || !target.owner) ? "7 7" : undefined;
-    const matched =
-      highlightFaction !== null && faction?.id === highlightFaction;
     return {
       ...route,
       id: `${route.source}__${route.target}`,
@@ -98,8 +104,8 @@ export function buildMapEdges(
       selectable: false,
       style: {
         stroke: faction?.color ?? "#5d7a8a",
-        strokeWidth: matched ? 3 : 2,
-        opacity: matched ? 1 : highlightFaction ? 0.12 : 0.45,
+        strokeWidth: 2,
+        opacity: 0.45,
         strokeDasharray: neutralLink,
       },
     };
