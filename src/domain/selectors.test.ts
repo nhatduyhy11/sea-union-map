@@ -9,7 +9,7 @@ import {
   scoresForNode,
   searchIslands,
 } from "./selectors";
-import { buildMapEdges, buildMapNodes } from "./mapGraph";
+import { buildMapEdges, buildMapNodes, matchNodeIds } from "./mapGraph";
 import type { Contribution, Faction, Island } from "../types";
 
 const factions: Faction[] = [
@@ -147,7 +147,7 @@ test("Map projection keeps pinning independent from global stats and filtering",
       selected: "1-1",
       pinned: new Set(["2-1"]),
       showAll: false,
-      filter: "a",
+      matched: new Set(["1-1"]),
     },
     { openIsland: () => {}, togglePin: () => {} }
   );
@@ -158,20 +158,55 @@ test("Map projection keeps pinning independent from global stats and filtering",
   assert.equal(byId.get("2-1")?.data.pinned, true);
   assert.equal(byId.get("2-1")?.data.dim, true);
   assert.equal(byId.get("2-1")?.zIndex, 10);
-  const edges = buildMapEdges(
-    [{ source: "1-1", target: "2-1" }],
+  const all = buildMapNodes(
     islands,
-    factions
+    scoresByNode,
+    factions,
+    { selected: null, pinned: new Set(), showAll: false, matched: null },
+    { openIsland: () => {}, togglePin: () => {} }
   );
-  assert.equal(edges[0]?.style?.stroke, "#5d7a8a");
-  const sameFactionEdges = buildMapEdges(
-    [{ source: "1-1", target: "1-1" }],
-    islands,
-    factions
+  assert.equal(
+    all.every((node) => !node.data.dim),
+    true
   );
-  assert.equal(sameFactionEdges[0]?.style?.stroke, "#123456");
 });
-test("Neutral filter dims owned islands and never highlights edges", () => {
+test("Guild/player filter matches nodes by contribution; edges always rest", () => {
+  const nodeIdsByGuild = new Map<string, Set<string>>([
+    ["G", new Set(["2-1"])],
+    ["Không guild", new Set(["1-1", "2-1"])],
+  ]);
+  const nodeIdsByPlayer = new Map<string, Set<string>>([
+    ["p1", new Set(["1-1", "2-1"])],
+    ["p2", new Set(["1-1"])],
+    ["p3", new Set(["2-1"])],
+  ]);
+  assert.deepEqual(
+    matchNodeIds({ kind: "guild", id: "G" }, nodeIdsByGuild, nodeIdsByPlayer),
+    new Set(["2-1"])
+  );
+  // "Không guild" gộp mọi player không guild — p1 và p2.
+  assert.deepEqual(
+    matchNodeIds(
+      { kind: "guild", id: "Không guild" },
+      nodeIdsByGuild,
+      nodeIdsByPlayer
+    ),
+    new Set(["1-1", "2-1"])
+  );
+  assert.deepEqual(
+    matchNodeIds({ kind: "player", id: "p1" }, nodeIdsByGuild, nodeIdsByPlayer),
+    new Set(["1-1", "2-1"])
+  );
+  assert.deepEqual(
+    matchNodeIds(
+      { kind: "guild", id: "Trống" },
+      nodeIdsByGuild,
+      nodeIdsByPlayer
+    ),
+    new Set()
+  );
+  assert.equal(matchNodeIds(null, nodeIdsByGuild, nodeIdsByPlayer), null);
+
   const neutral: Island = {
     id: "3-9",
     name: "Đảo Trung",
@@ -182,61 +217,20 @@ test("Neutral filter dims owned islands and never highlights edges", () => {
     claimThreshold: 1,
   };
   const withNeutral = [...islands, neutral];
-  const scoresByNode = new Map(
-    withNeutral.map((island) => [
-      island.id,
-      scoresForNode(island.id, contributions, factions),
-    ])
-  );
-  const actions = { openIsland: () => {}, togglePin: () => {} };
-  const state = {
-    selected: null,
-    pinned: new Set<string>(),
-    showAll: false,
-  };
-  const nodes = buildMapNodes(
-    withNeutral,
-    scoresByNode,
-    factions,
-    { ...state, filter: "neutral" },
-    actions
-  );
-  const byId = new Map(nodes.map((n) => [n.id, n]));
-  assert.equal(byId.get("3-9")?.data.dim, false);
-  assert.equal(byId.get("1-1")?.data.dim, true);
-  const neutralRoutes = [
+  const routes = [
     { source: "3-9", target: "3-9" },
     { source: "3-9", target: "1-1" },
     { source: "1-1", target: "2-1" },
+    { source: "1-1", target: "1-1" },
   ];
-  const resting = buildMapEdges(
-    neutralRoutes,
-    withNeutral,
-    factions,
-    "neutral"
-  );
-  assert.equal(resting[0]?.style?.strokeDasharray, "7 7");
-  assert.equal(resting[0]?.style?.opacity, 0.45);
-  assert.equal(resting[1]?.style?.strokeDasharray, "7 7");
-  assert.equal(resting[2]?.style?.strokeDasharray, undefined);
+  const edges = buildMapEdges(routes, withNeutral, factions);
+  assert.equal(edges[0]?.style?.strokeDasharray, "7 7");
+  assert.equal(edges[1]?.style?.strokeDasharray, "7 7");
+  assert.equal(edges[2]?.style?.strokeDasharray, undefined);
+  assert.equal(edges[2]?.style?.stroke, "#5d7a8a");
+  assert.equal(edges[3]?.style?.stroke, "#123456");
   assert.equal(
-    buildMapEdges(neutralRoutes, withNeutral, factions)[0]?.style
-      ?.strokeDasharray,
-    "7 7"
+    edges.every((edge) => edge.style?.opacity === 0.45),
+    true
   );
-  const highlighted = buildMapEdges(
-    [{ source: "1-1", target: "1-1" }],
-    islands,
-    factions,
-    "a"
-  );
-  assert.equal(highlighted[0]?.style?.opacity, 1);
-  assert.equal(highlighted[0]?.style?.strokeWidth, 3);
-  const dimmed = buildMapEdges(
-    [{ source: "1-1", target: "2-1" }],
-    islands,
-    factions,
-    "a"
-  );
-  assert.equal(dimmed[0]?.style?.opacity, 0.12);
 });

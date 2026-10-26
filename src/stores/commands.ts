@@ -4,6 +4,7 @@
 import { useMapView } from "./mapView";
 import { usePanel } from "./panel";
 import { useSelection } from "./selection";
+import type { MapFilter } from "../types";
 
 // Mở đảo từ canvas: bật chi tiết + kéo panel về tab cứ điểm.
 export function openIsland(id: string) {
@@ -11,11 +12,16 @@ export function openIsland(id: string) {
   usePanel.getState().setTab("node");
 }
 
-// Filter phe ở legend đáy canvas là nguồn chân lý duy nhất: panel ranking
-// đọc cùng state nên sub-tab phe ở BXH Phe cũng lọc ngược canvas. Chọn phe
-// ở legend đồng thời kéo panel sang ranking, mở đúng tab phe đó.
-export function selectFaction(id: string) {
-  useMapView.getState().toggleFaction(id);
-  usePanel.getState().setTab("ranking");
-  usePanel.getState().setBoard("faction");
+// Filter guild/player của canvas — nguồn chân lý là BXH (accordion đang mở),
+// command ở đây để chip ✕ và các nhịp reset view về sau dùng chung tham chiếu.
+export function setCanvasFilter(filter: MapFilter | null) {
+  useMapView.getState().setFilter(filter);
+}
+
+export function toggleCanvasFilter(filter: MapFilter) {
+  useMapView.getState().toggleFilter(filter);
+}
+
+export function resetCanvasFilter() {
+  useMapView.getState().resetFilter();
 }

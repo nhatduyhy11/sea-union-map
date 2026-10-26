@@ -4,6 +4,7 @@ import type {
   Faction,
   FactionBoardEntry,
   FactionScore,
+  GuildMember,
   Island,
   LeaderboardPlayer,
   NodeBoardEntry,
@@ -107,20 +108,46 @@ export function buildFactionBoard(
   return factions
     .map((faction) => {
       const members = players.filter((player) => player.faction === faction.id);
-      const guilds = new Map<string, { score: number; players: number }>();
+      const guilds = new Map<
+        string,
+        {
+          score: number;
+          players: number;
+          nodes: Set<string>;
+          members: GuildMember[];
+        }
+      >();
       for (const player of members) {
         const guild = player.guild ?? "Không guild";
-        const entry = guilds.get(guild) ?? { score: 0, players: 0 };
-        guilds.set(guild, {
-          score: entry.score + (scoreByPlayer.get(player.id) ?? 0),
-          players: entry.players + 1,
+        let entry = guilds.get(guild);
+        if (!entry) {
+          entry = { score: 0, players: 0, nodes: new Set(), members: [] };
+          guilds.set(guild, entry);
+        }
+        const score = scoreByPlayer.get(player.id) ?? 0;
+        const allocations = playerAllocations(player.id, contributions);
+        entry.score += score;
+        entry.players += 1;
+        for (const allocation of allocations)
+          entry.nodes.add(allocation.nodeId);
+        entry.members.push({
+          id: player.id,
+          name: player.name,
+          score,
+          nodes: allocations.length,
         });
       }
       return {
         ...faction,
         islands: islands.filter((node) => node.owner === faction.id).length,
         guilds: [...guilds]
-          .map(([guild, entry]) => ({ guild, ...entry }))
+          .map(([guild, entry]) => ({
+            guild,
+            score: entry.score,
+            players: entry.players,
+            nodes: entry.nodes.size,
+            members: entry.members.sort((a, b) => b.score - a.score),
+          }))
           .sort((a, b) => b.score - a.score),
         score: members.reduce(
           (total, player) => total + (scoreByPlayer.get(player.id) ?? 0),

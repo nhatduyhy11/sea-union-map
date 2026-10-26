@@ -1,8 +1,13 @@
 import { useMemo } from "react";
 import { routes } from "../data/demo";
 import { factions } from "../data/factions";
-import { buildMapEdges, buildMapNodes } from "../domain/mapGraph";
-import { ownedIslands, scoresByNode } from "../domain/mapData";
+import { buildMapEdges, buildMapNodes, matchNodeIds } from "../domain/mapGraph";
+import {
+  nodeIdsByGuild,
+  nodeIdsByPlayer,
+  ownedIslands,
+  scoresByNode,
+} from "../domain/mapData";
 import { openIsland } from "../stores/commands";
 import { useMapView } from "../stores/mapView";
 import { useSelection } from "../stores/selection";
@@ -20,20 +25,26 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
   const filter = useMapView((state) => state.filter);
   const debug = useMapView((state) => state.debug);
 
+  // Node ids được filter guild/player highlight — dim phần còn lại.
+  const matched = useMemo(
+    () => matchNodeIds(filter, nodeIdsByGuild, nodeIdsByPlayer),
+    [filter]
+  );
   const nodes = useMemo(
     () =>
       buildMapNodes(
         ownedIslands,
         scoresByNode,
         factions,
-        { selected, pinned, showAll, filter, debug },
+        { selected, pinned, showAll, matched, debug },
         { openIsland, togglePin }
       ),
-    [selected, pinned, showAll, filter, debug, togglePin]
+    [selected, pinned, showAll, matched, debug, togglePin]
   );
+  // Edges luôn resting (filter chỉ sáng node) — computed một lần.
   const edges = useMemo(
-    () => buildMapEdges(routes, ownedIslands, factions, filter),
-    [filter]
+    () => buildMapEdges(routes, ownedIslands, factions),
+    []
   );
   return { nodes, edges };
 }

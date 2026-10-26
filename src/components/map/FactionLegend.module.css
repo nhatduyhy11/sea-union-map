@@ -1,39 +1,24 @@
 .legend {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 12px;
   height: 55px;
   font-size: 10px;
   color: #667884;
   flex-shrink: 0;
 }
 
-.legend button {
+.entry {
   display: flex;
   gap: 6px;
   align-items: center;
-  padding: 6px 8px;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  font-size: 10px;
-}
-
-.legend button.chosen {
-  background: #e8eef0;
-  border-color: #d3dde1;
-  color: #2c3941;
-}
-
-.neutral {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  margin-left: 4px;
   white-space: nowrap;
 }
 
-.neutral i {
-  background: #7f929e;
+.entry i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
 }
 
 .legendHelp {
@@ -49,11 +34,7 @@
   }
 
   .legend {
-    gap: 0;
-  }
-
-  .legend button {
-    padding: 6px;
+    gap: 8px;
   }
 }
 
@@ -62,15 +43,5 @@
     justify-content: space-between;
     font-size: 9px;
     height: 46px;
-  }
-
-  .legend button {
-    font-size: 9px;
-    padding: 5px;
-  }
-
-  .neutral {
-    font-size: 9px;
-    margin-left: 0;
   }
 }

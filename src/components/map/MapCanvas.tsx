@@ -3,6 +3,7 @@ import { mapBounds, layoutNodes } from "../../data/map-layout";
 import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
 import { useMapGraph } from "../../hooks/useMapGraph";
 import { useMapView } from "../../stores/mapView";
+import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
 import { RouteEdge } from "./RouteEdge";
 import styles from "./MapCanvas.module.css";
@@ -85,6 +86,7 @@ export function MapCanvas() {
         {debug && <DebugGuides />}
         <ZoomLabel />
       </ReactFlow>
+      <FilterChip />
     </div>
   );
 }

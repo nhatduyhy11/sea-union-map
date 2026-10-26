@@ -1,10 +1,9 @@
+import { useState } from "react";
 import { ChevronRight, Users } from "lucide-react";
 import { compact, number } from "../../utils/format";
 import { PlayerIdentity } from "../shared/PlayerIdentity";
 import { useFocusIsland } from "../../hooks/useFocusIsland";
 import { factionBoard, leaderboard, nodeBoard } from "../../domain/mapData";
-import { selectFaction } from "../../stores/commands";
-import { useMapView } from "../../stores/mapView";
 import { usePanel } from "../../stores/panel";
 import styles from "./Leaderboard.module.css";
 import type {
@@ -21,9 +20,6 @@ import type {
 export function Leaderboard() {
   const board = usePanel((state) => state.board);
   const setBoard = usePanel((state) => state.setBoard);
-  // Filter phe của canvas legend — dùng chung làm sub-tab của BXH Phe nên
-  // chọn phe ở panel cũng lọc map (và ngược lại). "all"/"neutral" = tab Chung.
-  const factionFocus = useMapView((state) => state.filter);
   const focusIsland = useFocusIsland();
   return (
     <div className={`${styles.detail} ${styles.ranking}`}>
@@ -48,11 +44,7 @@ export function Leaderboard() {
         </button>
       </div>
       {board === "faction" ? (
-        <FactionBoard
-          factions={factionBoard}
-          focus={factionFocus}
-          onSelect={selectFaction}
-        />
+        <FactionBoard factions={factionBoard} />
       ) : board === "player" ? (
         <PlayerBoard players={leaderboard} onFocusIsland={focusIsland} />
       ) : (
@@ -155,18 +147,10 @@ function PlayerBoard({
   );
 }
 
-function FactionBoard({
-  factions,
-  focus,
-  onSelect,
-}: {
-  factions: FactionBoardEntry[];
-  focus: string;
-  onSelect: (id: string) => void;
-}) {
+function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   // Sub-tabs mirror the game's bottom row: "chung" + one tab per faction.
-  // Selection = filter của canvas legend; chọn lại phe đang chọn (hoặc chọn
-  // khi filter là neutral) quay về Chung qua toggle của onSelect.
+  // Thuần view — không đụng canvas; state local nên tự reset khi rời board.
+  const [focus, setFocus] = useState<string | null>(null);
   const faction = factions.find((entry) => entry.id === focus);
   return (
     <>
@@ -176,7 +160,7 @@ function FactionBoard({
       <div className={styles.subTabs}>
         <button
           className={faction ? "" : styles.selected}
-          onClick={() => onSelect(focus)}
+          onClick={() => setFocus(null)}
         >
           Chung
         </button>
@@ -184,7 +168,7 @@ function FactionBoard({
           <button
             key={entry.id}
             className={faction?.id === entry.id ? styles.selected : ""}
-            onClick={() => onSelect(entry.id)}
+            onClick={() => setFocus(faction?.id === entry.id ? null : entry.id)}
           >
             {entry.short ?? entry.name}
           </button>
