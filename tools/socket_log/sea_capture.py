@@ -77,36 +77,41 @@ def node_steps(idx: int, x: int, y: int) -> list[str]:
 STAGES: list[tuple[str, list[str]]] = [
     ("login", [
         "mark:01-logged-in",
-        "sleep:3",  # let ad/AFK popups paint
+        # 2026-10-26 (war day 1): a queue of no-X event splash popups paints
+        # over home as soon as the game loads ("Tranh Bá Tứ Hải", "Tranh Đoạt
+        # U Độ", "Tranh Bá Hắc Ám", … ~2s apart). Dismissal order per splash:
+        # tick the reminder checkbox first (visual template match — never
+        # text search; it commits only on a proper close — runs
+        # 124313/124849), optional X icon, then the outside click. The
+        # outside click doubles as the canonical entry: at (424,688) it is
+        # swallowed by the overlay while a splash is up, and once the queue
+        # drains it opens the "Lối vào PB" event lobby directly (owner call;
+        # stray clicks at other margins opened unrelated screens — run
+        # 132157 landed in the Shop).
+        "sleep:8",
         "shot:1-home-init",
-        # AFK welcome popup after (re)connect — X at (463,218), same as the mine
-        # POC. More ad-close clicks go here after reading 1-home-init if a
-        # different popup paints that day.
-        "mark:01-close-afk", "click:463,218", "sleep:1", "shot:1-home-init-2",
-        # Timed promo popup ("Tranh Đoạt U Độ", run 20261024-100054) covers
-        # the home on some loads; it has no X — an outside click on the
-        # top-right dark margin dismisses it. NEVER click "Đến" (319,626):
-        # that navigates away from home. Harmless no-op when no popup.
-        "mark:01-close-promo", "click:600,90", "sleep:1", "shot:1-home-init-3",
-        "expect:1-home-init",
+        "mark:01-popclose", "popclose:10,0.97,3",
+        "shot:1-home-clean",
+        "expect:2a-event-lobby-start",
     ]),
     ("open-sea", [
-        # Film-reel icon in the bottom nav — red-circled in 1-home-init.png —
-        # opens the "Lối vào PB" event list; Tranh Bá Tứ Hải is its last banner.
-        "mark:02-open-events", "click:424,688", "shot:2a-event-lobby-start",
-        "expect:2a-event-lobby-start",
-        # List content drifts (events rotate — 2026-10-24 runs showed 2 new
-        # banners pushing the list to ~9 cards), so no fixed scroll count: wheel
-        # until the Tranh Bá Tứ Hải banner card — the (170,492) 310x122 crop of
-        # the 2b golden — shows up (max 8 rounds x 10 rapid events of dy=3000;
-        # ~14px/event, run 20261024-093019 ran out 2 cards short of the end),
-        # then click its "Khiêu chiến" button at (230,102) inside the card.
+        # popclose's last outside click already entered the event list (see
+        # login). Reset to the top first (run 134234: an 8x dy=3000 seek
+        # landed past the target — the war-day list reordered), then hunt the
+        # Tranh Bá Tứ Hải banner card with a fine-grained scroll (dy=600 per
+        # round, 14 rounds) so no card slips between screenshots.
+        "mark:02-open-events", "scroll:320,400,0,-3000,15",
+        "shot:2a-event-lobby-top",
         "mark:02-scroll-end",
-        "seek:2b-event-lobby-scroll-end,170,492,310,122,230,102,320,400,3000,8",
+        "seek:2b-event-lobby-scroll-end,170,492,310,122,230,102,320,400,600,14",
+        "shot:2b-event-lobby-scroll-end",
         # The lobby plays a vibrant 4-character intro art before idling down to
         # the state the 3-sea-home golden shows (run 095111: shot at t+2s
         # scored 0.898 against it — right screen, wrong animation frame).
         "sleep:5",
+        # A promo splash popped right after entering the lobby via the
+        # go-live splash's Đến (run 125545) — eat any late queue item first.
+        "mark:02-lobby-popclose", "popclose:2",
         "shot:3-sea-home", "expect:3-sea-home",  # MANDATORY proof
     ]),
     ("leaderboards", [
