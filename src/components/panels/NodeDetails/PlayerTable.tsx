@@ -1,7 +1,7 @@
-import { number } from "../../utils/format";
-import { PlayerIdentity } from "../shared/PlayerIdentity";
+import { number } from "../../../utils/format";
+import { PlayerIdentity } from "../../shared/PlayerIdentity";
 import styles from "./PlayerTable.module.css";
-import type { Attacker } from "../../types";
+import type { Attacker } from "../../../types";
 
 export interface PlayerTableProps {
   attackers: Attacker[];

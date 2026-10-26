@@ -1,9 +1,9 @@
 import { Anchor, Castle, Pin, Shield, X } from "lucide-react";
-import { number } from "../../utils/format";
+import { number } from "../../../utils/format";
 import { FactionScores } from "./FactionScores";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
-import type { NodeDetailData } from "../../types";
+import type { NodeDetailData } from "../../../types";
 
 export interface NodeDetailsProps {
   details: NodeDetailData;
