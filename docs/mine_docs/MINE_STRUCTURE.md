@@ -1,7 +1,7 @@
 # Khai Thác Guild — Cấu Trúc Khu Mỏ (map UI ↔ protocol)
 
-> Mô tả cấu trúc world mỏ từ ảnh in-game (`docs/assets/mine-detail/`)
-> đối chiếu với state server đẩy về (`0x48/0x0002`, xem `docs/SOCKET_PROTOCOL.md`).
+> Mô tả cấu trúc world mỏ từ ảnh in-game (`../assets/mine-detail/`)
+> đối chiếu với state server đẩy về (`0x48/0x0002`, xem [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md)).
 > Ảnh tham chiếu: profile chính, acc **HuAsura** (id `51921435`, guild **HUNTERS**),
 > đang ngồi **sector 7 — mỏ Mỏ Huyền Quang — điểm 4 (lv9)**, slot 10.
 > Verify lần cuối: capture `run-20261023-050330` — tile `7057` slot `10` chứa đúng id `51921435`. ✓
@@ -112,7 +112,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 - [x] **DEBUFF tầng N + chuỗi thắng trên popup "Lv\|Lv Máy Đào Chính"**: cả hai nằm trong tile
   state — tầng = **số mốc trong slot `f5`** (mục 4), chuỗi thắng = **`f7` {slot: N}** (mục 4).
   Popup render từ `0x48/0x0007` + briefs, KHÔNG sinh request riêng (verify run-s7-lv8-v3).
-  Decode recipe + UI navigation + backlog: `docs/planning/2026-10-23-mine-streak-debuff-decode.md`.
+  Decode recipe + UI navigation + backlog: [`2026-10-23-mine-streak-debuff-decode.md`](2026-10-23-mine-streak-debuff-decode.md) (backlog đã chuyển sang [`BACKLOG_MINE.md`](BACKLOG_MINE.md)).
 - [ ] Đưa streak (`f7`) + tầng debuff (số mốc `f5` của slot) vào `mine_socket/report.py` khi cần —
   `parse_tile` (mine_socket/protocol.py) hiện đang bỏ `f5` (giữ mỗi id/slot), `f6`–`f9` bỏ hoàn toàn
   (đã probe xác nhận: `f7` = {slot: streak}, `f8−f9` = 3600s trên tile 1060/4044/6052).

@@ -1,20 +1,26 @@
 # STATS_MISMATCH — số liệu UI lệch so với game (backlog handoff)
 
-> Trạng thái chốt 2026-10-26: UI (`src/data/sea-live.ts`) tổng điểm từ **node-board
+> Trạng thái chốt 2026-10-26: UI (`src/data/sea-live.json`) tổng điểm từ **node-board
 > rows** (đúng semantic hiện có của `src/domain/selectors.ts`), chấp nhận lệch với
 > số server ở những chỗ ghi dưới đây. Đây là note bàn giao: ai pick up việc "khớp
 > số 100%" bắt đầu từ đây, không cần đào lại capture.
 
 ## Luồng dữ liệu hiện tại
 
+Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join):
+[`README.md`](../README.md) (mục "Luồng crawl → UI").
+
 ```
 sea_crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
 sea_config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
-sea_to_ui.py → src/data/sea-live.ts     (join layout qua prefix display id)
+sea_to_ui.py → src/data/sea-live.json   (thuần data, không sinh code)
+src/data/sea-live.ts                    (adapter join layout qua prefix display id)
 src/domain/mapData.ts (LIVE = true)     (derive owner/BXH/filter từ contributions)
 ```
 
-Regenerate sau mỗi lần crawl mới:
+Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live-dev.json`
+— gitignored, FE dev fetch lúc runtime; thêm `--out src/data/sea-live.json`
+để bake snapshot chính thức vào build):
 
 ```bash
 uv run python tools/socket_log/sea_config_extract.py --table CampGVGLO --out .tmp/sea-crawl/campgvglo.json
@@ -39,11 +45,11 @@ mốc 20 row** (48/54/57/64/65), nặng nhất node 64 Phe 3: board 22.29M vs po
 
 ## 2. BXH server chỉ trả top-K
 
-| Board | Server trả | Ghi chú |
-| --- | --- | --- |
-| BXH điểm (117) | đúng 200 row | top-200 toàn server, không có phần còn lại |
-| BXH phe (116) | 4 row | đủ tự nhiên (4 phe), `additionInfo` đủ guild/president/cityNum |
-| Node board (118) | ≤20 row | xem mục 1 |
+| Board            | Server trả   | Ghi chú                                                        |
+| ---------------- | ------------ | -------------------------------------------------------------- |
+| BXH điểm (117)   | đúng 200 row | top-200 toàn server, không có phần còn lại                     |
+| BXH phe (116)    | 4 row        | đủ tự nhiên (4 phe), `additionInfo` đủ guild/president/cityNum |
+| Node board (118) | ≤20 row      | xem mục 1                                                      |
 
 UI không dùng 116/117 làm nguồn sự thật — mọi BXH derive từ node-board rows
 (`playersFromContributions`), nên hạng >200 toàn server và hạng >20 per node
