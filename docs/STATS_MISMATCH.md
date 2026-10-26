@@ -8,7 +8,7 @@
 ## Luồng dữ liệu hiện tại
 
 Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join):
-[`DATA_PIPELINE.md`](DATA_PIPELINE.md).
+[`README.md`](../README.md) (mục "Luồng crawl → UI").
 
 ```
 sea_crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
@@ -45,11 +45,11 @@ mốc 20 row** (48/54/57/64/65), nặng nhất node 64 Phe 3: board 22.29M vs po
 
 ## 2. BXH server chỉ trả top-K
 
-| Board | Server trả | Ghi chú |
-| --- | --- | --- |
-| BXH điểm (117) | đúng 200 row | top-200 toàn server, không có phần còn lại |
-| BXH phe (116) | 4 row | đủ tự nhiên (4 phe), `additionInfo` đủ guild/president/cityNum |
-| Node board (118) | ≤20 row | xem mục 1 |
+| Board            | Server trả   | Ghi chú                                                        |
+| ---------------- | ------------ | -------------------------------------------------------------- |
+| BXH điểm (117)   | đúng 200 row | top-200 toàn server, không có phần còn lại                     |
+| BXH phe (116)    | 4 row        | đủ tự nhiên (4 phe), `additionInfo` đủ guild/president/cityNum |
+| Node board (118) | ≤20 row      | xem mục 1                                                      |
 
 UI không dùng 116/117 làm nguồn sự thật — mọi BXH derive từ node-board rows
 (`playersFromContributions`), nên hạng >200 toàn server và hạng >20 per node

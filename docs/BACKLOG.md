@@ -106,7 +106,7 @@ gần hết map khiến các đảo có chủ chìm mất.
   không có filter thì không node nào mờ.
 - **Việc**: node `owner: null` mờ sẵn khi không có filter — mở rộng điều kiện
   `dim` ở derive layer (`mapGraph.ts`, hiện `matched !== null &&
-  !matched.has(id)`), giữ hover hoạt động bình thường (opacity không chặn
+!matched.has(id)`), giữ hover hoạt động bình thường (opacity không chặn
   pointer events; cân nhắc un-dim khi hover để đọc rõ). Khi filter
   guild/player bật: ưu tiên logic filter hiện tại, node trung lập vẫn mờ
   như thường.
@@ -115,8 +115,7 @@ gần hết map khiến các đảo có chủ chìm mất.
 
 ## 7. CampGVG config nằm ở `.tmp` — commit baseline vào repo + gộp lệnh crawl/dump
 
-Phát hiện 2026-10-26 khi rà lại docs pipeline (`README_SOCKET.md`,
-`DATA_PIPELINE.md`).
+Phát hiện 2026-10-26 khi rà lại docs pipeline (giờ nằm ở `README.md`).
 
 - **Hiện trạng**: `campgvglo.json` (config client CampGVG, 89 row) là file
   trung gian `.tmp/` — gitignored và hay bị dọn, nên cần lại là phải
@@ -144,12 +143,12 @@ Phát hiện 2026-10-26 khi rà lại docs pipeline (`README_SOCKET.md`,
     (`sea_config_extract.py`); **transform** = hàm thuần biến đổi crawl
     output + config thành schema FE (nằm trong `sea_to_ui.py`); **dump** =
     transform + ghi file JSON. Hiện docs dùng "dump" lẫn lộn cả ba nghĩa.
-  - `README_SOCKET.md` mode sea: flow mới 1 lệnh `sea_crawler.py --profile …`;
-    vai trò mới của `sea_to_ui.py` là **re-dump tool** (command giữ nguyên,
-    `--config` thành optional); ghi rõ [1]/[2] độc lập thứ tự và [2] chạy
-    1 lần rồi reuse.
-  - `DATA_PIPELINE.md`: cập nhật sơ đồ luồng + ranh giới vai trò từng tool
-    theo arrangement mới.
+  - `README.md` (mục Crawler — mode sea): flow mới 1 lệnh
+    `sea_crawler.py --profile …`; vai trò mới của `sea_to_ui.py` là
+    **re-dump tool** (command giữ nguyên, `--config` thành optional); ghi rõ
+    [1]/[2] độc lập thứ tự và [2] chạy 1 lần rồi reuse.
+  - `README.md` (mục "Luồng crawl → UI"): cập nhật sơ đồ luồng +
+    ranh giới vai trò từng tool theo arrangement mới.
 
 ---
 
@@ -157,5 +156,3 @@ Phát hiện 2026-10-26 khi rà lại docs pipeline (`README_SOCKET.md`,
 
 Các việc tồn đọng thuộc nhánh Khai Thác Guild (module `0x48`, logger, report, streak/debuff) có mức ưu tiên thấp hơn và được quản lý riêng tại:
 👉 [`docs/mine_docs/BACKLOG_MINE.md`](mine_docs/BACKLOG_MINE.md).
-
-
