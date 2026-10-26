@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { Anchor, Castle, Pin } from "lucide-react";
-import { iconBoxSize } from "../../domain/mapGraph";
+import { iconBoxSize } from "../../../domain/mapGraph";
 import { NodeStats } from "./NodeStats";
 import styles from "./IslandNode.module.css";
-import type { AppNode } from "../../types";
+import type { AppNode } from "../../../types";
 
 export function IslandNode({ data }: NodeProps<AppNode>) {
   const [hovered, setHovered] = useState(false);

@@ -1,7 +1,7 @@
 import { Pin } from "lucide-react";
-import { compact } from "../../utils/format";
+import { compact } from "../../../utils/format";
 import styles from "./NodeStats.module.css";
-import type { FactionScore } from "../../types";
+import type { FactionScore } from "../../../types";
 
 export interface NodeStatsProps {
   nodeId: string;
