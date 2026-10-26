@@ -62,3 +62,47 @@ nền góc phải trên (600,90). **Tuyệt đối không click "Đến" (319,62
 - Xem `docs/SEA_PACKET_ANALYSE.md` §2 (NEED_CONFIRM) + §3 (deliverables): crawl 89 node
   bằng payload thẳng, join `CampGVGLO` vào `src/data/map-layout.ts`.
 - Capture lại sau **10/26 10:00** (khai chiến) cho dữ liệu động.
+
+## 6. Run war-day 20261026-142917 — chốt hướng crawl payload-driven (2026-10-26)
+
+> Run đầu trong cửa sổ chiến trường mở (14:29, khung 10:00~22:00 ngày khai chiến).
+> Headed `pmain`, 8/8 stage, 549 frame, 82 shot, exit 0 — fix headed-run chạy tốt.
+> shot `6-battle-map` dính frame transition trắng; dùng `probe-n01-closed` /
+> `6-map-pan-1` làm bằng chứng map lúc war.
+
+### 6.1. GUI run chỉ để verify — data lấy bằng payload theo id [chủ dự án chốt 2026-10-26]
+
+Toạ độ node trong `sea_capture.py` chỉ phục vụ check UI. Target thật: gửi payload
+thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi payload:
+
+| Request | Response | Verify trong run |
+| --- | --- | --- |
+| `0x72/0x000b` (mở map) | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | #393R 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4 |
+| `0x72/0x0011 {f1: id}` | `0x0012` state node: f4 art 1001..1009, f1 id, f2×4 `{faction, Điểm ST}` | 13 click → **9 node distinct** (8/53/62/63/70/71/74/82/85); phe ta (f3) có ST: node 8=2.31M, 53=6.39M, 62=5.89M, 63=4.88M, còn lại 0 |
+| `0x0c/0x0002 {f1:118, f2: id}` | `0x0003` node leaderboard | 9 board: 32B (rỗng) → 352B (node 8, có data) |
+| `0x0d/0x001f {packed ids}` | `0x0020` id→tên | #405S 92B → #406R 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`) |
+
+→ **Crawler kế tiếp = vòng lặp ids 1..89** (snapshot `0x000b` lấy enum + owner,
+`0x0011` + board `118` per node theo chu kỳ), zero GUI interaction.
+
+### 6.2. QuickLZ: một số response nén (status flag `01`)
+
+Header R 8B `seq|flags|module|cmd|status` — status `01` = payload QuickLZ-compressed:
+board node 8 #404R 352B không parse được (`<unparseable>`), trong khi names #406R
+status `00` là protobuf thuần. Khớp commit `f61dd7a`. Crawler cần bước decompress
+trước khi decode board/phe snapshot.
+
+### 6.3. BXH game = 2 tab [chủ dự án xác nhận 2026-10-26]
+
+Shot `4-leaderboard-*` lúc war vẫn chỉ **"XH Phe | XH điểm"**. Cấu trúc 3 tab
+"Cứ điểm | Cá nhân | Phe" + sub-tab là **bước tổng hợp phía UI frontend**
+(`Leaderboard.tsx`), không phải của game → đã sửa `docs/SEA_STRUCTURE.md` §3.2/§7.
+
+### 6.4. Ghi chú GUI (phụ)
+
+- Toạ độ chết lúc war: n15, n20, n21, n23 (n15 mới chết so với pre-war — nghi bị
+  panel "Đánh dấu đảo" che). Không quan trọng với hướng payload-driven.
+- `7-n01` == `7-n11` cùng node 8 vì 2 view cùng trỏ 1 đảo — không phải artifact
+  kẹt popup (khác vụ §3; verify bằng request id từng click).
+- Điểm faction chỉ mutate qua `0x0011→0x0012` khi mở node; snapshot `0x000c`
+  (đã chứa owner 89 node) là nguồn owner — re-pull theo chu kỳ là đủ.
