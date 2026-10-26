@@ -34,6 +34,7 @@ export function resetRankingView() {
   const panel = usePanel.getState();
   panel.setOpenGuild(null);
   panel.setSelectedMember(null);
+  panel.setOpenPlayer(null);
   panel.setOpenFaction(null);
 }
 
@@ -96,4 +97,17 @@ export function toggleFactionView(factionId: string, guildNames: string[]) {
     return;
   }
   panel.setOpenFaction(panel.openFaction === factionId ? null : factionId);
+}
+
+// Mở/đóng player ở tab Cá nhân (filter mode): cùng một logic filter với
+// member-click ở tab Phe — mở = filter player, collapse = reset view.
+export function togglePlayerFilter(playerId: string) {
+  if (usePanel.getState().openPlayer === playerId) {
+    resetRankingView();
+    return;
+  }
+  const panel = usePanel.getState();
+  panel.setOpenPlayer(playerId);
+  panel.setSelectedMember(null);
+  setCanvasFilter({ kind: "player", id: playerId });
 }

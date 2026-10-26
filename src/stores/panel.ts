@@ -23,6 +23,8 @@ interface PanelState {
   openGuild: string | null;
   // Thành viên đang chọn trong guild mở (filter player); null = filter guild.
   selectedMember: string | null;
+  // Player đang mở (accordion tab Cá nhân, filter mode) — filter canvas.
+  openPlayer: string | null;
   // Faction row đang expand — thuần view, không filter.
   openFaction: string | null;
   setTab: (tab: MapTab) => void;
@@ -31,6 +33,7 @@ interface PanelState {
   setFilterMode: (filterMode: boolean) => void;
   setOpenGuild: (guild: string | null) => void;
   setSelectedMember: (member: string | null) => void;
+  setOpenPlayer: (player: string | null) => void;
   setOpenFaction: (faction: string | null) => void;
 }
 
@@ -41,6 +44,7 @@ export const usePanel = create<PanelState>()((set) => ({
   filterMode: true,
   openGuild: null,
   selectedMember: null,
+  openPlayer: null,
   openFaction: null,
   setTab: (tab) => set({ tab }),
   setBoard: (board) => set({ board }),
@@ -48,5 +52,6 @@ export const usePanel = create<PanelState>()((set) => ({
   setFilterMode: (filterMode) => set({ filterMode }),
   setOpenGuild: (openGuild) => set({ openGuild }),
   setSelectedMember: (selectedMember) => set({ selectedMember }),
+  setOpenPlayer: (openPlayer) => set({ openPlayer }),
   setOpenFaction: (openFaction) => set({ openFaction }),
 }));

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChevronRight, Users } from "lucide-react";
 import { compact, number } from "../../utils/format";
 import { PlayerIdentity } from "../shared/PlayerIdentity";
-import { useFocusIsland } from "../../hooks/useFocusIsland";
+import { useFocusIslandOnBoard } from "../../hooks/useFocusIsland";
 import { factionBoard, leaderboard, nodeBoard } from "../../domain/mapData";
 import {
   selectGuildMember,
@@ -10,6 +10,7 @@ import {
   setRankingBoard,
   toggleFactionView,
   toggleGuildFilter,
+  togglePlayerFilter,
 } from "../../stores/commands";
 import { usePanel } from "../../stores/panel";
 import styles from "./Leaderboard.module.css";
@@ -27,7 +28,6 @@ import type {
 export function Leaderboard() {
   const board = usePanel((state) => state.board);
   const filterMode = usePanel((state) => state.filterMode);
-  const focusIsland = useFocusIsland();
   return (
     <div className={`${styles.detail} ${styles.ranking}`}>
       <div className={styles.rankingHead}>
@@ -67,27 +67,32 @@ export function Leaderboard() {
       {board === "faction" ? (
         <FactionBoard factions={factionBoard} />
       ) : board === "player" ? (
-        <PlayerBoard players={leaderboard} onFocusIsland={focusIsland} />
+        <PlayerBoard players={leaderboard} />
       ) : (
-        <NodeBoard nodes={nodeBoard} onFocusIsland={focusIsland} />
+        <NodeBoard nodes={nodeBoard} />
       )}
     </div>
   );
 }
 
-function NodeBoard({
-  nodes,
-  onFocusIsland,
-}: {
-  nodes: NodeBoardEntry[];
-  onFocusIsland: (id: string) => void;
-}) {
+// Tab Cứ điểm: mở expand của một đảo = focus đảo trên map (camera pan +
+// selected), panel giữ nguyên ở bảng. Focus chỉ xảy ra khi toggle mở; đa mở
+// được — camera theo lần expand cuối. Không phụ thuộc Filter mode.
+function NodeBoard({ nodes }: { nodes: NodeBoardEntry[] }) {
+  const focusIslandOnBoard = useFocusIslandOnBoard();
   return (
     <>
       <h2>Xếp hạng cứ điểm</h2>
-      <p>Cứ điểm xếp theo tổng Điểm ST các phe đã đổ vào.</p>
+      <p>Mở một cứ điểm để nhìn nó trên map; xếp theo tổng Điểm ST.</p>
       {nodes.map((entry, index) => (
-        <details key={entry.island.id} className={styles.item}>
+        <details
+          key={entry.island.id}
+          className={styles.item}
+          onToggle={(event) => {
+            if ((event.target as HTMLDetailsElement).open)
+              focusIslandOnBoard(entry.island.id);
+          }}
+        >
           <summary className={styles.summary}>
             <span className={styles.rank}>{index + 1}</span>
             <div className={styles.factionName}>
@@ -107,9 +112,6 @@ function NodeBoard({
               .map((score) => (
                 <FactionScoreRow key={score.id} score={score} />
               ))}
-            <button onClick={() => onFocusIsland(entry.island.id)}>
-              <span>Xem đảo trên map</span>
-            </button>
           </div>
         </details>
       ))}
@@ -126,20 +128,19 @@ function FactionScoreRow({ score }: { score: FactionScore }) {
   );
 }
 
-function PlayerBoard({
-  players,
-  onFocusIsland,
-}: {
-  players: LeaderboardPlayer[];
-  onFocusIsland: (id: string) => void;
-}) {
+// Tab Cá nhân: filter mode — accordion một player mở tại một thời điểm,
+// player mở chính là filter canvas (cùng logic với member-click tab Phe).
+// Đảo trong expand chỉ liệt kê + điểm — focus đảo là vai của tab Cứ điểm.
+function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
+  const filterMode = usePanel((state) => state.filterMode);
+  const openPlayer = usePanel((state) => state.openPlayer);
   return (
     <>
       <h2>Xếp hạng cá nhân</h2>
       <p>Tổng Điểm ST gộp từ BXH từng cứ điểm (top-N mỗi node).</p>
-      {players.map((player, index) => (
-        <details key={player.id} className={styles.item}>
-          <summary className={styles.summary}>
+      {players.map((player, index) => {
+        const summary = (
+          <>
             <span className={styles.rank}>{index + 1}</span>
             <PlayerIdentity
               player={player}
@@ -148,20 +149,42 @@ function PlayerBoard({
             />
             <b>{compact(player.score)}</b>
             <ChevronRight size={13} />
-          </summary>
+          </>
+        );
+        const allocations = (
           <div className={styles.allocation}>
             {player.allocations.map((entry) => (
-              <button
-                key={entry.nodeId}
-                onClick={() => onFocusIsland(entry.nodeId)}
-              >
+              <div key={entry.nodeId} className={styles.guildRow}>
                 <span>Đảo {entry.nodeId}</span>
                 <b>{number(entry.score)}</b>
-              </button>
+              </div>
             ))}
           </div>
-        </details>
-      ))}
+        );
+        return filterMode ? (
+          <details
+            key={player.id}
+            className={styles.item}
+            open={openPlayer === player.id}
+          >
+            <summary
+              className={styles.summary}
+              onClick={(event) => {
+                event.preventDefault();
+                togglePlayerFilter(player.id);
+              }}
+            >
+              {summary}
+            </summary>
+            {allocations}
+          </details>
+        ) : (
+          <details key={player.id} className={styles.item}>
+            <summary className={styles.summary}>{summary}</summary>
+            {allocations}
+          </details>
+        );
+      })}
     </>
   );
 }

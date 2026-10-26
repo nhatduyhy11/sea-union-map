@@ -26,3 +26,19 @@ export function useFocusIsland() {
     [setCenter]
   );
 }
+
+// Focus đảo từ bảng BXH (tab Cứ điểm): camera pan + đảo thành selected,
+// panel giữ nguyên ở bảng — không nhảy sang tab chi tiết. Chỉ gọi khi
+// toggle MỞ row (đóng không focus).
+export function useFocusIslandOnBoard() {
+  const { setCenter } = useReactFlow<AppNode, Edge>();
+  return useCallback(
+    (id: string) => {
+      const island = ownedIslands.find((node) => node.id === id);
+      if (!island) return;
+      useSelection.getState().open(id);
+      setCenter(island.position.x, island.position.y, FOCUS_OPTIONS);
+    },
+    [setCenter]
+  );
+}
