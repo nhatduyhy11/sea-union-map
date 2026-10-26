@@ -106,3 +106,56 @@ Shot `4-leaderboard-*` lúc war vẫn chỉ **"XH Phe | XH điểm"**. Cấu tr�
   kẹt popup (khác vụ §3; verify bằng request id từng click).
 - Điểm faction chỉ mutate qua `0x0011→0x0012` khi mở node; snapshot `0x000c`
   (đã chứa owner 89 node) là nguồn owner — re-pull theo chu kỳ là đủ.
+
+### 6.5. `sea_crawler.py` — crawler payload-driven đã chạy thật (2026-10-26)
+
+Tool `tools/socket_log/sea_crawler.py`: mở map **1 lần** (`0x72/0x000b` → snapshot
+89 node), rồi loop từng id: state `0x72/0x0011` + board `0x0c/0x0002 {f1:118, f2:id}`,
+sau đó BXH phe (116) + BXH điểm (117), decode toàn bộ board bằng runtime game trong
+page (một round-trip JS duy nhất, schema attach theo name-suffix — xem
+`game_proto_decode.py`), cuối cùng fetch brief `0x0d/0x001f` theo chunk 60 id.
+
+```bash
+uv run python tools/socket_log/sea_crawler.py --profile .tmp/pmain --out .tmp/sea-crawl/<run>
+```
+
+Output: `map-snapshot.json`, `node-states.jsonl`, `node-boards.jsonl` (body b64),
+`boards-decoded.json`, `players.jsonl`, `summary.json`, screens chứng tục từng stage.
+Inject qua `window.__wsLoggerWs` với ssid tự gán từ 0xF0 (không đụng seq của client);
+correlate response theo (module, cmd, ssid) — verify v1/v2: 89/89 khớp, 0 lệch.
+
+### 6.6. Server throttle err `10000035` — server chủ động chặn burst inject
+
+Ba run liên tiếp (v1 16:42, v2, v3): một số request inject bị trả về body
+`f1: 10000035` (không f2) — **~30/89 node mỗi run, nhưng set bị chặn KHÁC nhau giữa
+các run** (board node 8 có data ở run 14:29 và v2, sang v3 lại thành body 12B
+`err:10000035`). Chặn theo lô ~5 node liên tiếp, cách nhau ~12 node — pattern
+duty-cycle, không phải trạng thái node. Kết luận: **quota tốc độ phía server**, không
+phải dữ liệu thiếu. Đối sách trong crawler:
+
+- `REQUEST_PACE = 0.25s` giữa 2 node (mỗi node 2 request);
+- `inject_retrying()`: gặp response bất thường → retry với backoff
+  `min(2^retries, 10s)`, tối đa 5 lần. Predicate "bất thường":
+  state = không có field 2; board = `len(body) < 24` (body err nén ~12B, board
+  thật nhỏ nhất 32B — rỗng — nên ngưỡng 24 tách sạch, đã verify trên dữ liệu v3:
+  đúng 32 body 12B = đúng 32 node bị chặn).
+
+Run v4 (17:11) với retry: **89/89 state sạch (0 locked), 89/89 board, 0 decode
+error** — 6 lần throttle đều qua được ở retry đầu (backoff 1s). Data:
+BXH phe 4 hàng (additionInfo đủ `fightCap/president/cityNum/guilds/vicePresidents`,
+`cityNum` khớp tuyệt đối owner count: f3=8 đảo rank 1, f1=5 rank 2); BXH điểm
+top-200; 24 node board có data (332 hàng), 65 board rỗng (node không chủ, không ai
+đóng góp); 243 brief người chơi. Chuẩn hoá dataset so sánh: `.tmp/sea-crawl/sea-crawl-v4`.
+
+### 6.7. Finding dữ liệu: pool "Điểm ST" node dao động, board theo người chơi ổn định
+
+- **Pool Điểm ST per node (f2 trong `0x0012`) FLUCTUATE**: node 64 phe 3 từ 21.8M
+  xuống 0 mà owner không đổi — đây là pool đang tranh đoạt, không phải tổng cộng
+  lũy tiến. So sánh giữa 2 run cách nhau vài phút có thể thấy score tụt mà không có
+  đổi chủ.
+- **Board per-node (per-player rows) ổn định/tích lũy**: board node 8 lúc 14:29 (GUI)
+  và 16:49 (crawl v3) giống hệt nhau (VNChiến 850529 đứng đầu) — bảng này ghi đóng
+  góp cá nhân, không co giãn theo pool.
+- BXH phe (116) `additionInfo` giàu hơn UI: `fightCap`, `president`, `cityNum`
+  (= "Chiếm đảo" trên BXH), `guilds[]`, `vicePresidents[]` — đủ để render
+  Tổng quan phe khỏi cần screen nào thêm.

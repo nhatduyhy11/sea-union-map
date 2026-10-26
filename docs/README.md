@@ -15,6 +15,9 @@ Tầng dùng chung (reused bởi mọi event logger):
 | `socket_decode.py`  | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                                      |
 | `game_protocol.py`  | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`                                                     |
 | `ws_logger.py`      | Core runner dùng chung: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`) |
+| `sea_capture.py`    | Walkthrough GUI event Tranh Bá Tứ Hải: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước                                            |
+| `sea_crawler.py`    | Crawler payload-driven SEA: mở map 1 lần lấy snapshot 89 node, rồi inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game       |
+| `game_proto_decode.py` | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
 | `logger_args.py`    | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
 | `process_guard.py`  | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |
 | `page_guards.py`    | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                   |
