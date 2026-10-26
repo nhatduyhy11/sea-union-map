@@ -1,5 +1,10 @@
 # NEXT_SPEC — BXH drill-down + filter canvas theo guild / thành viên
 
+> Spec đã break thành 3 sub-spec ở `plans/next/`. File này giữ context chung
+> + **mô hình tương tác** (hợp đồng hành vi đã chốt với owner — nguồn chân lý
+> duy nhất); sub-spec giữ scope + kiến trúc của từng phần, không lặp lại
+> hành vi.
+
 ## Context
 
 BXH hiện tại 3 tab (Phe → Cá nhân → Cứ điểm) chỉ đọc: guild ở tab Phe là row tĩnh,
@@ -21,15 +26,17 @@ chiếu khớp; tổng guild vs tổng members liệt kê lệch nhẹ cũng kh�
 
 ### Filter là một — accordion trùng với filter
 
-- Canvas chỉ có **một filter tại một thời điểm**: `all` / phe / guild / player
-  (union, thay cho chuỗi `filter` hiện tại).
-- **Tab Phe (Chung + sub-tab một phe):** click guild row → expand ra thành viên.
+- Canvas chỉ có **một filter tại một thời điểm**: `all` / guild / player
+  (union, thay cho chuỗi `filter` hiện tại). **Không còn filter theo phe** —
+  owner chốt 2026-10-26 (review): highlight phe + edges không có ý nghĩa,
+  drop; BXH xoay quanh cơ chế highlight node.
+- **Tab Phe:** click guild row → expand ra thành viên.
   Chỉ **một guild mở tại một thời điểm**; guild được mở chính là filter canvas —
   highlight node mà guild đó có contribute, **edge không highlight**.
-- **Guild expand ưu tiên hơn sub-tab phe** (owner chốt 2026-10-26): mở guild
-  khi đang filter phe qua sub-tab → filter chuyển sang guild, sub-tab về
-  "Chung"; bấm sub-tab phe khi guild đang mở → collapse guild, filter về phe.
-  Nguyên tắc: một filter, mọi control phản chiếu đúng nó.
+- **Sub-tab phe (Chung + một phe) chỉ là view của panel**, không đụng canvas ở
+  cả 2 mode (hệ quả drop filter phe): "Chung" = list 4 phe, phe X = card X.
+  View-local, reset khi rời board. Faction summary row cũng không phải filter
+  control — chỉ guild/member row lọc canvas.
 - Click thành viên trong guild đang mở: lần 1 → filter chuyển thành player đó;
   lần nữa → quay về filter theo guild cha. Guild vẫn mở, member được chọn
   highlight trong list.
@@ -47,9 +54,11 @@ chiếu khớp; tổng guild vs tổng members liệt kê lệch nhẹ cũng kh�
 
 ### Focus đảo — mỗi tab một vai
 
-- **Tab Cứ điểm:** mở expand của một đảo = focus luôn đảo trên map (camera +
-  mở chi tiết). Bỏ nút "Xem đảo trên map". Chỉ focus khi toggle mở, không focus
-  khi đóng.
+- **Tab Cứ điểm:** mở expand của một đảo = focus đảo trên map — camera pan +
+  đảo thành selected (highlight node; panel **giữ nguyên ở bảng**, không tự
+  nhảy sang tab chi tiết — owner chốt 2026-10-26; muốn NodeDetails thì tự bấm
+  tab Cứ điểm của panel). Bỏ nút "Xem đảo trên map". Chỉ focus khi toggle mở,
+  không focus khi đóng.
 - **Tab Cá nhân:** đảo trong expand của player chỉ liệt kê + điểm — **bỏ focus**
   (trả lại vai focus cho tab Cứ điểm, tránh hai nơi cùng điều khiển camera).
 
@@ -59,12 +68,11 @@ chiếu khớp; tổng guild vs tổng members liệt kê lệch nhẹ cũng kh�
   chung của panel BXH** (trên board tabs), kèm một checkbox **"Filter mode"**
   (default tick).
 - **Tick (filter mode, mặc định):** đúng mô hình accordion = filter bên trên —
-  một expansion tại một thời điểm, mở = lọc canvas, member toggle player↔guild,
-  sub-tab phe lọc canvas.
+  một expansion tại một thời điểm, mở = lọc canvas, member toggle player↔guild.
 - **Bỏ tick (xem tự do):** tắt chế độ filter của BXH — panel thuần đọc. Expand
   thoải mái nhiều guild / player / faction cùng lúc, member trong guild chỉ
-  hiển thị (không toggle filter), sub-tab phe chỉ đổi view trong panel. BXH
-  không side-effect gì lên canvas; tắt mode thì canvas reset về `all`.
+  hiển thị (không toggle filter). BXH không side-effect gì lên canvas; tắt
+  mode thì canvas reset về `all`.
 - Mode này là state của panel — **không reset khi đổi tab BXH** (khác với
   filter/expansion). Focus-on-expand ở tab Cứ điểm giữ nguyên hành vi trong
   cả 2 mode (camera theo lần expand cuối là hành vi mong đợi).
@@ -72,52 +80,19 @@ chiếu khớp; tổng guild vs tổng members liệt kê lệch nhẹ cũng kh�
 ### Legend đáy canvas — display-only
 
 - Legend chỉ còn show màu/label các phe, **bỏ hết hành vi filter**.
-- Filter phe chỉ còn một điểm điều khiển: sub-tab của BXH Phe (giữ nguyên hành
-  vi canvas dim + edge highlight như cũ; chọn "Chung" = về `all`).
-- Hệ quả chấp nhận: mất điểm vào filter "Trung lập" (ít giá trị, cần thì thêm
-  sau). Union filter vẫn giữ case neutral ở data layer cho tương thích.
+- Filter phe drop hoàn toàn (owner chốt 2026-10-26): sau khi legend
+  display-only, sub-tab BXH Phe là điểm filter phe cuối cùng còn lại — và nó
+  cũng bị tước. Không còn điểm nào lọc canvas theo phe.
+- Hệ quả chấp nhận: mất luôn dim-theo-owner trên canvas; data layer bỏ case
+  neutral trong filter (owner hiển thị trên node vẫn tính riêng, không đụng
+  filter).
 
-## Thay đổi kiến trúc (high-level)
+## Roadmap sub-specs
 
-- **`stores/panel`** — thêm `filterMode: boolean` (default `true`, checkbox
-  "Filter mode") — state panel, sống qua các lần đổi tab.
-- **`stores/mapView`** — `filter: string` thành union `{ kind: "faction" | "guild"
-  | "player", id } | null` (null = all). Thêm action set/reset filter guild-player;
-  command cross-store (reset khi rời board, toggle member) đặt ở `stores/commands`
-  theo pattern hiện tại.
-- **`domain/selectors`** — `GuildScore` mang thêm danh sách thành viên (id, tên,
-  điểm, số đảo) sort theo điểm.
-- **`domain/mapGraph`** — node match theo `kind` của filter: phe → owner match
-  (như cũ, có edge highlight); guild/player → node có contribution của
-  guild/player đó, edge giữ resting style. Cặp index `nodeIdsByGuild` /
-  `nodeIdsByPlayer` derive một lần cạnh `scoresByNode`.
-- **`components/panels/Leaderboard`** — header chung (eyebrow "TOÀN CHIẾN
-  TRƯỜNG" + checkbox "Xem tự do") trên board tabs, bỏ eyebrow lặp trong 3 board;
-  guild row thành details (accordion điều khiển bởi filter, không state mở
-  riêng); member row toggle player↔guild; player tab accordion tương tự; đảo
-  trong expand player thành row tĩnh; tab Cứ điểm wire onToggle → focus đảo.
-  Khi `filterMode` tắt: mọi expansion thành `<details>` đa mở thuần đọc, bỏ
-  toàn bộ side-effect canvas.
-- **`components/map/FactionLegend`** — bỏ nút, chỉ còn swatch màu; `selectFaction`
-  thu về chỉ phục vụ sub-tab BXH.
+| # | Sub-spec | Scope | Phụ thuộc |
+|---|----------|-------|-----------|
+| 01 | [`next/01-filter-engine.md`](next/01-filter-engine.md) | Union filter + match theo kind, index guild/player, `GuildScore` members, chip overlay, legend display-only | — |
+| 02 | [`next/02-bxh-phe-drilldown.md`](next/02-bxh-phe-drilldown.md) | Header chung + checkbox Filter mode + accordion guild tab Phe + reset view | 01 |
+| 03 | [`next/03-canhan-focus.md`](next/03-canhan-focus.md) | Tab Cá nhân accordion + vai focus (Cứ điểm focus-on-expand, bỏ focus player) | 01 (nên sau 02) |
 
-## UI/UX notes (brainstorm)
-
-- **Header BXH** — một hàng: eyebrow "TOÀN CHIẾN TRƯỜNG" bên trái, checkbox
-  "Filter mode" (default tick) bên phải. User đổi mode ít, đừng để nó thành thứ
-  bắt mắt; tooltip ngắn: tick = "Mở mục là lọc map, một mục cùng lúc", bỏ tick
-  = "Mở nhiều mục cùng lúc, không lọc map".
-- **Chip filter trên canvas** — overlay nhỏ góc trên canvas: `[⚔ Guild A ✕]` /
-  `[👤 Player1 ✕]`, ✕ reset về `all`. Cần vì khi panel cuộn dài, user nhìn map
-  phải biết canvas đang lọc gì mà không nhìn panel; ✕ cũng là cách tắt lọc mà
-  không phải cuộn panel tìm đúng row để collapse.
-- **Node match/dim** — tái dùng pattern dim hiện tại (opacity thấp), thêm
-  transition nhẹ (~150ms) cho đỡ giật. Node match có thể viền màu phe của chủ
-  guild/player để đọc hướng phe mà không cần bật thêm gì.
-- **Row đang filter** — nền tint màu phe nhẹ + chevron xoay; member đang được
-  filter highlight mạnh hơn member thường (member là cấp "chọn sâu nhất").
-- **Guild row metadata** — hiện sẵn số người; thêm số đảo guild đang contribute
-  (`· 8 đảo`) để ngời ra trước việc expand, giá cả là 1 phép đếm từ index sẵn có.
-- **Guild "Không guild"** — vẫn expand/liệt kê được; filter canvas theo bucket
-  này match node có contribution từ player không guild. Ghi chú trong UI bằng
-  chính cái tên fallback, không cần xử lý đặc biệt.
+Thứ tự gợi ý: 01 → 02 → 03. Mỗi sub-spec một nhịp implement/review riêng.
