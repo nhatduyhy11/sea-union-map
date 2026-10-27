@@ -1,4 +1,4 @@
-# Quy tắc claim cứ điểm
+# Tranh Bá Tứ Hải — Quy Tắc Chiếm Cứ Điểm (SEA_EVENT_RULE)
 
 ## 1. Trạng thái của tài liệu
 
