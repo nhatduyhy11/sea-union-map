@@ -77,18 +77,20 @@ Server chặn burst inject với err `10000035` (set bị chặn đổi qua từ
 
 ## 5. Chỗ chưa có nguồn (không phải lệch, mà thiếu)
 
-### 5.1. Brief player bị thiếu — cooldown server, đã xử lý hết (chốt 2026-10-27)
+### 5.1. Brief player bị thiếu — đã xử lý hết, nguyên nhân gốc đang xét lại (2026-10-27)
 
 Crawler cũ gom id brief không retry, server nuốt 1 batch 60 id (seq=169 trả 0
 brief) → 55 player mất tên. Quá trình xử lý và bài học:
 
 - **Throttle:** tool `brief_backfill.py` re-request ids thiếu (chunk 20 +
   backoff, chỉ stage login). Lần 1: 39/59, `players.jsonl` 257 → 307.
-- **"Từ chối" thực chất là cooldown:** 16 id (toàn S513/S514) trả rỗng xuyên
-  5 round, kể cả session mới → tưởng chặn cứng chéo server. ~90 phút sau,
-  **1 batch 16 id riêng trả đủ 6.5KB brief** (`still missing: 0`,
-  `players.jsonl` → 323). Bài học: batch rỗng ≠ bị cấm; re-run
-  `brief_backfill.py` sau một khoảng thời gian là đủ.
+- **"Từ chối" tạm giải thích là cooldown (sau đó làm rõ):** 16 id trả rỗng
+  xuyên 5 round → ~90 phút sau 1 batch riêng trả đủ 6.5KB (`still missing:
+  0`, `players.jsonl` → 323). Lần thành công đó đi kèm fix bỏ 4 pseudo-id
+  `1..4` khỏi batch — mọi batch chứa `1..4` đều rỗng (5/5), mọi batch sạch
+  đều OK (8/8) → khả năng cao là **batch poisoning** (rankId invalid làm rỗng
+  cả list). Pipeline hiện đã skip `id_type != 1` và tăng interval retry nên
+  crawl 100% sạch.
 - **4 pseudo-id `1..4`** (`id_type=5`, board 116) — không phải player, là 4
   dòng phe. Crawler + backfill đã skip `id_type != 1` khi gom.
 
@@ -102,9 +104,13 @@ Hai phát hiện đi kèm (cùng session 2026-10-27):
   51476884 (hạng 2 toàn server, VP phe2) thuộc **OLYMPUS `5140005`** cùng 14
   refused khác; 51305171 thuộc OneKing `5130004` (phe3).
 - **Tên guild không cần member brief**: `0x24/0x0035 {f1: guild id}` →
-  `0x0036` trả tên + members + description (115/115 guild, 103 tên thực —
-  phần còn lại là guild giải tán/rỗng trả err). Crawler thu `guild-names.json`
-  mỗi run; report.py merge vào `guildNames`.
+  `0x0036` trả tên + members + description (115/115 guild). Crawler thu
+  `guild-names.json` mỗi run; report.py merge vào `guildNames`.
+  Lưu ý: request rỗng ở một thời điểm **không có nghĩa guild hết dữ liệu** —
+  rỗng là trạng thái theo thời gian (cold cache), retry muộn hơn trả đủ (16
+  guild rỗng lúc 07:26–07:45, chiều cùng ngày `dead_guild_probe.py` xác nhận
+  trả đủ 12/12 còn thiếu). `brief_backfill --guilds` giờ merge và không ghi đè
+  tên cũ bằng null.
 
 - **Boss node = null**: tên/trait boss nằm ở config khác (`SkillBuffBossLO`,
   NEED_CONFIRM 4 trong `SEA_PACKET_ANALYSE.md`) — chưa map. Level node đang

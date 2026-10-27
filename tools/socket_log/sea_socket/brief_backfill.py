@@ -45,8 +45,9 @@ from sea_socket.protocol import build_brief_frame  # noqa: E402
 # Throttle evidence (2026-10-27): the crawler's 60-id batches mostly answered
 # 60/60, but one came back empty — smaller chunks + pacing dodge it.
 BRIEF_CHUNK = 20
-REQUEST_PACE = 0.4
+REQUEST_PACE = 0.8
 ROUNDS = 5  # whole-pass retries for the still-missing tail
+RETRY_BACKOFF = 4.0  # linear +4s per round: 4s -> 8s -> 12s -> ... (matches crawler)
 
 
 def rank_ids(run_dir: Path) -> set[str]:
@@ -95,7 +96,7 @@ async def run_backfill(page: Page, router: CrawlRouter, wanted: list[str]) -> in
         await brief_pass(page, router, missing, BRIEF_CHUNK)
         still = [pid for pid in wanted if pid not in router.briefs]
         if still:
-            wait = min(2 ** (attempt - 1), 8.0)
+            wait = RETRY_BACKOFF * attempt
             print(f"[round {attempt}] {len(still)} still missing — backoff {wait:.0f}s",
                   flush=True)
             await asyncio.sleep(wait)
@@ -195,20 +196,41 @@ async def main() -> None:
                               f"still missing: {still_missing}", flush=True)
 
                     if guild_ids:
-                        names = {}
+                        # 0x24/0x0035 empty responses are time-gated, not
+                        # permanent (2026-10-27: 16 guilds empty at 07:26+07:45,
+                        # all 12 still-missing ones returned full briefs the
+                        # same afternoon — dead_guild_probe). So: merge into the
+                        # existing file and never overwrite a known name with a
+                        # null result — a later run (or warm server cache)
+                        # closes the rest.
+                        names_path = run_dir / "guild-names.json"
+                        names: dict = {}
+                        if names_path.exists():
+                            try:
+                                names = json.loads(
+                                    names_path.read_text(encoding="utf-8"))
+                            except (OSError, ValueError):
+                                names = {}
+                        filled = 0
                         for gid in guild_ids:
                             try:
                                 _h, body = await router.inject(
                                     page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
-                                names[str(gid)] = parse_guild_brief(body)
+                                brief = parse_guild_brief(body)
                             except RuntimeError as exc:
                                 print(f"[guild] {gid}: {exc}", flush=True)
-                            await asyncio.sleep(0.3)
-                        (run_dir / "guild-names.json").write_text(
+                                await asyncio.sleep(REQUEST_PACE)
+                                continue
+                            if brief.get("name"):
+                                names[str(gid)] = brief
+                                filled += 1
+                            await asyncio.sleep(REQUEST_PACE)
+                        names_path.write_text(
                             json.dumps(names, ensure_ascii=False, indent=1),
                             encoding="utf-8")
-                        print(f"[done] guild briefs for {len(names)}/{len(guild_ids)} guilds",
-                              flush=True)
+                        print(f"[done] guild briefs {filled}/{len(guild_ids)} filled, "
+                              f"{sum(1 for v in names.values() if v.get('name'))}"
+                              f"/{len(guild_ids)} named total", flush=True)
                 finally:
                     guard_task.cancel()
             finally:

@@ -81,8 +81,9 @@ from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
 BRIEF_RETRY_CHUNK = 20  # re-ask size for the post-throttle tail
 BRIEF_RETRY_ROUNDS = 3
+BRIEF_RETRY_BACKOFF = 4.0  # per-round step: round N waits 4s*N -> 4s, 8s, 12s
 INJECT_TIMEOUT = 8.0
-REQUEST_PACE = 0.25  # seconds between injected requests
+REQUEST_PACE = 0.4  # seconds between injected requests
 SNAPSHOT_TIMEOUT = 20.0
 # Server throttles bursts of injected requests with err 10000035 (2026-10-26:
 # ~57 requests pass, then blocks of ~5 rejections arrive at a duty cycle; the
@@ -378,7 +379,7 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
         still = [pid for pid in ordered if pid not in router.briefs]
         if not still:
             break
-        await asyncio.sleep(min(2 ** attempt, 4.0))
+        await asyncio.sleep(BRIEF_RETRY_BACKOFF * (attempt + 1))
         print(f"[briefs] retry {attempt + 1}: {len(still)} ids missing", flush=True)
         await ask_briefs(still, BRIEF_RETRY_CHUNK)
 
