@@ -9,7 +9,7 @@ no asyncio — safe to unit-test against captured frame bytes.
 import base64
 import struct
 
-from core.decode import decode_proto, encode_varint, read_packed_varints, split_frame
+from core.decode import decode_proto, encode_varint, split_frame
 from core.protocol import PLAYER_BRIEF_CMD, PLAYER_MODULE
 
 SEA_MODULE = 0x72
@@ -52,8 +52,12 @@ def iter_frames(direction: str, raw: bytes):
 
 
 def parse_map_snapshot(body: bytes) -> dict:
-    """0x72/0x000c: f2×N {f1 id, f2 owner}, f3×4 factions (opaque), f4 guild ids."""
-    nodes, factions_raw, guild_ids = [], [], []
+    """0x72/0x000c: f2×N {f1 id, f2 owner}, f3×4 factions (opaque),
+    f4×N guild roster {f1 guild id, f2×N {f1 player id}} — mapping đầy đủ
+    player→guild của mọi phe (115 guild / 3020 player, 2026-10-27); độc lập
+    với brief nên cứu được player bị server từ chối brief chéo server."""
+    nodes, factions_raw = [], []
+    roster: dict[int, list[int]] = {}
     for field, _wire, value in decode_proto(body):
         if field == 2 and isinstance(value, bytes):
             sub = {f: v for f, _w, v in decode_proto(value)}
@@ -61,11 +65,26 @@ def parse_map_snapshot(body: bytes) -> dict:
         elif field == 3 and isinstance(value, bytes):
             factions_raw.append(base64.b64encode(value).decode())
         elif field == 4 and isinstance(value, bytes):
-            guild_ids.extend(read_packed_varints(value))
+            guild_id, members = None, []
+            for f4, _w4, v4 in decode_proto(value):
+                if f4 == 1:
+                    guild_id = v4
+                elif f4 == 2 and isinstance(v4, bytes):
+                    member = {mf: mv for mf, _mw, mv in decode_proto(v4)}
+                    if member.get(1):
+                        members.append(member[1])
+            if guild_id is not None:
+                roster[guild_id] = members
     owners: dict[int, int] = {}
     for node in nodes:
         owners[node["owner"]] = owners.get(node["owner"], 0) + 1
-    return {"nodes": nodes, "owner_counts": owners, "factions_raw": factions_raw, "guild_ids": guild_ids}
+    return {
+        "nodes": nodes,
+        "owner_counts": owners,
+        "factions_raw": factions_raw,
+        "guild_ids": sorted(roster),
+        "guild_roster": roster,
+    }
 
 
 def parse_node_state(body: bytes, requested_id: int | None = None) -> dict:

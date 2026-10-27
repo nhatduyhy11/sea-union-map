@@ -77,48 +77,34 @@ Server chặn burst inject với err `10000035` (set bị chặn đổi qua từ
 
 ## 5. Chỗ chưa có nguồn (không phải lệch, mà thiếu)
 
-### 5.1. Brief player bị thiếu — 2 tầng nguyên nhân (chốt 2026-10-27)
+### 5.1. Brief player bị thiếu — cooldown server, đã xử lý hết (chốt 2026-10-27)
 
 Crawler cũ gom id brief không retry, server nuốt 1 batch 60 id (seq=169 trả 0
-brief) → 55 player mất tên. Đã xử lý 2 tầng:
+brief) → 55 player mất tên. Quá trình xử lý và bài học:
 
-- **Throttle (fix được):** tool `brief_backfill.py` re-request ids thiếu
-  (chunk 20 + backoff 5 round, chỉ stage login). Run 2026-10-27: 39/59 lấy
-  được, `players.jsonl` 257 → 307.
-- **Từ chối tuyệt đối (không fix được từ client):** 20 id server im lặng trả
-  rỗng xuyên 5 round, kể cả session mới:
+- **Throttle:** tool `brief_backfill.py` re-request ids thiếu (chunk 20 +
+  backoff, chỉ stage login). Lần 1: 39/59, `players.jsonl` 257 → 307.
+- **"Từ chối" thực chất là cooldown:** 16 id (toàn S513/S514) trả rỗng xuyên
+  5 round, kể cả session mới → tưởng chặn cứng chéo server. ~90 phút sau,
+  **1 batch 16 id riêng trả đủ 6.5KB brief** (`still missing: 0`,
+  `players.jsonl` → 323). Bài học: batch rỗng ≠ bị cấm; re-run
+  `brief_backfill.py` sau một khoảng thời gian là đủ.
+- **4 pseudo-id `1..4`** (`id_type=5`, board 116) — không phải player, là 4
+  dòng phe. Crawler + backfill đã skip `id_type != 1` khi gom.
 
-  **4 pseudo-id `1..4`** (`id_type=5`, board 116) — không phải player, là 4
-  dòng phe. Crawler gom nhầm mọi `player_id` bất kể id_type; cần skip
-  `id_type != 1` khi gom.
+Hai phát hiện đi kèm (cùng session 2026-10-27):
 
-  **16 player thật — toàn phe2 (campId=2), toàn id S513/S514** (nhóm server
-  khác S517 của account crawl). Entry server không phục vụ brief chéo nhóm
-  server. Guild không tra được trực tiếp (không có roster player→guild trong
-  capture; f2 faction blob chỉ là danh sách guild id); guild `5140005` của
-  phe2 (prefix S514) nghi là nhà nhưng **chưa xác nhận**. Riêng `51476884` là
-  **vice president phe2** (f5 faction blob + `vicePresidents` board 116).
-
-  | player_id | Global #       | Đảo đóng góp (=điểm)                                                    |
-  | --------- | -------------- | ----------------------------------------------------------------------- |
-  | 51476884  | **2**, VP phe2 | 1-7 Trường Kỷ=4,096,113 · 1-17 Mát Mẻ=46,081,211                        |
-  | 51406897  | 20             | 1-22 Hoàng Hôn=1,089,813 · 1-15 Xích Đu=9,460,107                       |
-  | 51436684  | 24             | 1-7 Trường Kỷ=9,636,701                                                 |
-  | 51416289  | 40             | 1-8 Võng=577,768 · 1-22 Hoàng Hôn=4,368,820 · 1-15 Xích Đu=1,768,056    |
-  | 51466198  | 37             | 1-17 Mát Mẻ=1,879,779 · 1-13 Lửa Trại=2,715,890 · 1-14 Mũ Rơm=2,579,672 |
-  | 51446598  | 31             | 1-1 Sao Biển=8,029,083                                                  |
-  | 51406419  | 113            | 1-7 Trường Kỷ=896,230                                                   |
-  | 51436910  | 82             | 1-17 Mát Mẻ=1,368,888                                                   |
-  | 51496319  | 132            | 1-7 Trường Kỷ=483,079                                                   |
-  | 51426619  | 133            | (chỉ có mặt ở global board)                                             |
-  | 51446004  | 143            | (chỉ có mặt ở global board)                                             |
-  | 51456997  | ngoài top-200  | 1-6 Cây Dừa=87,034                                                      |
-  | 51496982  | ngoài top-200  | 1-6 Cây Dừa=70,711                                                      |
-  | 51446910  | ngoài top-200  | 1-13 Lửa Trại=1,262 · 1-14 Mũ Rơm=57,851                                |
-  | 51426019  | ngoài top-200  | 1-21 Gió Nhẹ=31,173                                                     |
-  | 51305171  | ngoài top-200  | 1-23 Câu Cá=10,430                                                      |
-
-  UI sẽ hiện `#<id>` cho 16 player này — giới hạn game, không phải bug.
+- **Roster player→guild nằm sẵn trong map snapshot** `0x72/0x000c` f4×N
+  `{f1: guild id, f2×N {f1: player id}}` — 115 guild / 3020 player, độc lập
+  với brief. `parse_map_snapshot` cũ parse f4 bằng `read_packed_varints`
+  (mis-parse, vứt roster). Giờ dump `guildRoster` → player bị refuse brief
+  vẫn đúng guild (report.py `guildRoster`, FE fallback `guildId`).
+  51476884 (hạng 2 toàn server, VP phe2) thuộc **OLYMPUS `5140005`** cùng 14
+  refused khác; 51305171 thuộc OneKing `5130004` (phe3).
+- **Tên guild không cần member brief**: `0x24/0x0035 {f1: guild id}` →
+  `0x0036` trả tên + members + description (115/115 guild, 103 tên thực —
+  phần còn lại là guild giải tán/rỗng trả err). Crawler thu `guild-names.json`
+  mỗi run; report.py merge vào `guildNames`.
 
 - **Boss node = null**: tên/trait boss nằm ở config khác (`SkillBuffBossLO`,
   NEED_CONFIRM 4 trong `SEA_PACKET_ANALYSE.md`) — chưa map. Level node đang

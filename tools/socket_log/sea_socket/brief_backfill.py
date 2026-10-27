@@ -31,7 +31,12 @@ from browser.page_guards import (  # noqa: E402
 )
 from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
 from capture.capture import FrameWriter  # noqa: E402
-from core.protocol import parse_player_briefs  # noqa: E402
+from core.protocol import (  # noqa: E402
+    GUILD_BRIEF_CMD,
+    GUILD_MODULE,
+    parse_guild_brief,
+    parse_player_briefs,
+)
 from core.runner import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
 from sea_socket.crawler import CrawlRouter, LOCK_FILENAME  # noqa: E402
 from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
@@ -49,7 +54,8 @@ def rank_ids(run_dir: Path) -> set[str]:
     ids: set[str] = set()
     for row in boards.values():
         for entry in row.get("rows", []):
-            ids.add(str(entry["player_id"]))
+            if entry.get("id_type") == 1:  # skip faction pseudo-rows (ids 1..4)
+                ids.add(str(entry["player_id"]))
         if row.get("self"):
             ids.add(str(row["self"]["player_id"]))
     return ids
@@ -104,16 +110,29 @@ async def main() -> None:
     parser.add_argument("--browser", default="chrome")
     parser.add_argument("--settle", type=float, default=6.0,
                         help="seconds to let the lobby WS settle after login")
+    parser.add_argument("--guilds", action="store_true",
+                        help="also pull 0x24/0x0035 guild briefs for every "
+                             "guild in guild-scores.json -> guild-names.json")
     args = parser.parse_args()
 
     run_dir = Path(args.run)
     players_path = run_dir / "players.jsonl"
+    guild_ids: list[int] = []
+    if args.guilds:
+        scores = json.loads(
+            (run_dir / "guild-scores.json").read_text(encoding="utf-8"))
+        factions = scores.get("factions", scores)
+        guild_ids = sorted({g["guild_id"] for d in factions.values()
+                            for g in d["guilds"]})
     briefs_before = load_briefs(players_path)
     wanted = sorted(rank_ids(run_dir) - set(briefs_before), key=int)
-    if not wanted:
+    if wanted:
+        print(f"[backfill] {len(wanted)} ids without brief (of {len(wanted) + len(briefs_before)})")
+    elif not guild_ids:
         print("[backfill] nothing missing — every rank id already has a brief")
         return
-    print(f"[backfill] {len(wanted)} ids without brief (of {len(wanted) + len(briefs_before)})")
+    else:
+        print("[backfill] briefs complete — only pulling guild names")
 
     out_dir = run_dir / "backfill"
     out_dir.mkdir(exist_ok=True)
@@ -159,15 +178,37 @@ async def main() -> None:
 
                 try:
                     await run_stages(page, writer, out_dir, entry_stages)
-                    got = await run_backfill(page, router, wanted)
-                    merged = {**briefs_before, **router.briefs}
-                    with players_path.open("w", encoding="utf-8") as fh:
-                        for pid in sorted(merged, key=int):
-                            fh.write(json.dumps(merged[pid], ensure_ascii=False) + "\n")
-                    still_missing = [pid for pid in wanted if pid not in router.briefs]
-                    print(f"[done] backfilled {got}/{len(wanted)}; "
-                          f"players.jsonl now {len(merged)} rows; "
-                          f"still missing: {len(still_missing)}", flush=True)
+                    # Refused ids are a server-side cooldown, not a hard block
+                    # (2026-10-27: 16 ids empty across 5 rounds, all back in
+                    # one dedicated batch ~90min later) — a later --guilds run
+                    # closes whatever gap this pass leaves.
+                    got = still_missing = 0
+                    if wanted:
+                        got = await run_backfill(page, router, wanted)
+                        merged = {**briefs_before, **router.briefs}
+                        with players_path.open("w", encoding="utf-8") as fh:
+                            for pid in sorted(merged, key=int):
+                                fh.write(json.dumps(merged[pid], ensure_ascii=False) + "\n")
+                        still_missing = len([p for p in wanted if p not in router.briefs])
+                        print(f"[done] backfilled {got}/{len(wanted)}; "
+                              f"players.jsonl now {len(merged)} rows; "
+                              f"still missing: {still_missing}", flush=True)
+
+                    if guild_ids:
+                        names = {}
+                        for gid in guild_ids:
+                            try:
+                                _h, body = await router.inject(
+                                    page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
+                                names[str(gid)] = parse_guild_brief(body)
+                            except RuntimeError as exc:
+                                print(f"[guild] {gid}: {exc}", flush=True)
+                            await asyncio.sleep(0.3)
+                        (run_dir / "guild-names.json").write_text(
+                            json.dumps(names, ensure_ascii=False, indent=1),
+                            encoding="utf-8")
+                        print(f"[done] guild briefs for {len(names)}/{len(guild_ids)} guilds",
+                              flush=True)
                 finally:
                     guard_task.cancel()
             finally:

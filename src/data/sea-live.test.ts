@@ -85,11 +85,13 @@ test("Every valid board row becomes one contribution on a known island", () => {
     assert.ok(Object.values(factionDir).includes(entry.faction));
     assert.match(entry.name, /^(#|\S)/);
   }
-  // Player không brief hiển thị #id, không mất dòng.
+  // Player không brief hiển thị #id, không mất dòng. Run 2026-10-27 backfill
+  // đủ 100% (cooldown server hết) — assertion giữ chuẩn hoá cho run thiếu tên.
   const briefIds = new Set(Object.keys(raw.briefs));
-  const anonymous = contributions.filter((c) => !briefIds.has(c.playerId));
-  assert.ok(anonymous.length > 0);
-  for (const entry of anonymous) assert.equal(entry.name, `#${entry.playerId}`);
+  for (const entry of contributions) {
+    if (!briefIds.has(entry.playerId))
+      assert.equal(entry.name, `#${entry.playerId}`);
+  }
 });
 
 test("playerBoard keeps server top-200 order and joins brief names", () => {
@@ -104,8 +106,10 @@ test("playerBoard keeps server top-200 order and joins brief names", () => {
   assert.equal(top.rank, 1);
   assert.ok(Object.values(factionDir).includes(top.faction));
   assert.match(top.name, /^(#|\S)/);
-  const anonymous = playerBoard.filter((row) => row.name.startsWith("#"));
-  assert.ok(anonymous.length > 0, "player không brief hiện #id, không bị drop");
+  // Run 2026-10-27 đủ tên nên không còn #id; nếu run sau thiếu brief thì
+  // đúng hợp đồng là #<id>, không được drop row.
+  for (const row of playerBoard)
+    if (row.name.startsWith("#")) assert.equal(row.name, `#${row.playerId}`);
 });
 
 test("factionGuilds keys map to directions; scores sum to a plausible total", () => {

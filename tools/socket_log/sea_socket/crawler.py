@@ -51,7 +51,12 @@ from browser.page_guards import (  # noqa: E402
 from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
 from capture.capture import FrameWriter  # noqa: E402
 from core.decode import decode_proto  # noqa: E402
-from core.protocol import parse_player_briefs  # noqa: E402
+from core.protocol import (  # noqa: E402
+    GUILD_BRIEF_CMD,
+    GUILD_MODULE,
+    parse_guild_brief,
+    parse_player_briefs,
+)
 from core.runner import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
 from sea_socket.protocol import (  # noqa: E402
     FACTION_DETAIL_CMD,
@@ -301,6 +306,23 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
         await asyncio.sleep(REQUEST_PACE)
     (out_dir / "guild-scores.json").write_text(
         json.dumps(faction_details, ensure_ascii=False, indent=1),
+        encoding="utf-8")
+
+    # Guild names (0x24/0x0035, một request/guild): đặt tên cả guild mà mọi
+    # member đều bị refuse brief chéo server (OLYMPUS & co, 2026-10-27).
+    guild_briefs = {}
+    for gid in sorted({g["guild_id"]
+                       for detail in faction_details.values()
+                       for g in detail["guilds"]}):
+        try:
+            _h, body = await router.inject(
+                page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
+            guild_briefs[str(gid)] = parse_guild_brief(body)
+        except RuntimeError as exc:
+            print(f"[guild] {gid}: {exc}", flush=True)
+        await asyncio.sleep(REQUEST_PACE)
+    (out_dir / "guild-names.json").write_text(
+        json.dumps(guild_briefs, ensure_ascii=False, indent=1),
         encoding="utf-8")
 
     # Decode every collected board with the game runtime (single JS round-trip).

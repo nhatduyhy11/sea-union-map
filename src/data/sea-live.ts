@@ -30,6 +30,7 @@ interface SeaLiveDump {
   playerBoard: [number, number, number, number | null][];
   factionGuilds: Record<string, [number, number][]>;
   guildNames: Record<string, string>;
+  guildRoster: Record<string, string>;
   briefs: Record<string, { name: string; guildId?: string; guild?: string }>;
   baseDir: Record<string, string>;
 }
@@ -109,7 +110,8 @@ export const islands: Island[] = layoutNodes.map((node) => {
 });
 
 // Node-board rows (0x0c/0x0002 board 118, server cắt top-20/node):
-// [gameNodeId, playerId, score, campId].
+// [gameNodeId, playerId, score, campId]. guildId: brief trước, fallback
+// guildRoster (snapshot f4) — player bị server từ chối brief vẫn đúng guild.
 export const contributions: Contribution[] = dump.nodeRows.flatMap(
   ([gameId, playerId, score, camp]) => {
     const nodeId = layoutIdByGame.get(gameId);
@@ -123,7 +125,7 @@ export const contributions: Contribution[] = dump.nodeRows.flatMap(
         name: brief?.name ?? `#${playerId}`,
         faction,
         guild: brief?.guild,
-        guildId: brief?.guildId,
+        guildId: brief?.guildId ?? dump.guildRoster[playerId],
         score,
       },
     ];
