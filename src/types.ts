@@ -160,6 +160,8 @@ export type IslandNodeData = Island & {
   showAll: boolean;
   active: boolean;
   dim: boolean;
+  // Node khớp filter guild/player đang chạy — viền icon dày lên để nổi.
+  matched?: boolean;
   debug?: boolean;
   open: (id: string) => void;
   pin: (id: string) => void;

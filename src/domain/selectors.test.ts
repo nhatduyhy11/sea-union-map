@@ -171,7 +171,7 @@ test("Map projection keeps pinning independent from global stats and filtering",
     true
   );
 });
-test("Guild/player filter matches nodes by contribution; edges always rest", () => {
+test("Guild/player filter matches nodes by contribution; edges dim under filter", () => {
   const nodeIdsByGuild = new Map<string, Set<string>>([
     ["G", new Set(["2-1"])],
     ["Không guild", new Set(["1-1", "2-1"])],
@@ -228,12 +228,19 @@ test("Guild/player filter matches nodes by contribution; edges always rest", () 
   assert.equal(edges[0]?.style?.strokeDasharray, "7 7");
   assert.equal(edges[1]?.style?.strokeDasharray, "7 7");
   assert.equal(edges[2]?.style?.strokeDasharray, undefined);
-  assert.equal(edges[2]?.style?.stroke, "#5d7a8a");
+  assert.equal(edges[2]?.style?.stroke, "#93a5b0");
   assert.equal(edges[3]?.style?.stroke, "#123456");
-  assert.equal(
-    edges.every((edge) => edge.style?.opacity === 0.45),
-    true
-  );
+  // Edge sở hữu phe đậm + đậm màu; neutral link nhạt để đỡ rối toàn cảnh.
+  assert.equal(edges[3]?.style?.strokeWidth, 3);
+  assert.equal(edges[3]?.style?.opacity, 0.7);
+  assert.equal(edges[0]?.style?.strokeWidth, 2);
+  assert.equal(edges[0]?.style?.opacity, 0.35);
+  assert.equal(edges[2]?.style?.opacity, 0.35);
+  // Có filter: mọi connection dim xuống để node highlight nổi lên.
+  const dimmed = buildMapEdges(routes, withNeutral, factions, true);
+  assert.equal(dimmed[3]?.style?.opacity, 0.2);
+  assert.equal(dimmed[0]?.style?.opacity, 0.12);
+  assert.equal(dimmed[3]?.style?.strokeWidth, 3);
 });
 
 test("Server leaderboard keeps server rank/score and joins allocations", () => {

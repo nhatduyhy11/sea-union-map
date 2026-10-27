@@ -7,12 +7,38 @@
      bật lại để hover hiện popup điểm và các nút bấm được */
   pointer-events: auto;
   transition: opacity 0.2s;
-  --faction: #7f929e;
+  --faction: #9caeb9;
   /* --icon-box được set inline từ iconBoxSize() (nguồn duy nhất). */
+}
+
+/* Node trung lập (owner: null): mờ nhẹ mặc định để toàn cảnh đỡ rối, tự
+   un-dim khi hover/focus vào xem. Filter dim (.dim) vẫn phải thắng hover. */
+.neutral {
+  opacity: 0.4;
+}
+
+.neutral:hover,
+.neutral:focus-within {
+  opacity: 1;
 }
 
 .dim {
   opacity: 0.2;
+}
+
+.dim:hover {
+  opacity: 0.2;
+}
+
+/* Node khớp filter guild/player: viền icon dày lên rõ (thường 2px → 3.5px,
+   base 3px → 4.5px), kết hợp dim node lạ + edge mờ để cụm được lọc nổi khỏi
+   toàn cảnh. */
+.hot .islandIcon {
+  border-width: 3.5px;
+}
+
+.hot.base .islandIcon {
+  border-width: 4.5px;
 }
 
 .islandIcon {
@@ -82,13 +108,8 @@
 
 .base .islandLabel {
   color: var(--faction);
-}
-
-.baseNote {
-  font-size: 8px;
-  color: #7e8f9a;
-  letter-spacing: 1px;
-  margin-top: 4px;
+  /* Tên căn cứ in-game — cỡ x2 nhãn đảo thường để nổi bật toàn cảnh. */
+  font-size: 28px;
 }
 
 /* Debug: dấu tâm node — nằm ở 50%/50% hộp, trùng với điểm neo edge. */

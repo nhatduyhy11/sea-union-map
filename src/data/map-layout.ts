@@ -113,11 +113,13 @@ const indexed = (
     name: `Đảo ${tier}-${index}`,
     tier,
   }));
-const bases: [string, number, number][] = [
-  ["north", 412, 208],
-  ["east", 1584, 970],
-  ["south", 412, 1735],
-  ["west", -758, 970],
+// Base names are the in-game camp names (dump.baseDir); dump.camp overrides
+// them with the same strings when a live snapshot matches.
+const bases: [string, string, number, number][] = [
+  ["north", "Thần Tự Lấp Lánh", 412, 208],
+  ["east", "Vịnh Thao Thiết", 1584, 970],
+  ["south", "Long Khư U Ám", 412, 1735],
+  ["west", "Thánh Đảo Lạnh Giá", -758, 970],
 ];
 export const layoutNodes: LayoutNode[] = [
   ...indexed(1, outer),
@@ -129,9 +131,9 @@ export const layoutNodes: LayoutNode[] = [
     central: true,
     tier: id === "4" ? 4 : 3,
   })),
-  ...bases.map(([faction, x, y]) => ({
+  ...bases.map(([faction, name, x, y]) => ({
     id: `base-${faction}`,
-    name: `Căn cứ ${faction}`,
+    name,
     position: position(x, y),
     base: true,
     owner: faction,

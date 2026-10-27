@@ -41,10 +41,11 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
       ),
     [selected, pinned, showAll, matched, debug, togglePin]
   );
-  // Edges luôn resting (filter chỉ sáng node) — computed một lần.
+  // Edges không highlight theo filter nhưng dim xuống khi có filter (node
+  // highlight nổi lên) — recompute theo matched.
   const edges = useMemo(
-    () => buildMapEdges(routes, ownedIslands, factions),
-    []
+    () => buildMapEdges(routes, ownedIslands, factions, matched !== null),
+    [matched]
   );
   return { nodes, edges };
 }

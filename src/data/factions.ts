@@ -1,32 +1,34 @@
 import type { Faction } from "../types";
 
+// Nhận diện màu theo hướng: Bắc cam, Tây vàng, Đông tím, Nam xanh dương nhạt.
+// Đồng bộ tự động sang icon căn cứ, viền đảo, edge sở hữu, FactionLegend, BXH.
 export const factions: Faction[] = [
   {
     id: "north",
     name: "Phe Bắc",
     short: "Bắc",
-    color: "#2f8fd8",
+    color: "#e2762d",
     direction: "BẮC",
   },
   {
     id: "east",
     name: "Phe Đông",
     short: "Đông",
-    color: "#d9932a",
+    color: "#9a63d8",
     direction: "ĐÔNG",
   },
   {
     id: "south",
     name: "Phe Nam",
     short: "Nam",
-    color: "#12a578",
+    color: "#54a5d8",
     direction: "NAM",
   },
   {
     id: "west",
     name: "Phe Tây",
     short: "Tây",
-    color: "#9a63d8",
+    color: "#d1a41c",
     direction: "TÂY",
   },
 ];

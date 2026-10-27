@@ -9,16 +9,14 @@ import type { AppNode } from "../../../types";
 export function IslandNode({ data }: NodeProps<AppNode>) {
   const [hovered, setHovered] = useState(false);
   const Icon = data.base || data.central ? Castle : Anchor;
-  const direction = data.base
-    ? data.factionInfo?.direction
-    : data.id === "4"
-      ? "TRUNG TÂM"
-      : "";
+  const direction = data.id === "4" ? "TRUNG TÂM" : "";
   const className = [
     styles.island,
     data.base && styles.base,
     data.central && styles.central,
+    !data.owner && styles.neutral,
     data.active && styles.active,
+    data.matched && styles.hot,
     data.dim && styles.dim,
   ]
     .filter(Boolean)
@@ -53,7 +51,14 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         <Icon size={data.base ? 31 : 24} />
       </button>
       <div className={styles.islandLabel}>
-        <span>{data.id}</span> {direction}
+        {data.base ? (
+          // Base chỉ hiện tên in-game ("Vịnh Thao Thiết"...), không id/hướng.
+          data.name
+        ) : (
+          <>
+            <span>{data.id}</span> {direction}
+          </>
+        )}
         <button
           className={`${styles.pin} nodrag ${data.pinned ? styles.pinned : ""}`}
           aria-label={`${data.pinned ? "Bỏ ghim" : "Ghim"} ${data.id}`}
@@ -63,7 +68,6 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
           <Pin size={13} />
         </button>
       </div>
-      {data.base && <div className={styles.baseNote}>BASE · BẤT KHẢ CHIẾM</div>}
       {data.debug && <span className={styles.centerDot} aria-hidden />}
       {showStats && (
         <NodeStats

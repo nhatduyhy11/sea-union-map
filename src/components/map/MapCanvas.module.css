@@ -3,9 +3,11 @@
   flex: 1;
   min-height: 320px;
   overflow: hidden;
-  border: 1px solid #d5dcdf;
+  border: 1px solid #f0ebdd;
   border-radius: 9px;
-  background: #ffffff;
+  /* Trắng nhạt — mặc định khớp canvasBg trong stores/mapView (picker debug
+     ở DEV ghi đè bằng inline style). */
+  background: #fefdfa;
 }
 
 .zoomLabel {
@@ -15,6 +17,21 @@
   color: #7d8f9a;
   font-size: 10px;
   pointer-events: none;
+}
+
+/* Watermark guild góc dưới-phải: mờ, thuần trang trí — pointer-events none để
+   không cản tương tác map, đứng tránh Controls + zoomLabel (cụm góc dưới-trái). */
+.watermark {
+  position: absolute;
+  right: 14px;
+  bottom: 10px;
+  z-index: 5;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: rgba(45, 62, 75, 0.14);
+  pointer-events: none;
+  user-select: none;
 }
 
 /* Debug: đường dash ngang đi qua tâm node 4 (trục hoành) và các đường dựng

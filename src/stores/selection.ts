@@ -13,7 +13,8 @@ interface SelectionState {
 }
 
 export const useSelection = create<SelectionState>()((set) => ({
-  selected: "2-40",
+  // Vào app ở trạng thái trung lập — không mở chi tiết cứ điểm nào.
+  selected: null,
   pinned: new Set<string>(),
   open: (id) => set({ selected: id }),
   close: () => set({ selected: null }),

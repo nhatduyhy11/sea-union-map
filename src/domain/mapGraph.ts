@@ -70,6 +70,7 @@ export function buildMapNodes(
       showAll: state.showAll,
       active: island.id === state.selected,
       dim: state.matched !== null && !state.matched.has(island.id),
+      matched: state.matched?.has(island.id) ?? false,
       debug: state.debug,
       open: actions.openIsland,
       pin: actions.togglePin,
@@ -80,10 +81,12 @@ export function buildMapNodes(
 export function buildMapEdges(
   routes: Route[],
   islands: Island[],
-  factions: Faction[]
+  factions: Faction[],
+  filterActive = false
 ): Edge[] {
   const byId = new Map(islands.map((island) => [island.id, island]));
-  // Edges luôn resting — filter không highlight edge (chỉ node dim/sáng).
+  // Filter không highlight edge — chỉ dim toàn bộ connection để node được
+  // highlight nổi lên.
   return routes.map((route) => {
     const source = byId.get(route.source);
     const target = byId.get(route.target);
@@ -92,7 +95,8 @@ export function buildMapEdges(
         ? factions.find((entry) => entry.id === source.owner)
         : null;
     // Neutral islands answer to no base, so any route touching one draws
-    // dashed in every view.
+    // dashed in every view. Owned edges đậm để nổi trên toàn cảnh; neutral
+    // link đứt + nhạt để không rối mắt.
     const neutralLink =
       source && target && (!source.owner || !target.owner) ? "7 7" : undefined;
     return {
@@ -103,9 +107,15 @@ export function buildMapEdges(
       type: "route",
       selectable: false,
       style: {
-        stroke: faction?.color ?? "#5d7a8a",
-        strokeWidth: 2,
-        opacity: 0.45,
+        stroke: faction?.color ?? "#93a5b0",
+        strokeWidth: faction ? 3 : 2,
+        opacity: filterActive
+          ? faction
+            ? 0.2
+            : 0.12
+          : faction
+            ? 0.7
+            : 0.35,
         strokeDasharray: neutralLink,
       },
     };

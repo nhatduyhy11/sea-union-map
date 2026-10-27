@@ -70,7 +70,7 @@ export function MapCanvas() {
         nodeOrigin={[0.5, 0.5]}
         fitView
         fitViewOptions={FIT_VIEW_OPTIONS}
-        minZoom={0.2}
+        minZoom={0.19}
         maxZoom={2}
         translateExtent={mapBounds}
         nodesDraggable={false}
@@ -81,12 +81,15 @@ export function MapCanvas() {
         colorMode="light"
         proOptions={{ hideAttribution: true }}
       >
-        <Background color="#c7ced3" gap={40} size={1} />
+        <Background color="#ece7d7" gap={40} size={1} />
         <Controls showInteractive={false} />
         {debug && <DebugGuides />}
         <ZoomLabel />
       </ReactFlow>
       <FilterChip />
+      <div className={styles.watermark} aria-hidden>
+        HUNTERS [S517]
+      </div>
     </div>
   );
 }
