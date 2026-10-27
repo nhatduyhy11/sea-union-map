@@ -1,12 +1,18 @@
 .app {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  /* height xác định (không phải min-height): khung app luôn đúng viewport,
+     BXH expand dài cỡ nào cũng chỉ scroll trong cột phải chứ không đẩy chiều
+     cao app. Màn thấp hơn sàn 560px của workspace thì workspace giữ sàn và
+     page tự cuộn (footer tràn xuống dưới fold). */
+  height: 100dvh;
 }
 
+/* Cao bằng phần còn lại của viewport sau header + footer (flex: 1); màn thấp
+   thì giữ sàn 560px. Con của nó phải tự scroll — không được bước ra ngoài. */
 .workspace {
   display: flex;
-  height: calc(100dvh - 78px);
+  flex: 1;
   min-height: 560px;
 }
 
@@ -32,8 +38,7 @@
 
 @media (max-width: 760px) {
   .workspace {
-    height: auto;
-    min-height: calc(100dvh - 65px);
+    min-height: 520px;
     flex-wrap: wrap;
   }
 

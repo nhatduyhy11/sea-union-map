@@ -30,6 +30,15 @@
   border-color: #0f9d76;
 }
 
+/* Vùng nội dung giữa (BXH / chi tiết cứ điểm): scroll cục bộ trong cột —
+   expand guild/player không được đẩy chiều cao app. min-height: 0 là bắt
+   buộc để flex con co được dưới content size và overflow hoạt động. */
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .empty {
   flex: 1;
   display: flex;

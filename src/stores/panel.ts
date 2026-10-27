@@ -38,7 +38,8 @@ interface PanelState {
 }
 
 export const usePanel = create<PanelState>()((set) => ({
-  tab: "node",
+  // Vào app là BXH trước — người dùng nắm cục diện trước khi đụng map.
+  tab: "ranking",
   board: "faction",
   query: "",
   filterMode: true,
