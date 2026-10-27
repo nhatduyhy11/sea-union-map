@@ -34,8 +34,8 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
   player id, điểm, phe từ `additionInfo`). Không tự cộng điểm. Phần **expand**
   ("player này contribute vào đâu") mới match node boards 118 theo player id —
   node board là top-N/node nên đảo có thể thiếu nếu player không lọt top-N.
-- **Tab Phe:** guild rows + điểm guild khi expand = **board server** (board id
-  xác định qua `board_probe.py`; 116 chỉ trả 4 row phe). **Duy nhất** danh sách
+- **Tab Phe:** guild rows + điểm guild khi expand = **board 116 của server**
+  (chỉ trả 4 row phe). **Duy nhất** danh sách
   thành viên trong guild expand được derive từ node boards (match guild qua
   briefs của member).
 - **Tab Cứ điểm:** list + expand đều là **board 118 per-node của server**.

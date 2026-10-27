@@ -203,4 +203,4 @@ chỗ lấy data ở `sea-live.ts`, join giữ nguyên.
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol
 - [`BACKLOG.md`](BACKLOG.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI
 
-Câu hỏi cần chủ dự án xác nhận được ghi vào [NEED_CONFIRM.md](NEED_CONFIRM.md) trước khi hỏi.
+Điểm còn mở/câu hỏi cần chủ dự án xác nhận được ghi ở tài liệu liên quan kèm nguồn, phương án tạm và trạng thái — xem [`docs/DOCS_GUIDE.md`](docs/DOCS_GUIDE.md).

@@ -17,7 +17,6 @@
 | [docs/mine_docs/BACKLOG_MINE.md](mine_docs/BACKLOG_MINE.md)     | Backlog nhánh phụ Khai Thác Guild: parser streak/debuff, report mỏ                        | Khi phát hiện việc cần làm ở nhánh mỏ                               |
 | [specs/](specs/)                                                | Ảnh tham chiếu từ game, làm căn cứ cho map và dữ liệu điểm                                | Khi có thêm ảnh hoặc cập nhật nguồn từ game                         |
 | [DOCS_GUIDE.md](DOCS_GUIDE.md)                                  | Chỉ dẫn đọc và tổ chức tài liệu                                                           | Khi thêm, chuyển hoặc đổi vai trò tài liệu                          |
-| [NEED_CONFIRM.md](NEED_CONFIRM.md)                              | Câu hỏi cần chủ dự án xác nhận, trạng thái và phương án tạm                               | Ghi câu hỏi trước khi hỏi; cập nhật khi có câu trả lời              |
 | [README.md](../README.md)                                       | Tổng quan dự án: web UI, crawler socket WS (`tools/socket_log/`), usage, luồng crawl → UI | Khi thêm tool capture/decode, thay đổi luồng dữ liệu hoặc lệnh chạy |
 
 Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có nghĩa là đã có specs triển khai.
@@ -37,7 +36,7 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 - **Yêu cầu đã xác nhận:** điều chủ dự án muốn sản phẩm làm; ghi vào intent.
 - **Quyết định đã chốt:** lựa chọn đã được chủ dự án xác nhận; ghi vào spec hoặc README tương ứng.
 - **Đề xuất:** hướng AI hoặc người làm đưa ra nhưng chưa được chốt; ghi rõ là đề xuất trong plan/spec.
-- **Điểm còn mở:** thông tin thiếu hoặc hành vi chưa rõ; ghi ở tài liệu liên quan, không tự biến thành yêu cầu đã xác nhận. Câu hỏi cần gửi chủ dự án phải được ghi vào `NEED_CONFIRM.md` trước, kèm nguồn, phương án tạm và trạng thái.
+- **Điểm còn mở:** thông tin thiếu hoặc hành vi chưa rõ; ghi ở tài liệu liên quan kèm nguồn, phương án tạm và trạng thái, không tự biến thành yêu cầu đã xác nhận.
 
 Ví dụ hiện tại: node cố định, hover/click và toggle thông tin là yêu cầu; React Flow là lựa chọn công nghệ đã chốt; cách trình bày bảng stat và hành vi click chi tiết vẫn còn mở.
 

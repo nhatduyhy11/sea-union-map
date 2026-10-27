@@ -108,7 +108,7 @@ Hai phát hiện đi kèm (cùng session 2026-10-27):
   `guild-names.json` mỗi run; report.py merge vào `guildNames`.
   Lưu ý: request rỗng ở một thời điểm **không có nghĩa guild hết dữ liệu** —
   rỗng là trạng thái theo thời gian (cold cache), retry muộn hơn trả đủ (16
-  guild rỗng lúc 07:26–07:45, chiều cùng ngày `dead_guild_probe.py` xác nhận
+  guild rỗng lúc 07:26–07:45, chiều cùng ngày retry xác nhận
   trả đủ 12/12 còn thiếu). `brief_backfill --guilds` giờ merge và không ghi đè
   tên cũ bằng null.
 
