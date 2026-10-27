@@ -17,6 +17,7 @@ User xác nhận lại (2026-09-07): doc này để lưu issue còn tồn độn
 remove, chỉ snapshot issue khi lần đầu init scan / audit.
 
 **How to apply:**
+
 - Ghi spec/plan mới vào `docs/planning/` (prefix ngày).
 - Việc nào đã hoàn thiện (done) thì remove khỏi doc — không giữ lại như log,
   không append dòng "đã xong".

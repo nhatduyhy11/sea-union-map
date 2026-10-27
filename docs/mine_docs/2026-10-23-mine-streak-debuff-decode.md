@@ -11,11 +11,11 @@
 Popup **"N|Lv Máy Đào Chính"** (click máy claimer giữa sàn) hiện 3 thứ trên mỗi hàng,
 tất cả render thuần từ tile state + briefs — **không sinh request riêng**:
 
-| Trên UI | Nguồn packet | Verify |
-| --- | --- | --- |
-| Ribbon đỏ "**N Chuỗi thắng**" | tile `f7` = repeated `{f1: slot_no, f2: streak}` | 战神 (7054, slot 9001) = **9**; OLNaji (7055) = **11**; slot thường đa số = 1 |
-| Icon nắm đấm + **số tầng** | **`len(f5)` của slot** — số mốc ts trong packed string | 战神 = 4 mốc → 4 tầng; OLNaji = 1 → 1 tầng; HU.BON/HunCoCa = 0 mốc → không icon |
-| Đồng hồ đếm ngược | `f5[0] − now` (mốc gần nhất) | 战神 16:40 ✓; OLNaji 23:21 ✓ (sai số < 5s giữa 2 shot) |
+| Trên UI                       | Nguồn packet                                           | Verify                                                                          |
+| ----------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| Ribbon đỏ "**N Chuỗi thắng**" | tile `f7` = repeated `{f1: slot_no, f2: streak}`       | 战神 (7054, slot 9001) = **9**; OLNaji (7055) = **11**; slot thường đa số = 1   |
+| Icon nắm đấm + **số tầng**    | **`len(f5)` của slot** — số mốc ts trong packed string | 战神 = 4 mốc → 4 tầng; OLNaji = 1 → 1 tầng; HU.BON/HunCoCa = 0 mốc → không icon |
+| Đồng hồ đếm ngược             | `f5[0] − now` (mốc gần nhất)                           | 战神 16:40 ✓; OLNaji 23:21 ✓ (sai số < 5s giữa 2 shot)                          |
 
 ## 2. Chi tiết decode
 
@@ -44,7 +44,7 @@ tile `f6` = `{9001|9002: 0}` trên vài tile (chưa giải); `f8/f9` = cặp ts 
 ## 3. Nguồn chéo cho streak (đối chiếu, chưa cần parse)
 
 - `0x1f/0x000b` (battle log, push lúc login): entry `{f1: attacker, f2: defender, f3: ts,
-  f4: bên thắng (1=attacker, 2=defender), f7/f6: {"rKey","pKey"} rating}` — streak tăng khi
+f4: bên thắng (1=attacker, 2=defender), f7/f6: {"rKey","pKey"} rating}` — streak tăng khi
   defender thắng. Verify: HuAsura đánh OLNaji 2 lần, f4=2 cả 2 → OLNaji streak giữ/±.
 - `0x1f/0x0007` leaderboard, `0x65/0x0009+0x000c` (round summary / list guild) — đã ghi
   trong [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md) bảng module, chưa map đủ.
@@ -65,7 +65,7 @@ click(345,285) = zoomin mỏ (sàn của mình) → click(163,63) = minimap → 
 ## 5. Backlog (chính thức theo dõi tại [`BACKLOG_MINE.md`](BACKLOG_MINE.md))
 
 - [ ] `mine_logger.parse_tile`: giữ thêm `f7` (dict slot→streak) và `f5` (chain ts, hoặc
-  đã suy ra `tiers` + `next_expiry`) — hiện chỉ giữ id/slot_no của slot, `f6`–`f9` bỏ hết.
+      đã suy ra `tiers` + `next_expiry`) — hiện chỉ giữ id/slot_no của slot, `f6`–`f9` bỏ hết.
 - [ ] `mine_report`: thêm vào mỗi point `streak` (theo slot) + `debuff_tiers`/`debuff_expiry`
-  (slot 9001 là chính), cân nhắc cảnh báo khi streak/tầng thay đổi giữa 2 lần snapshot.
+      (slot 9001 là chính), cân nhắc cảnh báo khi streak/tầng thay đổi giữa 2 lần snapshot.
 - [ ] Giải nốt `f6`, `f8/f9`, `f3` (luôn 0) nếu bot cần.
