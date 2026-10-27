@@ -1,4 +1,5 @@
-// Pure queries: no React, UI state, or dependency on the demo fixture.
+// Pure queries: no React, UI state, or data source — everything arrives as
+// arguments.
 import type {
   Contribution,
   Faction,
@@ -78,27 +79,6 @@ export function buildServerLeaderboard(
   });
 }
 
-// Global player board (demo): mỗi player là tổng Điểm ST qua các dòng
-// node-board của hắn — xấp xỉ BXH in-game vì N từng node ≥ K. Live không dùng
-// (buildServerLeaderboard thay bằng board 117 server); giữ cho demo fixture.
-export function buildLeaderboard(
-  contributions: Contribution[],
-  factions: Faction[]
-): LeaderboardPlayer[] {
-  return playersFromContributions(contributions)
-    .map((player) => {
-      const allocations = playerAllocations(player.id, contributions);
-      return {
-        ...player,
-        factionInfo: factions.find((faction) => faction.id === player.faction),
-        score: allocations.reduce((total, entry) => total + entry.score, 0),
-        nodes: allocations.length,
-        allocations,
-      };
-    })
-    .sort((a, b) => b.score - a.score);
-}
-
 // Node board ("Cứ điểm"): non-base islands ranked by the total points poured
 // into them, each carrying its per-faction breakdown for the expanded row.
 export function buildNodeBoard(
@@ -123,7 +103,7 @@ export function buildNodeBoard(
 // (0x72/0x0025 — Tổng quan phe; tổng guild khớp per-faction node-state exact);
 // duy nhất member list khi expand guild mới derive từ node boards + briefs.
 // Member match qua guildId (brief) — player không brief thì rơi "Không guild".
-// Demo/không có server data: giữ path cũ tự tính từ contributions.
+// Không có server guild data: path cũ tự tính từ contributions.
 export function buildFactionBoard(
   contributions: Contribution[],
   factions: Faction[],

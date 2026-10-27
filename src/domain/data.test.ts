@@ -1,17 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { islands, routes, contributions } from "../data/demo";
-import { factions } from "../data/factions";
 import {
-  buildLeaderboard,
-  playersFromContributions,
-  scoresForNode as computeScores,
-} from "./selectors";
+  layoutNodes as islands,
+  layoutRoutes as routes,
+} from "../data/map-layout";
 
-const leaderboard = buildLeaderboard(contributions, factions);
-const players = playersFromContributions(contributions);
-const scoresForNode = (id: string) =>
-  computeScores(id, contributions, factions);
 const at = (id: string) => {
   const found = islands.find((n) => n.id === id);
   if (!found) throw new Error(`Island ${id} not found`);
@@ -87,26 +80,4 @@ test("Islands confirmed by the owner sit exactly on their vertical columns", () 
     ["3-3", "3-4"],
   ])
     assert.equal(at(left).x, -at(right).x, `${left}/${right} not mirrored`);
-});
-test("Faction scores and leaderboard reconcile with player contributions", () => {
-  for (const island of islands.filter((n) => !n.base)) {
-    const scores = scoresForNode(island.id);
-    for (const faction of factions) {
-      const expected = contributions
-        .filter((c) => c.nodeId === island.id && c.faction === faction.id)
-        .reduce((sum, c) => sum + c.score, 0);
-      const actual = scores.find((f) => f.id === faction.id)?.score;
-      assert.equal(actual, expected);
-    }
-  }
-  for (const player of players) {
-    const expected = contributions
-      .filter((c) => c.playerId === player.id)
-      .reduce((sum, c) => sum + c.score, 0);
-    const entry = leaderboard.find((p) => p.id === player.id);
-    assert.equal(entry?.score, expected);
-  }
-  const totalContributions = contributions.reduce((s, c) => s + c.score, 0);
-  const totalLeaderboard = leaderboard.reduce((s, p) => s + p.score, 0);
-  assert.equal(totalContributions, totalLeaderboard);
 });

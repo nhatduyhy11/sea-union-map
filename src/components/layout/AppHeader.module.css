@@ -39,38 +39,6 @@
   color: #647783;
 }
 
-.right {
-  margin-left: auto;
-  display: flex;
-  gap: 23px;
-  align-items: center;
-}
-
-.demoBadge {
-  color: #9c6d1b;
-  background: #f8efdd;
-  border: 1px solid #e8d6ae;
-  font-size: 9px;
-  letter-spacing: 1px;
-  padding: 8px 11px;
-  border-radius: 5px;
-}
-
-.demoBadge i {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  margin-right: 7px;
-}
-
-.version {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: #8b9aa4;
-}
-
 @media (max-width: 760px) {
   .header {
     height: 65px;
@@ -83,14 +51,7 @@
   }
 
   .divider,
-  .title,
-  .version {
+  .title {
     display: none;
-  }
-
-  .demoBadge {
-    font-size: 7px;
-    letter-spacing: 0.5px;
-    padding: 7px;
   }
 }

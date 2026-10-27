@@ -1,34 +1,27 @@
 import {
-  islands as demoIslands,
-  routes as demoRoutes,
-  contributions as demoContributions,
-} from "../data/demo";
-import {
   islands as liveIslands,
   contributions as liveContributions,
   playerBoard as serverPlayerBoard,
   factionGuilds as serverFactionGuilds,
+  routes as liveRoutes,
 } from "../data/sea-live";
 import { factions } from "../data/factions";
-import { deriveClaims, deriveConnected, type ClaimState } from "./claims";
+import { deriveConnected, type ClaimState } from "./claims";
 import {
   buildFactionBoard,
-  buildLeaderboard,
   buildNodeBoard,
   buildServerLeaderboard,
   playersFromContributions,
   scoresForNode,
 } from "./selectors";
-import type { FactionScore, Island } from "../types";
+import type { FactionScore } from "../types";
 
-// Nguồn dữ liệu: crawl thật từ sea_crawler (sea-live.json — regenerate bằng
-// tools/socket_log/sea_to_ui.py; join JSON → islands/contributions nằm ở
-// src/data/sea-live.ts). Đặt false để xem lại dữ liệu demo.
-export const LIVE = true;
-
-const islands = LIVE ? liveIslands : demoIslands;
-export const contributions = LIVE ? liveContributions : demoContributions;
-export const routes = demoRoutes;
+// Nguồn dữ liệu duy nhất: crawl thật từ sea_crawler (sea-live.json —
+// regenerate bằng tools/socket_log/sea_to_ui.py; join JSON → islands/
+// contributions nằm ở src/data/sea-live.ts).
+const islands = liveIslands;
+export const contributions = liveContributions;
+export const routes = liveRoutes;
 
 export const scoresByNode = new Map<string, FactionScore[]>(
   islands.map((node) => [
@@ -37,38 +30,30 @@ export const scoresByNode = new Map<string, FactionScore[]>(
   ])
 );
 
-// Live: owner là truth từ server snapshot (0x72/0x000c) — claim rule chỉ còn
-// tính connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
-// Demo: owner derive từ claim rule nên demo data không lưu owner.
-export const claims: ClaimState = LIVE
-  ? liveClaims()
-  : deriveClaims(islands, routes, contributions);
+// Owner là truth từ server snapshot (0x72/0x000c) — claim rule chỉ còn tính
+// connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
+const ownerByNode = new Map(
+  islands.map((node) => [node.id, node.owner] as const)
+);
+export const claims: ClaimState = {
+  ownerByNode,
+  connectedByNode: deriveConnected(islands, routes, ownerByNode),
+};
 
-function liveClaims(): ClaimState {
-  const owners = new Map(islands.map((node) => [node.id, node.owner] as const));
-  return {
-    ownerByNode: owners,
-    connectedByNode: deriveConnected(islands, routes, owners),
-  };
-}
+export const ownedIslands = islands;
 
-export const ownedIslands: Island[] = LIVE
-  ? islands
-  : islands.map((node) => ({
-      ...node,
-      owner: claims.ownerByNode.get(node.id) ?? null,
-    }));
-// Tab Cá nhân: live dùng BXH điểm server (board 117) — thứ tự/điểm truth;
-// demo tự tổng từ contributions. Tab Phe: live gắn guild scores server
-// (0x72/0x0025); demo path tự tính (LEADERBOARD_SPECS.md §1.3).
-export const leaderboard = LIVE
-  ? buildServerLeaderboard(serverPlayerBoard, contributions, factions)
-  : buildLeaderboard(contributions, factions);
+// Tab Cá nhân: BXH điểm server (board 117) — thứ tự/điểm truth. Tab Phe: gắn
+// guild scores server (0x72/0x0025).
+export const leaderboard = buildServerLeaderboard(
+  serverPlayerBoard,
+  contributions,
+  factions
+);
 export const factionBoard = buildFactionBoard(
   contributions,
   factions,
   ownedIslands,
-  LIVE ? serverFactionGuilds : undefined
+  serverFactionGuilds
 );
 export const nodeBoard = buildNodeBoard(islands, contributions, factions);
 export const baseCount = islands.filter((node) => node.base).length;

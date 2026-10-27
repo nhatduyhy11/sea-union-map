@@ -1,5 +1,4 @@
 import { Anchor } from "lucide-react";
-import { LIVE } from "../../domain/mapData";
 import { Watermark } from "../shared/Watermark";
 import styles from "./AppHeader.module.css";
 
@@ -18,12 +17,6 @@ export function AppHeader() {
       </div>
       <div className={styles.divider} />
       <span className={styles.title}>Bản đồ chiến thuật</span>
-      <div className={styles.right}>
-        <span className={styles.demoBadge}>
-          <i /> {LIVE ? "LIVE · DỮ LIỆU CRAWL" : "DEMO / DỮ LIỆU MẪU"}
-        </span>
-        <span className={styles.version}>PHASE 01</span>
-      </div>
     </header>
   );
 }

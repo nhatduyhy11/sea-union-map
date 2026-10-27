@@ -2,7 +2,6 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildFactionBoard,
-  buildLeaderboard,
   buildNodeBoard,
   buildServerLeaderboard,
   nodeDetails,
@@ -74,16 +73,6 @@ test("Queries prepare detail and allocation data without mutating the source", (
     [0, 0]
   );
   assert.equal(nodeDetails("missing", islands, contributions, factions), null);
-  const board = buildLeaderboard(contributions, factions);
-  assert.equal(board[0].id, "p1");
-  assert.equal(board[0].score, 400);
-  assert.equal(board[0].nodes, 2);
-  assert.deepEqual(
-    board[0].allocations.map((c) => c.nodeId),
-    ["2-1", "1-1"]
-  );
-  assert.equal(board[1].id, "p2");
-  assert.equal(board[1].score, 200);
   const flagged = nodeDetails(
     "1-1",
     islands,

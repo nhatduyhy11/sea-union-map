@@ -52,10 +52,10 @@ export interface Player {
   name: string;
   faction: string;
   // Guild name from the player brief (0x0d/0x001f f11); the faction board
-  // aggregates players by it. Demo data fills it, crawled data may not.
+  // aggregates players by it. Players without a brief leave it unset.
   guild?: string;
   // Guild id (brief f11 id part) — server guild rows (0x72/0x0025) are keyed
-  // by id, so the faction board matches members through it. Demo data omits.
+  // by id, so the faction board matches members through it.
   guildId?: string;
 }
 
