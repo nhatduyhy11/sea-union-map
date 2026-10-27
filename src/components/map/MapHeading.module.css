@@ -48,6 +48,69 @@
   border-radius: 5px;
 }
 
+/* Khung chung cả cụm debug (picker nền canvas, picker trung lập, nút debug
+   tâm node) — dev-only, cả cụm bị loại khỏi bundle prod. */
+.debugGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #cfd9de;
+  background: #ffffff;
+  padding: 5px 9px;
+  border-radius: 7px;
+}
+
+/* Picker màu (dev-only) — chip con của .debugGroup, viền nhạt hơn viền group;
+   position relative để popover của picker trung lập neo vào chip. */
+.bgPicker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8a9aa5;
+  border: 1px solid #e3eaee;
+  background: #ffffff;
+  padding: 4px 8px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.bgPicker input {
+  width: 24px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* Swatch mở picker trung lập — hiển thị màu hiện tại theo opacity. */
+.swatch {
+  width: 24px;
+  height: 18px;
+  border: 1px solid #c9d4da;
+  border-radius: 4px;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Popover picker alpha (react-colorful) — neo góc phải chip. */
+.pickerPop {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 60;
+  background: #ffffff;
+  border: 1px solid #d8dfe3;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(45, 62, 75, 0.16);
+  cursor: default;
+}
+
 .debugToggle:hover {
   color: #33424c;
   border-color: #b9c5cc;

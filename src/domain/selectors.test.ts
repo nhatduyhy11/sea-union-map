@@ -228,14 +228,15 @@ test("Guild/player filter matches nodes by contribution; edges dim under filter"
   assert.equal(edges[0]?.style?.strokeDasharray, "7 7");
   assert.equal(edges[1]?.style?.strokeDasharray, "7 7");
   assert.equal(edges[2]?.style?.strokeDasharray, undefined);
-  assert.equal(edges[2]?.style?.stroke, "#93a5b0");
+  assert.equal(edges[2]?.style?.stroke, "#9caeb9");
   assert.equal(edges[3]?.style?.stroke, "#123456");
-  // Edge sở hữu phe đậm + đậm màu; neutral link nhạt để đỡ rối toàn cảnh.
+  // Edge sở hữu phe đậm + đậm màu; neutral link nhạt (opacity mặc định 0.4
+  // từ neutralOpacity) để đỡ rối toàn cảnh.
   assert.equal(edges[3]?.style?.strokeWidth, 3);
   assert.equal(edges[3]?.style?.opacity, 0.7);
   assert.equal(edges[0]?.style?.strokeWidth, 2);
-  assert.equal(edges[0]?.style?.opacity, 0.35);
-  assert.equal(edges[2]?.style?.opacity, 0.35);
+  assert.equal(edges[0]?.style?.opacity, 0.4);
+  assert.equal(edges[2]?.style?.opacity, 0.4);
   // Có filter: mọi connection dim xuống để node highlight nổi lên.
   const dimmed = buildMapEdges(routes, withNeutral, factions, true);
   assert.equal(dimmed[3]?.style?.opacity, 0.2);

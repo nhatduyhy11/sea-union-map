@@ -11,10 +11,11 @@
   /* --icon-box được set inline từ iconBoxSize() (nguồn duy nhất). */
 }
 
-/* Node trung lập (owner: null): mờ nhẹ mặc định để toàn cảnh đỡ rối, tự
-   un-dim khi hover/focus vào xem. Filter dim (.dim) vẫn phải thắng hover. */
+/* Node trung lập (owner: null): mờ nhẹ mặc định để toàn cảnh đỡ rối (opacity
+   chỉnh từ picker debug qua --neutral-opacity), tự un-dim khi hover/focus.
+   Filter dim (.dim) vẫn phải thắng hover. */
 .neutral {
-  opacity: 0.4;
+  opacity: var(--neutral-opacity, 0.4);
 }
 
 .neutral:hover,

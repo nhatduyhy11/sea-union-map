@@ -60,8 +60,10 @@ function ZoomLabel() {
 export function MapCanvas() {
   const { nodes, edges } = useMapGraph();
   const debug = useMapView((state) => state.debug);
+  // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
+  const canvasBg = useMapView((state) => state.canvasBg);
   return (
-    <div className={styles.mapCanvas}>
+    <div className={styles.mapCanvas} style={{ background: canvasBg }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

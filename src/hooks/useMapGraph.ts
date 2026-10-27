@@ -24,6 +24,8 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
   const showAll = useMapView((state) => state.showAll);
   const filter = useMapView((state) => state.filter);
   const debug = useMapView((state) => state.debug);
+  const neutralColor = useMapView((state) => state.neutralColor);
+  const neutralOpacity = useMapView((state) => state.neutralOpacity);
 
   // Node ids được filter guild/player highlight — dim phần còn lại.
   const matched = useMemo(
@@ -42,10 +44,18 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     [selected, pinned, showAll, matched, debug, togglePin]
   );
   // Edges không highlight theo filter nhưng dim xuống khi có filter (node
-  // highlight nổi lên) — recompute theo matched.
+  // highlight nổi lên) — recompute theo matched + màu/opacity trung lập.
   const edges = useMemo(
-    () => buildMapEdges(routes, ownedIslands, factions, matched !== null),
-    [matched]
+    () =>
+      buildMapEdges(
+        routes,
+        ownedIslands,
+        factions,
+        matched !== null,
+        neutralColor,
+        neutralOpacity
+      ),
+    [matched, neutralColor, neutralOpacity]
   );
   return { nodes, edges };
 }

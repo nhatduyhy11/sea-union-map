@@ -82,7 +82,10 @@ export function buildMapEdges(
   routes: Route[],
   islands: Island[],
   factions: Faction[],
-  filterActive = false
+  filterActive = false,
+  // Màu + opacity nhóm trung lập (edge không thuộc phe) — chỉnh từ picker debug.
+  neutralColor = "#9caeb9",
+  neutralOpacity = 0.4
 ): Edge[] {
   const byId = new Map(islands.map((island) => [island.id, island]));
   // Filter không highlight edge — chỉ dim toàn bộ connection để node được
@@ -107,7 +110,7 @@ export function buildMapEdges(
       type: "route",
       selectable: false,
       style: {
-        stroke: faction?.color ?? "#93a5b0",
+        stroke: faction?.color ?? neutralColor,
         strokeWidth: faction ? 3 : 2,
         opacity: filterActive
           ? faction
@@ -115,7 +118,7 @@ export function buildMapEdges(
             : 0.12
           : faction
             ? 0.7
-            : 0.35,
+            : neutralOpacity,
         strokeDasharray: neutralLink,
       },
     };
