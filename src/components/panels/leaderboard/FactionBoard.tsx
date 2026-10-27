@@ -65,7 +65,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
             >
               <FactionSummary entry={entry} index={index} />
             </summary>
-            <div className={shared.allocation}>
+            <div className={`${shared.allocation} ${shared.allocationTall}`}>
               {entry.guilds.map((guild) => (
                 <GuildAccordion
                   key={guild.guild}
@@ -84,7 +84,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
             <summary className={shared.summary}>
               <FactionSummary entry={entry} index={index} />
             </summary>
-            <div className={shared.allocation}>
+            <div className={`${shared.allocation} ${shared.allocationTall}`}>
               {entry.guilds.map((guild) => (
                 <details key={guild.guild} className={guildStyles.guildDetails}>
                   <summary className={guildStyles.guildToggle}>
@@ -165,7 +165,7 @@ function SingleFaction({
         </div>
         <b>{compact(faction.score)}</b>
       </div>
-      <div className={shared.allocation}>
+      <div className={`${shared.allocation} ${shared.allocationTall}`}>
         {filterMode
           ? faction.guilds.map((guild) => (
               <GuildAccordion

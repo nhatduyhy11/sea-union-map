@@ -59,10 +59,14 @@ export function setFilterMode(on: boolean) {
 }
 
 // Mở/đóng guild ở tab Phe (filter mode): guild mở chính là filter canvas;
-// collapse guild đang mở = reset view toàn phần.
+// collapse guild đang mở = gỡ filter + thu gọn accordion, giữ nguyên faction
+// đang mở và các trạng thái khác của BXH (không reset view toàn phần).
 export function toggleGuildFilter(guild: string) {
   if (usePanel.getState().openGuild === guild) {
-    resetRankingView();
+    const panel = usePanel.getState();
+    panel.setOpenGuild(null);
+    panel.setSelectedMember(null);
+    setCanvasFilter(null);
     return;
   }
   const panel = usePanel.getState();

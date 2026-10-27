@@ -40,6 +40,12 @@
   overflow: auto;
 }
 
+/* Biến thể cho khối guild tab Phe: khi expand guild cần thấy ~15 member cùng
+   lúc, giữ max-height 225px của .allocation là bị cuộn chỉ thấy 6-8 dòng. */
+.allocationTall {
+  max-height: 440px;
+}
+
 .allocation button {
   display: flex;
   justify-content: space-between;
