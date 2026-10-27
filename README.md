@@ -133,8 +133,8 @@ uv run python tools/socket_log/core/runtime_codec.py rank body.b64
 | `mine_socket/report.py`   | Aggregate các JSONL thành mine-report.json + cây báo cáo                     |
 | `mine_socket/decode.py`   | Decoder offline `mine-events`/`mine-state` trên capture dir binary           |
 
-Logger ghi thẳng **JSONL đã decode** (không phải binary): `mine-events.jsonl`,
-`player-briefs.jsonl`, `guild-briefs.jsonl` dưới `.tmp/mine-events/`.
+Logger ghi thẳng **JSONL đã decode** (không phải binary) dưới `.tmp/mine-events/` —
+chi tiết 5 stream xem [`docs/mine_docs/MINE_STRUCTURE.md` §6](docs/mine_docs/MINE_STRUCTURE.md).
 
 ```bash
 # Snapshot nhanh: 1 pass state + tên, rồi thoát
@@ -197,7 +197,7 @@ chỗ lấy data ở `sea-live.ts`, join giữ nguyên.
 - [`docs/mine_docs/MINE_STRUCTURE.md`](docs/mine_docs/MINE_STRUCTURE.md) — cấu trúc world mỏ: map UI ↔ protocol (kèm [`docs/mine_docs/BACKLOG_MINE.md`](docs/mine_docs/BACKLOG_MINE.md))
 - [`docs/SEA_STRUCTURE.md`](docs/SEA_STRUCTURE.md) — cấu trúc event Tranh Bá Tứ Hải: map UI ↔ protocol
 - [`docs/LEADERBOARD_SPECS.md`](docs/LEADERBOARD_SPECS.md) — đặc tả BXH, cơ chế lọc guild/player canvas và tương tác UI/UX
-- [`docs/CLAIM_RULES.md`](docs/CLAIM_RULES.md) — quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, derive ownership
+- [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md) — quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, derive ownership
 - [`docs/STATS_MISMATCH.md`](docs/STATS_MISMATCH.md) — các lệch số UI vs game đã biết (backlog handoff)
 - `docs/planning/` — research notes và run capture (socket step learn, sea capture)
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol

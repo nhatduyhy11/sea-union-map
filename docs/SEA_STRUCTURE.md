@@ -170,7 +170,7 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
 **Node trung lập:** đảo chưa phe nào chiếm sẽ hiện "Đảo chưa có chủ" + "Điểm chiếm đóng
 tối thiểu" + "Không có phe gây ST" — đúng cảnh ngày đầu event (chưa ai đủ điểm, hoặc phe
 top bị suspend / bị ngắt đường). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
-trong `docs/CLAIM_RULES.md` §2 — demo đang equalize = 1, crawl thật sẽ cho ngưỡng thật
+trong `docs/SEA_EVENT_RULE.md` §2 — demo đang equalize = 1, crawl thật sẽ cho ngưỡng thật
 từng node.
 
 ## 5. Quy tắc crawl (scope bước đầu)

@@ -9,12 +9,12 @@
 | Tài liệu                                                        | Vai trò                                                                                   | Khi nào cập nhật                                                    |
 | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
 | [PROJECT_INTENT.md](PROJECT_INTENT.md)                          | Mục tiêu sản phẩm, nhu cầu, ràng buộc và phạm vi mong muốn                                | Khi chủ dự án bổ sung hoặc thay đổi yêu cầu                         |
-| [docs/CLAIM_RULES.md](CLAIM_RULES.md)                           | Quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, tạm ngắt, derive ownership              | Khi chủ dự án bổ sung hoặc thay đổi rule                            |
+| [docs/SEA_EVENT_RULE.md](SEA_EVENT_RULE.md)                     | Quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, tạm ngắt, derive ownership              | Khi chủ dự án bổ sung hoặc thay đổi rule                            |
 | [docs/SEA_STRUCTURE.md](SEA_STRUCTURE.md)                       | Cấu trúc event Tranh Bá Tứ Hải: luồng điều hướng, màn hình, dữ liệu node, quy tắc crawl   | Khi mô tả event thay đổi hoặc crawl xác nhận thêm dữ liệu           |
 | [docs/LEADERBOARD_SPECS.md](LEADERBOARD_SPECS.md)               | Đặc tả BXH, cơ chế lọc guild/player canvas, filter mode và tương tác UI/UX                | Khi thay đổi cơ chế lọc bản đồ hoặc tương tác BXH                   |
 | [docs/SOCKET_PROTOCOL.md](SOCKET_PROTOCOL.md)                   | Tham chiếu protocol WS: framing, module/cmd, kết quả decode                               | Khi decode thêm module/cmd hoặc chốt một nghi vấn                   |
 | [docs/mine_docs/MINE_STRUCTURE.md](mine_docs/MINE_STRUCTURE.md) | Cấu trúc event mỏ (Khai Thác Guild): map UI ↔ protocol                                    | Khi capture mới xác minh thêm field                                 |
-| [docs/mine_docs/BACKLOG_MINE.md](mine_docs/BACKLOG_MINE.md)     | Backlog nhánh phụ Khai Thác Guild: parser streak/debuff, report mỏ                        | Khi phát hiện việc cần làm ở nhánh mỏ                               |
+| [docs/mine_docs/BACKLOG_MINE.md](mine_docs/BACKLOG_MINE.md)     | Backlog nhánh phụ Khai Thác Guild (hợp nhất toàn bộ open issues mỏ)       | Khi phát hiện việc cần làm ở nhánh mỏ                               |
 | [specs/](specs/)                                                | Ảnh tham chiếu từ game, làm căn cứ cho map và dữ liệu điểm                                | Khi có thêm ảnh hoặc cập nhật nguồn từ game                         |
 | [DOCS_GUIDE.md](DOCS_GUIDE.md)                                  | Chỉ dẫn đọc và tổ chức tài liệu                                                           | Khi thêm, chuyển hoặc đổi vai trò tài liệu                          |
 | [README.md](../README.md)                                       | Tổng quan dự án: web UI, crawler socket WS (`tools/socket_log/`), usage, luồng crawl → UI | Khi thêm tool capture/decode, thay đổi luồng dữ liệu hoặc lệnh chạy |
@@ -26,7 +26,7 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 1. Đọc guide này để biết tài liệu nào chứa thông tin cần thiết.
 2. Đọc `PROJECT_INTENT.md` để hiểu mục tiêu và phạm vi.
 3. Đọc `README.md` (các mục Web UI / Crawler / Luồng crawl → UI) / `docs/LEADERBOARD_SPECS.md` khi làm việc với giao diện web, map hoặc luồng dữ liệu.
-4. Đọc `docs/CLAIM_RULES.md` khi làm việc với ownership, điểm claim hoặc dữ liệu demo.
+4. Đọc `docs/SEA_EVENT_RULE.md` khi làm việc với ownership, điểm claim hoặc dữ liệu demo.
 5. Đọc `docs/SEA_STRUCTURE.md` khi làm việc với event Tranh Bá Tứ Hải (crawl dữ liệu hoặc feed UI).
 6. Đọc `docs/SOCKET_PROTOCOL.md` / `docs/mine_docs/MINE_STRUCTURE.md` khi làm việc với tầng bắt socket và decode.
 7. Xem các ảnh được liên kết khi công việc liên quan tới bố cục map hoặc dữ liệu game.

@@ -52,7 +52,7 @@ Tham chiếu: [node-camp-info](specs/node-camp-info.PNG).
 - Điểm của các phe tại node thay đổi theo diễn biến sự kiện.
 - Trước mắt cập nhật điểm thủ công.
 
-Quy tắc claim — ngưỡng điểm, đường nối từ base, tạm ngắt khi bị cắt và cách derive ownership — được ghi riêng tại [docs/CLAIM_RULES.md](CLAIM_RULES.md).
+Quy tắc claim — ngưỡng điểm, đường nối từ base, tạm ngắt khi bị cắt và cách derive ownership — được ghi riêng tại [docs/SEA_EVENT_RULE.md](SEA_EVENT_RULE.md).
 
 ### 5.2. Bảng người chơi tấn công cứ điểm
 
