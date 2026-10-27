@@ -1,6 +1,6 @@
 """POC walkthrough into the Tranh Bá Tứ Hải (Sea Union) event, capturing raw WS frames.
 
-Thin entry over socket_capture.py — same FrameWriter / step DSL / launch block —
+Thin entry over capture/capture.py — same FrameWriter / step DSL / launch block —
 plus named STAGES for the navigation flow in docs/SEA_STRUCTURE.md §2 and wheel
 scroll for the event-lobby list. Expect guards cover only the home→sea-lobby
 entry (login + open-sea): that stretch has no fallback if a click misses, so a
@@ -12,10 +12,10 @@ Coordinates are initial reads off docs/assets/sea-socket/*.png (viewport 640x720
 run stage → Read the shot → fix coords → rerun (--from <stage>).
 
 Usage:
-    uv run python tools/socket_log/sea_capture.py --list
-    uv run python tools/socket_log/sea_capture.py                  # full walkthrough
-    uv run python tools/socket_log/sea_capture.py --from open-sea  # resume mid-flow
-    uv run python tools/socket_log/sea_capture.py --only login     # probe one stage
+    uv run python tools/socket_log/sea_socket/walkthrough.py --list
+    uv run python tools/socket_log/sea_socket/walkthrough.py                  # full walkthrough
+    uv run python tools/socket_log/sea_socket/walkthrough.py --from open-sea  # resume mid-flow
+    uv run python tools/socket_log/sea_socket/walkthrough.py --only login     # probe one stage
 """
 
 import argparse
@@ -27,11 +27,11 @@ from pathlib import Path
 
 from playwright.async_api import Page, async_playwright
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from page_guards import close_profile_popup_tabs  # noqa: E402
-from process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from socket_capture import (  # noqa: E402
+from browser.page_guards import close_profile_popup_tabs  # noqa: E402
+from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
+from capture.capture import (  # noqa: E402
     DEFAULT_OUT_DIR,
     FrameWriter,
     close_session,

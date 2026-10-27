@@ -1,18 +1,18 @@
 """Game protocol layer shared by every event logger: broadcast bus + name services.
 
-Pure bytes -> dict functions, split out of the old mine_protocol.py: the
-broadcast feed (module 0x13) and the brief services (0x0d player, 0x24 guild)
-are game-wide services any event stream may need, while event-specific layouts
-live in their own subfolders (mine = module 0x48, see mine_socket/protocol.py).
+Pure bytes -> dict functions: the broadcast feed (module 0x13) and the brief
+services (0x0d player, 0x24 guild) are game-wide services any event stream may
+need, while event-specific layouts live in their own subfolders (mine = module
+0x48 in mine_socket/protocol.py, sea = module 0x72 in sea_socket/protocol.py).
 No I/O, no playwright, no asyncio — safe to unit-test against captured bytes.
 """
 
 import struct
 
-from socket_decode import decode_proto, encode_varint, split_frame
+from core.decode import decode_proto, encode_varint, split_frame
 
 # Broadcast bus: the server pushes every feed entry here; consumers filter by
-# the type code inside the entry payload (mine = type 150, see mine_socket).
+# the type code inside the entry payload (e.g. mine entries = type 150).
 BROADCAST_MODULE = 0x13
 BROADCAST_PUSH_REPLAY_CMD = 0x0004  # login replay of past feed entries
 BROADCAST_PUSH_LIVE_CMD = 0x0007  # real-time pushes

@@ -8,9 +8,9 @@ Event-specific extractors (mine etc.) live in their own subfolders — see
 mine_socket/decode.py.
 
 Usage:
-    uv run python tools/socket_log/socket_decode.py .tmp/socket-capture/run-mine1 271
-    uv run python tools/socket_log/socket_decode.py .tmp/socket-capture/run-mine1 all --dir R
-    uv run python tools/socket_log/socket_decode.py .tmp/socket-capture/run-mine1 grep:AEMin
+    uv run python tools/socket_log/core/decode.py .tmp/socket-capture/run-mine1 271
+    uv run python tools/socket_log/core/decode.py .tmp/socket-capture/run-mine1 all --dir R
+    uv run python tools/socket_log/core/decode.py .tmp/socket-capture/run-mine1 grep:AEMin
 """
 
 import argparse

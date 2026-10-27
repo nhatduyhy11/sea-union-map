@@ -1,6 +1,6 @@
 """Payload-driven SEA crawler: enumerate the battle map and pull every node by id.
 
-The GUI walkthrough (sea_capture.py) only proves the protocol; this crawler is
+The GUI walkthrough (walkthrough.py) only proves the protocol; this crawler is
 the real collector. It boots the game headed, replays the login -> open-sea ->
 battle-map stages once (the server hands over the full map snapshot 0x72/0x000c
 on map open — 89 node ids + owners in one payload), then injects per-node
@@ -11,12 +11,12 @@ requests straight into the game socket, zero map interaction:
     0x0c/0x0002 {f1:116/117}    -> 0x0003  faction / player leaderboard
     0x0d/0x001f {packed ids}    -> 0x0020  player briefs (name/guild/power)
 
-Injected requests use ssid bytes 0xF0..0xFF (game_protocol.INJECT_SEQ
+Injected requests use ssid bytes 0xF0..0xFF (core.protocol.INJECT_SEQ
 convention): the server echoes the ssid in the response header, the game client
 ignores stray replies, so responses correlate by ssid. Board bodies carry the
 compress flag (response header byte 7, commit f61dd7a); they are decoded with
 the game's own runtime (QuickLZ + BufferUtils via window.__require) in the live
-page — same approach as game_proto_decode.py.
+page — same approach as core/runtime_codec.py.
 
 Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>):
     map-snapshot.json    89 nodes {id, owner} + factions + guild roster
@@ -27,47 +27,49 @@ Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>):
     summary.json         counts + per-faction score rollup
 
 Usage:
-    uv run python tools/socket_log/sea_crawler.py --profile .tmp/pmain
-    uv run python tools/socket_log/sea_crawler.py --profile .tmp/pmain --headless
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --headless
 """
 
 import argparse
 import asyncio
 import base64
 import json
-import struct
 import sys
 from datetime import datetime
 from pathlib import Path
 
 from playwright.async_api import Page, WebSocket, async_playwright
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from game_protocol import parse_player_briefs  # noqa: E402
-from navigation import navigate_to_game  # noqa: E402
-from page_guards import (  # noqa: E402
+from browser.navigation import navigate_to_game  # noqa: E402
+from browser.page_guards import (  # noqa: E402
     install_game_core_frame_guard_after_delay,
     install_profile_popup_guard,
 )
-from process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from sea_capture import STAGES, run_stages  # noqa: E402
-from socket_capture import FrameWriter  # noqa: E402
-from socket_decode import decode_proto, encode_varint, read_packed_varints, split_frame  # noqa: E402
-from ws_logger import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
-
-SEA_MODULE = 0x72
-MAP_SNAPSHOT_CMD = 0x000C
-NODE_STATE_CMD = 0x0011
-
-RANK_MODULE = 0x0C
-RANK_CMD = 0x0002
-RANK_FACTION = 116
-RANK_PLAYER = 117
-RANK_NODE = 118
-
-PLAYER_MODULE = 0x0D
-PLAYER_BRIEF_CMD = 0x001F
+from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
+from capture.capture import FrameWriter  # noqa: E402
+from core.decode import decode_proto  # noqa: E402
+from core.protocol import parse_player_briefs  # noqa: E402
+from core.runner import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
+from sea_socket.protocol import (  # noqa: E402
+    MAP_SNAPSHOT_CMD,
+    NODE_STATE_CMD,
+    PLAYER_MODULE,
+    RANK_CMD,
+    RANK_FACTION,
+    RANK_MODULE,
+    RANK_NODE,
+    RANK_PLAYER,
+    SEA_MODULE,
+    build_brief_frame,
+    build_request,
+    iter_frames,
+    parse_map_snapshot,
+    parse_node_state,
+)
+from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
 INJECT_TIMEOUT = 8.0
@@ -81,7 +83,7 @@ SNAPSHOT_TIMEOUT = 20.0
 THROTTLE_RETRY_ATTEMPTS = 5
 LOCK_FILENAME = ".sea_crawler.lock"
 
-# Board decode with the game's own codec (see game_proto_decode.py DECODE_JS):
+# Board decode with the game's own codec (see core/runtime_codec.py DECODE_JS):
 # QuickLZ when flagged, then BufferUtils.decode with the ranking schema def.
 DECODE_BOARDS_JS = r"""
 async (inputs) => {
@@ -135,72 +137,6 @@ async (inputs) => {
   });
 }
 """
-
-
-def build_request(module: int, cmd: int, seq: int, fields: list[tuple[int, int]]) -> bytes:
-    """[len:2][module:1][cmd:2][seq:1] + protobuf body of varint-only fields."""
-    body = b"".join(
-        encode_varint((field << 3) | 0) + encode_varint(value) for field, value in fields
-    )
-    return struct.pack(">HBHB", 4 + len(body), module, cmd, seq) + body
-
-
-def build_brief_frame(seq: int, ids: list[int]) -> bytes:
-    """0x0d/0x001f with a caller-chosen ssid (game_protocol.build_brief_request
-    hardcodes INJECT_SEQ, which would collide across consecutive batches)."""
-    packed = b"".join(encode_varint(int(i)) for i in ids)
-    body = b"\x0a" + encode_varint(len(packed)) + packed
-    return struct.pack(">HBHB", 4 + len(body), PLAYER_MODULE, PLAYER_BRIEF_CMD, seq) + body
-
-
-def iter_frames(direction: str, raw: bytes):
-    """Yield (header, body) for every sub-frame in one WS message."""
-    i = 0
-    while i + 2 <= len(raw):
-        (length,) = struct.unpack(">H", raw[i : i + 2])
-        if length < 5 or i + 2 + length > len(raw):
-            return
-        yield split_frame(direction, raw[i : i + 2 + length])
-        i += 2 + length
-
-
-def parse_map_snapshot(body: bytes) -> dict:
-    """0x72/0x000c: f2×N {f1 id, f2 owner}, f3×4 factions (opaque), f4 guild ids."""
-    nodes, factions_raw, guild_ids = [], [], []
-    for field, _wire, value in decode_proto(body):
-        if field == 2 and isinstance(value, bytes):
-            sub = {f: v for f, _w, v in decode_proto(value)}
-            nodes.append({"id": sub.get(1), "owner": sub.get(2)})
-        elif field == 3 and isinstance(value, bytes):
-            factions_raw.append(base64.b64encode(value).decode())
-        elif field == 4 and isinstance(value, bytes):
-            guild_ids.extend(read_packed_varints(value))
-    owners: dict[int, int] = {}
-    for node in nodes:
-        owners[node["owner"]] = owners.get(node["owner"], 0) + 1
-    return {"nodes": nodes, "owner_counts": owners, "factions_raw": factions_raw, "guild_ids": guild_ids}
-
-
-def parse_node_state(body: bytes, requested_id: int | None = None) -> dict:
-    """0x72/0x0012 body, two shapes seen 2026-10-26:
-    unlocked: f1: 0, f2 {f4 art, f1 id, f2×4 {f1 faction, f2 score}}
-    locked:   f1: nonzero (10,000,035 on locked "1-x"/"2-x" islands — semantics
-    TBD), no f2 at all. Response does not echo the id when locked, so the
-    requested id is attached by the caller."""
-    err = None
-    for field, _wire, value in decode_proto(body):
-        if field == 1:
-            err = value
-        elif field == 2 and isinstance(value, bytes):
-            sub = {f: v for f, _w, v in decode_proto(value)}
-            scores = {}
-            for f2, _w2, v2 in decode_proto(value):
-                if f2 == 2 and isinstance(v2, bytes):
-                    s = {f: v for f, _w, v in decode_proto(v2)}
-                    if 1 in s:
-                        scores[s[1]] = s.get(2, 0)
-            return {"id": sub.get(1), "art": sub.get(4), "faction_scores": scores}
-    return {"id": requested_id, "art": None, "faction_scores": {}, "locked_err": err}
 
 
 class CrawlRouter:

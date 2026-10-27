@@ -1,7 +1,7 @@
 """Mine-specific websocket wiring: frame routing + snapshot completion.
 
 build_routes() plugs the mine streams into the shared GameLogger core
-(ws_logger.py): broadcast type-150 events, 0x48 map state / tile deltas,
+(core/runner.py): broadcast type-150 events, 0x48 map state / tile deltas,
 plus the --snapshot done-predicate (one state captured, all occupant names
 settled).
 """
@@ -9,9 +9,9 @@ settled).
 import asyncio
 from typing import Optional
 
-from game_protocol import BROADCAST_MODULE, BROADCAST_PUSH_CMDS, frame_is
-from socket_decode import split_frame
-from ws_logger import FrameRoutes, JsonlSink, LoggerContext
+from core.protocol import BROADCAST_MODULE, BROADCAST_PUSH_CMDS, frame_is
+from core.decode import split_frame
+from core.runner import FrameRoutes, JsonlSink, LoggerContext
 
 from mine_socket.protocol import (
     MINE_MODULE,

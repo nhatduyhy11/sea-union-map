@@ -82,7 +82,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 **Hệ quả cho bot:**
 - Tên player của cả mỏ fetch **một lần lúc zoomin**, không lazy theo điểm — nhưng nếu chỉ có login state
   (không click) thì KHÔNG có tên nào; bot phải tự bắn `0x0d/0x001f` theo id —
-  `mine_logger.py` đã làm sẵn (inject frame, 60 id/request, verify 195/195 người có tên 2026-10-23).
+  `mine_socket/logger.py` đã làm sẵn (inject frame, 60 id/request, verify 195/195 người có tên 2026-10-23).
 - **3 slot 9001–9003 của mỗi điểm = bộ claimer của guild chủ điểm**: 3 acc cùng 1 guild (rule game),
   guild đó = guild claim `f4` — xác minh được người claim ngay từ state; `mine_socket/report.py` đối chiếu
   cả 2 phía (đồng bộ giữa 3 claimer, và giữa claimer ↔ `f4`), vi phạm thì đưa vào `errors`.
@@ -93,7 +93,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 
 ## 6. Việc cần làm tiếp
 
-- [x] Sửa `mine_logger.py`: nghe `0x13/0x0004`+`0x13/0x0007`, ghi state/delta/brief ra JSONL, **inject
+- [x] Sửa `mine_socket/logger.py`: nghe `0x13/0x0004`+`0x13/0x0007`, ghi state/delta/brief ra JSONL, **inject
   `0x0d/0x001f` fetch tên chủ động** — chi tiết mục Listener `SOCKET_PROTOCOL.md` (2026-10-23).
 - [x] Bước tổng hợp: `tools/socket_log/mine_socket/report.py` — sector → mỏ (chunk 4 tile theo thứ tự id) →
   điểm 1–4 → user (id/tên/guild) + claim/unclaimed + cảnh báo. Output `mine-report.json` + cây text.

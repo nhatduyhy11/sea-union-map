@@ -1,4 +1,4 @@
-"""Shared CLI surface for the event loggers (the args half of ws_logger.GameLogger).
+"""Shared CLI surface for the event loggers (the args half of core.runner.GameLogger).
 
 Each event logger starts from build_parser() and adds its own event-specific
 args before parse_args(); resolve_run_dir() applies the shared --dir/--snapshot

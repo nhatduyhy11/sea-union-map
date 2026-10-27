@@ -57,15 +57,15 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 - `f1: 118/116/117` = **board id**: 118 = per-node, 116 = BXH phe, 117 = BXH điểm.
 - Kính lúp (boss detail) và các nút phụ trong popup **không sinh request** — render từ
   config client (xem NEED_CONFIRM 4).
-- Cơ chế inject frame vào game socket đã POC ở event mỏ (`mine_logger.py` hook
+- Cơ chế inject frame vào game socket đã POC ở event mỏ (`mine_socket/logger.py` hook
   `WebSocket.prototype.send` + `page.add_init_script`) — áp nguyên cho sea.
 
 ### 1.4. Flow crawl đề xuất (dùng cho giai đoạn feed UI)
 
-1. Vào battle map (điều hướng như `sea_capture.py`) → đọc `0x72/0x000c` → list id + owner.
+1. Vào battle map (điều hướng như `sea_socket/walkthrough.py`) → đọc `0x72/0x000c` → list id + owner.
 2. Với mỗi id 5..89: inject `0x72/0x0011` + `0x0c/0x0002{118}` → thu detail + leaderboard.
 3. Inject `0x0c/0x0002{116/117}` cho 2 BXH; `0x0d/0x001f` theo id player xuất hiện.
-4. Sink JSONL tái dùng lõi `ws_logger` (như mine) — re-crawl định kỳ khi war diễn ra.
+4. Sink JSONL tái dùng lõi `core/runner.py` (như mine) — re-crawl định kỳ khi war diễn ra.
 
 ## 2. NEED_CONFIRM (việc mở — làm/xác nhận thì xóa dòng)
 

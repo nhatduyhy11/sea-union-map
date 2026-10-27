@@ -1,16 +1,16 @@
 """Mine protocol layer: module 0x48 layout + broadcast type-150 events.
 
 Mine-specific slice of the game protocol — the game-wide pieces (broadcast
-channel, player/guild briefs, frame classifier) live in the top-level
-game_protocol.py. Pure bytes -> dict functions, no I/O, no playwright,
-no asyncio — safe to unit-test against captured frame bytes.
+channel, player/guild briefs, frame classifier) live in core/protocol.py.
+Pure bytes -> dict functions, no I/O, no playwright, no asyncio — safe to
+unit-test against captured frame bytes.
 """
 
 import datetime
 import json
 from typing import Optional
 
-from socket_decode import decode_proto
+from core.decode import decode_proto
 
 MINE_EVENT_TYPE = 150  # broadcast feed type code for guild-mine entries
 MINE_MODULE = 0x48

@@ -1,11 +1,14 @@
-"""POC: capture Haunted Room WebSocket frames while walking the mine-history flow.
+"""Interactive walkthrough capture: drive the game page with the step DSL while
+dumping every WebSocket frame verbatim (binary included).
 
-Launches the same persistent-profile browser as ``hauntedroom_runner.py``, hooks
-every WebSocket on every page, and dumps each frame verbatim (binary included)
-so the mine-history protocol can be reverse engineered from a single session.
+Launches the persistent-profile browser, hooks every WebSocket on every page,
+and writes frames + index.jsonl so a protocol can be reverse engineered from a
+single session. Started as the POC that decoded the mine-history flow; the same
+layer now backs the per-event walkthroughs (sea_socket/walkthrough.py) and
+crawlers.
 
 Usage:
-    uv run python tools/socket_log/socket_capture.py --profile .tmp/m535 \
+    uv run python tools/socket_log/capture/capture.py --profile .tmp/m535 \
         --step sleep:8 --step shot:01_loaded --step click:463,218 ...
 
 Step DSL:
@@ -20,7 +23,7 @@ Step DSL:
                  (grayscale 32x36 thumbnail, fail below MIN, default 0.95):
                  saves FAIL-expect-<golden>.png and raises on mismatch, so a
                  missed click stops the run instead of desyncing later steps.
-                 Golden lookup: tools/socket_log/goldens/<GOLDEN>.png, then
+                 Golden lookup: tools/socket_log/capture/goldens/<GOLDEN>.png, then
                  docs/assets/sea-socket/<GOLDEN>.png
     seek:GOLDEN,CX,CY,CW,CH,OX,OY,X,Y,DY,N[,MIN]
                  scroll until a target is on screen, then click it: match the
@@ -48,10 +51,10 @@ from typing import NamedTuple, Optional, Union
 from PIL import Image
 from playwright.async_api import BrowserContext, Page, Playwright, async_playwright
 
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from navigation import navigate_to_game  # noqa: E402
-from page_guards import (  # noqa: E402
+from browser.navigation import navigate_to_game  # noqa: E402
+from browser.page_guards import (  # noqa: E402
     install_game_core_frame_guard_after_delay,
     install_profile_popup_guard,
 )
@@ -152,7 +155,7 @@ def parse_step(spec: str) -> tuple[str, str]:
 
 
 GOLDENS_DIR = Path(__file__).resolve().parent / "goldens"
-DOCS_SEA_ASSETS = Path(__file__).resolve().parents[2] / "docs" / "assets" / "sea-socket"
+DOCS_SEA_ASSETS = Path(__file__).resolve().parents[3] / "docs" / "assets" / "sea-socket"
 
 
 def resolve_golden(name: str) -> Path:

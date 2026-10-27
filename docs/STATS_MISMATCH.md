@@ -11,9 +11,9 @@ Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join)
 [`README.md`](../README.md) (mục "Luồng crawl → UI").
 
 ```
-sea_crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
-sea_config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
-sea_to_ui.py → src/data/sea-live.json   (thuần data, không sinh code)
+sea_socket/crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
+config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
+sea_socket/report.py → src/data/sea-live.json   (thuần data, không sinh code)
 src/data/sea-live.ts                    (adapter join layout qua prefix display id)
 src/domain/mapData.ts (LIVE = true)     (derive owner/BXH/filter từ contributions)
 ```
@@ -23,8 +23,8 @@ Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live
 để bake snapshot chính thức vào build):
 
 ```bash
-uv run python tools/socket_log/sea_config_extract.py --table CampGVGLO --out .tmp/sea-crawl/campgvglo.json
-uv run python tools/socket_log/sea_to_ui.py --crawl .tmp/sea-crawl/<run> --config .tmp/sea-crawl/campgvglo.json
+uv run python tools/socket_log/config_extract.py --table CampGVGLO --out .tmp/sea-crawl/campgvglo.json
+uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> --config .tmp/sea-crawl/campgvglo.json
 ```
 
 ## 1. Tổng điểm node: sum(board) thiếu trên node nóng — server cắt top-20

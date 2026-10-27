@@ -1,7 +1,7 @@
 # Haunted Room — Giao Thức WebSocket (Nghiên Cứu POC)
 
 > Kết quả reverse-engineer phiên POC 2026-10-22, server VN, profile `.tmp/m535`.
-> Công cụ: `tools/socket_log/socket_capture.py` (bắt frame) + `tools/socket_log/socket_decode.py` (decode).
+> Công cụ: `tools/socket_log/capture/capture.py` (bắt frame) + `tools/socket_log/core/decode.py` (decode).
 > Capture mẫu: `.tmp/socket-capture/run-mine1`, `.tmp/socket-capture/probe1`.
 
 ## Tổng quan
@@ -24,7 +24,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   trong bundle `assets/main/index.<hash>.js`: byte[2]=ssid, [3]=fragIdx, [4]=fragCount
   (>1 = gói rời, client ghép theo fragIdx), [7]=**compress flag: 1 = body QuickLZ**
   (trước đây hiểu nhầm "status=00"). Frame nén đầu tiên gặp: `0x0c/0x0003` leaderboard.
-  Decode frame nén: `tools/socket_log/game_proto_decode.py`.
+  Decode frame nén: `tools/socket_log/core/runtime_codec.py`.
 - Body là protobuf wire format chuẩn, không có schema `.proto` (client decode bằng code sinh sẵn).
 - Heartbeat: mỗi ~5s, `module 0x02 cmd 0x0008` ↔ response `0x0009` (chứa server time varint).
 - Login: client đăng ký kênh broadcast bằng `module 0x10 cmd 0x0008` (packed list kênh),
@@ -40,7 +40,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 | 0x1f | 0x0007 | **Leaderboard PvP mỏ** (push lúc login): entry = {f2: rank, f3: score, f1: profile đầy đủ nhúng (power, skins, avatar, blob config f17)} |
 | 0x1f | 0x000a→0x000b | **Lịch sử đánh nhau ở mỏ** (trước nay nhầm "visit log"): entry = {f1: attacker, f2: defender, f3: ts, f5: battle id, f4: **bên thắng (1=attacker, 2=defender)**, f7/f6: JSON `{"rKey","pKey"}` rating attacker/defender, f9: profile defender nhúng}. Verify: HuAsura đánh OLNaji 2 lần đều f4=2 (thua) |
 | 0x65 | 0x0009, 0x000c | Capture 2026-10-23: 0x9 = summary lượt đánh (nhóm 3 fighter {f1: id, f3: cờ thắng, f2: ?} + f3 = id winner); 0xc = list guild {f4: id chủ guild, f3 repeated: {f1: id thành viên, f2–f6: stat}} — chưa map đủ |
-| 0x0d | 0x001f→0x0020 | **Player brief** — request `f1`=packed player ids; response: f1=id, f2=tên, f4=power?, f33=avatar id, f11=guild nhúng (tên + mô tả), f15=server. **Đây là nguồn id→tên**. [2026-10-25] Schema thật từ bundle: `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` (name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel…) — decode qua `tools/socket_log/game_proto_decode.py briefs` |
+| 0x0d | 0x001f→0x0020 | **Player brief** — request `f1`=packed player ids; response: f1=id, f2=tên, f4=power?, f33=avatar id, f11=guild nhúng (tên + mô tả), f15=server. **Đây là nguồn id→tên**. [2026-10-25] Schema thật từ bundle: `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` (name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel…) — decode qua `tools/socket_log/core/runtime_codec.py briefs` |
 | 0x0d | 0x0019→0x001a | **Player full profile** (bấm vào 1 player/máy): heroes, items, power… popup "Mỏ Quặng LvX" |
 | 0x24 | 0x0035→0x0036 | **Guild brief** — request f1=guild id (dạng f4 của tile: 5170010…); response f3={f2=tên, f11=server, f10/f3=số thành viên…}. Dùng khi mở minimap overview |
 | 0x24 | 0x0033→0x0034 | **Guild detail**: f2=tên, f14=mô tả, f9/f8=id chủ guild, f13/f16=power, f26=log {thành viên, ts gia nhập}, f24=cửa sổ season guild, f1=id dạng f4 |
@@ -158,7 +158,7 @@ uv run python tools/socket_log/mine_socket/decode.py <capture_dir> mine-state > 
 
 ## Listener chạy dài hạn (ĐÃ LÀM — 2026-10-22; nâng cấp live push 2026-10-23)
 
-`tools/socket_log/mine_logger.py`: giữ session mở vô hạn, tự reload page khi game socket đứt
+`tools/socket_log/mine_socket/logger.py`: giữ session mở vô hạn, tự reload page khi game socket đứt
 (socket handshake `:19005/` đóng thường xuyên là hành vi bình thường — không được tính là mất
 kết nối), `--webhook` đẩy alert. Ghi **5 stream raw** dưới `.tmp/mine-events/`:
 
@@ -189,18 +189,18 @@ tách `claimer` (slot 9001–9003, bộ claimer của guild chủ điểm) + `us
 lệch guild claim `f4`). Tên sector = nhãn level ("Lv2-Lv3"), không phải tên in-game. Sector 1 bỏ qua.
 
 ```bash
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --snapshot   # 1 vòng snapshot + tên (~20-25s), tự thoát
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --duration 300   # tự dừng sau 5 phút
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --snapshot --dir .tmp/mine-events-$(date +%Y%m%d-%H%M%S)  # một-off vào folder timestamp
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --snapshot   # 1 vòng snapshot + tên (~20-25s), tự thoát
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --duration 300   # tự dừng sau 5 phút
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --snapshot --dir .tmp/mine-events-$(date +%Y%m%d-%H%M%S)  # một-off vào folder timestamp
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
 uv run python tools/socket_log/mine_socket/report.py --dir .tmp/mine-events   # tổng hợp 1 folder -> mine-report.json
 ```
 
 ```bash
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --duration 300   # tự dừng sau 5 phút
-uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --duration 300   # tự dừng sau 5 phút
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
 ```
 
 ## Đang mở (open items)

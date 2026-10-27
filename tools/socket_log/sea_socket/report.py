@@ -19,11 +19,11 @@ Nội dung dump (key → nguồn):
 
 Usage:
     # Dev: dump vào public/ (gitignored), refresh browser để xem
-    uv run python tools/socket_log/sea_to_ui.py \
+    uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/sea-crawl-v4 \
         --config .tmp/sea-crawl/campgvglo.json
     # Ship: bake snapshot chính thức vào bundle
-    uv run python tools/socket_log/sea_to_ui.py \
+    uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/sea-crawl-v4 \
         --config .tmp/sea-crawl/campgvglo.json \
         --out src/data/sea-live.json
@@ -80,7 +80,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--crawl", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path,
-                        help="campgvglo.json từ sea_config_extract.py")
+                        help="campgvglo.json từ config_extract.py")
     parser.add_argument("--out", default="public/sea-live-dev.json", type=Path)
     args = parser.parse_args()
 

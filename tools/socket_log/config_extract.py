@@ -7,7 +7,7 @@ so booting the real page sidesteps versioning entirely — see
 docs/SEA_PACKET_ANALYSE.md §4 for the bundle-chain background.
 
 Usage:
-    uv run python tools/socket_log/sea_config_extract.py --table CampGVGLO \
+    uv run python tools/socket_log/config_extract.py --table CampGVGLO \
         --out .tmp/sea-crawl/campgvglo.json
 """
 

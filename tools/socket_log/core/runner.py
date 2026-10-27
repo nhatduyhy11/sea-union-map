@@ -1,11 +1,11 @@
-"""Shared runner core for the live event loggers (mine today, next event later).
+"""Shared runner core for the live event loggers (mine and sea today).
 
-Owns everything event-independent that used to live in mine_logger.py: profile
-lock + stop signals, the persistent-Chrome session, WebSocket hookup, JSONL
-sinks, player/guild name fetching (injected 0x0d/0x001f brief requests), and
-the run modes (forever / --duration / --snapshot). An event logger (e.g.
-mine_logger.py) plugs in its own sinks + frame routing through a routes
-factory returning FrameRoutes — see mine_socket/handlers.py for the mine wiring.
+Owns everything event-independent: profile lock + stop signals, the
+persistent-Chrome session, WebSocket hookup, JSONL sinks, player/guild name
+fetching (injected 0x0d/0x001f brief requests), and the run modes (forever /
+--duration / --snapshot). An event logger plugs in its own sinks + frame
+routing through a routes factory returning FrameRoutes — see
+mine_socket/handlers.py for the mine wiring.
 """
 
 import asyncio
@@ -18,7 +18,7 @@ from typing import Awaitable, Callable, Optional
 
 from playwright.async_api import Page, WebSocket, async_playwright
 
-from game_protocol import (
+from core.protocol import (
     GUILD_BRIEF_CMD,
     GUILD_BRIEF_LIST_CMD,
     GUILD_MODULE,
@@ -30,17 +30,17 @@ from game_protocol import (
     parse_guild_brief,
     parse_player_briefs,
 )
-from navigation import navigate_to_game
-from page_guards import (
+from browser.navigation import navigate_to_game
+from browser.page_guards import (
     install_game_core_frame_guard_after_delay,
     install_profile_popup_guard,
 )
-from process_guard import (
+from browser.process_guard import (
     acquire_profile_lock,
     install_stop_signals,
     release_profile_lock,
 )
-from socket_decode import decode_proto, read_packed_varints, split_frame
+from core.decode import decode_proto, read_packed_varints, split_frame
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
 NAME_FETCH_MIN_INTERVAL = 5.0  # seconds between injected batches
@@ -193,7 +193,7 @@ async def reload_later(page: Page, delay: float = 10.0) -> None:
 class GameLogger:
     """Run one event-logging session: browser, sockets, name service, run modes.
 
-    args is the namespace built by logger_args.build_parser() (+ any event
+    args is the namespace built by core.args.build_parser() (+ any event
     args); the core reads profile, url, dir, briefs, guilds, no_fetch_names,
     snapshot, snapshot_timeout, duration from it.
     """

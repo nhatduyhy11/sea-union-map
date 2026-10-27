@@ -7,13 +7,13 @@ that stack to Python, boot the game page headless and drive ``window.__require``
 
 Usage:
     # leaderboard 0x0c/0x0003 (mode rank) — b64 body files first, then json on stdout
-    uv run python tools/socket_log/game_proto_decode.py rank body1.b64 body2.b64
+    uv run python tools/socket_log/core/runtime_codec.py rank body1.b64 body2.b64
 
     # player briefs 0x0d/0x0020 (mode briefs)
-    uv run python tools/socket_log/game_proto_decode.py briefs body1.b64
+    uv run python tools/socket_log/core/runtime_codec.py briefs body1.b64
 
     # cut a frame body out of a capture (true 8B header!) and pipe both steps:
-    uv run python tools/socket_log/game_proto_decode.py --cut .tmp/socket-capture/bxh-run7 321
+    uv run python tools/socket_log/core/runtime_codec.py --cut .tmp/socket-capture/bxh-run7 321
     # -> writes /tmp/f321-body.b64 and prints the header fields
 """
 

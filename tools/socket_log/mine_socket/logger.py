@@ -1,8 +1,9 @@
 """Live mine logger: keep a game session open and log raw mine data as JSONL.
 
-Thin mine-specific entry over the shared ws_logger.py core (browser session,
-websocket hookup, name fetching, run modes) + mine_socket/ (protocol, sinks,
-routes, report). One instance per profile: a lock file refuses a second run,
+Thin mine-specific entry over the shared core/runner.py (browser session,
+websocket hookup, name fetching, run modes) + the rest of mine_socket/
+(protocol, sinks, routes, report). One instance per profile: a lock file
+refuses a second run,
 and SIGTERM/SIGHUP (closing the terminal) stops it cleanly just like Ctrl+C.
 Raw streams written under .tmp/mine-events/ — a per-run run-<ts> subdir for
 --snapshot one-off passes, the shared dir otherwise (aggregated into
@@ -22,9 +23,9 @@ through the game socket for occupant ids of sectors 2-7, so the report gets a
 name for every seated player without any UI clicking.
 
 Usage:
-    uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --snapshot   # one state+names pass, then exit
-    uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --duration 300   # auto-stop after 5 min
-    uv run python tools/socket_log/mine_logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
+    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --snapshot   # one state+names pass, then exit
+    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --duration 300   # auto-stop after 5 min
+    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
 """
 
 import asyncio
@@ -32,9 +33,9 @@ import json
 import pathlib
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).parent))
-from logger_args import build_parser, resolve_run_dir  # noqa: E402
-from ws_logger import GameLogger, JsonlSink  # noqa: E402
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
+from core.args import build_parser, resolve_run_dir  # noqa: E402
+from core.runner import GameLogger, JsonlSink  # noqa: E402
 
 from mine_socket.handlers import build_routes  # noqa: E402
 from mine_socket.report import build_report, print_tree  # noqa: E402

@@ -1,6 +1,6 @@
-"""Offline mine decoders over a socket_capture.py capture dir.
+"""Offline mine decoders over a capture/capture.py capture dir.
 
-Moved out of socket_decode.py (which keeps only the generic frame dumpers):
+Mine-specific extractors (core/decode.py keeps only the generic frame dumpers):
   - extract_mine_state: full guild-mine state (module 0x48) — season window,
     map state, history feed;
   - extract_mine_events: guild-mine history events (broadcast type 150).
@@ -19,7 +19,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))  # standalone CLI: reach the shared modules
 
-from game_protocol import BROADCAST_MODULE, BROADCAST_PUSH_REPLAY_CMD  # noqa: E402
+from core.protocol import BROADCAST_MODULE, BROADCAST_PUSH_REPLAY_CMD  # noqa: E402
 from mine_socket.protocol import (  # noqa: E402
     MINE_EVENT_TYPE,
     MINE_HISTORY_CMD,
@@ -27,7 +27,7 @@ from mine_socket.protocol import (  # noqa: E402
     MAP_STATE_CMD,
     SEASON_INFO_CMD,
 )
-from socket_decode import decode_proto, read_packed_varints, split_frame  # noqa: E402
+from core.decode import decode_proto, read_packed_varints, split_frame  # noqa: E402
 
 
 def extract_mine_state(capture_dir: pathlib.Path) -> dict:

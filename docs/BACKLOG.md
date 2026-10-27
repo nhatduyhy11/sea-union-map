@@ -20,9 +20,9 @@ Phát hiện 2026-10-26, run `sea-crawl-20261026-195342`.
 - **Hướng fix**: thay `sleep:8` cứng trong STAGES bằng bước chờ sẵn sàng —
   ví dụ verb `await:<golden>` (loop expect đến khi similarity ≥ ngưỡng hoặc hết
   hạn, screenshot evidence mỗi lần thử), hoặc tối thiểu chờ WS game mở + thêm
-  expect-retry trước khi vào popclose. Sửa ở `sea_capture.py` (STAGES) +
-  `socket_capture.py` (run_step) — vẫn thuần Python/template matching, không
-  đụng phần inject của `sea_crawler.py`.
+  expect-retry trước khi vào popclose. Sửa ở `sea_socket/walkthrough.py` (STAGES) +
+  `capture/capture.py` (run_step) — vẫn thuần Python/template matching, không
+  đụng phần inject của `sea_socket/crawler.py`.
 
 ## 2. Background trang: watermark "Hunter [S517]" xoay 45°
 
@@ -45,10 +45,10 @@ Phát hiện 2026-10-26 khi review data crawl.
   brief có cả `server` (vd `server: 517`, guild `HUNTERS` id 5170010), nên hai
   guild cùng tên khác server sẽ **dính vào một row**: BXH Phe gộp nhầm điểm,
   filter guild chọn một là sáng cả hai, drill-down trộn member.
-- **Hiện trạng pipeline**: `sea_to_ui.py` drop `server` khi dump BRIEFS
-  (`{name, guild}` — `sea_to_ui.py:60`) nên FE hiện không đủ dữ liệu để ghép id.
+- **Hiện trạng pipeline**: `sea_socket/report.py` drop `server` khi dump BRIEFS
+  (`{name, guild}` — `sea_socket/report.py:60`) nên FE hiện không đủ dữ liệu để ghép id.
 - **Hướng fix**:
-  1. `sea_to_ui.py`: giữ `server` vào BRIEFS (và contributions nếu cần).
+  1. `sea_socket/report.py`: giữ `server` vào BRIEFS (và contributions nếu cần).
   2. FE: guild identity thành `guildName_serverNumber` (vd `HUNTERS_517`);
      display name vẫn `guildName` riêng. Chạm `CanvasFilter` (`types.ts`),
      bucket + `GuildScore`/drill-down (`selectors.ts`), filter matching ở
@@ -79,10 +79,10 @@ Phát hiện 2026-10-26 — owner muốn rank guild theo sức mạnh, không ph
   (`buildFactionBoard` ở `src/domain/selectors.ts`, hiển thị tại
   `src/components/panels/leaderboard/FactionBoard.tsx` — `GuildLabel` +
   `{number(guild.score)}`). `power` của player **không vào được UI**:
-  `players.jsonl` brief có `power` (vd 30.887.328) nhưng `sea_to_ui.py` dump
+  `players.jsonl` brief có `power` (vd 30.887.328) nhưng `sea_socket/report.py` dump
   BRIEFS chỉ `{name, guild}` — cùng dạng drop như `server` ở task 3.
 - **Việc**:
-  1. Pipeline: `sea_to_ui.py` giữ `power` vào BRIEFS (gộp 1 lần với `server`
+  1. Pipeline: `sea_socket/report.py` giữ `power` vào BRIEFS (gộp 1 lần với `server`
      của task 3 — cùng chỗ sửa).
   2. Domain: guild có `power = sum(power thành viên)` trong `buildFactionBoard`
      (`GuildScore` thêm field); sort guild **luôn theo power giảm dần**, điểm
@@ -123,28 +123,28 @@ Phát hiện 2026-10-26 khi rà lại docs pipeline (giờ nằm ở `README.md`
   `camp` của `src/data/sea-live.json`, nhưng là bản đã join, không phải file
   gốc của tool dump.
 - **Việc 1 — commit baseline config**: extract lại 1 lần rồi commit
-  `src/data/campgvg.json` (cạnh `sea-live.json`); `sea_to_ui.py --config`
+  `src/data/campgvg.json` (cạnh `sea-live.json`); `sea_socket/report.py --config`
   trỏ vào đó làm default. Lợi: pipeline chạy lại không cần bước extract;
   re-extract + `git diff` thành drift-detection miễn phí khi game deploy
   bundle mới (season mới, sửa node — thấy ngay trong review). ⚠️ Phải
   re-extract bằng tool cho đúng format gốc, đừng derive tay từ `camp` của
   `sea-live.json` (schema có thể biến đổi lúc join).
 - **Việc 2 — gộp lệnh crawl [1] + dump [3]**: khi config đã có đường cố định,
-  `sea_crawler.py` thêm `--dump` (mặc định bật) tự transform sau khi crawl —
+  `sea_socket/crawler.py` thêm `--dump` (mặc định bật) tự transform sau khi crawl —
   1 lệnh ra cả raw run lẫn JSON cho FE. Transform là hàm thuần vài ms nên
-  gộp ở tầng lệnh được; giữ `sea_to_ui.py` làm module/CLI riêng để re-dump
+  gộp ở tầng lệnh được; giữ `sea_socket/report.py` làm module/CLI riêng để re-dump
   run cũ — crawl đắt (login, throttle pacing, vài phút) còn dump rẻ (ms),
   sửa transform phải re-dump nhiều lần mà không muốn crawl lại.
 - **Việc 3 — update docs kèm theo (cùng change với việc 1+2, docs theo code
   chứ không đi trước)**: viết lại phần pipeline cho khớp arrangement mới +
   chốt bộ thuật ngữ, vì bản hiện tại gây rối (đã xác nhận với owner):
   - **Thuật ngữ dùng nhất quán** — **crawl** = thu data live từ server
-    (`sea_crawler.py`); **extract** = bóc config tĩnh từ bundle client
-    (`sea_config_extract.py`); **transform** = hàm thuần biến đổi crawl
-    output + config thành schema FE (nằm trong `sea_to_ui.py`); **dump** =
+    (`sea_socket/crawler.py`); **extract** = bóc config tĩnh từ bundle client
+    (`config_extract.py`); **transform** = hàm thuần biến đổi crawl
+    output + config thành schema FE (nằm trong `sea_socket/report.py`); **dump** =
     transform + ghi file JSON. Hiện docs dùng "dump" lẫn lộn cả ba nghĩa.
   - `README.md` (mục Crawler — mode sea): flow mới 1 lệnh
-    `sea_crawler.py --profile …`; vai trò mới của `sea_to_ui.py` là
+    `sea_socket/crawler.py --profile …`; vai trò mới của `sea_socket/report.py` là
     **re-dump tool** (command giữ nguyên, `--config` thành optional); ghi rõ
     [1]/[2] độc lập thứ tự và [2] chạy 1 lần rồi reuse.
   - `README.md` (mục "Luồng crawl → UI"): cập nhật sơ đồ luồng +
