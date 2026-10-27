@@ -15,6 +15,7 @@ from core.protocol import PLAYER_BRIEF_CMD, PLAYER_MODULE
 SEA_MODULE = 0x72
 MAP_SNAPSHOT_CMD = 0x000C  # full battle-map snapshot pushed on map open
 NODE_STATE_CMD = 0x0011  # request {f1: id} -> 0x0012 node state
+FACTION_DETAIL_CMD = 0x0024  # request {f1: faction id} -> 0x0025 guild scores
 
 RANK_MODULE = 0x0C
 RANK_CMD = 0x0002
@@ -87,3 +88,30 @@ def parse_node_state(body: bytes, requested_id: int | None = None) -> dict:
                         scores[s[1]] = s.get(2, 0)
             return {"id": sub.get(1), "art": sub.get(4), "faction_scores": scores}
     return {"id": requested_id, "art": None, "faction_scores": {}, "locked_err": err}
+
+
+def parse_faction_detail(body: bytes) -> dict:
+    """0x72/0x0025 (Tổng quan phe): f2 {f1 faction, f2×N {f1 guild, f2 score},
+    f3 cityNum, f4 fightCap (fixed64 double), f5 rank}. Guild scores sum to the
+    faction total from node states — verified exact on run 2026-10-27."""
+    for field, _wire, value in decode_proto(body):
+        if field != 2 or not isinstance(value, bytes):
+            continue
+        info: dict = {"faction": None, "guilds": [], "city_num": None,
+                      "rank": None, "fight_cap": None}
+        for f, wire, v in decode_proto(value):
+            if f == 1:
+                info["faction"] = v
+            elif f == 2 and isinstance(v, bytes):
+                row = {rf: rv for rf, _rw, rv in decode_proto(v)}
+                info["guilds"].append({"guild_id": row.get(1), "score": row.get(2, 0)})
+            elif f == 3:
+                info["city_num"] = v
+            elif f == 4 and wire == 1:
+                info["fight_cap"] = struct.unpack("<d", struct.pack("<Q", v))[0]
+            elif f == 5:
+                info["rank"] = v
+        info["guilds"].sort(key=lambda g: -g["score"])
+        return info
+    return {"faction": None, "guilds": [], "city_num": None, "rank": None,
+            "fight_cap": None}

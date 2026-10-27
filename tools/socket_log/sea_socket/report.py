@@ -13,7 +13,13 @@ Nội dung dump (key → nguồn):
 - ``owner``      ← ``map-snapshot.json``: game faction id đang giữ từng node
 - ``nodeRows``   ← ``boards-decoded.json``: [gameNodeId, playerId, score, campId]
                    (server cắt top-20/node)
-- ``briefs``     ← ``players.jsonl``: playerId → tên + guild
+- ``playerBoard`` ← ``boards-decoded.json`` (117, 0): [rank, playerId, score, campId]
+                   (BXH điểm server top-200 — nguồn sự thật tab Cá nhân)
+- ``factionGuilds`` ← ``guild-scores.json`` (0x72/0x0025): factionId →
+                   [[guildId, điểm ST], ...] sort giảm dần (tab Phe)
+- ``guildNames`` ← ``players.jsonl``: guildId → tên (từ brief member; guild
+                   không có member nào được brief thì thiếu tên)
+- ``briefs``     ← ``players.jsonl``: playerId → tên + guild (+guildId)
 - ``baseDir``    ← tên 4 đảo base → hướng trên layout (specs/map-*.PNG)
 - ``snapshotAt`` ← ``map-snapshot.json``: logged_at (nếu có)
 
@@ -76,6 +82,27 @@ def layout_id_of(camp: dict) -> str | None:
     return m.group(1) if m else None
 
 
+def player_board(boards: dict) -> list:
+    board = boards.get("(117, 0)", {})
+    rows = []
+    for row in board.get("rows", []):
+        info = row.get("addition_info")
+        camp = int(info) if isinstance(info, str) and info.isdigit() else None
+        rows.append([row["rank"], int(row["player_id"]), row["score"], camp])
+    rows.sort()
+    return rows
+
+
+def faction_guilds(crawl: Path) -> dict:
+    path = crawl / "guild-scores.json"
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    factions = raw.get("factions", raw)
+    return {fid: [[g["guild_id"], g["score"]] for g in detail["guilds"]]
+            for fid, detail in factions.items()}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--crawl", required=True, type=Path)
@@ -89,13 +116,18 @@ def main() -> None:
     owner = {n["id"]: n["owner"] for n in snapshot["nodes"]}
     boards = load_boards_decoded(args.crawl)
     briefs = {}
+    guild_names = {}
     with (args.crawl / "players.jsonl").open(encoding="utf-8") as fh:
         for line in fh:
             p = json.loads(line)
             entry = {"name": p["name"]}
+            if p.get("guild_id"):
+                entry["guildId"] = str(p["guild_id"])
+                guild_names.setdefault(str(p["guild_id"]), p.get("guild_name"))
             if p.get("guild_name"):
                 entry["guild"] = p["guild_name"]
             briefs[p["id"]] = entry
+    guild_names = {gid: name for gid, name in guild_names.items() if name}
     camp_raw = json.loads(args.config.read_text(encoding="utf-8"))["CampGVGLO"]
     camp = {
         int(rid): {
@@ -123,6 +155,8 @@ def main() -> None:
         raise SystemExit(f"snapshot nodes without layout id: {unmatched}")
 
     rows = node_rows(boards)
+    board_rows = player_board(boards)
+    guilds_by_faction = faction_guilds(args.crawl)
     known = {pid for _g, pid, _s, _c in rows}
     unnamed = sorted(known - set(briefs))
     payload = {
@@ -130,6 +164,9 @@ def main() -> None:
         "camp": {str(g): c for g, c in camp.items()},
         "owner": {str(g): o for g, o in owner.items()},
         "nodeRows": rows,
+        "playerBoard": board_rows,
+        "factionGuilds": {str(f): g for f, g in guilds_by_faction.items()},
+        "guildNames": guild_names,
         "briefs": {str(p): b for p, b in briefs.items()},
         "baseDir": BASE_DIR,
     }
@@ -137,7 +174,9 @@ def main() -> None:
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
     print(f"[sea-to-ui] {args.out}: {len(camp)} camp rows, {len(owner)} owners, "
-          f"{len(rows)} contribution rows, {len(briefs)} briefs, "
+          f"{len(rows)} contribution rows, {len(board_rows)} playerBoard rows, "
+          f"{sum(len(g) for g in guilds_by_faction.values())} guild scores, "
+          f"{len(guild_names)} guild names, {len(briefs)} briefs, "
           f"{len(unnamed)} players without brief")
 
 

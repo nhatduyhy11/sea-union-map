@@ -54,6 +54,7 @@ from core.decode import decode_proto  # noqa: E402
 from core.protocol import parse_player_briefs  # noqa: E402
 from core.runner import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
 from sea_socket.protocol import (  # noqa: E402
+    FACTION_DETAIL_CMD,
     MAP_SNAPSHOT_CMD,
     NODE_STATE_CMD,
     PLAYER_MODULE,
@@ -66,12 +67,15 @@ from sea_socket.protocol import (  # noqa: E402
     build_brief_frame,
     build_request,
     iter_frames,
+    parse_faction_detail,
     parse_map_snapshot,
     parse_node_state,
 )
 from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
+BRIEF_RETRY_CHUNK = 20  # re-ask size for the post-throttle tail
+BRIEF_RETRY_ROUNDS = 3
 INJECT_TIMEOUT = 8.0
 REQUEST_PACE = 0.25  # seconds between injected requests
 SNAPSHOT_TIMEOUT = 20.0
@@ -285,6 +289,20 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
         header, body = await router.inject(page, RANK_MODULE, RANK_CMD, [(1, kind)])
         router.board_bodies[(kind, 0)] = (body, header["status"] == 1)
 
+    # Guild scores (Tổng quan phe, 0x72/0x0024 -> 0x0025): the only server
+    # source of per-guild ST totals — the web faction board uses it directly
+    # instead of summing node rows (LEADERBOARD_SPECS.md §1.3).
+    faction_details = {}
+    for faction_id in (1, 2, 3, 4):
+        header, body = await router.inject(
+            page, SEA_MODULE, FACTION_DETAIL_CMD, [(1, faction_id)])
+        detail = parse_faction_detail(body)
+        faction_details[faction_id] = detail
+        await asyncio.sleep(REQUEST_PACE)
+    (out_dir / "guild-scores.json").write_text(
+        json.dumps(faction_details, ensure_ascii=False, indent=1),
+        encoding="utf-8")
+
     # Decode every collected board with the game runtime (single JS round-trip).
     inputs = [
         {"key": list(key), "b64": base64.b64encode(body).decode(), "compress": compress}
@@ -302,27 +320,45 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
     )
 
     # Player briefs for every rankId seen in any board (ssid-tracked batches).
+    # id_type 1 = player; board 116 rows are factions (id_type 5, ids "1".."4")
+    # — the brief endpoint refuses those, asking for them is wasted quota.
     ids = set()
     for row in decoded_boards.values():
         for entry in row.get("rows", []):
-            ids.add(entry["player_id"])
+            if entry.get("id_type") == 1:
+                ids.add(entry["player_id"])
         if row.get("self"):
             ids.add(row["self"]["player_id"])
     ordered = sorted(ids, key=int)
-    for start in range(0, len(ordered), BRIEF_CHUNK):
-        missing = [pid for pid in ordered[start : start + BRIEF_CHUNK] if pid not in router.briefs]
-        if not missing:
-            continue
-        seq = router.next_seq()
-        fut: asyncio.Future = loop.create_future()
-        router.pending[seq] = fut
-        await page.evaluate(SEND_FRAME_JS, list(build_brief_frame(seq, missing)))
-        try:
-            await asyncio.wait_for(fut, INJECT_TIMEOUT)
-        except asyncio.TimeoutError:
-            router.pending.pop(seq, None)
-            print(f"[briefs] timeout for {len(missing)} ids", flush=True)
-        await asyncio.sleep(REQUEST_PACE)
+
+    async def ask_briefs(wanted: list[str], chunk: int) -> None:
+        for start in range(0, len(wanted), chunk):
+            missing = [pid for pid in wanted[start : start + chunk] if pid not in router.briefs]
+            if not missing:
+                continue
+            seq = router.next_seq()
+            fut: asyncio.Future = loop.create_future()
+            router.pending[seq] = fut
+            await page.evaluate(SEND_FRAME_JS, list(build_brief_frame(seq, missing)))
+            try:
+                await asyncio.wait_for(fut, INJECT_TIMEOUT)
+            except asyncio.TimeoutError:
+                router.pending.pop(seq, None)
+                print(f"[briefs] timeout for {len(missing)} ids", flush=True)
+            await asyncio.sleep(REQUEST_PACE)
+
+    await ask_briefs(ordered, BRIEF_CHUNK)
+    # A throttled batch can come back empty (2026-10-27: one 60-id batch
+    # answered 0 briefs) — re-ask the tail in smaller chunks with backoff.
+    # Ids still missing after this are server-refused (cross-server group);
+    # brief_backfill.py documents them rather than retrying forever.
+    for attempt in range(BRIEF_RETRY_ROUNDS):
+        still = [pid for pid in ordered if pid not in router.briefs]
+        if not still:
+            break
+        await asyncio.sleep(min(2 ** attempt, 4.0))
+        print(f"[briefs] retry {attempt + 1}: {len(still)} ids missing", flush=True)
+        await ask_briefs(still, BRIEF_RETRY_CHUNK)
 
     players_path = out_dir / "players.jsonl"
     with players_path.open("w", encoding="utf-8") as fh:
