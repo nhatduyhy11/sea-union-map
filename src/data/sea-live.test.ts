@@ -1,19 +1,39 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import raw from "./sea-live.json";
-import { contributions, factionDir, islands, layoutIdOf } from "./sea-live";
+import {
+  contributions,
+  factionDir,
+  factionGuilds,
+  islands,
+  layoutIdOf,
+  playerBoard,
+} from "./sea-live";
 
 // Join game-id → layout-id chạy trong sea-live.ts, dữ liệu từ sea-live.json
 // (Python dump thuần). Test này khoá hợp đồng của join để re-crawl đè JSON
 // không lọt data lệch layout.
 test("layoutIdOf reads the trailing display-id prefix", () => {
-  assert.equal(layoutIdOf({ name: "1-23Đảo Câu Cá", type: 2, pointRequire: 0 }), "1-23");
   assert.equal(
-    layoutIdOf({ name: "Khu nghỉ dưỡng Trường Đảo 3-2", type: 4, pointRequire: 0 }),
+    layoutIdOf({ name: "1-23Đảo Câu Cá", type: 2, pointRequire: 0 }),
+    "1-23"
+  );
+  assert.equal(
+    layoutIdOf({
+      name: "Khu nghỉ dưỡng Trường Đảo 3-2",
+      type: 4,
+      pointRequire: 0,
+    }),
     "3-2"
   );
-  assert.equal(layoutIdOf({ name: "4-1Khách Sạn Cực Lạc", type: 5, pointRequire: 0 }), "4");
-  assert.equal(layoutIdOf({ name: "Vịnh Thao Thiết", type: 1, pointRequire: 0 }), null);
+  assert.equal(
+    layoutIdOf({ name: "4-1Khách Sạn Cực Lạc", type: 5, pointRequire: 0 }),
+    "4"
+  );
+  assert.equal(
+    layoutIdOf({ name: "Vịnh Thao Thiết", type: 1, pointRequire: 0 }),
+    null
+  );
 });
 
 test("Every non-base island joins exactly one camp and vice versa", () => {
@@ -51,10 +71,7 @@ test("Four bases own one direction each; every faction resolves to a direction",
     assert.equal(factionDir[dump.owner[camp[0]]], dir);
   }
   // faction 1..4 đều có hướng — ngược lại contribution không biết thuộc phe nào.
-  assert.deepEqual(
-    Object.keys(factionDir).map(Number).sort(),
-    [1, 2, 3, 4]
-  );
+  assert.deepEqual(Object.keys(factionDir).map(Number).sort(), [1, 2, 3, 4]);
 });
 
 test("Every valid board row becomes one contribution on a known island", () => {
@@ -73,4 +90,38 @@ test("Every valid board row becomes one contribution on a known island", () => {
   const anonymous = contributions.filter((c) => !briefIds.has(c.playerId));
   assert.ok(anonymous.length > 0);
   for (const entry of anonymous) assert.equal(entry.name, `#${entry.playerId}`);
+});
+
+test("playerBoard keeps server top-200 order and joins brief names", () => {
+  assert.ok(
+    playerBoard.length === 200,
+    `top-200, thực tế ${playerBoard.length}`
+  );
+  for (let i = 1; i < playerBoard.length; i++)
+    assert.ok(playerBoard[i - 1].rank < playerBoard[i].rank, "rank tăng dần");
+  // Row 1 = server hạng 1, có phe, tên từ brief hoặc #id (player bị từ chối brief).
+  const top = playerBoard[0];
+  assert.equal(top.rank, 1);
+  assert.ok(Object.values(factionDir).includes(top.faction));
+  assert.match(top.name, /^(#|\S)/);
+  const anonymous = playerBoard.filter((row) => row.name.startsWith("#"));
+  assert.ok(anonymous.length > 0, "player không brief hiện #id, không bị drop");
+});
+
+test("factionGuilds keys map to directions; scores sum to a plausible total", () => {
+  assert.deepEqual(Object.keys(factionGuilds).sort(), [
+    "east",
+    "north",
+    "south",
+    "west",
+  ]);
+  for (const rows of Object.values(factionGuilds)) {
+    assert.ok(rows.length >= 4, "mỗi phe ≥ 4 guild (board 116 guilds[])");
+    for (let i = 1; i < rows.length; i++)
+      assert.ok(
+        rows[i - 1].score >= rows[i].score,
+        "sort giảm dần theo server"
+      );
+    for (const row of rows) assert.match(row.name, /^(#|\S)/);
+  }
 });

@@ -15,7 +15,10 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
   return (
     <>
       <h2>Xếp hạng cá nhân</h2>
-      <p>Tổng Điểm ST gộp từ BXH từng cứ điểm (top-N mỗi node).</p>
+      <p>
+        BXH điểm server (top-200). Mở rộng: đảo đóng góp ghép từ BXH từng cứ
+        điểm.
+      </p>
       {players.map((player, index) => {
         const summary = (
           <>

@@ -6,7 +6,13 @@
 
 import raw from "./sea-live.json";
 import { layoutNodes, layoutRoutes } from "./map-layout";
-import type { Contribution, Island, Route } from "../types";
+import type {
+  Contribution,
+  Island,
+  Route,
+  ServerGuildRow,
+  ServerPlayerRow,
+} from "../types";
 
 // CampGVG (client config, id == server node id): tên node, loại, ngưỡng chiếm.
 interface CampRow {
@@ -15,20 +21,25 @@ interface CampRow {
   pointRequire: number;
 }
 
-// Hình dạng dump của sea_to_ui.py — key số đến đây là string (JSON).
+// Hình dạng dump của report.py — key số đến đây là string (JSON).
 interface SeaLiveDump {
   snapshotAt: string;
   camp: Record<string, CampRow>;
   owner: Record<string, number>;
   nodeRows: [number, number, number, number][];
-  briefs: Record<string, { name: string; guild?: string }>;
+  playerBoard: [number, number, number, number | null][];
+  factionGuilds: Record<string, [number, number][]>;
+  guildNames: Record<string, string>;
+  briefs: Record<string, { name: string; guildId?: string; guild?: string }>;
   baseDir: Record<string, string>;
 }
 
-// Chỉ nodeRows cần downcast (JSON import infer number[][], không biết tuple).
+// Tuple fields cần downcast (JSON import infer number[][], không biết tuple).
 const bundledDump: SeaLiveDump = {
   ...raw,
   nodeRows: raw.nodeRows as SeaLiveDump["nodeRows"],
+  playerBoard: raw.playerBoard as SeaLiveDump["playerBoard"],
+  factionGuilds: raw.factionGuilds as unknown as SeaLiveDump["factionGuilds"],
 };
 
 // Dev: ưu tiên dump mới nhất ở public/sea-live-dev.json (gitignored —
@@ -112,10 +123,57 @@ export const contributions: Contribution[] = dump.nodeRows.flatMap(
         name: brief?.name ?? `#${playerId}`,
         faction,
         guild: brief?.guild,
+        guildId: brief?.guildId,
         score,
       },
     ];
   }
 );
+
+// BXH điểm server (board 117, top-200): rank + điểm là truth, tên/phe ghép từ
+// brief + factionDir. Row phe không xác định (mất base) bị bỏ — không render được.
+export const playerBoard: (ServerPlayerRow & { faction: string })[] =
+  dump.playerBoard.flatMap(([rank, playerId, score, camp]) => {
+    const faction = camp !== null ? (factionDir[camp] ?? null) : null;
+    if (!faction) return [];
+    const brief = dump.briefs[playerId];
+    return [
+      {
+        rank,
+        playerId: String(playerId),
+        name: brief?.name ?? `#${playerId}`,
+        faction,
+        guild: brief?.guild,
+        score,
+      },
+    ];
+  });
+
+// Guild scores server (0x72/0x0025 "Tổng quan phe"), key theo direction FE.
+// Guild thiếu tên (không member nào được brief) hiện #id — STATS_MISMATCH §5.1.
+export const factionGuilds: Record<string, ServerGuildRow[]> = Object.entries(
+  dump.factionGuilds
+)
+  .flatMap(([fid, rows]) => {
+    const dir = factionDir[Number(fid)];
+    if (!dir) return [];
+    return [
+      [
+        dir,
+        rows.map(([guildId, score]) => ({
+          guildId: String(guildId),
+          name: dump.guildNames[String(guildId)] ?? `#${guildId}`,
+          score,
+        })),
+      ] as const,
+    ];
+  })
+  .reduce<Record<string, ServerGuildRow[]>>(
+    (acc, [dir, rows]) => ({ ...acc, [dir]: rows }),
+    {}
+  );
+
+// guildId → tên (từ brief member) — cùng nguồn guildNames của report.py.
+export const guildNames: Record<string, string> = dump.guildNames;
 
 export const routes: Route[] = layoutRoutes;

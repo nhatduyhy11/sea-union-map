@@ -1,11 +1,21 @@
-import { islands as demoIslands, routes as demoRoutes, contributions as demoContributions } from "../data/demo";
-import { islands as liveIslands, contributions as liveContributions } from "../data/sea-live";
+import {
+  islands as demoIslands,
+  routes as demoRoutes,
+  contributions as demoContributions,
+} from "../data/demo";
+import {
+  islands as liveIslands,
+  contributions as liveContributions,
+  playerBoard as serverPlayerBoard,
+  factionGuilds as serverFactionGuilds,
+} from "../data/sea-live";
 import { factions } from "../data/factions";
 import { deriveClaims, deriveConnected, type ClaimState } from "./claims";
 import {
   buildFactionBoard,
   buildLeaderboard,
   buildNodeBoard,
+  buildServerLeaderboard,
   playersFromContributions,
   scoresForNode,
 } from "./selectors";
@@ -35,9 +45,7 @@ export const claims: ClaimState = LIVE
   : deriveClaims(islands, routes, contributions);
 
 function liveClaims(): ClaimState {
-  const owners = new Map(
-    islands.map((node) => [node.id, node.owner] as const)
-  );
+  const owners = new Map(islands.map((node) => [node.id, node.owner] as const));
   return {
     ownerByNode: owners,
     connectedByNode: deriveConnected(islands, routes, owners),
@@ -50,11 +58,17 @@ export const ownedIslands: Island[] = LIVE
       ...node,
       owner: claims.ownerByNode.get(node.id) ?? null,
     }));
-export const leaderboard = buildLeaderboard(contributions, factions);
+// Tab Cá nhân: live dùng BXH điểm server (board 117) — thứ tự/điểm truth;
+// demo tự tổng từ contributions. Tab Phe: live gắn guild scores server
+// (0x72/0x0025); demo path tự tính (LEADERBOARD_SPECS.md §1.3).
+export const leaderboard = LIVE
+  ? buildServerLeaderboard(serverPlayerBoard, contributions, factions)
+  : buildLeaderboard(contributions, factions);
 export const factionBoard = buildFactionBoard(
   contributions,
   factions,
-  ownedIslands
+  ownedIslands,
+  LIVE ? serverFactionGuilds : undefined
 );
 export const nodeBoard = buildNodeBoard(islands, contributions, factions);
 export const baseCount = islands.filter((node) => node.base).length;

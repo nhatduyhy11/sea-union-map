@@ -4,6 +4,7 @@ import {
   buildFactionBoard,
   buildLeaderboard,
   buildNodeBoard,
+  buildServerLeaderboard,
   nodeDetails,
   playersFromContributions,
   scoresForNode,
@@ -232,5 +233,113 @@ test("Guild/player filter matches nodes by contribution; edges always rest", () 
   assert.equal(
     edges.every((edge) => edge.style?.opacity === 0.45),
     true
+  );
+});
+
+test("Server leaderboard keeps server rank/score and joins allocations", () => {
+  const rows = [
+    { rank: 1, playerId: "p2", name: "Two", faction: "b", score: 900 },
+    { rank: 2, playerId: "p1", name: "One", faction: "a", score: 300 },
+    // Trên server board nhưng không lọt top-N node nào → allocations rỗng.
+    { rank: 3, playerId: "p9", name: "#p9", faction: "a", score: 1 },
+  ];
+  const board = buildServerLeaderboard(rows, contributions, factions);
+  // Thứ tự server giữ nguyên — không sort lại theo score/allocations.
+  assert.deepEqual(
+    board.map((p) => [p.id, p.score, p.nodes]),
+    [
+      ["p2", 900, 1],
+      ["p1", 300, 2],
+      ["p9", 1, 0],
+    ]
+  );
+  assert.equal(board[0].factionInfo?.id, "b");
+  // playerAllocations sort theo score giảm dần.
+  assert.deepEqual(
+    board[1].allocations.map((a) => [a.nodeId, a.score]),
+    [
+      ["2-1", 300],
+      ["1-1", 100],
+    ]
+  );
+});
+
+test("Server faction board uses server guild scores; members derive from rows", () => {
+  const live: Contribution[] = [
+    {
+      nodeId: "1-1",
+      playerId: "m1",
+      name: "M1",
+      faction: "a",
+      guild: "Alpha",
+      guildId: "1",
+      score: 70,
+    },
+    {
+      nodeId: "2-1",
+      playerId: "m1",
+      name: "M1",
+      faction: "a",
+      guild: "Alpha",
+      guildId: "1",
+      score: 30,
+    },
+    {
+      nodeId: "1-1",
+      playerId: "m2",
+      name: "M2",
+      faction: "a",
+      guild: "Beta",
+      guildId: "2",
+      score: 40,
+    },
+    // Không guildId (không brief) → bucket "Không guild", điểm tự tính.
+    { nodeId: "1-1", playerId: "m3", name: "#m3", faction: "a", score: 5 },
+    {
+      nodeId: "1-1",
+      playerId: "x1",
+      name: "X1",
+      faction: "b",
+      guild: "Gamma",
+      guildId: "9",
+      score: 500,
+    },
+  ];
+  const serverGuilds = {
+    a: [
+      { guildId: "2", name: "Beta", score: 400 },
+      { guildId: "1", name: "Alpha", score: 100 },
+    ],
+  };
+  const board = buildFactionBoard(live, factions, islands, serverGuilds);
+  const factionA = board.find((f) => f.id === "a");
+  assert.ok(factionA);
+  // Điểm phe = tổng guild scores server (không cộng bucket "Không guild").
+  assert.equal(factionA.score, 500);
+  // Guild rows theo thứ tự + điểm server, bất kể member có bao nhiêu.
+  assert.deepEqual(
+    factionA.guilds.map((g) => [g.guild, g.score, g.players]),
+    [
+      ["Beta", 400, 1],
+      ["Alpha", 100, 1],
+      ["Không guild", 5, 1],
+    ]
+  );
+  // Member list derive từ node rows + briefs (guildId match).
+  assert.deepEqual(
+    factionA.guilds[1].members.map((m) => [m.id, m.score, m.nodes]),
+    [["m1", 100, 2]]
+  );
+  assert.deepEqual(
+    factionA.guilds[0].members.map((m) => [m.id, m.score]),
+    [["m2", 40]]
+  );
+  // Phe không có server guilds → rows rỗng, score 0, mọi member thành strays.
+  const factionB = board.find((f) => f.id === "b");
+  assert.ok(factionB);
+  assert.equal(factionB.score, 0);
+  assert.deepEqual(
+    factionB.guilds.map((g) => [g.guild, g.score, g.players]),
+    [["Không guild", 500, 1]]
   );
 });
