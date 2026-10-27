@@ -21,12 +21,12 @@
 
 ## 2. Hệ toạ độ hằng số trong `sea_capture.py`
 
-| Hằng | Giá trị | Ghi chú |
-| --- | --- | --- |
-| `BOSS_LENS` | 383,251 | kính lúp header node detail (349,251 = swap — KHÔNG click) |
-| `BOSS_CLOSE` | 476,149 | X popup boss |
-| `BOARD_STACK` | 487,479 | ô tròn xếp chồng → node leaderboard |
-| `BOARD_CLOSE` | 487,88 | X popup board |
+| Hằng           | Giá trị | Ghi chú                                                                                                                                |
+| -------------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `BOSS_LENS`    | 383,251 | kính lúp header node detail (349,251 = swap — KHÔNG click)                                                                             |
+| `BOSS_CLOSE`   | 476,149 | X popup boss                                                                                                                           |
+| `BOARD_STACK`  | 487,479 | ô tròn xếp chồng → node leaderboard                                                                                                    |
+| `BOARD_CLOSE`  | 487,88  | X popup board                                                                                                                          |
 | `DETAIL_CLOSE` | 318,560 | click nền tối dưới popup. **(80,620) không ăn** — element mờ phía đó nuốt click (probe 095825); 318,560 = đảo dưới, click trống vô hại |
 
 Popup quảng cáo login: AFK X(463,218); promo "Tranh Đoạt U Độ" **không có X** — click
@@ -75,12 +75,12 @@ nền góc phải trên (600,90). **Tuyệt đối không click "Đến" (319,62
 Toạ độ node trong `sea_capture.py` chỉ phục vụ check UI. Target thật: gửi payload
 thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi payload:
 
-| Request | Response | Verify trong run |
-| --- | --- | --- |
-| `0x72/0x000b` (mở map) | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | #393R 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4 |
-| `0x72/0x0011 {f1: id}` | `0x0012` state node: f4 art 1001..1009, f1 id, f2×4 `{faction, Điểm ST}` | 13 click → **9 node distinct** (8/53/62/63/70/71/74/82/85); phe ta (f3) có ST: node 8=2.31M, 53=6.39M, 62=5.89M, 63=4.88M, còn lại 0 |
-| `0x0c/0x0002 {f1:118, f2: id}` | `0x0003` node leaderboard | 9 board: 32B (rỗng) → 352B (node 8, có data) |
-| `0x0d/0x001f {packed ids}` | `0x0020` id→tên | #405S 92B → #406R 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`) |
+| Request                        | Response                                                                                                                             | Verify trong run                                                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `0x72/0x000b` (mở map)         | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | #393R 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4                                                   |
+| `0x72/0x0011 {f1: id}`         | `0x0012` state node: f4 art 1001..1009, f1 id, f2×4 `{faction, Điểm ST}`                                                             | 13 click → **9 node distinct** (8/53/62/63/70/71/74/82/85); phe ta (f3) có ST: node 8=2.31M, 53=6.39M, 62=5.89M, 63=4.88M, còn lại 0 |
+| `0x0c/0x0002 {f1:118, f2: id}` | `0x0003` node leaderboard                                                                                                            | 9 board: 32B (rỗng) → 352B (node 8, có data)                                                                                         |
+| `0x0d/0x001f {packed ids}`     | `0x0020` id→tên                                                                                                                      | #405S 92B → #406R 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`)                                                                        |
 
 → **Crawler kế tiếp = vòng lặp ids 1..89** (snapshot `0x000b` lấy enum + owner,
 `0x0011` + board `118` per node theo chu kỳ), zero GUI interaction.

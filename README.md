@@ -71,25 +71,25 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 
 ### Dùng chung
 
-| File                    | Vai trò                                                                                                                                                         |
-| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/runner.py`        | Core runner: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`) |
-| `capture/capture.py`    | Bắt frame thô: dump payload nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl`, kèm step DSL (`click:X,Y`, `shot:NAME`, `sleep:S`, `mark:LABEL`) + golden |
-| `core/decode.py`        | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                           |
-| `core/protocol.py`      | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`, convention inject ssid `0xF0..0xFF`     |
-| `core/args.py`          | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                              |
-| `core/runtime_codec.py` | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
-| `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                |
-| `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                     |
-| `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                           |
+| File                       | Vai trò                                                                                                                                                                    |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `core/runner.py`           | Core runner: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`)            |
+| `capture/capture.py`       | Bắt frame thô: dump payload nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl`, kèm step DSL (`click:X,Y`, `shot:NAME`, `sleep:S`, `mark:LABEL`) + golden             |
+| `core/decode.py`           | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                                      |
+| `core/protocol.py`         | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`, convention inject ssid `0xF0..0xFF`                |
+| `core/args.py`             | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
+| `core/runtime_codec.py`    | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
+| `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |
+| `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                   |
+| `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                                         |
 
 ### Mode 1 — sea (`sea_socket/`)
 
 Pipeline chuẩn: crawl → bóc config → dump JSON cho FE — luồng đầy đủ tới UI
 xem mục **Luồng crawl → UI** bên dưới.
 
-| File                       | Vai trò                                                                                                                                                                                   |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File                        | Vai trò                                                                                                                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (chỉ để proof protocol)                                                         |
 | `sea_socket/crawler.py`     | **Collector chính**: mở map 1 lần lấy snapshot 89 node, rồi inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game                            |
 | `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
@@ -124,14 +124,14 @@ uv run python tools/socket_log/core/runtime_codec.py rank body.b64
 
 ### Mode 2 — mine (`mine_socket/`)
 
-| File                       | Vai trò                                                                        |
-| -------------------------- | ------------------------------------------------------------------------------- |
-| `mine_socket/logger.py`    | Entry point event mine: tạo sink + route mine, lắp vào core `core/runner.py`    |
-| `mine_socket/protocol.py`  | Module 0x48 + broadcast type 150 (parse event/tile)                             |
-| `mine_socket/sinks.py`     | `MineEventSink` — dedupe theo event id, optional webhook                        |
-| `mine_socket/handlers.py`  | Route frame mine vào sink + predicate hoàn thành `--snapshot`                   |
-| `mine_socket/report.py`    | Aggregate các JSONL thành mine-report.json + cây báo cáo                        |
-| `mine_socket/decode.py`    | Decoder offline `mine-events`/`mine-state` trên capture dir binary              |
+| File                      | Vai trò                                                                      |
+| ------------------------- | ---------------------------------------------------------------------------- |
+| `mine_socket/logger.py`   | Entry point event mine: tạo sink + route mine, lắp vào core `core/runner.py` |
+| `mine_socket/protocol.py` | Module 0x48 + broadcast type 150 (parse event/tile)                          |
+| `mine_socket/sinks.py`    | `MineEventSink` — dedupe theo event id, optional webhook                     |
+| `mine_socket/handlers.py` | Route frame mine vào sink + predicate hoàn thành `--snapshot`                |
+| `mine_socket/report.py`   | Aggregate các JSONL thành mine-report.json + cây báo cáo                     |
+| `mine_socket/decode.py`   | Decoder offline `mine-events`/`mine-state` trên capture dir binary           |
 
 Logger ghi thẳng **JSONL đã decode** (không phải binary): `mine-events.jsonl`,
 `player-briefs.jsonl`, `guild-briefs.jsonl` dưới `.tmp/mine-events/`.
@@ -203,4 +203,4 @@ chỗ lấy data ở `sea-live.ts`, join giữ nguyên.
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol
 - [`BACKLOG.md`](BACKLOG.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI
 
-Câu hỏi cần chủ dự án xác nhận được ghi vào [NEED_CONFIRM.md](NEED_CONFIRM.md) trước khi hỏi.
+Điểm còn mở/câu hỏi cần chủ dự án xác nhận được ghi ở tài liệu liên quan kèm nguồn, phương án tạm và trạng thái — xem [`docs/DOCS_GUIDE.md`](docs/DOCS_GUIDE.md).

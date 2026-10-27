@@ -139,6 +139,16 @@ def attach_capture(page: Page, writer: FrameWriter) -> None:
 # puts the checkbox in the bottom strip, so the scan stays there.
 POPUP_STRIP = (180, 560, 420, 700)
 POPUP_CHECKBOX_MIN = 0.97
+# Popup X close-button ("Thông Báo" clipboard, 2026-10-27 FAIL-login.png):
+# golden cropped from the only capture of it — the account that sees the popup
+# can't re-show it the same day, so the FAIL shot is the asset source.
+# Calibrated on that run: self-match 0.955 (the X sits at odd coords, so the
+# (2,2) window grid tops out 1px off — pixel-exact only at (1,1)), cleanest
+# screen 0.893 — 0.93 separates. NOT the checkbox threshold: splash checkboxes
+# self-match ≥0.981, this button doesn't reach 0.97 even against itself. The
+# boss/board popup X's are different assets (mutual aligned score 0.73-0.80) —
+# don't reuse their shots as the golden.
+POPUP_X_MIN = 0.93
 # Outside-click point: the bottom-nav event icon (owner call 2026-10-26).
 # While a splash covers the screen the modal overlay swallows the click
 # (corner margins (600,90)/(320,40) closed only part of the queue and, once
@@ -267,12 +277,12 @@ async def run_step(page, writer: FrameWriter, verb: str, arg: str, out_dir: Path
                 await asyncio.sleep(0.12)
             await asyncio.sleep(1.0)
     elif verb == "popclose":
-        # Dismiss no-X splash popups: per round, check the "don't remind"
-        # checkbox first (visual template match — never text search), then
-        # close via the red-circle X template when present
-        # (goldens/popup-x.png — none of the current splashes ship an X), else
-        # an outside click on the dark overlay above the popup frame. Fixed
-        # round count:
+        # Dismiss splash popups: per round, check the "don't remind" checkbox
+        # first (visual template match — never text search), then close via the
+        # red-circle X template when present (goldens/popup-x.png — the
+        # "Thông Báo" clipboard ships one; the 2026-10-26 war-day splashes
+        # didn't), else an outside click on the dark overlay above the popup
+        # frame. Fixed round count:
         # the queue pops one splash after another (~2s apart), and a no-match
         # round degrades to a harmless background click.
         parts = [p.strip() for p in arg.split(",")]
@@ -310,8 +320,11 @@ async def run_step(page, writer: FrameWriter, verb: str, arg: str, out_dir: Path
                     break
             closed = False
             if x_tmpl is not None:
-                xs, xbx, xby = best_crop_position(live, x_tmpl)
-                if xs >= minimum:
+                # Fine grid like the checkbox scan — at the default (24,6) the
+                # window lattice skips the ~44px button entirely (2026-10-27
+                # probe: best landing 297px off the real X).
+                xs, xbx, xby = best_crop_position(live, x_tmpl, x_step=2, y_step=2)
+                if xs >= POPUP_X_MIN:
                     await page.mouse.click(xbx + x_tmpl.width // 2, xby + x_tmpl.height // 2)
                     print(f"[popclose] X icon {xs:.3f} at ({xbx},{xby}) — closed")
                     closed = True

@@ -9,6 +9,7 @@
 Đọc phần launch browser trong `tools/socket_log/mine_logger.py` (thời điểm đó
 nằm ở `tools/hauntedroom_runner.py` + `hauntedroom/core/cli.py`, đã xoá cùng
 logic bot cũ) để biết:
+
 - Browser launch thế nào: `launch_persistent_context(user_data_dir=.tmp/<profile>)`,
   viewport 640x720, channel `chrome`, `service_workers: block`, URL VN/CN mặc định.
 - Profile `.tmp/m535` đã có session đăng nhập → không cần xử lý auth thủ công.
@@ -19,12 +20,14 @@ hành vi (popup guard, retry navigation) và session cũ vẫn còn hiệu lực
 ## Bước 1: Viết tool bắt frame TRƯỚC khi phân tích gì cả
 
 `tools/socket_log/socket_capture.py` — 3 phần:
+
 1. Hook mọi WebSocket của mọi page: `page.on("websocket")` → `ws.on("framesent" / "framereceived")`.
 2. Dump từng payload **nguyên vẹn (binary giữ nguyên)** ra `frames/NNNNN-{S|R}.bin`
-   + `index.jsonl` ghi `{seq, t(ms), dir, size, file}` — đây là "xương sống" để correlate sau này.
+   - `index.jsonl` ghi `{seq, t(ms), dir, size, file}` — đây là "xương sống" để correlate sau này.
 3. Step DSL để lái game: `click:X,Y`, `shot:NAME`, `sleep:S`, `mark:LABEL`.
 
 **Bài học:**
+
 - Playwright/CDP trả payload ĐÃ giải mã TLS và ĐÃ inflate (permessage-deflate) — không cần wireshark.
 - `mark` trước mỗi click là thứ cho phép truy vết "event này sinh ra do thao tác nào".
 - Cần hook cả `context.on("page")` phòng game mở tab/frame mới.
@@ -40,6 +43,7 @@ uv run python tools/socket_log/socket_capture.py --profile .tmp/m535 --settle 12
 → Xem screenshot các mốc để biết trạng thái sau login (có popup AFK không, đã vào home chưa).
 
 Kết quả ngay lập tức:
+
 - Thấy endpoint thật: `wss://mg-sea-entry.bighost.games/ws?nodeName=wgamed...`
 - Thấy volume: ~280 frame ngay khi login → game push state, không phải request-response thuần.
 
@@ -55,6 +59,7 @@ Toàn bộ flow trúng ngay lần đầu vì tọa độ lấy từ ảnh ngư�
 ## Bước 4: Tìm framing từ chính dữ liệu (không đoán mò)
 
 Thủ tục chuẩn trên `index.jsonl` + file frame:
+
 1. **Tìm length prefix:** so `size` với 2 byte đầu. Thấy `00f1` = 241 = 243−2 trên MỌI frame
    → prefix 2 byte big-endian. Xác nhận lại trên frame khác (56−2=54, 17−2=15).
 2. **Histogram size + timeline:** frame 6B lặp đều ~5s = heartbeat; frame nhỏ khác = request ADSL.
@@ -66,6 +71,7 @@ Thủ tục chuẩn trên `index.jsonl` + file frame:
 ## Bước 5: Decoder protobuf KHÔNG CẦN schema
 
 `tools/socket_log/socket_decode.py` — walker wire-format generic (~40 dòng):
+
 - Đọc key varint → `field`, `wire type`; wire 0 = varint, 2 = length-delimited, 1/5 = fixed.
 - Bytes con: thử decode tiếp như protobuf (in cây), fail thì in hex, được thì in UTF-8.
 - Heuristic nhận dạng: giá trị 1.7e9–2.0e9 → annotate ngày giờ UTC (giúp nhận ra timestamp ngay).
@@ -76,6 +82,7 @@ cấu trúc; chỉ cần schema thật khi muốn tên field "chính xác".
 ## Bước 6: Định vị dữ liệu mục tiêu bằng CORRELATION, không phải đoán
 
 Trình tự đã dùng khi tìm "lịch sử khu mỏ":
+
 1. **Timeline quanh mark `clicked-log`:** chỉ thấy heartbeat → popup KHÔNG request gì
    → suy ra data đã nằm trong client từ lúc login → đổi hướng tìm trong login burst.
 2. **Grep nhị phân bằng chuỗi đã biết từ UI:** tên "AEMìn" hiện trên popup → `bytes.find`

@@ -19,6 +19,8 @@ Nội dung dump (key → nguồn):
                    [[guildId, điểm ST], ...] sort giảm dần (tab Phe)
 - ``guildNames`` ← ``players.jsonl``: guildId → tên (từ brief member; guild
                    không có member nào được brief thì thiếu tên)
+- ``guildRoster`` ← ``map-snapshot.json`` f4: playerId → guildId (mapping đầy
+                   đủ 115 guild độc lập với brief — cứu player bị refuse brief)
 - ``briefs``     ← ``players.jsonl``: playerId → tên + guild (+guildId)
 - ``baseDir``    ← tên 4 đảo base → hướng trên layout (specs/map-*.PNG)
 - ``snapshotAt`` ← ``map-snapshot.json``: logged_at (nếu có)
@@ -103,6 +105,16 @@ def faction_guilds(crawl: Path) -> dict:
             for fid, detail in factions.items()}
 
 
+def guild_brief_names(crawl: Path) -> dict:
+    """guild-names.json (0x24/0x0035) — tên guild trực tiếp, không cần member
+    brief; phủ cả guild mà mọi member đều bị refuse brief chéo server."""
+    path = crawl / "guild-names.json"
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {gid: brief["name"] for gid, brief in raw.items() if brief.get("name")}
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--crawl", required=True, type=Path)
@@ -128,6 +140,7 @@ def main() -> None:
                 entry["guild"] = p["guild_name"]
             briefs[p["id"]] = entry
     guild_names = {gid: name for gid, name in guild_names.items() if name}
+    guild_names.update(guild_brief_names(args.crawl))
     camp_raw = json.loads(args.config.read_text(encoding="utf-8"))["CampGVGLO"]
     camp = {
         int(rid): {
@@ -157,6 +170,9 @@ def main() -> None:
     rows = node_rows(boards)
     board_rows = player_board(boards)
     guilds_by_faction = faction_guilds(args.crawl)
+    roster = {str(pid): str(gid)
+              for gid, members in snapshot.get("guild_roster", {}).items()
+              for pid in members}
     known = {pid for _g, pid, _s, _c in rows}
     unnamed = sorted(known - set(briefs))
     payload = {
@@ -167,6 +183,7 @@ def main() -> None:
         "playerBoard": board_rows,
         "factionGuilds": {str(f): g for f, g in guilds_by_faction.items()},
         "guildNames": guild_names,
+        "guildRoster": roster,
         "briefs": {str(p): b for p, b in briefs.items()},
         "baseDir": BASE_DIR,
     }

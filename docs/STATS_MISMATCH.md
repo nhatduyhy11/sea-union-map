@@ -53,7 +53,12 @@ mốc 20 row** (48/54/57/64/65), nặng nhất node 64 Phe 3: board 22.29M vs po
 
 UI không dùng 116/117 làm nguồn sự thật — mọi BXH derive từ node-board rows
 (`playersFromContributions`), nên hạng >200 toàn server và hạng >20 per node
-không phản ánh rank game. Đã chốt chấp nhận.
+không phản ánh rank game.
+
+> **Hết hiệu lực 2026-10-27:** owner chốt lại — BXH Cá nhân dùng thẳng board
+> 117, guild scores tab Phe dùng server board, chỉ member list (expand guild)
+> mới derive từ node boards. Contract mới: [`LEADERBOARD_SPECS.md`](LEADERBOARD_SPECS.md)
+> §1.3.
 
 ## 3. Pool "Điểm ST" dao động — mọi con số là instant snapshot
 
@@ -72,9 +77,41 @@ Server chặn burst inject với err `10000035` (set bị chặn đổi qua từ
 
 ## 5. Chỗ chưa có nguồn (không phải lệch, mà thiếu)
 
-- **40/283 player trong node boards không có brief** (đã request nhưng server
-  không trả kịp trong run v4) → UI hiện `#<id>`. Crawler có thể re-request
-  phần missing trước khi thoát — backlog.
+### 5.1. Brief player bị thiếu — đã xử lý hết, nguyên nhân gốc đang xét lại (2026-10-27)
+
+Crawler cũ gom id brief không retry, server nuốt 1 batch 60 id (seq=169 trả 0
+brief) → 55 player mất tên. Quá trình xử lý và bài học:
+
+- **Throttle:** tool `brief_backfill.py` re-request ids thiếu (chunk 20 +
+  backoff, chỉ stage login). Lần 1: 39/59, `players.jsonl` 257 → 307.
+- **"Từ chối" tạm giải thích là cooldown (sau đó làm rõ):** 16 id trả rỗng
+  xuyên 5 round → ~90 phút sau 1 batch riêng trả đủ 6.5KB (`still missing:
+  0`, `players.jsonl` → 323). Lần thành công đó đi kèm fix bỏ 4 pseudo-id
+  `1..4` khỏi batch — mọi batch chứa `1..4` đều rỗng (5/5), mọi batch sạch
+  đều OK (8/8) → khả năng cao là **batch poisoning** (rankId invalid làm rỗng
+  cả list). Pipeline hiện đã skip `id_type != 1` và tăng interval retry nên
+  crawl 100% sạch.
+- **4 pseudo-id `1..4`** (`id_type=5`, board 116) — không phải player, là 4
+  dòng phe. Crawler + backfill đã skip `id_type != 1` khi gom.
+
+Hai phát hiện đi kèm (cùng session 2026-10-27):
+
+- **Roster player→guild nằm sẵn trong map snapshot** `0x72/0x000c` f4×N
+  `{f1: guild id, f2×N {f1: player id}}` — 115 guild / 3020 player, độc lập
+  với brief. `parse_map_snapshot` cũ parse f4 bằng `read_packed_varints`
+  (mis-parse, vứt roster). Giờ dump `guildRoster` → player bị refuse brief
+  vẫn đúng guild (report.py `guildRoster`, FE fallback `guildId`).
+  51476884 (hạng 2 toàn server, VP phe2) thuộc **OLYMPUS `5140005`** cùng 14
+  refused khác; 51305171 thuộc OneKing `5130004` (phe3).
+- **Tên guild không cần member brief**: `0x24/0x0035 {f1: guild id}` →
+  `0x0036` trả tên + members + description (115/115 guild). Crawler thu
+  `guild-names.json` mỗi run; report.py merge vào `guildNames`.
+  Lưu ý: request rỗng ở một thời điểm **không có nghĩa guild hết dữ liệu** —
+  rỗng là trạng thái theo thời gian (cold cache), retry muộn hơn trả đủ (16
+  guild rỗng lúc 07:26–07:45, chiều cùng ngày retry xác nhận
+  trả đủ 12/12 còn thiếu). `brief_backfill --guilds` giờ merge và không ghi đè
+  tên cũ bằng null.
+
 - **Boss node = null**: tên/trait boss nằm ở config khác (`SkillBuffBossLO`,
   NEED_CONFIRM 4 trong `SEA_PACKET_ANALYSE.md`) — chưa map. Level node đang
   theo tier demo (35/60/100), không phải số game.

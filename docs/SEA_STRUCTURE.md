@@ -201,7 +201,7 @@ từng node.
 
 ## 7. Điểm còn mở
 
-**Đã chốt (2026-10-24)** — xem `NEED_CONFIRM.md`:
+**Đã chốt (2026-10-24)**:
 
 1. Phe acc: **Thần Tử Lệ Lãnh**, profile crawl = **`pmain`** (không dùng p535); leaderboard public nên phe acc không ảnh hưởng dữ liệu.
 2. Cửa sổ chiến trường **lặp mỗi ngày**; ngoài giờ chiến trường đóng, leaderboard đứng yên — trong event check lúc nào cũng được.

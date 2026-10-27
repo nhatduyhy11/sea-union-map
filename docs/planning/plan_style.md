@@ -16,6 +16,7 @@ agent khi chạy tự figure out". Excessive detail makes the plan hard to read
 and duplicates what the agent discovers on its own when the suite runs.
 
 **How to apply:**
+
 - When writing or reviewing a plan, only flag plan-level issues: a commit
   structure that contradicts itself, wrong boundaries, a scope gap covering
   a whole cluster — not execution-level consequences.

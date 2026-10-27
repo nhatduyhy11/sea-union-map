@@ -32,36 +32,36 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 
 ## Các module đã map (một phần)
 
-| Module | Cmd | Ý nghĩa |
-| --- | --- | --- |
-| 0x02 | 0x0008 | Heartbeat / time sync |
-| 0x13 | 0x0004 | **Replay broadcast feed lúc login** (chat + system + mine events), nhiều frame ~34KB |
-| 0x13 | 0x0007 | **Kênh live push**: guild chat **và** event mỏ real-time (entry giống 0x0004: f7=150, f9=JSON args, f3=ts UTC) — mine_logger cần nghe kênh này |
-| 0x1f | 0x0007 | **Leaderboard PvP mỏ** (push lúc login): entry = {f2: rank, f3: score, f1: profile đầy đủ nhúng (power, skins, avatar, blob config f17)} |
-| 0x1f | 0x000a→0x000b | **Lịch sử đánh nhau ở mỏ** (trước nay nhầm "visit log"): entry = {f1: attacker, f2: defender, f3: ts, f5: battle id, f4: **bên thắng (1=attacker, 2=defender)**, f7/f6: JSON `{"rKey","pKey"}` rating attacker/defender, f9: profile defender nhúng}. Verify: HuAsura đánh OLNaji 2 lần đều f4=2 (thua) |
-| 0x65 | 0x0009, 0x000c | Capture 2026-10-23: 0x9 = summary lượt đánh (nhóm 3 fighter {f1: id, f3: cờ thắng, f2: ?} + f3 = id winner); 0xc = list guild {f4: id chủ guild, f3 repeated: {f1: id thành viên, f2–f6: stat}} — chưa map đủ |
-| 0x0d | 0x001f→0x0020 | **Player brief** — request `f1`=packed player ids; response: f1=id, f2=tên, f4=power?, f33=avatar id, f11=guild nhúng (tên + mô tả), f15=server. **Đây là nguồn id→tên**. [2026-10-25] Schema thật từ bundle: `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` (name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel…) — decode qua `tools/socket_log/core/runtime_codec.py briefs` |
-| 0x0d | 0x0019→0x001a | **Player full profile** (bấm vào 1 player/máy): heroes, items, power… popup "Mỏ Quặng LvX" |
-| 0x24 | 0x0035→0x0036 | **Guild brief** — request f1=guild id (dạng f4 của tile: 5170010…); response f3={f2=tên, f11=server, f10/f3=số thành viên…}. Dùng khi mở minimap overview |
-| 0x24 | 0x0033→0x0034 | **Guild detail**: f2=tên, f14=mô tả, f9/f8=id chủ guild, f13/f16=power, f26=log {thành viên, ts gia nhập}, f24=cửa sổ season guild, f1=id dạng f4 |
-| 0x48 | 0x0001→0x0002 | **Full state khu mỏ** (summary + 65 tile, xem mục riêng) |
-| 0x48 | 0x0006→0x0007 | **Chi tiết 4 điểm của 1 mỏ** (request packed tile id, bắn lúc click vào mỏ): tile như login + slot `f5` = chuỗi phiên đào 60 phút |
-| 0x48 | 0x0008 | **Live push delta tile** (không có request) — tile cập nhật realtime khi có người vào/ra slot |
-| 0x48 | 0x0013→0x0014 | Season Khai Thác Guild: start/end + packed list season tile id (513–544) |
-| 0x48 | 0x0015→0x0016 | Request cùng ids với 0x0006 nhưng response **RỖNG (11B)** — no-op/legacy |
-| 0x48 | 0x001a→0x001b | Feed lịch sử mỏ: entry = {f2: JSON string, f1: type} — type 4 `[player_id, pos, action, ts]` (action 9001/9002/**9003**), type 1 `[7057, 10, ts]` |
+| Module | Cmd            | Ý nghĩa                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------ | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0x02   | 0x0008         | Heartbeat / time sync                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 0x13   | 0x0004         | **Replay broadcast feed lúc login** (chat + system + mine events), nhiều frame ~34KB                                                                                                                                                                                                                                                                                                                                          |
+| 0x13   | 0x0007         | **Kênh live push**: guild chat **và** event mỏ real-time (entry giống 0x0004: f7=150, f9=JSON args, f3=ts UTC) — mine_logger cần nghe kênh này                                                                                                                                                                                                                                                                                |
+| 0x1f   | 0x0007         | **Leaderboard PvP mỏ** (push lúc login): entry = {f2: rank, f3: score, f1: profile đầy đủ nhúng (power, skins, avatar, blob config f17)}                                                                                                                                                                                                                                                                                      |
+| 0x1f   | 0x000a→0x000b  | **Lịch sử đánh nhau ở mỏ** (trước nay nhầm "visit log"): entry = {f1: attacker, f2: defender, f3: ts, f5: battle id, f4: **bên thắng (1=attacker, 2=defender)**, f7/f6: JSON `{"rKey","pKey"}` rating attacker/defender, f9: profile defender nhúng}. Verify: HuAsura đánh OLNaji 2 lần đều f4=2 (thua)                                                                                                                       |
+| 0x65   | 0x0009, 0x000c | Capture 2026-10-23: 0x9 = summary lượt đánh (nhóm 3 fighter {f1: id, f3: cờ thắng, f2: ?} + f3 = id winner); 0xc = list guild {f4: id chủ guild, f3 repeated: {f1: id thành viên, f2–f6: stat}} — chưa map đủ                                                                                                                                                                                                                 |
+| 0x0d   | 0x001f→0x0020  | **Player brief** — request `f1`=packed player ids; response: f1=id, f2=tên, f4=power?, f33=avatar id, f11=guild nhúng (tên + mô tả), f15=server. **Đây là nguồn id→tên**. [2026-10-25] Schema thật từ bundle: `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` (name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel…) — decode qua `tools/socket_log/core/runtime_codec.py briefs` |
+| 0x0d   | 0x0019→0x001a  | **Player full profile** (bấm vào 1 player/máy): heroes, items, power… popup "Mỏ Quặng LvX"                                                                                                                                                                                                                                                                                                                                    |
+| 0x24   | 0x0035→0x0036  | **Guild brief** — request f1=guild id (dạng f4 của tile: 5170010…); response f3={f2=tên, f11=server, f10/f3=số thành viên…}. Dùng khi mở minimap overview                                                                                                                                                                                                                                                                     |
+| 0x24   | 0x0033→0x0034  | **Guild detail**: f2=tên, f14=mô tả, f9/f8=id chủ guild, f13/f16=power, f26=log {thành viên, ts gia nhập}, f24=cửa sổ season guild, f1=id dạng f4                                                                                                                                                                                                                                                                             |
+| 0x48   | 0x0001→0x0002  | **Full state khu mỏ** (summary + 65 tile, xem mục riêng)                                                                                                                                                                                                                                                                                                                                                                      |
+| 0x48   | 0x0006→0x0007  | **Chi tiết 4 điểm của 1 mỏ** (request packed tile id, bắn lúc click vào mỏ): tile như login + slot `f5` = chuỗi phiên đào 60 phút                                                                                                                                                                                                                                                                                             |
+| 0x48   | 0x0008         | **Live push delta tile** (không có request) — tile cập nhật realtime khi có người vào/ra slot                                                                                                                                                                                                                                                                                                                                 |
+| 0x48   | 0x0013→0x0014  | Season Khai Thác Guild: start/end + packed list season tile id (513–544)                                                                                                                                                                                                                                                                                                                                                      |
+| 0x48   | 0x0015→0x0016  | Request cùng ids với 0x0006 nhưng response **RỖNG (11B)** — no-op/legacy                                                                                                                                                                                                                                                                                                                                                      |
+| 0x48   | 0x001a→0x001b  | Feed lịch sử mỏ: entry = {f2: JSON string, f1: type} — type 4 `[player_id, pos, action, ts]` (action 9001/9002/**9003**), type 1 `[7057, 10, ts]`                                                                                                                                                                                                                                                                             |
 
 ## Lịch sử khu mỏ (mục tiêu POC — ĐÃ XÁC MINH)
 
 Nằm trong broadcast feed (module `0x13` cmd `0x0004`), mỗi entry là repeated `f2`:
 
-| Field | Ý nghĩa |
-| --- | --- |
-| f1 | msg id (tăng dần) |
-| f2 | kênh: 1 = world chat, 2 = system broadcast |
-| f3 | unix timestamp (giây) |
-| f7 | loại broadcast: **150 = sự kiện khu mỏ**, 151/152/153 = loại khác |
-| f9 | template args, JSON string: `[["PLAYER"],[28000],[pos],[action]]` |
+| Field | Ý nghĩa                                                           |
+| ----- | ----------------------------------------------------------------- |
+| f1    | msg id (tăng dần)                                                 |
+| f2    | kênh: 1 = world chat, 2 = system broadcast                        |
+| f3    | unix timestamp (giây)                                             |
+| f7    | loại broadcast: **150 = sự kiện khu mỏ**, 151/152/153 = loại khác |
+| f9    | template args, JSON string: `[["PLAYER"],[28000],[pos],[action]]` |
 
 - `28000` = template "đồng quê tại…" trên client.
 - `pos` = `map*1000 + tile` (vd `5047` = map 5 / Mỏ Đá Cháy, tile 47; `6053` = map 6).
@@ -105,17 +105,17 @@ f4=4500, f8=51520, f9={30000015, 3, 525}, f6/f7/f10 = timestamp (f6 ≈ thời �
 Mỗi tile — **65 tile = 64 điểm mỏ + 1 mỏ phẳng sector 1; 1084 slot = 64×15 + 124**
 (cấu trúc world chi tiết xem `docs/mine_docs/MINE_STRUCTURE.md`):
 
-| Field | Ý nghĩa |
-| --- | --- |
-| f1 | pos = **id tĩnh của tile trong bảng server** (KHÔNG phải map*1000+tile — dãy id 1058–1065 thuộc sector 4/5); sector đọc từ f2 |
-| f2 | **sector 1–7** [x đã chốt 2026-10-23] |
-| f3 | **level điểm mỏ 1–9** [x đã chốt] — điểm 4 của mỗi mỏ = level trên của title sector |
-| f4 | 0 hoặc `5XX00YY` (5XX ∈ 513–544 trùng season id, YY ∈ 4–12) — nghi node Mỏ Quặng + lượng còn lại |
-| f7 | repeated `{f1: action, f2: count}` — đếm event theo action trên tile trong season |
-| f5 | repeated slot: f1=player id (0 = trống), f2=số slot (điểm thường: 1–12 + 9001/9002/9003; sector 1: 1–124), f5=packed ts |
-| f5.f5 | timestamps chỉ xuất hiện khi slot **đang được đào**: [start] hoặc [start, end] (thấy cặp cách đúng 60 phút) |
-| f6 | `{1: 9001, 2: 0 hoặc ts}` trên 1 số điểm — nghi event chiếm điểm gần nhất |
-| f8/f9 | hiếm; khi có f8 − f9 = đúng 3600s — cặp cửa sổ 1 giờ, chưa chốt |
+| Field | Ý nghĩa                                                                                                                       |
+| ----- | ----------------------------------------------------------------------------------------------------------------------------- |
+| f1    | pos = **id tĩnh của tile trong bảng server** (KHÔNG phải map*1000+tile — dãy id 1058–1065 thuộc sector 4/5); sector đọc từ f2 |
+| f2    | **sector 1–7** [x đã chốt 2026-10-23]                                                                                         |
+| f3    | **level điểm mỏ 1–9** [x đã chốt] — điểm 4 của mỗi mỏ = level trên của title sector                                           |
+| f4    | 0 hoặc `5XX00YY` (5XX ∈ 513–544 trùng season id, YY ∈ 4–12) — nghi node Mỏ Quặng + lượng còn lại                              |
+| f7    | repeated `{f1: action, f2: count}` — đếm event theo action trên tile trong season                                             |
+| f5    | repeated slot: f1=player id (0 = trống), f2=số slot (điểm thường: 1–12 + 9001/9002/9003; sector 1: 1–124), f5=packed ts       |
+| f5.f5 | timestamps chỉ xuất hiện khi slot **đang được đào**: [start] hoặc [start, end] (thấy cặp cách đúng 60 phút)                   |
+| f6    | `{1: 9001, 2: 0 hoặc ts}` trên 1 số điểm — nghi event chiếm điểm gần nhất                                                     |
+| f8/f9 | hiếm; khi có f8 − f9 = đúng 3600s — cặp cửa sổ 1 giờ, chưa chốt                                                               |
 
 State **không chứa tên player/guild** — chỉ có id; tên lấy qua `0x0d/0x001f→0x0020`.
 
@@ -145,8 +145,8 @@ uv run python tools/socket_log/mine_socket/decode.py <capture_dir> mine-state > 
   4 base, có owner sẵn), `f3` ×4 phe {f1: id, f4: chủ phe, f2: packed member ids},
   `f4` ×115 guild roster {f1: guild id, f2: repeated player ids}.
 - Mở node (click đảo): `0x72/0x0011` `{f1: node id}` → `0x72/0x0012` `{f2: {f4:
-  1001..1009 art/boss class, f1: id, f2: 4×{f1: faction, f2: Điểm ST của phe tại node},
-  f3}}` + `0x72/0x003e {f1}` → `0x003f` (per-node status, toàn 0 pre-war).
+1001..1009 art/boss class, f1: id, f2: 4×{f1: faction, f2: Điểm ST của phe tại node},
+f3}}` + `0x72/0x003e {f1}` → `0x003f` (per-node status, toàn 0 pre-war).
 - Leaderboard sea: `0x0c/0x0002` `{f1: board, f2: node}` → `0x0c/0x0003`. Board:
   **116** = BXH phe, **117** = BXH điểm (f2=0), **118** = node leaderboard (f2=node id).
   Kèm `0x0d/0x001f→0x0020` fetch tên (như event mỏ).
@@ -162,13 +162,13 @@ uv run python tools/socket_log/mine_socket/decode.py <capture_dir> mine-state > 
 (socket handshake `:19005/` đóng thường xuyên là hành vi bình thường — không được tính là mất
 kết nối), `--webhook` đẩy alert. Ghi **5 stream raw** dưới `.tmp/mine-events/`:
 
-| File | Nội dung |
-| --- | --- |
-| `mine-events.jsonl` | broadcast type 150 từ `0x13/0x0004` (replay) + `0x13/0x0007` (live), dedupe id qua restart |
-| `mine-state.jsonl` | snapshot map lúc login `0x48/0x0002` — **server cũng đẩy 0x0002 một phần giữa session**, 1 dòng/tile |
-| `mine-tiles.jsonl` | delta tile `0x48/0x0008` (`--no-tiles` để tắt) |
-| `player-briefs.jsonl` | mọi `0x0d/0x0020` client nhận: id, tên, power, server, **f11 = {id guild, tên guild}** |
-| `guild-briefs.jsonl` | `0x24/0x0036` — response không echo id, map qua **seq** của request `0x24/0x0035` |
+| File                  | Nội dung                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| `mine-events.jsonl`   | broadcast type 150 từ `0x13/0x0004` (replay) + `0x13/0x0007` (live), dedupe id qua restart           |
+| `mine-state.jsonl`    | snapshot map lúc login `0x48/0x0002` — **server cũng đẩy 0x0002 một phần giữa session**, 1 dòng/tile |
+| `mine-tiles.jsonl`    | delta tile `0x48/0x0008` (`--no-tiles` để tắt)                                                       |
+| `player-briefs.jsonl` | mọi `0x0d/0x0020` client nhận: id, tên, power, server, **f11 = {id guild, tên guild}**               |
+| `guild-briefs.jsonl`  | `0x24/0x0036` — response không echo id, map qua **seq** của request `0x24/0x0035`                    |
 
 **Fetch tên chủ động (mặc định bật, `--no-fetch-names` để tắt):** loggerinject frame
 `0x0d/0x001f` (packed 60 id/lần) thẳng vào game socket qua JS (`WebSocket.prototype.send`
@@ -206,18 +206,18 @@ uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --webho
 ## Đang mở (open items)
 
 - [ ] Chạy listener dài (~1 giờ+, logger đã nghe `0x13/0x0007`) để xác nhận mọi loại thay đổi
-  của mỏ đều đi qua broadcast type 150 (live đã thấy: action `9001` rồi `12` cách 6s trên
-  `0x13/0x0007`).
+      của mỏ đều đi qua broadcast type 150 (live đã thấy: action `9001` rồi `12` cách 6s trên
+      `0x13/0x0007`).
 - [ ] Map `action` 1–12, `9001/9002/9003` và template 28000 (đối chiếu localization trong JS bundle nếu cần).
 - [ ] Giải f6, f8/f9 — xem open items cuối `docs/mine_docs/MINE_STRUCTURE.md`
-  (nghi vấn "lazy name" + owner guild + slot 9001–9003 đã giải xong 2026-10-23: tên fetch nguyên mỏ
-  lúc zoomin; **f4 = id guild chủ điểm**, tra tên qua `0x24/0x0035→0x0036`;
-  **slot 9001–9003 = bộ claimer của guild chủ điểm** — 3 acc cùng guild, trùng guild claim `f4`).
+      (nghi vấn "lazy name" + owner guild + slot 9001–9003 đã giải xong 2026-10-23: tên fetch nguyên mỏ
+      lúc zoomin; **f4 = id guild chủ điểm**, tra tên qua `0x24/0x0035→0x0036`;
+      **slot 9001–9003 = bộ claimer của guild chủ điểm** — 3 acc cùng guild, trùng guild claim `f4`).
 - [ ] Giải nghĩa history entry type 1 `[7057, 10, ts]` (nghi event về slot của chính mình —
-  pos + slot khớp summary f1/f2; số lượng không khớp 1:1 với popup Lịch Sử) và summary f9={30000015, 3, 525}.
+      pos + slot khớp summary f1/f2; số lượng không khớp 1:1 với popup Lịch Sử) và summary f9={30000015, 3, 525}.
 - [x] id→tên player: request `0x0d/0x001f` với packed ids → `0x0020` trả tên (đã xác minh
-  2026-10-23: 6 id trong history feed → HaHuu, UnVila, AESaa, AEDungg, AEBon, OLNiet).
+      2026-10-23: 6 id trong history feed → HaHuu, UnVila, AESaa, AEDungg, AEBon, OLNiet).
 - [ ] Kiểm tra server CN (`hauntheroesweb.acenetgame.com`) có cùng framing/module không.
 - [ ] Xác định cách giữ session lâu dài (token login trong localStorage của profile có TTL
-  `expires_in: 2419200` — 28 ngày, xem `env.json`); kiểm tra game có kick AFK/session idle
-  lâu không (chưa gặp trong 4 phút test).
+      `expires_in: 2419200` — 28 ngày, xem `env.json`); kiểm tra game có kick AFK/session idle
+      lâu không (chưa gặp trong 4 phút test).
