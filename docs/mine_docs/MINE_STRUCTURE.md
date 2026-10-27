@@ -73,7 +73,8 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Login**                     | `0x48/0x0001→0002` (map state) + `0x48/0x0013→0014` (season) + `0x48/0x001a→001b` (history) + brief `0x0d/0x001f` cho 6 id **quân đoàn** (51729833 = chủ guild HUNTERS…) — không phải người trong mỏ                                                                                                          |
 | **Click guild icon**          | `0x13/0x0007` guild chat feed                                                                                                                                                                                                                                                                                 |
-| **Click "Khai Thác Guild"**   | `0x48/0x0013→0014` refresh season                                                                                                                                                                                                                                                                             |
+| **Click "Khai Thác Guild"**   | `0x48/0x0013→0014` refresh season — `f5`=start, `f4`=end (unix s), `f3`=packed list season tile id (513–544, encoding chưa chốt — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §3)                                                                                                                                |
+| **Click nút Log (popup Lịch Sử)** | *(từ POC run-mine1, không phải capture của bảng này)* popup **TRỐNG** thì không sinh request (render từ state); khi **có entry** mới fetch `0x0d/0x001f` (packed = đúng các player id trong history feed) → `0x0020` briefs để render tên. Popup lọc sự kiện theo **map đang mở**                               |
 | **Click vào mỏ (zoomin)**     | ① `0x48/0x0006` [4 tile id] → `0x0007` **chi tiết 4 điểm**: như login state + slot `f5` = đầy đủ chuỗi phiên đào ② `0x48/0x0015` [4 tile id] → `0x0016` **RỖNG (11B, no-op)** ③ `0x0d/0x001f` **59 id = toàn bộ người của 4 điểm** → `0x0020` 24KB tên ④ `0x0d/0x001f` lô 2 (11 id, nguồn chưa rõ) → `0x0020` |
 | **Click minimap (overview)**  | `0x24/0x0035` theo **f4 từng điểm** [5170010, 5170010, 5140005, 5320011] → `0x0036` tên guild (HUNTERS/HUNTERS/OLYMPUS/LxVN). Expand ▼ **không sinh packet** — tên đã có sẵn                                                                                                                                  |
 | **Click máy của player khác** | `0x0d/0x0019` {id} → `0x001a` **profile đầy đủ** (heroes, items, power…) + `0x24/0x0033` {f4 guild} → `0x0034` guild detail (tên, mô tả, chủ guild, power, log thành viên, cửa sổ season)                                                                                                                     |
@@ -92,30 +93,23 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
   mỗi điểm có 0 hoặc 1 guild claim (`f4`), điểm unclaimed vẫn có user ngồi bình thường (40/64 điểm
   unclaimed khi capture).
 
-## 6. Việc cần làm tiếp
+## 6. Listener — output stream (JSONL)
 
-- [x] Sửa `mine_socket/logger.py`: nghe `0x13/0x0004`+`0x13/0x0007`, ghi state/delta/brief ra JSONL, **inject
-      `0x0d/0x001f` fetch tên chủ động** — chi tiết mục Listener `SOCKET_PROTOCOL.md` (2026-10-23).
-- [x] Bước tổng hợp: `tools/socket_log/mine_socket/report.py` — sector → mỏ (chunk 4 tile theo thứ tự id) →
-      điểm 1–4 → user (id/tên/guild) + claim/unclaimed + cảnh báo. Output `mine-report.json` + cây text.
-      Lưu ý: **mỏ được cắt theo chunk 4 trong dãy id sort tăng dần của sector** (sector là dãy liên tục),
-      điểm 4 luôn là tile có id lớn nhất + level trên — khớp 16/16 mỏ.
-- [x] Shape report (chốt lần 2, 2026-10-23): `points` là **dict key `Lv{level}_{vị trí}`** — layout
-      2x2 của mỏ phụ: `top_left_1`/`top_right_2`/`bot_left_3` = 3 điểm level dưới, `bot_right` = điểm
-      level trên (rule: **id cao nhất của submine = bot_right của nó**), mỗi point giữ tile id tĩnh ở
-      field `id`; occupant tách `claimer` (slot 9001–9003) / `users` (slot 1–12);
-      thêm `errors` (vi phạm rule claimer) cạnh `warnings`; tên sector = nhãn level
-      ("Lv2-Lv3") thay tên in-game; mỏ = `sub` 1..n trong sector. f3 lệch mức level suy ra → warning.
-- [ ] Map `action` 1–12, `9001/9002/9003` (9001 thấy khi vào điểm; 12 thấy 6s sau — đối chiếu localization).
-- [x] Vai trò slot 9001–9003: **[x CHỐT 2026-10-23] bộ claimer của guild chủ điểm** — xem mục 2/5
-      (3 acc cùng guild = guild claim `f4`; report tự check rule này).
-- [ ] Giải `f6`, `f8/f9`, lô 11 id thứ 2 lúc zoomin, summary f9={30000015, 3, 140}, history type 1 `[7057, 10, ts]`.
-- [x] **DEBUFF tầng N + chuỗi thắng trên popup "Lv\|Lv Máy Đào Chính"**: cả hai nằm trong tile
-      state — tầng = **số mốc trong slot `f5`** (mục 4), chuỗi thắng = **`f7` {slot: N}** (mục 4).
-      Popup render từ `0x48/0x0007` + briefs, KHÔNG sinh request riêng (verify run-s7-lv8-v3).
-      Decode recipe + UI navigation + backlog: [`2026-10-23-mine-streak-debuff-decode.md`](2026-10-23-mine-streak-debuff-decode.md) (backlog đã chuyển sang [`BACKLOG_MINE.md`](BACKLOG_MINE.md)).
-- [ ] Đưa streak (`f7`) + tầng debuff (số mốc `f5` của slot) vào `mine_socket/report.py` khi cần —
-      `parse_tile` (mine_socket/protocol.py) hiện đang bỏ `f5` (giữ mỗi id/slot), `f6`–`f9` bỏ hoàn toàn
-      (đã probe xác nhận: `f7` = {slot: streak}, `f8−f9` = 3600s trên tile 1060/4044/6052).
-- [ ] Chạy listener dài (~1 giờ+) xác nhận mọi loại thay đổi mỏ đều qua broadcast type 150.
-- [ ] ts mốc 05:23:35 "tương lai" ở run-050330 — kiểm tra lại cờ [start, end] vs window đặt trước.
+`mine_socket/logger.py` giữ session mở vô hạn, tự reload page khi game socket đứt, ghi thẳng
+JSONL đã decode (không phải binary) dưới `.tmp/mine-events/`:
+
+| File                  | Nội dung                                                                                             |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| `mine-events.jsonl`   | broadcast type 150: replay `0x13/0x0004` lúc login + live `0x13/0x0007`, dedupe theo event id        |
+| `mine-state.jsonl`    | snapshot map lúc login `0x48/0x0002`, 1 dòng/tile — server cũng đẩy 0x0002 một phần giữa session      |
+| `mine-tiles.jsonl`    | delta tile realtime `0x48/0x0008` (`--no-tiles` để tắt)                                               |
+| `player-briefs.jsonl` | mọi `0x0d/0x0020` client nhận: id, tên, power, server, `f11` = {id guild, tên guild}                  |
+| `guild-briefs.jsonl`  | `0x24/0x0036` — response không echo guild id, map qua `seq` của request `0x24/0x0035`                 |
+
+Bước tổng hợp: `mine_socket/report.py` đọc 5 stream trên → rebuild world mới nhất (snapshot +
+delta theo `logged_at`, snapshot ≥32 tile mới tính là full map) → `mine-report.json` + cây báo cáo.
+
+## 7. Trạng thái & Backlog
+
+- Toàn bộ open issues và các việc cần làm tiếp theo của nhánh Khai Thác Guild đã được hợp nhất theo dõi tập trung tại: [`BACKLOG_MINE.md`](BACKLOG_MINE.md).
+- Các mốc cấu trúc world, layout 2x2, cơ chế claimer slot 9001–9003, guild claim `f4`, và nhận diện streak/debuff đã được xác minh xong và chốt tại các mục 1–5 ở trên.

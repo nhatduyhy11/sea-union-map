@@ -86,8 +86,8 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
       bằng flow §1.4 → JSON/JSONL thay mock `src/data/`.
 - [ ] `src/data/map-layout.ts`: join CampGVG `_name` prefix ↔ layout id hiện có; bổ sung
       `gameId` (server id) + `_pointRequire` (claimThreshold thật) + tên thật.
-- [ ] Cập nhật `docs/SOCKET_PROTOCOL.md` section sea (module 0x72/0x0c) — đã làm một phần
-      khi spec này chốt.
+- [x] Cập nhật `docs/SOCKET_PROTOCOL.md` section sea (module 0x72/0x0c) — hoàn tất khi
+      SOCKET_PROTOCOL tách thành doc dùng chung (§4.2 + §3.5).
 - [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 5/7.
 
 ## 4. Bóc config client (hướng dẫn tái sử dụng)

@@ -133,8 +133,8 @@ uv run python tools/socket_log/core/runtime_codec.py rank body.b64
 | `mine_socket/report.py`   | Aggregate các JSONL thành mine-report.json + cây báo cáo                     |
 | `mine_socket/decode.py`   | Decoder offline `mine-events`/`mine-state` trên capture dir binary           |
 
-Logger ghi thẳng **JSONL đã decode** (không phải binary): `mine-events.jsonl`,
-`player-briefs.jsonl`, `guild-briefs.jsonl` dưới `.tmp/mine-events/`.
+Logger ghi thẳng **JSONL đã decode** (không phải binary) dưới `.tmp/mine-events/` —
+chi tiết 5 stream xem [`docs/mine_docs/MINE_STRUCTURE.md` §6](docs/mine_docs/MINE_STRUCTURE.md).
 
 ```bash
 # Snapshot nhanh: 1 pass state + tên, rồi thoát

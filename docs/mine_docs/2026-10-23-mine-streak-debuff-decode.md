@@ -46,8 +46,8 @@ tile `f6` = `{9001|9002: 0}` trên vài tile (chưa giải); `f8/f9` = cặp ts 
 - `0x1f/0x000b` (battle log, push lúc login): entry `{f1: attacker, f2: defender, f3: ts,
 f4: bên thắng (1=attacker, 2=defender), f7/f6: {"rKey","pKey"} rating}` — streak tăng khi
   defender thắng. Verify: HuAsura đánh OLNaji 2 lần, f4=2 cả 2 → OLNaji streak giữ/±.
-- `0x1f/0x0007` leaderboard, `0x65/0x0009+0x000c` (round summary / list guild) — đã ghi
-  trong [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md) bảng module, chưa map đủ.
+- `0x1f/0x0007` leaderboard, `0x65/0x0009+0x000c` (round summary / list guild) — spec rút gọn
+  đã ghi trong [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md) §4.3, chưa map đủ.
 
 ## 4. UI navigation để lấy data (socket_capture.py, cửa sổ 640x720)
 
@@ -64,8 +64,9 @@ click(345,285) = zoomin mỏ (sàn của mình) → click(163,63) = minimap → 
 
 ## 5. Backlog (chính thức theo dõi tại [`BACKLOG_MINE.md`](BACKLOG_MINE.md))
 
+> Toàn bộ các việc tồn đọng đã được hợp nhất vào [`BACKLOG_MINE.md`](BACKLOG_MINE.md) (mục 1 và 5).
+
 - [ ] `mine_logger.parse_tile`: giữ thêm `f7` (dict slot→streak) và `f5` (chain ts, hoặc
-      đã suy ra `tiers` + `next_expiry`) — hiện chỉ giữ id/slot_no của slot, `f6`–`f9` bỏ hết.
-- [ ] `mine_report`: thêm vào mỗi point `streak` (theo slot) + `debuff_tiers`/`debuff_expiry`
-      (slot 9001 là chính), cân nhắc cảnh báo khi streak/tầng thay đổi giữa 2 lần snapshot.
-- [ ] Giải nốt `f6`, `f8/f9`, `f3` (luôn 0) nếu bot cần.
+      đã suy ra `tiers` + `next_expiry`) — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §1.
+- [ ] `mine_report`: thêm vào mỗi point `streak` + `debuff_tiers`/`debuff_expiry` và cảnh báo biến động — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §5.
+- [ ] Giải nốt `f6`, `f8/f9`, `f3` (luôn 0) — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §3.
