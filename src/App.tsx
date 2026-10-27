@@ -1,4 +1,5 @@
 import { AppHeader } from "./components/layout/AppHeader";
+import { AppFooter } from "./components/layout/AppFooter";
 import { NavigationRail } from "./components/layout/NavigationRail";
 import { MapHeading } from "./components/map/MapHeading";
 import { MapToolbar } from "./components/map/MapToolbar";
@@ -23,6 +24,7 @@ export function App() {
         </main>
         <Sidebar />
       </div>
+      <AppFooter />
     </div>
   );
 }

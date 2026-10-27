@@ -1,0 +1,57 @@
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 27px;
+  border-top: 1px solid #dfe4e8;
+  background: #f8fafa;
+  gap: 16px;
+}
+
+.quote {
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: 0.3px;
+  color: #7b8d98;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    opacity 0.25s ease,
+    color 0.15s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.quote:hover {
+  color: #2a3740;
+}
+
+.quote:focus-visible {
+  outline: 2px solid #0f9d76;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+.fadeIn {
+  opacity: 1;
+}
+
+.fadeOut {
+  opacity: 0;
+}
+
+@media (max-width: 760px) {
+  .footer {
+    padding: 8px 16px;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+    text-align: center;
+  }
+
+  .quote {
+    white-space: normal;
+    text-align: center;
+  }
+}

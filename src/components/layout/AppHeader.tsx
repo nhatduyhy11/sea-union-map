@@ -1,5 +1,6 @@
 import { Anchor } from "lucide-react";
 import { LIVE } from "../../domain/mapData";
+import { Watermark } from "../shared/Watermark";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
@@ -10,11 +11,9 @@ export function AppHeader() {
           <Anchor size={25} />
         </div>
         <div>
-          SEA UNION
+          SEAWIDE SHOWDOWN
           {/* Easter egg: dev in-game id */}
-          <p id="51921435" className={styles.devSignature}>
-            From <strong>Hunter [S517]</strong> with ❤️
-          </p>
+          <Watermark id="51921435" variant="badge" />
         </div>
       </div>
       <div className={styles.divider} />

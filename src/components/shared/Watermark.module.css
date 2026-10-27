@@ -1,0 +1,28 @@
+.watermark {
+  margin: 0;
+  user-select: none;
+  letter-spacing: 1.5px;
+  font-weight: 500;
+  color: #8b9aa4;
+}
+
+.watermark strong {
+  color: #0f9d76;
+  font-weight: 700;
+}
+
+.badge {
+  display: block;
+  margin-top: 5px;
+  width: fit-content;
+  font-size: 8px;
+  background: #e0f2ea;
+  border: 1px solid #bde3d4;
+  border-radius: 5px;
+  padding: 3px 7px;
+  pointer-events: none;
+}
+
+.text {
+  font-size: 9px;
+}

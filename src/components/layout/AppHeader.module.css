@@ -17,26 +17,6 @@
   letter-spacing: 2px;
 }
 
-.devSignature {
-  margin: 5px 0 0;
-  width: fit-content;
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  color: #8b9aa4;
-  font-weight: 500;
-  background: #e0f2ea;
-  border: 1px solid #bde3d4;
-  border-radius: 5px;
-  padding: 3px 7px;
-  user-select: none;
-  pointer-events: none;
-}
-
-.devSignature strong {
-  color: #0f9d76;
-  font-weight: 700;
-}
-
 .brandIcon {
   color: #0f9d76;
   background: #e0f2ea;

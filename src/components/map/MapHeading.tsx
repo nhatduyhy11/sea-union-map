@@ -91,7 +91,7 @@ export function MapHeading() {
       <div>
         <div className={styles.eyebrow}>CHIẾN TRƯỜNG / TỔNG QUAN</div>
         <h1 className={styles.title}>
-          Đại hải trình<span>01</span>
+          Tranh bá Tứ Hải<span>01</span>
         </h1>
       </div>
       <div className={styles.headingMeta}>

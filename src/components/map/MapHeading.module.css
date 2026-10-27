@@ -55,7 +55,7 @@
   align-items: center;
   gap: 10px;
   border: 1px solid #cfd9de;
-  background: #ffffff;
+  background: transparent;
   padding: 5px 9px;
   border-radius: 7px;
 }
