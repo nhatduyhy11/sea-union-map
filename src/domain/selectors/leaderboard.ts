@@ -62,7 +62,7 @@ export function buildNodeBoard(
 }
 
 // Faction board ("BXH Phe"). Live: guild rows + điểm guild là truth server
-// (0x72/0x0025 — Tổng quan phe; tổng guild khớp per-faction node-state exact);
+// (bảng "Tổng quan phe" trong dump; tổng guild khớp per-faction node-state exact);
 // duy nhất member list khi expand guild mới derive từ node boards + briefs.
 // Member match qua guildId (brief) — player không brief thì rơi "Không guild".
 // Không có server guild data: path cũ tự tính từ contributions.
