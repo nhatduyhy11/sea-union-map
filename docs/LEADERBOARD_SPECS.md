@@ -1,7 +1,7 @@
 # Leaderboard & Canvas Filter Specs (Bảng Xếp Hạng & Lọc Canvas)
 
 > Tài liệu đặc tả mô hình bảng xếp hạng (BXH), cơ chế lọc bản đồ (filter canvas) và quy tắc tương tác UI/UX trên web frontend.
-> Hợp đồng hành vi đã thống nhất với chủ dự án (2026-10-26), kế thừa và làm rõ cấu trúc event từ [docs/SEA_STRUCTURE.md](SEA_STRUCTURE.md) §3.2.
+> Hợp đồng hành vi đã thống nhất với chủ dự án (2026-10-26), kế thừa và làm rõ cấu trúc event từ [docs/sea/SEA_STRUCTURE.md](sea/SEA_STRUCTURE.md) §3.2.
 
 ---
 
@@ -9,7 +9,7 @@
 
 ### 1.1. Bảng xếp hạng trong game (nguồn gốc)
 
-Theo ghi nhận từ capture thực tế ([docs/SEA_STRUCTURE.md](SEA_STRUCTURE.md) §3.2, §3.3, §3.7):
+Theo ghi nhận từ capture thực tế ([docs/sea/SEA_STRUCTURE.md](sea/SEA_STRUCTURE.md) §3.2, §3.3, §3.7):
 
 - **Giao diện game chỉ có 2 tab:** "XH Phe" (xếp hạng 4 phe) và "XH điểm" (BXH cá nhân top-K).
 - **Node leaderboard:** Mỗi cứ điểm có một popup BXH riêng (top-N người chơi gây Điểm ST tại cứ điểm đó).
@@ -40,7 +40,7 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
   briefs của member).
 - **Tab Cứ điểm:** list + expand đều là **board 118 per-node của server**.
 - **Giới hạn đã biết:** server cắt top-20/node, top-200 global; player/guild
-  ngoài ngưỡng không có dữ liệu — xem [STATS_MISMATCH.md](STATS_MISMATCH.md)
+  ngoài ngưỡng không có dữ liệu — xem [docs/sea/STATS_MISMATCH.md](sea/STATS_MISMATCH.md)
   (bao gồm 16 player S513/S514 server không trả brief).
 
 ---
@@ -64,7 +64,7 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
   - BXH chuyển thành chế độ đọc thuần túy (dùng `<details>` đa mở tự do).
   - Người dùng có thể expand nhiều phe/guild/player cùng lúc để tra cứu số liệu.
   - Thao tác trên BXH không gây bất kỳ side-effect nào lên canvas (canvas giữ nguyên trạng thái `all`).
-- **Trạng thái lưu trữ:** `filterMode` là state của panel ([`stores/panel.ts`](../src/stores/panel.ts)), **không bị reset** khi chuyển tab BXH.
+- **Trạng thái lưu trữ:** `filterMode` là state của panel ([`src/stores/panel.ts`](../src/stores/panel.ts)), **không bị reset** khi chuyển tab BXH.
 
 ### 2.3. Quy tắc chi tiết từng Tab
 
@@ -116,9 +116,9 @@ View và filter sẽ tự động reset về `all` và đóng toàn bộ expansi
 | [`src/stores/mapView.ts`](../src/stores/mapView.ts)                               | Quản lý state `filter: MapFilter \| null`, các action `setFilter`, `toggleFilter`, `resetFilter`.                                                    |
 | [`src/stores/panel.ts`](../src/stores/panel.ts)                                   | Lưu `filterMode: boolean`, state expansion (`openGuild`, `selectedMember`, `openFaction`, `openPlayer`).                                             |
 | [`src/stores/commands.ts`](../src/stores/commands.ts)                             | Gom các tương tác đa store: `setRankingBoard`, `setFilterMode`, `resetRankingView`, `toggleGuildFilter`, `toggleMemberFilter`, `togglePlayerFilter`. |
-| [`src/domain/selectors.ts`](../src/domain/selectors.ts)                           | Tính toán `GuildScore` kèm danh sách `members` (sort theo điểm) và số lượng đảo; gộp dữ liệu từ `Contribution[]`.                                    |
+| [`src/domain/selectors/index.ts`](../src/domain/selectors/index.ts)                           | Tính toán `GuildScore` kèm danh sách `members` (sort theo điểm) và số lượng đảo; gộp dữ liệu từ `Contribution[]`.                                    |
 | [`src/domain/mapData.ts`](../src/domain/mapData.ts)                               | Xây dựng index tra cứu nhanh `nodeIdsByGuild` và `nodeIdsByPlayer`.                                                                                  |
 | [`src/domain/mapGraph.ts`](../src/domain/mapGraph.ts)                             | Áp dụng logic dim/highlight node dựa trên `matchNodeIds`; giữ edges luôn ở trạng thái resting.                                                       |
 | [`src/components/map/FilterChip.tsx`](../src/components/map/FilterChip.tsx)       | Chip overlay hiển thị filter hiện tại và nút đóng `✕`.                                                                                               |
-| [`src/components/map/FactionLegend.tsx`](../src/components/map/FactionLegend.tsx) | Legend display-only, bỏ toàn bộ nút bấm lọc.                                                                                                         |
+| [`src/components/map/map-footer/FactionLegend.tsx`](../src/components/map/map-footer/FactionLegend.tsx) | Legend display-only, bỏ toàn bộ nút bấm lọc.                                                                                                         |
 | [`src/components/panels/leaderboard/`](../src/components/panels/leaderboard/)     | Các component `FactionBoard`, `PlayerBoard`, `IslandBoard` thực thi accordion và filter mode.                                                        |

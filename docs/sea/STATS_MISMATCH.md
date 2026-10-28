@@ -1,19 +1,19 @@
 # STATS_MISMATCH — số liệu UI lệch so với game (backlog handoff)
 
 > Trạng thái chốt 2026-10-26: UI (`src/data/sea-live.json`) tổng điểm từ **node-board
-> rows** (đúng semantic hiện có của `src/domain/selectors.ts`), chấp nhận lệch với
+> rows** (đúng semantic hiện có của `src/domain/selectors/`), chấp nhận lệch với
 > số server ở những chỗ ghi dưới đây. Đây là note bàn giao: ai pick up việc "khớp
 > số 100%" bắt đầu từ đây, không cần đào lại capture.
 
 ## Luồng dữ liệu hiện tại
 
 Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join):
-[`README.md`](../README.md) (mục "Luồng crawl → UI").
+[`README.md`](../../README.md) (mục "Luồng crawl → UI").
 
 ```
-sea_socket/crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
-config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
-sea_socket/report.py → src/data/sea-live.json   (thuần data, không sinh code)
+tools/socket_log/sea_socket/crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
+tools/socket_log/config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
+tools/socket_log/sea_socket/report.py → src/data/sea-live.json   (thuần data, không sinh code)
 src/data/sea-live.ts                    (adapter join layout qua prefix display id)
 src/domain/mapData.ts (LIVE = true)     (derive owner/BXH/filter từ contributions)
 ```
@@ -57,7 +57,7 @@ không phản ánh rank game.
 
 > **Hết hiệu lực 2026-10-27:** owner chốt lại — BXH Cá nhân dùng thẳng board
 > 117, guild scores tab Phe dùng server board, chỉ member list (expand guild)
-> mới derive từ node boards. Contract mới: [`LEADERBOARD_SPECS.md`](LEADERBOARD_SPECS.md)
+> mới derive từ node boards. Contract mới: [`LEADERBOARD_SPECS.md`](../LEADERBOARD_SPECS.md)
 > §1.3.
 
 ## 3. Pool "Điểm ST" dao động — mọi con số là instant snapshot
@@ -82,7 +82,7 @@ Server chặn burst inject với err `10000035` (set bị chặn đổi qua từ
 Crawler cũ gom id brief không retry, server nuốt 1 batch 60 id (seq=169 trả 0
 brief) → 55 player mất tên. Quá trình xử lý và bài học:
 
-- **Throttle:** tool `brief_backfill.py` re-request ids thiếu (chunk 20 +
+- **Throttle:** tool `tools/socket_log/sea_socket/brief_backfill.py` re-request ids thiếu (chunk 20 +
   backoff, chỉ stage login). Lần 1: 39/59, `players.jsonl` 257 → 307.
 - **"Từ chối" tạm giải thích là cooldown (sau đó làm rõ):** 16 id trả rỗng
   xuyên 5 round → ~90 phút sau 1 batch riêng trả đủ 6.5KB (`still missing:
@@ -127,4 +127,4 @@ Hai phát hiện đi kèm (cùng session 2026-10-27):
   `SEA_PACKET_ANALYSE.md` §1.2); UI node 1-23 = game 8: 2.307.224 tổng,
   VNChiến 850.529 top-1 — khớp run GUI 14:29 từng chữ.
 - Shot UI chạy live data: `docs/assets/sea-socket/sea-live-map.png`,
-  `sea-live-node-detail.png` (2026-10-26).
+  `docs/assets/sea-socket/sea-live-node-detail.png` (2026-10-26).

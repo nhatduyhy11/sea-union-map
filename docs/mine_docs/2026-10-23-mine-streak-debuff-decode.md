@@ -47,7 +47,7 @@ tile `f6` = `{9001|9002: 0}` trên vài tile (chưa giải); `f8/f9` = cặp ts 
 f4: bên thắng (1=attacker, 2=defender), f7/f6: {"rKey","pKey"} rating}` — streak tăng khi
   defender thắng. Verify: HuAsura đánh OLNaji 2 lần, f4=2 cả 2 → OLNaji streak giữ/±.
 - `0x1f/0x0007` leaderboard, `0x65/0x0009+0x000c` (round summary / list guild) — spec rút gọn
-  đã ghi trong [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md) §4.3, chưa map đủ.
+  đã ghi trong [`../sea/SOCKET_PROTOCOL.md`](../sea/SOCKET_PROTOCOL.md) §4.3, chưa map đủ.
 
 ## 4. UI navigation để lấy data (socket_capture.py, cửa sổ 640x720)
 

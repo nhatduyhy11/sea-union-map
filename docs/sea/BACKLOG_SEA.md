@@ -1,8 +1,8 @@
-# BACKLOG — Kế hoạch & Các việc tồn đọng
+# BACKLOG SEA — Kế hoạch & Các việc tồn đọng
 
 > Việc ghi vào đây khi phát hiện hoặc chốt yêu cầu mới; mỗi mục ghi đủ context +
 > hướng fix để người sau pick up không phải đào lại. Lệch số UI vs game riêng
-> một file: [`STATS_MISMATCH.md`](STATS_MISMATCH.md).
+> một file: [`docs/sea/STATS_MISMATCH.md`](STATS_MISMATCH.md).
 >
 > Các mục quick-win UI đã xử lý xong (map init, màu 4 phe, tên căn cứ,
 > watermark, footer, tab mặc định, sidebar scroll, sort vùng member, collapse
@@ -31,7 +31,7 @@ Phát hiện 2026-10-26, run `sea-crawl-20261026-195342`.
   hạn, screenshot evidence mỗi lần thử), hoặc tối thiểu chờ WS game mở + thêm
   expect-retry trước khi vào popclose. Sửa ở `tools/socket_log/sea_socket/walkthrough.py` (STAGES) +
   `tools/socket_log/capture/capture.py` (run_step) — vẫn thuần Python/template matching, không
-  đụng phần inject của `sea_socket/crawler.py`.
+  đụng phần inject của `tools/socket_log/sea_socket/crawler.py`.
 
 ### 2. CampGVG config nằm ở `.tmp` — commit baseline vào repo + gộp lệnh crawl/dump
 
@@ -43,13 +43,13 @@ Phát hiện 2026-10-26 khi rà lại docs pipeline (nằm ở `README.md`).
   `camp` của `src/data/sea-live.json`, nhưng là bản đã join, không phải file
   gốc của tool dump.
 - **Việc 1 — commit baseline config**: extract lại 1 lần rồi commit
-  `src/data/campgvg.json` (cạnh `sea-live.json`); `tools/socket_log/sea_socket/report.py --config`
+  `src/data/campgvg.json` (cạnh `src/data/sea-live.json`); `tools/socket_log/sea_socket/report.py --config`
   trỏ vào đó làm default. Lợi: pipeline chạy lại không cần bước extract;
   re-extract + `git diff` thành drift-detection khi game deploy
-  bundle mới. ⚠️ Phải re-extract bằng tool cho đúng format gốc, không derive tay từ `camp` của `sea-live.json`.
+  bundle mới. ⚠️ Phải re-extract bằng tool cho đúng format gốc, không derive tay từ `camp` của `src/data/sea-live.json`.
 - **Việc 2 — gộp lệnh crawl [1] + dump [3]**: khi config đã có đường cố định,
   `tools/socket_log/sea_socket/crawler.py` thêm `--dump` (mặc định bật) tự transform sau khi crawl —
-  1 lệnh ra cả raw run lẫn JSON cho FE. Giữ `sea_socket/report.py` làm module/CLI riêng để re-dump run cũ khi cần.
+  1 lệnh ra cả raw run lẫn JSON cho FE. Giữ `tools/socket_log/sea_socket/report.py` làm module/CLI riêng để re-dump run cũ khi cần.
 - **Việc 3 — update docs kèm theo**: viết lại phần pipeline trong `README.md`
   khớp với quy trình mới và chuẩn hóa bộ thuật ngữ (crawl / extract / transform / dump).
 
@@ -74,7 +74,7 @@ Phát hiện 2026-10-26 khi review data crawl phục vụ hiển thị đa serve
 
 Hiển thị các mốc lịch sử diễn ra sự kiện để người dùng có thể xem lại diễn biến bản đồ qua các ngày.
 
-- **Vị trí**: Đặt ở phía dưới thanh nhãn màu 4 phe của canvas (`src/components/map/FactionLegend.tsx`).
+- **Vị trí**: Đặt ở phía dưới thanh nhãn màu 4 phe của canvas (`src/components/map/map-footer/FactionLegend.tsx`).
 - **Giao diện**: Dãy nút thể hiện các ngày snapshot trong event, ví dụ: `[26]`, `[27]`, ...
 - **Quy tắc hiển thị**:
   - Chỉ hiển thị nút của những ngày **đã qua mốc 22:00** (thời điểm kết thúc lượt đánh trong ngày của game). Các ngày chưa tới hoặc chưa qua 22h sẽ không xuất hiện.
@@ -83,7 +83,7 @@ Hiển thị các mốc lịch sử diễn ra sự kiện để người dùng c
   - Trạng thái nút: Nút của ngày đang được chọn sẽ sáng (active state) để báo hiệu đang xem snapshot lịch sử.
   - Trường hợp không có dữ liệu: nếu click vào ngày không có data snapshot tương ứng, bắn Toast thông báo lỗi (Toast Error), nút không click được / không đổi trạng thái và không làm xáo trộn màn hình hiện tại.
 - **Chỗ sửa**:
-  - Thêm component SnapshotBar / cập nhật `src/components/map/FactionLegend.tsx`.
+  - Thêm component SnapshotBar / cập nhật `src/components/map/map-footer/FactionLegend.tsx`.
   - Store quản lý active snapshot date và logic load dữ liệu lịch sử từ các file `src/data/sea-live.<date>.*.json`.
   - Tích hợp Toast notification cho trường hợp nạp dữ liệu thất bại.
 
@@ -111,14 +111,14 @@ Cho phép chuyển đổi nhanh dữ liệu hiển thị giữa các cụm serve
 Gộp từ yêu cầu hiển thị sức mạnh bang hội và tùy chọn sắp xếp linh hoạt.
 
 - **Hiện trạng**:
-  - Guild trong tab Phe (`FactionBoard.tsx`) hiện sort thuần theo tổng điểm đóng góp (`buildFactionBoard` ở `src/domain/selectors.ts`).
+  - Guild trong tab Phe (`src/components/panels/leaderboard/FactionBoard.tsx`) hiện sort thuần theo tổng điểm đóng góp (`buildFactionBoard` ở `src/domain/selectors/`).
   - Lực chiến (`power`) của từng thành viên chưa được pipeline giữ lại nên chưa đưa lên UI được (khắc phục ở mục 3).
 - **Yêu cầu mới**:
   1. **Mặc định sort theo Lực chiến**: Guild trong từng phe được sắp xếp giảm dần theo tổng Lực chiến (LC) của tất cả thành viên trong bang (`sum(power)`).
   2. **Option sort theo Điểm**: Bổ sung thêm một tùy chọn (checkbox hoặc toggle switch, mặc định **UNCHECK**) cho phép người dùng đổi sang sắp xếp bang theo Điểm ST đóng góp. Khi uncheck thì tự động quay về sort theo LC.
   3. **Hiển thị lực chiến**: Mỗi dòng guild / accordion hiển thị rõ `tên bang [lực chiến]` (vd: `HUNTERS [30.88M]` — format qua `src/utils/format.ts`), điểm ST vẫn hiển thị ở cột điểm.
 - **Chỗ sửa**:
-  - `src/domain/selectors.ts`: `buildFactionBoard` tính tổng LC cho guild, hỗ trợ tiêu chí sắp xếp (`sortBy: "power" | "score"`).
+  - `src/domain/selectors/`: `buildFactionBoard` tính tổng LC cho guild, hỗ trợ tiêu chí sắp xếp (`sortBy: "power" | "score"`).
   - `src/components/panels/leaderboard/FactionBoard.tsx`: thêm UI option toggle sort theo điểm, truyền state sort xuống.
   - `src/components/panels/leaderboard/GuildAccordion.tsx`: cập nhật hiển thị `GuildLabel` theo format `tên [lực chiến]`.
 
@@ -126,10 +126,10 @@ Gộp từ yêu cầu hiển thị sức mạnh bang hội và tùy chọn sắp
 
 Phát hiện 2026-10-26 — tránh xung đột dữ liệu giữa các server.
 
-- **Vấn đề**: Hiện đang dùng tên bang làm id (`CanvasFilter`, `selectors.ts` nhóm theo `player.guild`). Khi chạy multi-server, hai guild cùng tên ở hai server khác nhau (vd `HUNTERS` ở S517 và S590) sẽ bị gộp chung làm một row, gây sai lệch điểm và drill-down.
+- **Vấn đề**: Hiện đang dùng tên bang làm id (`CanvasFilter`, `src/domain/selectors/` nhóm theo `player.guild`). Khi chạy multi-server, hai guild cùng tên ở hai server khác nhau (vd `HUNTERS` ở S517 và S590) sẽ bị gộp chung làm một row, gây sai lệch điểm và drill-down.
 - **Hướng fix**:
   - Đổi guild identity nội bộ thành dạng `guildName_serverNumber` (vd: `HUNTERS_517`), trong khi display name trên UI vẫn giữ nguyên là `guildName`.
-  - Cập nhật `CanvasFilter` (`src/types.ts`), bucket & drill-down (`src/domain/selectors.ts`), filter matching ở canvas và legend.
+  - Cập nhật `CanvasFilter` (`src/types.ts`), bucket & drill-down (`src/domain/selectors/`), filter matching ở canvas và legend.
   - Bucket `"Không guild"` vẫn giữ nguyên; `guild_id` số từ game giữ làm evidence.
 
 ### 8. BXH Cứ điểm: Expand hiển thị BXH player fetch in-game & clear selection khi đóng
@@ -138,14 +138,12 @@ Cung cấp thông tin chi tiết người chơi tấn công cứ điểm và g�
 
 - **Vấn đề / Việc cần làm**:
   1. **Hiển thị BXH người chơi của node**: Khi expand một cứ điểm trong tab Cứ điểm (`src/components/panels/leaderboard/NodeBoard.tsx`), mục `.allocation` hiện tại chỉ hiển thị điểm 4 phe, thiếu danh sách người chơi. Cần bổ sung bảng người chơi tham gia đóng góp/tấn công cứ điểm đó (tương tự `PlayerTable` trong `NodeDetails`, hiển thị tên, phe, guild, điểm đóng góp).
-  2. **Clear selection khi đóng hàng**: Khi toggle đóng một cứ điểm trong `NodeBoard.tsx`, nếu node đó đang là node được chọn trên map (`selected === entry.island.id`) thì gọi `close()` để gỡ viền active.
-- **Chỗ sửa**: `src/components/panels/leaderboard/NodeBoard.tsx`, `src/domain/selectors.ts` (query player contributions cho từng node).
+  2. **Clear selection khi đóng hàng**: Khi toggle đóng một cứ điểm trong `src/components/panels/leaderboard/NodeBoard.tsx`, nếu node đó đang là node được chọn trên map (`selected === entry.island.id`) thì gọi `close()` để gỡ viền active.
+- **Chỗ sửa**: `src/components/panels/leaderboard/NodeBoard.tsx`, `src/domain/selectors/` (query player contributions cho từng node).
 
 ---
 
 ## Nhánh phụ: Khai Thác Guild (Mine)
 
 Các việc tồn đọng thuộc nhánh Khai Thác Guild (module `0x48`, logger, report, streak/debuff) có mức ưu tiên thấp hơn và được quản lý riêng tại:
-👉 [`docs/mine_docs/BACKLOG_MINE.md`](mine_docs/BACKLOG_MINE.md).
-
-
+👉 [`docs/mine_docs/BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md).

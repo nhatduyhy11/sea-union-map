@@ -1,208 +1,107 @@
-# Sea Union
+# Sea Union — Frontend (Web UI)
 
-Web UI (React Flow) xem map **Tranh Bá Tứ Hải** theo data crawl, và crawler
-Python bắt/giải mã packet websocket của game H5. Repo gồm hai nửa nối nhau bằng
-pipeline crawl → JSON → UI:
+Giao diện Web tương tác hiển thị bản đồ chiến sự **Tranh Bá Tứ Hải** (Sea Union) và hệ thống bảng xếp hạng thời gian thực, xây dựng bằng **React 19**, **Vite** và **React Flow**.
 
-- `tools/socket_log/` — crawler & decoder WS, 2 mode: **mine** (Khai Thác
-  Guild) và **sea** (Tranh Bá Tứ Hải)
-- `src/` — web UI React + React Flow, chạy hoàn toàn phía trình duyệt
+Tài liệu này hướng dẫn chi tiết về cách chạy, tương tác, cấu trúc dữ liệu và tổ chức mã nguồn phía Frontend (`src/`). Để xem hướng dẫn về tầng crawler socket backend và luồng pipeline dữ liệu, xem [README.md](README.md).
 
-## Web UI
+---
 
-### Chạy
+## 1. Cài đặt & Chạy
+
+Yêu cầu môi trường: **Node.js 18+** và `pnpm` (hoặc `npm`).
 
 ```sh
-npm install
-npm run dev
+# Cài đặt dependencies
+pnpm install
+
+# Chạy dev server cục bộ (mặc định tại http://localhost:5173)
+pnpm run dev
+
+# Chạy kiểm thử đơn vị (domain, selectors, layout, data join)
+pnpm test
+
+# Build bản static phục vụ production (xuất ra dist/)
+pnpm run build
 ```
 
-Mở URL local Vite in ra. `npm run build` tạo bản static trong `dist/`; `npm test` kiểm tra cấu trúc map và đối chiếu điểm.
+---
 
-### Tương tác
+## 2. Tương tác trên Giao diện
 
-- Kéo nền để pan, cuộn/pinch để zoom, nút **Toàn cảnh** để fit map.
-- Hover hoặc focus đảo để xem điểm bốn phe; click icon mở panel chi tiết.
-- Nút ghim từng đảo giữ bảng điểm; **Điểm toàn map** hiện mọi bảng. Tắt tùy chọn chung vẫn giữ các đảo được ghim riêng.
-- Lọc canvas theo guild hoặc thành viên trực tiếp từ BXH (xem [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md)); legend chân map hiển thị màu phe.
-- Tìm ID/tên đảo để tới đảo; tab xếp hạng mở phân bố điểm của từng player và liên kết tới cứ điểm.
+* **Điều hướng bản đồ (Canvas):**
+  * Kéo giữ chuột trên nền để di chuyển (Pan).
+  * Cuộn chuột hoặc pinch (trackpad) để thu phóng (Zoom).
+  * Nút **Toàn cảnh** trên toolbar để căn chỉnh vừa màn hình (Fit view).
+* **Tra cứu Cứ điểm / Đảo:**
+  * **Hover / Focus:** Hiển thị điểm số hiện tại của 4 phe tại node.
+  * **Click node:** Chọn đảo và mở panel chi tiết bên hông (thông tin boss, ngưỡng chiếm, bảng đóng góp người chơi).
+  * **Ghim đảo:** Nút ghim trên từng đảo cho phép giữ bảng điểm cố định; tùy chọn **Điểm toàn map** bật/tắt toàn bộ bảng điểm đồng loạt.
+  * **Tìm kiếm:** Ô tìm kiếm trên toolbar hỗ trợ nhảy nhanh tới vị trí đảo theo tên hoặc ID (ví dụ: `4`, `1-11`, `Đảo Lều Trại`).
+* **Bảng Xếp Hạng & Bộ lọc (Leaderboard & Filter):**
+  * Hệ thống gồm 3 tab chính: **Phe** (drill-down: Phe → Bang hội → Thành viên), **Cá nhân** (BXH điểm toàn server), **Cứ điểm** (xếp hạng đảo theo tổng điểm tranh đoạt).
+  * **Cơ chế Filter mode:** Click vào một Bang hội hoặc Thành viên trên BXH sẽ tự động lọc và làm nổi bật (highlight) toàn bộ các đảo mà thực thể đó có đóng góp trên canvas.
+  * Chi tiết đặc tả hành vi và cơ chế lọc được quy định tại [`docs/LEADERBOARD_SPECS.md`](docs/LEADERBOARD_SPECS.md).
+* **Nhãn & Trạng thái:** Thanh chú giải (Legend) ở chân màn hình thể hiện màu sắc đại diện cho 4 phe và trạng thái trung lập.
 
-### Map & dữ liệu
+---
 
-Map có 89 node: 24 đảo tầng 1, 52 đảo tầng 2, 9 cứ điểm trên hàng giữa và 4 base. `src/data/map-layout.ts` chứa ID, tọa độ ghép từ `specs/map-left.PNG`, `map-mid.PNG`, `map-right.PNG` và 118 đường nối đọc từ ảnh. Tọa độ được phóng đồng đều để giữ tỷ lệ bố cục và khoảng cách. Không sinh map bằng cách xoay một cụm node; các index thật được khai báo riêng ở đúng khu vực trong ảnh.
+## 3. Bản đồ & Dữ liệu Hiển thị
 
-Cứ điểm trung tâm là `4` — là tâm tọa độ của map. Dãy cứ điểm trục giữa gồm 9 node theo index từ tây sang đông: `3-7`, `3-5`, `3-3`, `3-1`, `4` (tâm), `3-2`, `3-4`, `3-6`, `3-8`. Layout đặt tên chuẩn theo index (`Đảo 1-x`, `Đảo 2-x`, `Cứ điểm 3-x/4`); khi bật live, tên hiển thị lấy từ config CampGVG của game. Các base không có index trong ảnh nên dùng ID nội bộ `base-north/east/south/west`.
+### Bố cục 89 Node
+* Bản đồ bao gồm 89 node:
+  * 24 đảo tầng 1 (vành ngoài).
+  * 52 đảo tầng 2.
+  * 9 cứ điểm chiến lược trên trục giữa: `3-7`, `3-5`, `3-3`, `3-1`, `4` (cứ điểm trung tâm - tâm toạ độ), `3-2`, `3-4`, `3-6`, `3-8`.
+  * 4 cứ điểm căn cứ (Base): `base-north`, `base-east`, `base-south`, `base-west`.
+* Toàn bộ vị trí toạ độ và 118 đường nối (routes) được định nghĩa chuẩn xác trong [`src/data/map-layout.ts`](src/data/map-layout.ts).
 
-Nguồn dữ liệu chọn bằng cờ `LIVE` ở `src/domain/mapData.ts`:
+### Nguồn nạp dữ liệu (Data Source)
+* **Live Data (Mặc định):** Dữ liệu được crawl từ server game và bake vào [`src/data/sea-live.json`](src/data/sea-live.json).
+  * Adapter [`src/data/sea-live.ts`](src/data/sea-live.ts) thực hiện ánh xạ ID từ game sang ID bố cục layout canvas, nạp thông tin phe sở hữu (`owner`), điểm đóng góp từng cứ điểm (`contributions`) và bảng xếp hạng.
+  * Khi chạy dev (`pnpm run dev`), nếu tồn tại file `public/sea-live-dev.json` (sinh ra từ crawler, gitignored), ứng dụng sẽ ưu tiên nạp file này để xem trước ngay mà không cần build lại.
+  * Chi tiết về cơ chế nạp dev vs build xem [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md).
+* **Quy tắc tính toán đường nối & sở hữu:**
+  * Phe sở hữu căn cứ và các đảo nối liên tục từ base được xác định thông qua logic duyệt đồ thị tại [`src/domain/claims.ts`](src/domain/claims.ts) theo quy tắc game tại [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md).
 
-- **Live (mặc định)** — crawl thật từ server, bake vào `src/data/sea-live.json`: tên node và ngưỡng chiếm từ config CampGVG, owner từ snapshot server (`0x72/0x000c`), điểm từ board từng node. Join game-id → layout-id nằm ở adapter `src/data/sea-live.ts`, có unit test; các lệch số so với UI game đã biết liệt kê ở [docs/STATS_MISMATCH.md](docs/STATS_MISMATCH.md). Owner là truth từ server — claim rule chỉ còn tính connectivity (phe nào còn nối base tới node). Boss chưa map (`null`) — detail nằm ở config khác.
-- **Demo** — đặt `LIVE = false` để xem lại dữ liệu mẫu `src/data/demo.ts`; owner derive từ claim rule. `src/domain/selectors.ts` tính điểm phe và leaderboard từ cùng nguồn cho cả hai mode.
+---
 
-Bốn base không có điểm tấn công. Bảng điểm co giãn theo zoom; zoom gần hơn để đọc. Chưa có nhập dữ liệu, lưu trạng thái hay đồng bộ giữa người dùng; ghim, lọc và các lựa chọn chỉ tồn tại trong phiên trang hiện tại.
-
-### Tổ chức code
-
-- `src/main.tsx`: khởi tạo React và nạp CSS.
-- `src/App.tsx`: bố cục ứng dụng — thuần layout, component tự nối store nên không threaded props.
-- `src/components/layout/`: header và thanh điều hướng.
-- `src/components/map/`: map, custom node/edge, toolbar, bảng điểm nhỏ và chú giải.
-- `src/components/panels/`: panel cứ điểm, bảng điểm phe, player và leaderboard.
-- `src/components/shared/`: UI dùng chung.
-- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc guild/player, điểm toàn map), `debug` (tâm node, màu canvas, màu trung lập lúc dev), `panel` (tab, sub-tab BXH, filterMode, accordion expansion), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `setFilterMode`, `resetRankingView`). Chi tiết mô hình tương tác tại [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md).
-- `src/hooks/`: shared command cần instance React Flow (dùng đa module) — `useFitMap`, `useFocusIsland` (các hook đơn-consumer đã co-locate về cạnh component tương ứng).
-- `src/domain/`: hàm thuần tính điểm, truy vấn chi tiết, tìm kiếm, chọn nguồn dữ liệu (`mapData.ts`, cờ `LIVE`) và chuyển dữ liệu sang model React Flow; kèm test.
-- `src/data/`: bố cục theo ảnh, định nghĩa phe, fixture demo và dữ liệu crawl live (`sea-live.json` + adapter `sea-live.ts`).
-- `src/types.ts`: định nghĩa kiểu dữ liệu (model, props, React Flow node data).
-- `src/utils/format.ts`: định dạng số để hiển thị.
-- `src/style.css`: global CSS reset, typography, scrollbar và React Flow styles; UI dùng CSS Modules co-located theo từng component.
-
-UI nhận dữ liệu đã chuẩn bị qua props; component subscribe store theo slice nên mỗi tương tác chỉ re-render vùng liên quan. Command chạm nhiều store nằm ở `stores/commands.ts`; command cần camera (focus/fit) là hook vì cần instance React Flow. Domain không import React, component hay store. Derived data (nodes/edges, chi tiết đảo, kết quả tìm kiếm) memo theo state đầu vào; điểm và leaderboard không tính lại theo mỗi thao tác pan/zoom.
-
-## Crawler (`tools/socket_log/`)
-
-Có **2 mode** dùng chung một tầng generic — chọn mode theo entry point:
-
-- **Mode sea** — Tranh Bá Tứ Hải (module 0x72 + board 0x0c), kèm pipeline crawl → JSON cho FE
-- **Mode mine** — event world mỏ (module 0x48 + broadcast type 150)
-
-Layout: 3 package generic (`core/`, `browser/`, `capture/`) + 2 package event
-(`sea_socket/`, `mine_socket/`) độc lập nhau — xóa 1 package event thì package
-kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì không đụng socket.
-
-### Dùng chung
-
-| File                       | Vai trò                                                                                                                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/runner.py`           | Core runner: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`)            |
-| `capture/capture.py`       | Bắt frame thô: dump payload nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl`, kèm step DSL (`click:X,Y`, `shot:NAME`, `sleep:S`, `mark:LABEL`) + golden             |
-| `core/decode.py`           | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                                      |
-| `core/protocol.py`         | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`, convention inject ssid `0xF0..0xFF`                |
-| `core/args.py`             | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
-| `core/runtime_codec.py`    | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
-| `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |
-| `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                   |
-| `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                                         |
-
-### Mode 1 — sea (`sea_socket/`)
-
-Pipeline chuẩn: crawl → bóc config → dump JSON cho FE — luồng đầy đủ tới UI
-xem mục **Luồng crawl → UI** bên dưới.
-
-| File                        | Vai trò                                                                                                                                                                                   |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (chỉ để proof protocol)                                                         |
-| `sea_socket/crawler.py`     | **Collector chính**: mở map 1 lần lấy snapshot 89 node, rồi inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game                            |
-| `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
-| `sea_socket/report.py`      | Dump crawl JSONL + CampGVG thành JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build); lệch số ở `docs/STATS_MISMATCH.md` |
-| `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON                                                            |
-
-```bash
-# [1] Crawl đủ 89 node (headed mặc định, cần session đăng nhập)
-uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
-#    → .tmp/sea-crawl/<run>/: map-snapshot.json, node-states.jsonl,
-#      boards-decoded.json, players.jsonl, summary.json
-
-# [2] Bóc config CampGVG (không cần login) — chỉ chạy 1 LẦN rồi reuse:
-#    campgvglo.json để nguyên trên đĩa, các lần crawl sau không cần bước này.
-#    Chỉ chạy lại khi game deploy bundle mới mà config đổi (season mới, sửa node).
-uv run python tools/socket_log/config_extract.py --table CampGVGLO \
-    --out .tmp/sea-crawl/campgvglo.json
-
-# [3] Dump JSON cho FE (dev: public/sea-live-dev.json, gitignored)
-uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
-    --config .tmp/sea-crawl/campgvglo.json
-#    Bake chính thức vào build:
-uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
-    --config .tmp/sea-crawl/campgvglo.json --out src/data/sea-live.json
-```
-
-Helper decode offline (nếu cần tách riêng 1 frame board từ capture):
-
-```bash
-uv run python tools/socket_log/core/runtime_codec.py rank body.b64
-```
-
-### Mode 2 — mine (`mine_socket/`)
-
-| File                      | Vai trò                                                                      |
-| ------------------------- | ---------------------------------------------------------------------------- |
-| `mine_socket/logger.py`   | Entry point event mine: tạo sink + route mine, lắp vào core `core/runner.py` |
-| `mine_socket/protocol.py` | Module 0x48 + broadcast type 150 (parse event/tile)                          |
-| `mine_socket/sinks.py`    | `MineEventSink` — dedupe theo event id, optional webhook                     |
-| `mine_socket/handlers.py` | Route frame mine vào sink + predicate hoàn thành `--snapshot`                |
-| `mine_socket/report.py`   | Aggregate các JSONL thành mine-report.json + cây báo cáo                     |
-| `mine_socket/decode.py`   | Decoder offline `mine-events`/`mine-state` trên capture dir binary           |
-
-Logger ghi thẳng **JSONL đã decode** (không phải binary) dưới `.tmp/mine-events/` —
-chi tiết 5 stream xem [`docs/mine_docs/MINE_STRUCTURE.md` §6](docs/mine_docs/MINE_STRUCTURE.md).
-
-```bash
-# Snapshot nhanh: 1 pass state + tên, rồi thoát
-uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/pmain --snapshot
-
-# Logger dài hạn, tự dừng sau 5 phút
-uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/pmain --duration 300
-
-# Báo cáo từ JSONL đã ghi (mặc định --dir .tmp/mine-events)
-uv run python tools/socket_log/mine_socket/report.py
-
-# Decode offline từ capture binary của capture/capture.py
-uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/run-mine1 mine-events
-```
-
-### Prerequisite
-
-Cả hai mode đều cần profile `.tmp/<name>` đã có session đăng nhập (persistent
-context của Playwright). Riêng `config_extract.py` boot headless không cần
-login.
-
-## Luồng crawl → UI
+## 4. Tổ chức Mã Nguồn (`src/`)
 
 ```
-[1] sea_socket/crawler.py ──crawl WS game──▶  .tmp/sea-crawl/<run>/ (JSONL + boards-decoded.json)
-[2] config_extract.py     ──boot game headless──▶ .tmp/sea-crawl/campgvglo.json (CampGVG 89 row)
-[3] sea_socket/report.py  ◀── đọc [1] + [2] ──dump──▶ public/sea-live-dev.json (MẶC ĐỊNH — gitignored)
-                                                     hoặc src/data/sea-live.json (--out, commit = bake vào build)
-[4] src/data/sea-live.ts  (adapter FE, viết tay) + sea-live.test.ts
-                          ◀── dev: fetch sea-live-dev.json, thiếu → fallback
-                              build: import src/data/sea-live.json (baked)
-                          ──export──▶ islands / contributions / routes
-[5] FE: mapData.ts (LIVE switch) → derive owner/BXH/filter từ contributions
+src/
+├── components/          # Các React component giao diện
+│   ├── layout/          # Header ứng dụng, thanh điều hướng (AppHeader, NavigationRail)
+│   ├── map/             # Canvas React Flow, custom IslandNode, RouteEdge, toolbar, footer
+│   ├── panels/          # Panel bên hông (Sidebar, NodeDetails, Leaderboard tabs)
+│   └── shared/          # UI components tái sử dụng (PlayerIdentity, Watermark...)
+├── stores/              # Quản lý trạng thái ứng dụng bằng Zustand
+│   ├── mapView.ts       # State bộ lọc (guild/player), chế độ hiển thị điểm toàn map
+│   ├── panel.ts         # State tab panel, sub-tab BXH, filterMode, accordion expansion
+│   ├── selection.ts     # State chọn đảo, ghim đảo
+│   ├── debug.ts         # Tùy chọn hỗ trợ debug canvas lúc dev
+│   └── commands.ts      # Action handler điều phối nhiều store (openIsland, setFilterMode...)
+├── hooks/               # Custom React hooks (useFitMap, useFocusIsland, v.v.)
+├── domain/              # Logic nghiệp vụ thuần TypeScript (không phụ thuộc React)
+│   ├── claims.ts        # Thuật toán kiểm tra connectivity đường nối từ base
+│   ├── mapData.ts       # Điểm tập trung dữ liệu chuẩn bị cung cấp cho View layer
+│   ├── mapGraph.ts      # Adapter chuyển đổi layout & claims sang Node/Edge của React Flow
+│   └── selectors/       # Các hàm truy vấn, tính điểm, sắp xếp BXH và tìm kiếm
+├── data/                # Dữ liệu tĩnh & adapter nạp data
+│   ├── map-layout.ts    # Toạ độ 89 đảo và danh sách đường nối
+│   ├── factions.ts      # Danh sách 4 phe và màu đại diện
+│   ├── sea-live.ts      # Adapter chuyển đổi dữ liệu crawl sang model ứng dụng
+│   └── sea-live.json    # Snapshot dữ liệu crawl chính thức (baked vào bundle)
+├── types.ts             # Định nghĩa toàn bộ TypeScript Interfaces & Models
+├── utils/format.ts      # Hàm tiện ích định dạng số, lực chiến, nhãn hiển thị
+├── App.tsx              # Component gốc bố cục giao diện
+├── main.tsx             # Entry point khởi tạo React DOM
+└── style.css            # Global CSS reset & React Flow base styling
 ```
 
-Hai file JSON dump, cùng schema (chi tiết dev vs build, thuật ngữ dump/baked:
-[`docs/SEA_LIVE_DATA.md`](docs/SEA_LIVE_DATA.md)):
+---
 
-- `public/sea-live-dev.json` — **gitignored**, dump mặc định mỗi lần crawl.
-  FE dev server fetch lúc runtime: crawl xong, refresh browser là thấy, không
-  đụng git. Thiếu file hay sai format → rơi về bản baked.
-- `src/data/sea-live.json` — **committed**, snapshot "chính thức" baked vào
-  bundle lúc build. Chỉ cập nhật chủ động bằng `--out src/data/sea-live.json`.
+## 5. Nguyên tắc Kiến trúc
 
-Ranh giới vai trò: **Python** (`sea_socket/report.py`) chỉ gom crawl outputs thành một
-JSON thuần — `camp`, `owner`, `nodeRows`, `briefs`, `baseDir`, `snapshotAt` —
-kèm cross-checks (base names, 4 owner base, node không map được layout) để bắt
-join hỏng trước khi data đến FE. **FE** (`src/data/sea-live.ts`) là code viết
-tay — `layoutIdOf` (prefix display id → layout id), `factionDir` (owner 4 base
-→ hướng), join vào `layoutNodes` theo types `Contribution`/`Island` — có unit
-test ở `sea-live.test.ts`. Crawl (dev hay ship) không bao giờ đè file code FE.
-
-Auto-refresh trên bản deploy khi war (poll `fetch` dump chính thức + re-run
-adapter trên data mới) chưa làm — adapter đã nhận data qua biến nên chỉ đổi
-chỗ lấy data ở `sea-live.ts`, join giữ nguyên.
-
-## Docs
-
-- [`docs/DOCS_GUIDE.md`](docs/DOCS_GUIDE.md) — index toàn bộ docs, vai trò từng tài liệu và cách cập nhật
-- [`docs/SOCKET_PROTOCOL.md`](docs/SOCKET_PROTOCOL.md) — reference protocol WS (framing, module/cmd, decode)
-- [`docs/mine_docs/MINE_STRUCTURE.md`](docs/mine_docs/MINE_STRUCTURE.md) — cấu trúc world mỏ: map UI ↔ protocol (kèm [`docs/mine_docs/BACKLOG_MINE.md`](docs/mine_docs/BACKLOG_MINE.md))
-- [`docs/SEA_STRUCTURE.md`](docs/SEA_STRUCTURE.md) — cấu trúc event Tranh Bá Tứ Hải: map UI ↔ protocol
-- [`docs/LEADERBOARD_SPECS.md`](docs/LEADERBOARD_SPECS.md) — đặc tả BXH, cơ chế lọc guild/player canvas và tương tác UI/UX
-- [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md) — quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, derive ownership
-- [`docs/SEA_LIVE_DATA.md`](docs/SEA_LIVE_DATA.md) — các file JSON crawl sea: dump vs baked, dev dùng file nào, build/deploy dùng file nào
-- [`docs/STATS_MISMATCH.md`](docs/STATS_MISMATCH.md) — các lệch số UI vs game đã biết (backlog handoff)
-- `docs/planning/` — research notes và run capture (socket step learn, sea capture)
-- `docs/assets/` — ảnh in-game dùng đối chiếu protocol
-- [`BACKLOG.md`](BACKLOG.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI
-
-Điểm còn mở/câu hỏi cần chủ dự án xác nhận được ghi ở tài liệu liên quan kèm nguồn, phương án tạm và trạng thái — xem [`docs/DOCS_GUIDE.md`](docs/DOCS_GUIDE.md).
+1. **Unidirectional Data Flow:** State được quản lý tập trung qua Zustand stores. Component chỉ subscribe theo slice nhỏ cần thiết để tối ưu hóa hiệu năng render (tránh re-render toàn bộ map khi pan/zoom).
+2. **Domain Layer độc lập:** Thư mục `src/domain/` chứa các hàm xử lý dữ liệu và thuật toán thuần túy (pure functions), hoàn toàn không import React, UI components hay stores, đi kèm đầy đủ unit test trong `src/**/*.test.ts`.
+3. **Co-located CSS Modules:** Mỗi component có file styles riêng biệt (ví dụ: `MapCanvas.module.css` nằm cạnh `MapCanvas.tsx`), đảm bảo tính đóng gói và không xung đột CSS class.

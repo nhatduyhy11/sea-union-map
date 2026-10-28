@@ -1,8 +1,8 @@
 # Sea capture POC — walkthrough chạy thành công + phân tích frame (2026-10-24)
 
 > Run chuẩn: `.tmp/socket-capture/sea-20261024-100433` — 8/8 stage, 634 frame, toàn bộ
-> shot theo `docs/SEA_STRUCTURE.md` §2. Script: `tools/socket_log/sea_capture.py`
-> (branch `socket-capture`). Phân tích packet + kết luận data: `docs/SEA_PACKET_ANALYSE.md`.
+> shot theo `docs/sea/SEA_STRUCTURE.md` §2. Script: `tools/socket_log/sea_capture.py`
+> (branch `socket-capture`). Phân tích packet + kết luận data: `docs/sea/SEA_PACKET_ANALYSE.md`.
 
 ## 1. Chạy gì, ra gì
 
@@ -39,7 +39,7 @@ nền góc phải trên (600,90). **Tuyệt đối không click "Đến" (319,62
   1-23" là **artifact**, không phải data.
 - Run 100433 (close sửa xong): shot + frame cho thấy node khác nhau hẳn — request mở
   node `0x72/0x0011 {f1: id}` với id riêng từng đảo; decode id ↔ tên qua bảng
-  `CampGVGLO` (`docs/SEA_PACKET_ANALYSE.md` §1.2).
+  `CampGVGLO` (`docs/sea/SEA_PACKET_ANALYSE.md` §1.2).
 - Sót lại 3 shot `7-n03/n04/n13` vẫn lệch tên dù request đúng — **popup render lag khi
   auto-click nhanh**; shot `7-n14` (cùng id 63 với n03) render đúng "1-11Đảo Lều Trại",
   khớp bảng config → chốt artifact, không phải mapping khác. Bài học: khi nghi shot lệch,
@@ -59,7 +59,7 @@ nền góc phải trên (600,90). **Tuyệt đối không click "Đến" (319,62
 
 ## 5. Việc kế tiếp
 
-- Xem `docs/SEA_PACKET_ANALYSE.md` §2 (NEED_CONFIRM) + §3 (deliverables): crawl 89 node
+- Xem `docs/sea/SEA_PACKET_ANALYSE.md` §2 (NEED_CONFIRM) + §3 (deliverables): crawl 89 node
   bằng payload thẳng, join `CampGVGLO` vào `src/data/map-layout.ts`.
 - Capture lại sau **10/26 10:00** (khai chiến) cho dữ liệu động.
 
@@ -96,7 +96,7 @@ trước khi decode board/phe snapshot.
 
 Shot `4-leaderboard-*` lúc war vẫn chỉ **"XH Phe | XH điểm"**. Cấu trúc 3 tab
 "Cứ điểm | Cá nhân | Phe" + sub-tab là **bước tổng hợp phía UI frontend**
-(`Leaderboard.tsx`), không phải của game → đã sửa `docs/SEA_STRUCTURE.md` §3.2/§7.
+(`Leaderboard.tsx`), không phải của game → đã sửa `docs/sea/SEA_STRUCTURE.md` §3.2/§7.
 
 ### 6.4. Ghi chú GUI (phụ)
 
@@ -163,7 +163,7 @@ crawl + CampGVG → `src/data/sea-live.ts`; `mapData.ts` có công tắc `LIVE`.
 - Verify UI: node 1-23 = game 8 hiện 2.307.224 tổng, top-1 VNChiến 850.529
   (khớp run GUI 14:29 từng chữ); game 63 → "1-11Đảo Lều Trại" khớp §1.2.
 - Lệch số đã biết (board top-20, BXH top-200, boss chưa map…) liệt kê +
-  phương án fix trong `docs/STATS_MISMATCH.md` — handoff cho phase sau.
+  phương án fix trong `docs/sea/STATS_MISMATCH.md` — handoff cho phase sau.
 
 ### 6.7. Finding dữ liệu: pool "Điểm ST" node dao động, board theo người chơi ổn định
 
