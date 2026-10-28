@@ -16,8 +16,8 @@ import {
 } from "./selectors";
 import type { FactionScore } from "../types";
 
-// Nguồn dữ liệu duy nhất: crawl thật từ sea_crawler (sea-live.json —
-// regenerate bằng tools/socket_log/sea_to_ui.py; join JSON → islands/
+// Nguồn dữ liệu duy nhất: data crawl thật từ JSON dump (sea-live.json —
+// regenerate bằng script dump; join JSON → islands/
 // contributions nằm ở src/data/sea-live.ts).
 const islands = liveIslands;
 export const contributions = liveContributions;
@@ -30,7 +30,7 @@ export const scoresByNode = new Map<string, FactionScore[]>(
   ])
 );
 
-// Owner là truth từ server snapshot (0x72/0x000c) — claim rule chỉ còn tính
+// Owner là truth từ server snapshot (dump owner) — claim rule chỉ còn tính
 // connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
 const ownerByNode = new Map(
   islands.map((node) => [node.id, node.owner] as const)
@@ -42,8 +42,8 @@ export const claims: ClaimState = {
 
 export const ownedIslands = islands;
 
-// Tab Cá nhân: BXH điểm server (board 117) — thứ tự/điểm truth. Tab Phe: gắn
-// guild scores server (0x72/0x0025).
+// Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth. Tab
+// Phe: gắn guild scores server (dump factionGuilds).
 export const leaderboard = buildServerLeaderboard(
   serverPlayerBoard,
   contributions,

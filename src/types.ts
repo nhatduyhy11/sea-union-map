@@ -51,10 +51,10 @@ export interface Player {
   id: string;
   name: string;
   faction: string;
-  // Guild name from the player brief (0x0d/0x001f f11); the faction board
+  // Guild name from the player brief (dump briefs); the faction board
   // aggregates players by it. Players without a brief leave it unset.
   guild?: string;
-  // Guild id (brief f11 id part) — server guild rows (0x72/0x0025) are keyed
+  // Guild id (from the dump briefs) — server guild rows (dump factionGuilds) are keyed
   // by id, so the faction board matches members through it.
   guildId?: string;
 }
@@ -72,7 +72,7 @@ export interface Contribution {
   score: number;
 }
 
-// One row of the server's global player board ("BXH điểm", 0x0c/0x0002 {117}):
+// One row of the server's global player board ("BXH điểm", dump playerBoard):
 // rank + score are server truth; allocations per island are joined separately
 // from node boards (LEADERBOARD_SPECS.md §1.3).
 export interface ServerPlayerRow {
@@ -84,7 +84,7 @@ export interface ServerPlayerRow {
   score: number;
 }
 
-// One row of the server's guild-score roster (0x72/0x0025 "Tổng quan phe"):
+// One row of the server's guild-score roster ("Tổng quan phe", dump factionGuilds):
 // the faction board renders these scores directly instead of summing rows.
 export interface ServerGuildRow {
   guildId: string;

@@ -1,6 +1,6 @@
-// Adapter FE cho dữ liệu crawl live. Python (tools/socket_log/sea_to_ui.py)
-// CHỈ dump JSON — không sinh file này. Join game-id → layout-id và faction →
-// hướng là code client: sửa tay được, unit test ở sea-live.test.ts.
+// Adapter FE cho dữ liệu crawl live. Đầu vào là JSON dump (sea-live.json) —
+// script dump chỉ xuất JSON, không sinh file này. Join game-id → layout-id và
+// faction → hướng là code client: sửa tay được, unit test ở sea-live.test.ts.
 // Live totals sum the per-node boards, which the server caps at top-20 rows —
 // known deviations vs the game numbers live in docs/STATS_MISMATCH.md.
 
@@ -21,7 +21,7 @@ interface CampRow {
   pointRequire: number;
 }
 
-// Hình dạng dump của report.py — key số đến đây là string (JSON).
+// Hình dạng file dump — key số đến đây là string (JSON).
 interface SeaLiveDump {
   snapshotAt: string;
   camp: Record<string, CampRow>;
@@ -44,7 +44,7 @@ const bundledDump: SeaLiveDump = {
 };
 
 // Dev: ưu tiên dump mới nhất ở public/sea-live-dev.json (gitignored —
-// sea_to_ui.py ghi vào đây mỗi lần crawl, refresh browser là thấy). Thiếu file
+// script dump ghi vào đây mỗi lần crawl, refresh browser là thấy). Thiếu file
 // hay sai format thì rơi về bản baked trong bundle. Build: luôn dùng bản baked,
 // không fetch. Guard ?.: ngoài Vite (tsx --test) import.meta.env không có →
 // bundled luôn, không đụng fetch.
@@ -109,9 +109,9 @@ export const islands: Island[] = layoutNodes.map((node) => {
   };
 });
 
-// Node-board rows (0x0c/0x0002 board 118, server cắt top-20/node):
+// Node-board rows (dump nodeRows; server cắt top-20/node):
 // [gameNodeId, playerId, score, campId]. guildId: brief trước, fallback
-// guildRoster (snapshot f4) — player bị server từ chối brief vẫn đúng guild.
+// guildRoster — player bị server từ chối brief vẫn đúng guild.
 export const contributions: Contribution[] = dump.nodeRows.flatMap(
   ([gameId, playerId, score, camp]) => {
     const nodeId = layoutIdByGame.get(gameId);
@@ -151,7 +151,7 @@ export const playerBoard: (ServerPlayerRow & { faction: string })[] =
     ];
   });
 
-// Guild scores server (0x72/0x0025 "Tổng quan phe"), key theo direction FE.
+// Guild scores server (dump factionGuilds — bảng "Tổng quan phe"), key theo direction FE.
 // Guild thiếu tên (không member nào được brief) hiện #id — STATS_MISMATCH §5.1.
 export const factionGuilds: Record<string, ServerGuildRow[]> = Object.entries(
   dump.factionGuilds
@@ -175,7 +175,7 @@ export const factionGuilds: Record<string, ServerGuildRow[]> = Object.entries(
     {}
   );
 
-// guildId → tên (từ brief member) — cùng nguồn guildNames của report.py.
+// guildId → tên (từ brief member) — cùng nguồn guildNames trong dump.
 export const guildNames: Record<string, string> = dump.guildNames;
 
 export const routes: Route[] = layoutRoutes;

@@ -1,7 +1,7 @@
 # Khai Thác Guild — Cấu Trúc Khu Mỏ (map UI ↔ protocol)
 
 > Mô tả cấu trúc world mỏ từ ảnh in-game (`../assets/mine-detail/`)
-> đối chiếu với state server đẩy về (`0x48/0x0002`, xem [`../SOCKET_PROTOCOL.md`](../SOCKET_PROTOCOL.md)).
+> đối chiếu với state server đẩy về (`0x48/0x0002`, xem [`../sea/SOCKET_PROTOCOL.md`](../sea/SOCKET_PROTOCOL.md)).
 > Ảnh tham chiếu: profile chính, acc **HuAsura** (id `51921435`, guild **HUNTERS**),
 > đang ngồi **sector 7 — mỏ Mỏ Huyền Quang — điểm 4 (lv9)**, slot 10.
 > Verify lần cuối: capture `run-20261023-050330` — tile `7057` slot `10` chứa đúng id `51921435`. ✓
@@ -33,20 +33,20 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 | Slot               | Số lượng | UI (view zoomin)                                                                                                                                                                                                                                                                                                                                                        |
 | ------------------ | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 1–12               | 12       | Máy đào nhỏ có **tên player** đứng cạnh (zoomin hiện đủ 12 tên ở 7057)                                                                                                                                                                                                                                                                                                  |
-| 9001 / 9002 / 9003 | 3        | **[x CHỐT 2026-10-23] slot claimer của điểm** ("Máy Đào Chính"): vẫn chứa player id trong state nhưng **không label tên**. Rule game: 3 acc này **phải cùng 1 guild** và guild đó **= guild đang claim điểm (`f4`)** — bot nhận diện guild chủ điểm ngay từ state, không cần request `0x24/0x0035`; lệch guild = data lỗi, `mine_socket/report.py` đưa vào mục `errors` |
+| 9001 / 9002 / 9003 | 3        | **[x CHỐT 2026-10-23] slot claimer của điểm** ("Máy Đào Chính"): vẫn chứa player id trong state nhưng **không label tên**. Rule game: 3 acc này **phải cùng 1 guild** và guild đó **= guild đang claim điểm (`f4`)** — bot nhận diện guild chủ điểm ngay từ state, không cần request `0x24/0x0035`; lệch guild = data lỗi, `tools/socket_log/mine_socket/report.py` đưa vào mục `errors` |
 
 - Sector 1 là ngoại lệ: 1 tile, slot 1–124, không có slot đặc biệt.
 - Slot có player id = 0 là slot trống. Slot **đang đào** mang cặp timestamp ~60 phút (`f5`).
 
 ## 3. Các view UI (theo ảnh fixture)
 
-1. **Sector overview** (`Sector7_lv8-lv9.png`): cuộn dọc qua 7 sector; mỗi mỏ hiện tên + số slot `(60/60)`;
+1. **Sector overview** (`docs/assets/mine-detail/Sector7_lv8-lv9.png`): cuộn dọc qua 7 sector; mỗi mỏ hiện tên + số slot `(60/60)`;
    nhãn "Tôi" chỉ mỏ acc đang đứng; "Vị trí của tôi" góc dưới trái = quay về mỏ của mình.
-2. **Zoomin** (`lv9-zoomin.png`): click vào 1 mỏ → nhìn gần các máy đào, **tên player hiện sẵn**,
+2. **Zoomin** (`docs/assets/mine-detail/lv9-zoomin.png`): click vào 1 mỏ → nhìn gần các máy đào, **tên player hiện sẵn**,
    mỗi máy có badge level mỏ (vd "9"); **minimap thu nhỏ góc top-left**.
-3. **Overview popup** (`lv9-overview.png`): click minimap → ảnh 4 vòng tròn = 4 điểm của mỏ
+3. **Overview popup** (`docs/assets/mine-detail/lv9-overview.png`): click minimap → ảnh 4 vòng tròn = 4 điểm của mỏ
    (chấm **xanh = guild mình, đỏ = guild khác**), bên dưới là list **"Sàn Máy Đào Chính | guild | n/15 ▼"** — 4 dòng.
-4. **Expand** (`lv9-expand.png`): bấm ▼ → list từng player trong điểm: **"Mỏ Quặng LvX | tên | guild"**.
+4. **Expand** (`docs/assets/mine-detail/lv9-expand.png`): bấm ▼ → list từng player trong điểm: **"Mỏ Quặng LvX | tên | guild"**.
 
 ## 4. Ánh xạ field protocol ↔ UI (trạng thái hiện tại)
 
@@ -84,9 +84,9 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 
 - Tên player của cả mỏ fetch **một lần lúc zoomin**, không lazy theo điểm — nhưng nếu chỉ có login state
   (không click) thì KHÔNG có tên nào; bot phải tự bắn `0x0d/0x001f` theo id —
-  `mine_socket/logger.py` đã làm sẵn (inject frame, 60 id/request, verify 195/195 người có tên 2026-10-23).
+  `tools/socket_log/mine_socket/logger.py` đã làm sẵn (inject frame, 60 id/request, verify 195/195 người có tên 2026-10-23).
 - **3 slot 9001–9003 của mỗi điểm = bộ claimer của guild chủ điểm**: 3 acc cùng 1 guild (rule game),
-  guild đó = guild claim `f4` — xác minh được người claim ngay từ state; `mine_socket/report.py` đối chiếu
+  guild đó = guild claim `f4` — xác minh được người claim ngay từ state; `tools/socket_log/mine_socket/report.py` đối chiếu
   cả 2 phía (đồng bộ giữa 3 claimer, và giữa claimer ↔ `f4`), vi phạm thì đưa vào `errors`.
 - State mỏ tự cập nhật realtime qua `0x48/0x0008` + `0x48/0x0002` một phần — giữ session là có state tươi.
 - **Quy tắc đã xác minh trên data:** 1 user chỉ chiếm đúng 1 slot (195 người = 195 slot, live check);
@@ -95,7 +95,7 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
 
 ## 6. Listener — output stream (JSONL)
 
-`mine_socket/logger.py` giữ session mở vô hạn, tự reload page khi game socket đứt, ghi thẳng
+`tools/socket_log/mine_socket/logger.py` giữ session mở vô hạn, tự reload page khi game socket đứt, ghi thẳng
 JSONL đã decode (không phải binary) dưới `.tmp/mine-events/`:
 
 | File                  | Nội dung                                                                                             |
@@ -106,7 +106,7 @@ JSONL đã decode (không phải binary) dưới `.tmp/mine-events/`:
 | `player-briefs.jsonl` | mọi `0x0d/0x0020` client nhận: id, tên, power, server, `f11` = {id guild, tên guild}                  |
 | `guild-briefs.jsonl`  | `0x24/0x0036` — response không echo guild id, map qua `seq` của request `0x24/0x0035`                 |
 
-Bước tổng hợp: `mine_socket/report.py` đọc 5 stream trên → rebuild world mới nhất (snapshot +
+Bước tổng hợp: `tools/socket_log/mine_socket/report.py` đọc 5 stream trên → rebuild world mới nhất (snapshot +
 delta theo `logged_at`, snapshot ≥32 tile mới tính là full map) → `mine-report.json` + cây báo cáo.
 
 ## 7. Trạng thái & Backlog

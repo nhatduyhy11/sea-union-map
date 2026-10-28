@@ -2,13 +2,12 @@
 
 ## 1. Trạng thái của tài liệu
 
-Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự án xác nhận (2026-10-22), làm căn cứ cho việc derive ownership và mock dữ liệu demo. Các phần triển khai đi kèm chỉ mô tả cách demo đang phản ánh rule, không phải rule game. Khi rule thay đổi, cập nhật tài liệu này trước khi sửa code.
+Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự án xác nhận, làm căn cứ cho logic tính toán quyền sở hữu (ownership) và tính liên tục của đường nối (connectivity). Khi rule thay đổi, cập nhật tài liệu này trước khi sửa code.
 
 ## 2. Ngưỡng claim và phe thắng
 
-- Mỗi node có một ngưỡng điểm (claim threshold); một phe phải đạt tối thiểu ngưỡng đó mới đủ điều kiện chiếm node.
+- Mỗi node có một ngưỡng điểm riêng (claim threshold); một phe phải đạt tối thiểu ngưỡng đó mới đủ điều kiện chiếm node.
 - Trong các phe đủ điều kiện (đạt ngưỡng và còn được xét điểm — xem §3), phe có tổng điểm lớn nhất chiếm node.
-- Thực tế mỗi node có ngưỡng riêng; demo đang equalize mọi node bằng `1`.
 
 ## 3. Đường nối từ base phải liên tục
 
@@ -24,22 +23,19 @@ Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự á
 ## 5. Leaderboard là tổng điểm thô
 
 - Điểm trên leaderboard — tổng của player và tổng của phe — **không bao giờ** bị suspend hay ngắt.
-- Việc ngắt đường chỉ dùng để quyết định ownership của từng node, không ảnh hưởng điểm tổng.
+- Việc ngắt đường chỉ dùng để quyết định ownership và trạng thái hợp lệ của từng node, không ảnh hưởng điểm tổng.
 
 ## 6. Chiếm dần, không chiếm nhảy
 
 - Phe chỉ mở rộng ra node kề với lãnh thổ của mình; không chiếm một node chưa được nối tới base.
 - Hệ quả: lãnh thổ mỗi phe luôn là một khối liền quanh base, và node trung lập không nằm lồng bên trong lãnh thổ (case trung lập bị bao vây thực tế không xảy ra).
-- Dữ liệu demo đã được điều chỉnh để phản ánh đúng điều này.
 
 ## 7. Phe chưa từng mở link thì không có điểm tại node
 
 - Nếu một phe chưa từng mở node liên kết tới một cứ điểm thì cứ điểm đó không có điểm của phe đó.
-- Khi có data thật, rule này tự đúng theo dữ liệu; demo mock trọng số theo việc phe đã "probe" tới node hay chưa (§8).
 
-## 8. Triển khai và demo hiện tại
+## 8. Triển khai trong code
 
-- Ownership không lưu tĩnh trong data: `deriveClaims` tại `src/domain/claims.ts` derive từ islands + routes + contributions bằng fixed-point iteration, vì connectivity và ownership quyết định lẫn nhau.
-- Demo `src/data/demo.ts` sinh contributions bằng flood-fill mở rộng khoanh vùng từ 4 base: lãnh thổ mỗi phe một khối liền, giữa map là vùng trung lập; trọng số theo phe — owner cao, phe đã probe tới node thấp, phe chưa probe bằng 0.
+- Xác định đường nối: `deriveConnected` tại [`src/domain/claims.ts`](../src/domain/claims.ts) kiểm tra tính liên tục từ base của từng phe tới từng node.
 - Exact tie giữa các phe đủ điều kiện → node tạm chưa ai chiếm (neutral): cách xử lý đã triển khai, chưa được chủ dự án chốt riêng.
-- Tests rule nằm tại `src/domain/claims.test.ts`; node panel đánh mờ phe đang bị ngắt (`FactionScores.tsx`); leaderboard tổng điểm thô tại `src/domain/selectors.ts`.
+- Tests rule nằm tại [`src/domain/claims.test.ts`](../src/domain/claims.test.ts); node panel đánh mờ phe đang bị ngắt ([`src/components/panels/NodeDetails/FactionScores.tsx`](../src/components/panels/NodeDetails/FactionScores.tsx)); leaderboard tổng điểm thô tại [`src/domain/selectors/`](../src/domain/selectors/).

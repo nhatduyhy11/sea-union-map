@@ -2,7 +2,8 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches:
+      - deploy-fe
   workflow_dispatch:
 
 # Deploys on remote 'lo' (kiennguyenkt/sea-union).

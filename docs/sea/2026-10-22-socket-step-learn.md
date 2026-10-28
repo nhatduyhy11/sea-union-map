@@ -1,6 +1,6 @@
 # Socket Step Learn — Quy Trình Reverse-Engineer Binary WS Của Game H5 (POC 2026-10-22)
 
-> Bài học rút ra từ phiên POC lấy lịch sử khu mỏ (xem `docs/SOCKET_PROTOCOL.md`).
+> Bài học rút ra từ phiên POC lấy lịch sử khu mỏ (xem `docs/sea/SOCKET_PROTOCOL.md`).
 > Ghi lại từng bước CÁCH LÀM để tái sử dụng cho feature/dashboard tiếp theo.
 > Toàn bộ step chạy trên server VN, profile `.tmp/m535`, không cần mitmproxy hay sửa payload.
 
@@ -105,7 +105,7 @@ không phụ thuộc phiên bắt.
 
 ## Bước 8: Ghi doc
 
-Kết quả → `docs/SOCKET_PROTOCOL.md` (reference), open items → mục "Đang mở".
+Kết quả → `docs/sea/SOCKET_PROTOCOL.md` (reference), open items → mục "Đang mở".
 
 ## Checklist tái sử dụng cho game H5 khác
 

@@ -31,22 +31,22 @@ Web cần giúp:
 - Base của 4 phe nằm ở 4 hướng: đông, tây, nam, bắc.
 - Lúc bắt đầu sự kiện, mỗi phe chỉ có một điểm chính tại góc/hướng tương ứng của mình.
 - Base của mỗi phe không thể bị chiếm.
-- [Ảnh map-base](specs/map-base.PNG) là hình tham chiếu cho một base/khu vực base.
+- [Ảnh map-base](../specs/map-base.PNG) là hình tham chiếu cho một base/khu vực base.
 
 ### 4.2. Khu vực trung tâm
 
-- Vùng được khoanh trong [ảnh map-2](specs/map-2.PNG) là phần tham chiếu cho 1/4 khu vực trung tâm.
+- Vùng được khoanh trong [ảnh map-2](../specs/map-2.PNG) là phần tham chiếu cho 1/4 khu vực trung tâm.
 - Các phần còn lại của khu vực trung tâm đối xứng theo bốn phía.
 - Map có các cứ điểm (node) để người chơi của các phe tấn công.
 - Bố cục node cố định, không phải lưới grid đều. Người dùng không di chuyển được các node.
 - Các node không được sinh thêm hay mất đi trong quá trình sử dụng; dữ liệu điểm và trạng thái có thể thay đổi.
-- Đã có ảnh toàn map ghép từ [trái](specs/map-left.PNG), [giữa](specs/map-mid.PNG), [phải](specs/map-right.PNG); dùng index để định danh, tên đảo không quan trọng. Bốn khu vực đối xứng quanh cứ điểm giữa, không phải bốn cụm demo xoay quanh một node tự thêm. Hai index ở hàng giữa còn cần xác nhận; xem README.
+- Đã có ảnh toàn map ghép từ [trái](../specs/map-left.PNG), [giữa](../specs/map-mid.PNG), [phải](../specs/map-right.PNG); dùng index để định danh, tên đảo không quan trọng. Bốn khu vực đối xứng quanh cứ điểm giữa, không phải bốn cụm demo xoay quanh một node tự thêm. Hai index ở hàng giữa còn cần xác nhận; xem README.
 
 ## 5. Thông tin tại một cứ điểm
 
 ### 5.1. Thông tin boss và điểm các phe
 
-Tham chiếu: [node-camp-info](specs/node-camp-info.PNG).
+Tham chiếu: [node-camp-info](../specs/node-camp-info.PNG).
 
 - Mỗi node có thông tin chi tiết về boss cứ điểm; thông tin này cố định.
 - Điểm của các phe tại node thay đổi theo diễn biến sự kiện.
@@ -56,7 +56,7 @@ Quy tắc claim — ngưỡng điểm, đường nối từ base, tạm ngắt k
 
 ### 5.2. Bảng người chơi tấn công cứ điểm
 
-Tham chiếu: [node-camp-board](specs/node-camp-board.PNG).
+Tham chiếu: [node-camp-board](../specs/node-camp-board.PNG).
 
 - Mỗi node có bảng chi tiết các player tấn công, phe của họ và điểm họ đóng góp tại node đó.
 - Node `1-8` trong ảnh là ví dụ minh họa cho một cứ điểm trên map.
@@ -64,7 +64,7 @@ Tham chiếu: [node-camp-board](specs/node-camp-board.PNG).
 
 ## 6. Bảng thống kê tổng
 
-Tham chiếu: [leaderboard](specs/leaderboard.jpeg).
+Tham chiếu: [leaderboard](../specs/leaderboard.jpeg).
 
 - Có một board thống kê tổng điểm của các player trên toàn bộ các node.
 - Kết hợp board tổng với dữ liệu từng node để theo dõi phân bố điểm của các top player.

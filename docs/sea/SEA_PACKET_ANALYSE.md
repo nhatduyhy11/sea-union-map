@@ -6,7 +6,7 @@
 >
 > Nguồn dữ liệu: capture `.tmp/socket-capture/sea-20261024-100433` (634 frame, pre-war
 > 2026-10-24) + config table client bóc từ bundle game (hướng dẫn §5). Framing chung xem
-> `docs/SOCKET_PROTOCOL.md`; cấu trúc nghiệp vụ xem `docs/SEA_STRUCTURE.md`.
+> `docs/sea/SOCKET_PROTOCOL.md`; cấu trúc nghiệp vụ xem `docs/sea/SEA_STRUCTURE.md`.
 
 ## 1. Kết quả chính (ĐÃ CHỨNG MINH — không cần làm lại)
 
@@ -57,15 +57,15 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 - `f1: 118/116/117` = **board id**: 118 = per-node, 116 = BXH phe, 117 = BXH điểm.
 - Kính lúp (boss detail) và các nút phụ trong popup **không sinh request** — render từ
   config client (xem NEED_CONFIRM 4).
-- Cơ chế inject frame vào game socket đã POC ở event mỏ (`mine_socket/logger.py` hook
+- Cơ chế inject frame vào game socket đã POC ở event mỏ (`tools/socket_log/mine_socket/logger.py` hook
   `WebSocket.prototype.send` + `page.add_init_script`) — áp nguyên cho sea.
 
 ### 1.4. Flow crawl đề xuất (dùng cho giai đoạn feed UI)
 
-1. Vào battle map (điều hướng như `sea_socket/walkthrough.py`) → đọc `0x72/0x000c` → list id + owner.
+1. Vào battle map (điều hướng như `tools/socket_log/sea_socket/walkthrough.py`) → đọc `0x72/0x000c` → list id + owner.
 2. Với mỗi id 5..89: inject `0x72/0x0011` + `0x0c/0x0002{118}` → thu detail + leaderboard.
 3. Inject `0x0c/0x0002{116/117}` cho 2 BXH; `0x0d/0x001f` theo id player xuất hiện.
-4. Sink JSONL tái dùng lõi `core/runner.py` (như mine) — re-crawl định kỳ khi war diễn ra.
+4. Sink JSONL tái dùng lõi `tools/socket_log/core/runner.py` (như mine) — re-crawl định kỳ khi war diễn ra.
 
 ## 2. NEED_CONFIRM (việc mở — làm/xác nhận thì xóa dòng)
 
@@ -76,7 +76,7 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 | 3   | **"Hiệu suất sản xuất 12/24/36/h" không nằm trong CampGVGLO** — chỉ thấy `_pointRequire` 2/4/6/10/15M tỉ lệ thuận. Tìm bảng nguồn (config còn lại) hoặc derive từ `_pointRequire`     | Cần decode   |
 | 4   | **Boss detail** (tên "Tứ Hải-Oán Linh", trait, hero đề xuất): popup không sinh request → nguồn là config client. Ứng viên: `SkillBuffBossLO` (67 row) / `_monsterType`. Chưa map xong | Cần decode   |
 | 5   | **`0x72/0x003e→0x003f` toàn 0 pre-war** — ý nghĩa 4 trường chỉ đọc được sau khai chiến. Capture lại sau 10/26 10:00                                                                   | Chờ war      |
-| 6   | **Base ↔ hướng (north/east/south/west)**: CampGVG chỉ cho id 1..4 = 4 phe, không có toạ độ. Tự đối chiếu màu cờ trên `6-battle-map.png` khi build `src/`                              | Tự đối chiếu |
+| 6   | **Base ↔ hướng (north/east/south/west)**: CampGVG chỉ cho id 1..4 = 4 phe, không có toạ độ. Tự đối chiếu màu cờ trên `docs/assets/sea-socket/6-battle-map.png` khi build `src/`       | Tự đối chiếu |
 | 7   | **War-time delta**: sau 10/26 10:00 capture lại xem `0x72/0x000c` push interval + `0x72/0x0012` khi node có chủ / có ST                                                               | Chờ war      |
 | 8   | Server CN có cùng module không (open item chung của SOCKET_PROTOCOL)                                                                                                                  | Backlog      |
 
@@ -86,7 +86,7 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
       bằng flow §1.4 → JSON/JSONL thay mock `src/data/`.
 - [ ] `src/data/map-layout.ts`: join CampGVG `_name` prefix ↔ layout id hiện có; bổ sung
       `gameId` (server id) + `_pointRequire` (claimThreshold thật) + tên thật.
-- [x] Cập nhật `docs/SOCKET_PROTOCOL.md` section sea (module 0x72/0x0c) — hoàn tất khi
+- [x] Cập nhật `docs/sea/SOCKET_PROTOCOL.md` section sea (module 0x72/0x0c) — hoàn tất khi
       SOCKET_PROTOCOL tách thành doc dùng chung (§4.2 + §3.5).
 - [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 5/7.
 
@@ -110,4 +110,4 @@ Game = Cocos Creator 2.x, bundle trên cùng host. Trích CampGVGLO không cần
 - Node-open request samples: `#443 {08 3f}` = id 63 (n03), `#455 {08 47}` = id 71 (n04).
 - Board request samples: `#379 {f1:116,f2:0}` (BXH phe), `#425 {f1:118,f2:8}` (node 8).
 - Map state: frame `#415` `0x72/0x000c` 23132B (f2×89, f3×4, f4×115).
-- Chi tiết điều hướng/coords màn hình: `docs/planning/2026-10-24-sea-capture.md`.
+- Chi tiết điều hướng/coords màn hình: `docs/sea/2026-10-24-sea-capture.md`.

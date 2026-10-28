@@ -4,9 +4,9 @@
 > `docs/assets/sea-socket/` (chụp 2026-10-24, trước giờ khai chiến 10/26 10:00).
 > Đây là spec cho crawler Playwright (tầng `tools/socket_log/`) và nguồn dữ liệu
 > thay mock cho UI `src/`. **[Cập nhật 2026-10-24] Đã có capture POC + decode sơ bộ
-> protocol** — xem `docs/SEA_PACKET_ANALYSE.md` (packet + config node) và
-> `docs/planning/2026-10-24-sea-capture.md` (coords/flow chạy thật); framing chung
-> `docs/SOCKET_PROTOCOL.md`.
+> protocol** — xem `docs/sea/SEA_PACKET_ANALYSE.md` (packet + config node) và
+> `docs/sea/2026-10-24-sea-capture.md` (coords/flow chạy thật); framing chung
+> `docs/sea/SOCKET_PROTOCOL.md`.
 > Chủ dự án đã xác nhận mô tả khớp (2026-10-24): phe acc + cửa sổ giờ đã chốt
 > (mục 1, mục 7); các câu hỏi phụ tạm skip.
 
@@ -41,16 +41,16 @@ Thứ tự thao tác = thứ tự chủ dự án mô tả; mỗi bước có ả
 
 | Bước | Thao tác                                                                                           | Kết quả                                               | Bằng chứng                                                                                               |
 | ---- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| 1    | Login (profile persistent), **đóng popup quảng cáo nếu có**                                        | Home screen                                           | [hình 1](assets/sea-socket/1-home-init.png)                                                              |
-| 2    | Click icon list event ở bottom nav (**khoanh đỏ hình 1**)                                          | Event lobby **"Lối vào PB"**, đầu danh sách           | [hình 2a](assets/sea-socket/2a-event-lobby-start.png)                                                    |
-| 3    | Cuộn danh sách xuống cuối                                                                          | Banner **"Tranh Bá Tứ Hải"** (cuối list) hiện đủ      | [hình 2b](assets/sea-socket/2b-event-lobby-scroll-end.png)                                               |
-| 4    | Click **"Khiêu chiến"** trên banner Tranh Bá Tứ Hải                                                | **Sea Union lobby**                                   | [hình 3](assets/sea-socket/3-sea-home.png) — **chụp màn này làm bằng chứng navigate đúng**               |
-| 5    | Click "BXH" (menu phải, trên cùng)                                                                 | BXH, 2 tab: Phe / điểm                                | [hình 4a](assets/sea-socket/4-leaderboard-faction.png), [4b](assets/sea-socket/4-leaderboard-player.png) |
-| 6    | Click 1 cờ trong dãy 4 cờ cuối lobby                                                               | "Tổng quan phe" — chuyển phe bằng 4 tab cờ cuối trang | [hình 5](assets/sea-socket/5-4faction-detail.png)                                                        |
-| 7    | Click **vùng trung tâm** lobby (lúc chưa mở: "Nghỉ Đấu"; khi battle mở: chữ khác, **cùng vị trí**) | **Battle map**                                        | [hình 6](assets/sea-socket/6-battle-map.png)                                                             |
-| 8    | Click 1 node trên map                                                                              | Node detail                                           | [hình 7](assets/sea-socket/7-node-detail.png)                                                            |
-| 9    | Click **kính lúp** (góc phải header node detail)                                                   | Boss detail của node                                  | [hình 9](assets/sea-socket/9-boss-node.png)                                                              |
-| 10   | Click **ô tròn xếp chồng** (góc dưới phải node detail)                                             | Node leaderboard                                      | [hình 8](assets/sea-socket/8-node-leaderboard.png)                                                       |
+| 1    | Login (profile persistent), **đóng popup quảng cáo nếu có**                                        | Home screen                                           | [hình 1](../assets/sea-socket/1-home-init.png)                                                              |
+| 2    | Click icon list event ở bottom nav (**khoanh đỏ hình 1**)                                          | Event lobby **"Lối vào PB"**, đầu danh sách           | [hình 2a](../assets/sea-socket/2a-event-lobby-start.png)                                                    |
+| 3    | Cuộn danh sách xuống cuối                                                                          | Banner **"Tranh Bá Tứ Hải"** (cuối list) hiện đủ      | [hình 2b](../assets/sea-socket/2b-event-lobby-scroll-end.png)                                               |
+| 4    | Click **"Khiêu chiến"** trên banner Tranh Bá Tứ Hải                                                | **Sea Union lobby**                                   | [hình 3](../assets/sea-socket/3-sea-home.png) — **chụp màn này làm bằng chứng navigate đúng**               |
+| 5    | Click "BXH" (menu phải, trên cùng)                                                                 | BXH, 2 tab: Phe / điểm                                | [hình 4a](../assets/sea-socket/4-leaderboard-faction.png), [4b](../assets/sea-socket/4-leaderboard-player.png) |
+| 6    | Click 1 cờ trong dãy 4 cờ cuối lobby                                                               | "Tổng quan phe" — chuyển phe bằng 4 tab cờ cuối trang | [hình 5](../assets/sea-socket/5-4faction-detail.png)                                                        |
+| 7    | Click **vùng trung tâm** lobby (lúc chưa mở: "Nghỉ Đấu"; khi battle mở: chữ khác, **cùng vị trí**) | **Battle map**                                        | [hình 6](../assets/sea-socket/6-battle-map.png)                                                             |
+| 8    | Click 1 node trên map                                                                              | Node detail                                           | [hình 7](../assets/sea-socket/7-node-detail.png)                                                            |
+| 9    | Click **kính lúp** (góc phải header node detail)                                                   | Boss detail của node                                  | [hình 9](../assets/sea-socket/9-boss-node.png)                                                              |
+| 10   | Click **ô tròn xếp chồng** (góc dưới phải node detail)                                             | Node leaderboard                                      | [hình 8](../assets/sea-socket/8-node-leaderboard.png)                                                       |
 
 Ghi chú triển khai (chưa làm): bước 7 cần xử lý 2 trạng thái (chưa mở / đang mở).
 Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_log/capture/capture.py`
@@ -59,7 +59,7 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
 
 ## 3. Màn hình và dữ liệu tương ứng
 
-### 3.1. Lobby — `3-sea-home.png`
+### 3.1. Lobby — `docs/assets/sea-socket/3-sea-home.png`
 
 - Header: tên event + "Thời gian: 10/26 00:00 – 11/2 00:00" + dòng trạng thái cửa sổ chiến trường.
 - Trung tâm: emblem **"Nghỉ Đấu"** = điểm vào battle map (bước 7), bao quanh là 4 nhân vật đại diện phe.
@@ -68,7 +68,7 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   và 4 số stat nhỏ (đọc chưa rõ từ ảnh, nghi gồm Xếp hàng / Chiếm đảo / Tổng Nhận Liệu + 1
   chỉ số; đối chiếu khi crawl). Dãy này là đường vào "Tổng quan phe" (bước 6).
 
-### 3.2. BXH Phe — `4-leaderboard-faction.png` (bảng xếp hạng chung)
+### 3.2. BXH Phe — `docs/assets/sea-socket/4-leaderboard-faction.png` (bảng xếp hạng chung)
 
 - Tab chuyển ở đáy màn: **"BXH Phe" | "BXH điểm"**.
 - Header card: phe đang hiển thị (lúc chụp = Vinh Thao Thiết) + 3 chỉ số
@@ -82,32 +82,32 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
 - **Màn BXH trong game chỉ có 2 tab** "XH Phe | XH điểm" — kể cả lúc war [capture
   war-day 2026-10-26 + chủ dự án xác nhận]. Cấu trúc 3 tab **"Cứ điểm | Cá nhân |
   Phe"** + sub-tab "chung + 4 phe" là **bước tổng hợp phía UI frontend**
-  (`Leaderboard.tsx`), không phải của game.
+  (`src/components/panels/leaderboard/Leaderboard.tsx`), không phải của game.
 - UI frontend dựng cấu trúc này với **thứ tự tab riêng của mình** [chủ dự án
-  2026-10-25]: `Leaderboard.tsx` 3 tab **Phe → Cá nhân → Cứ điểm** (game để Cứ
+  2026-10-25]: `src/components/panels/leaderboard/Leaderboard.tsx` 3 tab **Phe → Cá nhân → Cứ điểm** (game để Cứ
   điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
   Chung + 4 phe. **Mô hình tương tác, cơ chế Filter mode và quy tắc lọc canvas theo guild/thành viên**
-  (thay thế hoàn toàn việc lọc theo phe cũ) được đặc tả chi tiết tại [docs/LEADERBOARD_SPECS.md](LEADERBOARD_SPECS.md).
+  (thay thế hoàn toàn việc lọc theo phe cũ) được đặc tả chi tiết tại [docs/LEADERBOARD_SPECS.md](../LEADERBOARD_SPECS.md).
 - **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
   cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
   trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K
   đủ bắt mọi player có impact). `Contribution` = 1 dòng node leaderboard mang
   sẵn tên/phe/guild; BXH cá nhân (top-K), BXH phe, thống kê theo guild/faction
   đều quy về từ đó (`playersFromContributions` / `buildLeaderboard` /
-  `buildFactionBoard` / `buildNodeBoard` trong `src/domain/selectors.ts`);
+  `buildFactionBoard` / `buildNodeBoard` trong `src/domain/selectors/`);
   guild theo player lấy từ brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm"
   phía frontend là diễn giải (node xếp theo tổng Điểm ST) — chưa có ảnh game,
   xem mục 7.
 - Đây là leaderboard **theo phe** ("chung") như intent §6.
 
-### 3.3. BXH điểm — `4-leaderboard-player.png` (bảng xếp hạng cá nhân)
+### 3.3. BXH điểm — `docs/assets/sea-socket/4-leaderboard-player.png` (bảng xếp hạng cá nhân)
 
 - Podium top 3 (hộp rank 2/1/3) + list xếp hạng bên dưới — lúc chụp toàn "Trống" (chưa khai chiến).
 - Dòng cố định đáy màn: chính mình (HuAsura) + **"Điểm ST: 0"** — điểm tổng của player.
 - Đây là bảng "thống kê tổng điểm các player" của intent §6; ràng buộc đối chiếu
   intent §7 áp dụng: tổng Điểm ST của một player trên mọi node = Điểm ST trên BXH này.
 
-### 3.4. Tổng quan phe — `5-4faction-detail.png` (detail faction)
+### 3.4. Tổng quan phe — `docs/assets/sea-socket/5-4faction-detail.png` (detail faction)
 
 - Vào từ cờ phe ở lobby; tiêu đề "Tổng quan phe".
 - Header card giống BXH Phe (Xếp hàng / Chiếm đảo / Tổng Nhận Liệu + chủ phe CHỦ TỊCH).
@@ -116,7 +116,7 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   Đây là dữ liệu "top player phân bố điểm vào cứ điểm nào" mà intent cần theo dõi.
 - 4 tab cờ cuối trang: switch qua lại giữa 4 phe — **crawl đủ 4 phe, mỗi phe 1 lần**.
 
-### 3.5. Battle map — `6-battle-map.png` (map canvas frontend đang cố hiện)
+### 3.5. Battle map — `docs/assets/sea-socket/6-battle-map.png` (map canvas frontend đang cố hiện)
 
 - Canvas biển, các node đảo nối nhau bằng **đường tím** (route graph), node hiện
   **"Chưa mở khóa"** kèm tên. Viewport chỉ thấy một phần → map pan/zoom được;
@@ -130,7 +130,7 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   trái có "Nhiệm Vụ" + "Thông Tin Chiến Lược"; dưới trái có dải nút
   (…Mua Giải / Thưởng / Báo Cáo / Bản đồ / Mô tả — nhãn đọc từ ảnh, từng chữ chưa chắc).
 
-### 3.6. Node detail — `7-node-detail.png`
+### 3.6. Node detail — `docs/assets/sea-socket/7-node-detail.png`
 
 - Vào bằng click node. Header = **`{id}{tên}`**, ví dụ "1-23Đảo Câu Cá" — format id
   `x-nn` khớp định danh đang dùng trong demo (`2-41`, `3-1`, `4`…).
@@ -142,14 +142,14 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
   Khi battle mở, vùng này dự kiến thay bằng điểm các phe (chưa có ảnh — capture bổ sung).
 - Góc dưới phải: **ô tròn xếp chồng** → node leaderboard (§3.7).
 
-### 3.7. Node leaderboard — `8-node-leaderboard.png`
+### 3.7. Node leaderboard — `docs/assets/sea-socket/8-node-leaderboard.png`
 
 - Popup full theo node (header "1-23Đảo Câu Cá"); BXH player **của riêng node này** —
   lúc chụp "Trống".
 - Dòng đáy: chính mình + Điểm ST tại node.
 - Đây là bảng "player tấn công cứ điểm, phe, điểm đóng góp" của intent §5.2.
 
-### 3.8. Boss detail — `9-boss-node.png`
+### 3.8. Boss detail — `docs/assets/sea-socket/9-boss-node.png`
 
 - Vào bằng kính lúp từ node detail; popup "Chi tiết" dạng clipboard.
 - Nội dung: ảnh + **tên boss node** ("Tứ Hải-Oán Linh") + **mô tả trait** (chịu thêm ST,
@@ -183,7 +183,7 @@ từng node.
   **skip node đã có đủ dữ liệu**, chỉ scrape lại khi missing/thiếu trường.
 - Dữ liệu động (điểm, sở hữu, leaderboard) sẽ re-crawl theo chu kỳ khi tới giai đoạn
   feed UI (không realtime — intent §3); chi tiết kỹ thuật (sink JSONL, tái dùng
-  `core/runner.py` core như tầng mine) chốt lúc triển khai, không thuộc spec này.
+  `tools/socket_log/core/runner.py` core như tầng mine) chốt lúc triển khai, không thuộc spec này.
 
 ## 6. Ánh xạ vào UI hiện có (`src/`)
 
@@ -195,7 +195,7 @@ từng node.
 | Điểm phe/player tại node, sở hữu   | `NodeStats` + `src/domain/claims.ts` (derive ownership)                         |
 | Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — nguồn duy nhất của mọi thống kê           |
 | Điểm ST tổng player (BXH top-K)    | `buildLeaderboard(contributions)` — gộp node rows, xấp xỉ BXH in-game           |
-| BXH Phe (điểm phe = tổng guild)    | `buildFactionBoard` `src/domain/selectors.ts` → tab "BXH Phe" `Leaderboard.tsx` |
+| BXH Phe (điểm phe = tổng guild)    | `buildFactionBoard` `src/domain/selectors/` → tab "BXH Phe" `src/components/panels/leaderboard/Leaderboard.tsx` |
 | Guild theo player (brief f11)      | `Player.guild` — demo fill tay, crawl qua `0x0d/0x001f`                         |
 | Phe + thành viên + tổng điểm       | `src/data/factions.ts`                                                          |
 

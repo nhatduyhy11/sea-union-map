@@ -2,12 +2,12 @@
 
 Tài liệu này là nơi chính giải thích các file JSON crawl sea, chúng được dùng ở
 đâu lúc dev và lúc build/deploy. README có sơ đồ tổng quát ở mục
-[Luồng crawl → UI](../README.md#luồng-crawl--ui); tài liệu này đi sâu chi tiết.
+[Luồng crawl → UI](../../README.md#luồng-crawl--ui); tài liệu này đi sâu chi tiết.
 
 ## Thuật ngữ
 
 - **Dump** — file JSON **ghi ra disk** sau mỗi lần crawl
-  (`sea_socket/report.py`): "dump" là hành động ghi kết quả crawl ra file, và
+  (`tools/socket_log/sea_socket/report.py`): "dump" là hành động ghi kết quả crawl ra file, và
   cũng chỉ file kết quả đó. Là snapshot dữ liệu server tại thời điểm
   `snapshotAt`, chưa "chốt". Data trong memory của crawler (JSONL thô ở
   `.tmp/sea-crawl/`) không phải dump.
@@ -20,12 +20,12 @@ Tài liệu này là nơi chính giải thích các file JSON crawl sea, chúng 
 
 | File | Git | Ai ghi | Ai đọc | Vai trò |
 | --- | --- | --- | --- | --- |
-| `src/data/sea-live.json` | **committed** | `report.py --out src/data/sea-live.json` (chủ động) | import tĩnh trong `sea-live.ts` | Bản chính thức, **baked vào build** |
-| `public/sea-live-dev.json` | **gitignored** | `report.py` (default, mỗi lần crawl) | `fetch` lúc dev server chạy | Dump "xem trước", refresh browser là thấy |
+| `src/data/sea-live.json` | **committed** | `tools/socket_log/sea_socket/report.py --out src/data/sea-live.json` (chủ động) | import tĩnh trong `src/data/sea-live.ts` | Bản chính thức, **baked vào build** |
+| `public/sea-live-dev.json` | **gitignored** | `tools/socket_log/sea_socket/report.py` (default, mỗi lần crawl) | `fetch` lúc dev server chạy | Dump "xem trước", refresh browser là thấy |
 | `dist/sea-live-dev.json` | gitignored (cả `dist/`) | Vite copy nguyên thư mục `public/` lúc build | không ai đọc | Được ship lên Pages nhưng **chết** — code build không fetch. Vô hại, có thể bỏ bằng cách xoá file trong `public/` trước khi build |
 | `src/data/sea-live.261027-*.json` | committed | copy tay | **không có code nào import** | Snapshot thủ công theo thời điểm, chỉ để lưu lịch sử |
 
-Chỉ `sea-live.json` được import. Chunk `sea-data` (tách trong `vite.config.ts`
+Chỉ `src/data/sea-live.json` được import. Chunk `sea-data` (tách trong `vite.config.ts`
 qua `manualChunks`) chính là bản baked này.
 
 ## Dev local dùng cái nào?

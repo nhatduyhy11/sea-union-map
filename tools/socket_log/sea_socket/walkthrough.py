@@ -1,14 +1,14 @@
 """POC walkthrough into the Tranh Bá Tứ Hải (Sea Union) event, capturing raw WS frames.
 
 Thin entry over capture/capture.py — same FrameWriter / step DSL / launch block —
-plus named STAGES for the navigation flow in docs/SEA_STRUCTURE.md §2 and wheel
+plus named STAGES for the navigation flow in docs/sea/SEA_STRUCTURE.md §2 and wheel
 scroll for the event-lobby list. Expect guards cover only the home→sea-lobby
 entry (login + open-sea): that stretch has no fallback if a click misses, so a
 wrong screen must stop the run. Deeper screens stay inside the same lobby
 context — a missed click there is harmless, shots are evidence enough.
 
 Coordinates are initial reads off docs/assets/sea-socket/*.png (viewport 640x720
-→ 1:1); methodology per docs/planning/2026-10-22-socket-step-learn.md:
+→ 1:1); methodology per docs/sea/2026-10-22-socket-step-learn.md:
 run stage → Read the shot → fix coords → rerun (--from <stage>).
 
 Usage:
@@ -63,7 +63,7 @@ def node_steps(idx: int, x: int, y: int) -> list[str]:
     """Detail + boss + leaderboard for one node, plus a post-close proof shot —
     a stuck popup once masqueraded as every later node's detail (runs 093346/
     094110: DETAIL_CLOSE was dead, so 7-n02..04 shots were all n01's popup).
-    Shot prefix = figure number in docs/SEA_STRUCTURE.md; chronology lives in
+    Shot prefix = figure number in docs/sea/SEA_STRUCTURE.md; chronology lives in
     index.jsonl marks, not filenames."""
     n = f"n{idx:02d}"
     return [
@@ -121,7 +121,7 @@ STAGES: list[tuple[str, list[str]]] = [
     ]),
     ("factions", [
         # Enter via the first lobby flag, then switch factions with the in-page
-        # flag tabs (docs/SEA_STRUCTURE.md §3.4) instead of 4 lobby round-trips.
+        # flag tabs (docs/sea/SEA_STRUCTURE.md §3.4) instead of 4 lobby round-trips.
         "mark:05-flag-1", "click:145,612", "shot:5-faction-1",
         "mark:05-tab-2", "click:232,686", "shot:5-faction-2",
         "mark:05-tab-3", "click:300,684", "shot:5-faction-3",
