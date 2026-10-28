@@ -1,0 +1,17 @@
+{
+  "name": "sea-union-map",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:fe": "pnpm --dir frontend dev",
+    "build:fe": "pnpm --dir frontend build",
+    "test:fe": "pnpm --dir frontend test",
+    "dev:be": "uv --project backend run python backend/tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain",
+    "fe": "pnpm dev:fe",
+    "be": "pnpm dev:be",
+    "crawler:sea": "uv --project backend run python backend/tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain",
+    "logger:mine": "uv --project backend run python backend/tools/socket_log/mine_socket/logger.py --profile .tmp/pmain --snapshot",
+    "report:sea": "uv --project backend run python backend/tools/socket_log/sea_socket/report.py",
+    "extract:config": "uv --project backend run python backend/tools/socket_log/config_extract.py --table CampGVGLO --out .tmp/sea-crawl/campgvglo.json"
+  }
+}
