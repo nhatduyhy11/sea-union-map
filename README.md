@@ -1,23 +1,22 @@
 # Sea Union
 
 Web UI (React Flow) xem map **Tranh Bá Tứ Hải** theo data crawl, và crawler
-Python bắt/giải mã packet websocket của game H5. Repo gồm hai nửa nối nhau bằng
-pipeline crawl → JSON → UI:
+Python bắt/giải mã packet websocket của game H5. Repo được tổ chức thành 2 phần độc lập:
 
-- `tools/socket_log/` — crawler & decoder WS, 2 mode: **mine** (Khai Thác
-  Guild) và **sea** (Tranh Bá Tứ Hải)
-- `src/` — web UI React + React Flow, chạy hoàn toàn phía trình duyệt
+- `frontend/` — web UI React + React Flow, Vite, TypeScript
+- `backend/` — crawler & decoder WS Python (uv), 2 mode: **mine** (Khai Thác Guild) và **sea** (Tranh Bá Tứ Hải)
 
-## Web UI
+## Web UI (`frontend/`)
 
 ### Chạy
 
 ```sh
-npm install
-npm run dev
+cd frontend
+pnpm install
+pnpm dev
 ```
 
-Mở URL local Vite in ra. `npm run build` tạo bản static trong `dist/`; `npm test` kiểm tra cấu trúc map và đối chiếu điểm.
+Mở URL local Vite in ra. `pnpm run build` tạo bản static trong `dist/`; `pnpm test` kiểm tra cấu trúc map và đối chiếu điểm.
 
 ### Tương tác
 
@@ -29,36 +28,41 @@ Mở URL local Vite in ra. `npm run build` tạo bản static trong `dist/`; `np
 
 ### Map & dữ liệu
 
-Map có 89 node: 24 đảo tầng 1, 52 đảo tầng 2, 9 cứ điểm trên hàng giữa và 4 base. `src/data/map-layout.ts` chứa ID, tọa độ ghép từ `specs/map-left.PNG`, `map-mid.PNG`, `map-right.PNG` và 118 đường nối đọc từ ảnh. Tọa độ được phóng đồng đều để giữ tỷ lệ bố cục và khoảng cách. Không sinh map bằng cách xoay một cụm node; các index thật được khai báo riêng ở đúng khu vực trong ảnh.
+Map có 89 node: 24 đảo tầng 1, 52 đảo tầng 2, 9 cứ điểm trên hàng giữa và 4 base. `frontend/src/data/map-layout.ts` chứa ID, tọa độ ghép từ `specs/map-left.PNG`, `map-mid.PNG`, `map-right.PNG` và 118 đường nối đọc từ ảnh. Tọa độ được phóng đồng đều để giữ tỷ lệ bố cục và khoảng cách. Không sinh map bằng cách xoay một cụm node; các index thật được khai báo riêng ở đúng khu vực trong ảnh.
 
 Cứ điểm trung tâm là `4` — là tâm tọa độ của map. Dãy cứ điểm trục giữa gồm 9 node theo index từ tây sang đông: `3-7`, `3-5`, `3-3`, `3-1`, `4` (tâm), `3-2`, `3-4`, `3-6`, `3-8`. Layout đặt tên chuẩn theo index (`Đảo 1-x`, `Đảo 2-x`, `Cứ điểm 3-x/4`); khi bật live, tên hiển thị lấy từ config CampGVG của game. Các base không có index trong ảnh nên dùng ID nội bộ `base-north/east/south/west`.
 
-Nguồn dữ liệu chọn bằng cờ `LIVE` ở `src/domain/mapData.ts`:
+Nguồn dữ liệu chọn bằng cờ `LIVE` ở `frontend/src/domain/mapData.ts`:
 
-- **Live (mặc định)** — crawl thật từ server, bake vào `src/data/sea-live.json`: tên node và ngưỡng chiếm từ config CampGVG, owner từ snapshot server (`0x72/0x000c`), điểm từ board từng node. Join game-id → layout-id nằm ở adapter `src/data/sea-live.ts`, có unit test; các lệch số so với UI game đã biết liệt kê ở [docs/STATS_MISMATCH.md](docs/STATS_MISMATCH.md). Owner là truth từ server — claim rule chỉ còn tính connectivity (phe nào còn nối base tới node). Boss chưa map (`null`) — detail nằm ở config khác.
-- **Demo** — đặt `LIVE = false` để xem lại dữ liệu mẫu `src/data/demo.ts`; owner derive từ claim rule. `src/domain/selectors.ts` tính điểm phe và leaderboard từ cùng nguồn cho cả hai mode.
+- **Live (mặc định)** — crawl thật từ server, bake vào `frontend/src/data/sea-live.json`: tên node và ngưỡng chiếm từ config CampGVG, owner từ snapshot server (`0x72/0x000c`), điểm từ board từng node. Join game-id → layout-id nằm ở adapter `frontend/src/data/sea-live.ts`, có unit test; các lệch số so với UI game đã biết liệt kê ở [docs/STATS_MISMATCH.md](docs/STATS_MISMATCH.md). Owner là truth từ server — claim rule chỉ còn tính connectivity (phe nào còn nối base tới node). Boss chưa map (`null`) — detail nằm ở config khác.
+- **Demo** — đặt `LIVE = false` để xem lại dữ liệu mẫu `frontend/src/data/demo.ts`; owner derive từ claim rule. `frontend/src/domain/selectors.ts` tính điểm phe và leaderboard từ cùng nguồn cho cả hai mode.
 
 Bốn base không có điểm tấn công. Bảng điểm co giãn theo zoom; zoom gần hơn để đọc. Chưa có nhập dữ liệu, lưu trạng thái hay đồng bộ giữa người dùng; ghim, lọc và các lựa chọn chỉ tồn tại trong phiên trang hiện tại.
 
-### Tổ chức code
+### Tổ chức code Frontend
 
-- `src/main.tsx`: khởi tạo React và nạp CSS.
-- `src/App.tsx`: bố cục ứng dụng — thuần layout, component tự nối store nên không threaded props.
-- `src/components/layout/`: header và thanh điều hướng.
-- `src/components/map/`: map, custom node/edge, toolbar, bảng điểm nhỏ và chú giải.
-- `src/components/panels/`: panel cứ điểm, bảng điểm phe, player và leaderboard.
-- `src/components/shared/`: UI dùng chung.
-- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc guild/player, điểm toàn map), `debug` (tâm node, màu canvas, màu trung lập lúc dev), `panel` (tab, sub-tab BXH, filterMode, accordion expansion), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `setFilterMode`, `resetRankingView`). Chi tiết mô hình tương tác tại [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md).
-- `src/hooks/`: shared command cần instance React Flow (dùng đa module) — `useFitMap`, `useFocusIsland` (các hook đơn-consumer đã co-locate về cạnh component tương ứng).
-- `src/domain/`: hàm thuần tính điểm, truy vấn chi tiết, tìm kiếm, chọn nguồn dữ liệu (`mapData.ts`, cờ `LIVE`) và chuyển dữ liệu sang model React Flow; kèm test.
-- `src/data/`: bố cục theo ảnh, định nghĩa phe, fixture demo và dữ liệu crawl live (`sea-live.json` + adapter `sea-live.ts`).
-- `src/types.ts`: định nghĩa kiểu dữ liệu (model, props, React Flow node data).
-- `src/utils/format.ts`: định dạng số để hiển thị.
-- `src/style.css`: global CSS reset, typography, scrollbar và React Flow styles; UI dùng CSS Modules co-located theo từng component.
+- `frontend/src/main.tsx`: khởi tạo React và nạp CSS.
+- `frontend/src/App.tsx`: bố cục ứng dụng — thuần layout, component tự nối store nên không threaded props.
+- `frontend/src/components/layout/`: header và thanh điều hướng.
+- `frontend/src/components/map/`: map, custom node/edge, toolbar, bảng điểm nhỏ và chú giải.
+- `frontend/src/components/panels/`: panel cứ điểm, bảng điểm phe, player và leaderboard.
+- `frontend/src/components/shared/`: UI dùng chung.
+- `frontend/src/stores/`: zustand store chia theo loại state — `mapView` (lọc guild/player, điểm toàn map), `debug` (tâm node, màu canvas, màu trung lập lúc dev), `panel` (tab, sub-tab BXH, filterMode, accordion expansion), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `setFilterMode`, `resetRankingView`). Chi tiết mô hình tương tác tại [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md).
+- `frontend/src/hooks/`: shared command cần instance React Flow (dùng đa module) — `useFitMap`, `useFocusIsland`.
+- `frontend/src/domain/`: hàm thuần tính điểm, truy vấn chi tiết, tìm kiếm, chọn nguồn dữ liệu (`mapData.ts`, cờ `LIVE`) và chuyển dữ liệu sang model React Flow; kèm test.
+- `frontend/src/data/`: bố cục theo ảnh, định nghĩa phe, fixture demo và dữ liệu crawl live (`sea-live.json` + adapter `sea-live.ts`).
+- `frontend/src/types.ts`: định nghĩa kiểu dữ liệu (model, props, React Flow node data).
+- `frontend/src/utils/format.ts`: định dạng số để hiển thị.
+- `frontend/src/style.css`: global CSS reset, typography, scrollbar và React Flow styles; UI dùng CSS Modules co-located theo từng component.
 
-UI nhận dữ liệu đã chuẩn bị qua props; component subscribe store theo slice nên mỗi tương tác chỉ re-render vùng liên quan. Command chạm nhiều store nằm ở `stores/commands.ts`; command cần camera (focus/fit) là hook vì cần instance React Flow. Domain không import React, component hay store. Derived data (nodes/edges, chi tiết đảo, kết quả tìm kiếm) memo theo state đầu vào; điểm và leaderboard không tính lại theo mỗi thao tác pan/zoom.
+## Backend Crawler (`backend/`)
 
-## Crawler (`tools/socket_log/`)
+Toàn bộ crawler và công cụ socket được quản lý trong thư mục `backend/` bằng `uv`:
+
+```sh
+cd backend
+uv sync
+```
 
 Có **2 mode** dùng chung một tầng generic — chọn mode theo entry point:
 
@@ -108,12 +112,12 @@ uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
 uv run python tools/socket_log/config_extract.py --table CampGVGLO \
     --out .tmp/sea-crawl/campgvglo.json
 
-# [3] Dump JSON cho FE (dev: public/sea-live-dev.json, gitignored)
+# [3] Dump JSON cho FE (dev: frontend/public/sea-live-dev.json, gitignored)
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
     --config .tmp/sea-crawl/campgvglo.json
 #    Bake chính thức vào build:
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
-    --config .tmp/sea-crawl/campgvglo.json --out src/data/sea-live.json
+    --config .tmp/sea-crawl/campgvglo.json --out frontend/src/data/sea-live.json
 ```
 
 Helper decode offline (nếu cần tách riêng 1 frame board từ capture):

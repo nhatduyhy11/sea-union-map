@@ -1,11 +1,11 @@
 """Dump a sea-crawl run + CampGVG config as pure JSON for the FE.
 
 Python chỉ nhả data thuần — KHÔNG sinh code. Mọi join (game-id → layout-id,
-faction → hướng) là việc của adapter FE ``src/data/sea-live.ts``.
+faction → hướng) là việc của adapter FE ``frontend/src/data/sea-live.ts``.
 
-Mặc định dump vào ``public/sea-live-dev.json`` — gitignored, FE dev server
+Mặc định dump vào ``frontend/public/sea-live-dev.json`` — gitignored, FE dev server
 fetch lúc runtime (crawl xong, refresh browser là thấy). Để ship snapshot
-chính thức vào bundle, chỉ đích ``--out src/data/sea-live.json``.
+chính thức vào bundle, chỉ đích ``--out frontend/src/data/sea-live.json``.
 
 Nội dung dump (key → nguồn):
 
@@ -26,7 +26,7 @@ Nội dung dump (key → nguồn):
 - ``snapshotAt`` ← ``map-snapshot.json``: logged_at (nếu có)
 
 Usage:
-    # Dev: dump vào public/ (gitignored), refresh browser để xem
+    # Dev: dump vào frontend/public/ (gitignored), refresh browser để xem
     uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/sea-crawl-v4 \
         --config .tmp/sea-crawl/campgvglo.json
@@ -34,7 +34,7 @@ Usage:
     uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/sea-crawl-v4 \
         --config .tmp/sea-crawl/campgvglo.json \
-        --out src/data/sea-live.json
+        --out frontend/src/data/sea-live.json
 """
 
 import argparse
@@ -116,11 +116,16 @@ def guild_brief_names(crawl: Path) -> dict:
 
 
 def main() -> None:
+    default_out = (
+        Path("frontend/public/sea-live-dev.json")
+        if Path("frontend").is_dir()
+        else Path("../frontend/public/sea-live-dev.json")
+    )
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--crawl", required=True, type=Path)
     parser.add_argument("--config", required=True, type=Path,
                         help="campgvglo.json từ config_extract.py")
-    parser.add_argument("--out", default="public/sea-live-dev.json", type=Path)
+    parser.add_argument("--out", default=default_out, type=Path)
     args = parser.parse_args()
 
     snapshot = json.loads(
