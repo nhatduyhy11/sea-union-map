@@ -13,8 +13,8 @@ import { buildMapEdges, buildMapNodes, matchNodeIds } from "./mapGraph";
 import type { Contribution, Faction, Island } from "../types";
 
 const factions: Faction[] = [
-  { id: "a", name: "A", color: "#123456" },
-  { id: "b", name: "B", color: "#abcdef" },
+  { id: "a", name: "A", color: "#123456", labelColor: "#0000ff" },
+  { id: "b", name: "B", color: "#abcdef", labelColor: "#ff0000" },
 ];
 const islands: Island[] = [
   {

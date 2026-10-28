@@ -36,7 +36,7 @@ export function NodeDetails({
       <h2 className={styles.title}>{island.name}</h2>
       <div className={styles.detailTags}>
         <span>#{island.id}</span>
-        <span style={{ color: owner?.color }}>
+        <span style={{ color: owner?.labelColor }}>
           {owner?.name || "Trung lập"}
         </span>
       </div>

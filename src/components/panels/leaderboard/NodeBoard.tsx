@@ -83,7 +83,7 @@ export function NodeBoard({ nodes }: { nodes: NodeBoardEntry[] }) {
 function FactionScoreRow({ score }: { score: FactionScore }) {
   return (
     <div className={styles.guildRow}>
-      <span style={{ color: score.color }}>{score.name}</span>
+      <span style={{ color: score.labelColor }}>{score.name}</span>
       <b>{number(score.score)}</b>
     </div>
   );

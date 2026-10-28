@@ -36,9 +36,9 @@ export function NodeStats({
       </div>
       {scores.map((faction) => (
         <div key={faction.id}>
-          <span>
+          <span style={{ color: faction.labelColor }}>
             <i style={{ background: faction.color }} />
-            {faction.short}
+            {faction.name}
           </span>
           <b>{compact(faction.score)}</b>
         </div>

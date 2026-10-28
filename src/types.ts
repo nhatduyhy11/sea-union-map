@@ -8,9 +8,10 @@ export interface Position {
 export interface Faction {
   id: string;
   name: string;
-  short?: string;
+  // Edge/swatch/viền đảo.
   color: string;
-  direction?: string;
+  // Text label tên phe — tách khỏi color theo rule màu label.
+  labelColor: string;
 }
 
 export interface FactionScore extends Faction {

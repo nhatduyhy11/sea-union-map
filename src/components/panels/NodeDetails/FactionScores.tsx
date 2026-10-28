@@ -17,7 +17,7 @@ export function FactionScores({ scores, total }: FactionScoresProps) {
         return (
           <div key={faction.id} className={suspended ? styles.suspended : ""}>
             <div>
-              <span>
+              <span style={{ color: faction.labelColor }}>
                 <i style={{ background: faction.color }} />
                 {faction.name}
               </span>

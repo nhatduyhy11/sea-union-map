@@ -12,7 +12,7 @@ export function PlayerIdentity({
   faction,
   nodeCount,
 }: PlayerIdentityProps) {
-  const color = faction?.color || "#97acbb";
+  const color = faction?.labelColor || "#97acbb";
   const name = player?.name || "Người chơi";
   const factionName = faction?.name || "Không rõ";
 

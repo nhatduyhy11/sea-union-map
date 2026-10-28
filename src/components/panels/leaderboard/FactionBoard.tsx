@@ -30,11 +30,25 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
     }));
   }, [factions, sortByScore]);
 
+  // List giữ thứ tự cố định; số hạng vẫn là thứ hạng theo điểm phe.
+  const rankById = useMemo(
+    () =>
+      new Map(
+        [...factions]
+          .sort((a, b) => b.score - a.score)
+          .map((entry, index) => [entry.id, index + 1])
+      ),
+    [factions]
+  );
+
   const faction = displayFactions.find((entry) => entry.id === focus);
   return (
     <>
       <h2>Xếp hạng phe</h2>
-      <p>Điểm phe là tổng Điểm ST của các guild thành viên.</p>
+      <p>
+        Điểm phe là tổng Điểm ST của các guild thành viên; [LC] là tổng lực
+        chiến các guild.
+      </p>
       <div className={styles.subTabs}>
         <button
           className={faction ? "" : styles.selected}
@@ -45,16 +59,17 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
         {factions.map((entry) => (
           <button
             key={entry.id}
-            className={faction?.id === entry.id ? styles.selected : ""}
+            className={`${styles.factionPill} ${faction?.id === entry.id ? styles.selected : ""}`}
+            style={{ "--label": entry.labelColor } as React.CSSProperties}
             onClick={() => setFocus(faction?.id === entry.id ? null : entry.id)}
           >
-            {entry.short ?? entry.name}
+            {entry.name}
           </button>
         ))}
       </div>
-      <div className={styles.sortBar}>
+      <div className={shared.sortBar}>
         <label
-          className={styles.sortOption}
+          className={shared.sortOption}
           title="Bật: sắp xếp guild theo Điểm ST. Tắt: mặc định sắp xếp theo Lực chiến (LC)."
         >
           <input
@@ -73,7 +88,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
           selectedMember={selectedMember}
         />
       ) : filterMode ? (
-        displayFactions.map((entry, index) => (
+        displayFactions.map((entry) => (
           <details
             key={entry.id}
             className={shared.item}
@@ -89,7 +104,10 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
                 );
               }}
             >
-              <FactionSummary entry={entry} index={index} />
+              <FactionSummary
+                entry={entry}
+                rank={rankById.get(entry.id) ?? 0}
+              />
             </summary>
             <div className={`${shared.allocation} ${shared.allocationTall}`}>
               {entry.guilds.map((guild) => (
@@ -105,10 +123,13 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
           </details>
         ))
       ) : (
-        displayFactions.map((entry, index) => (
+        displayFactions.map((entry) => (
           <details key={entry.id} className={shared.item}>
             <summary className={shared.summary}>
-              <FactionSummary entry={entry} index={index} />
+              <FactionSummary
+                entry={entry}
+                rank={rankById.get(entry.id) ?? 0}
+              />
             </summary>
             <div className={`${shared.allocation} ${shared.allocationTall}`}>
               {entry.guilds.map((guild) => (
@@ -131,26 +152,27 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
 
 function FactionSummary({
   entry,
-  index,
+  rank,
 }: {
   entry: FactionBoardEntry;
-  index: number;
+  rank: number;
 }) {
   return (
     <>
-      <span className={shared.rank}>{index + 1}</span>
+      <span className={shared.rank}>{rank}</span>
       <span
         className={styles.flag}
         style={{
-          color: entry.color,
-          background: `${entry.color}18`,
+          color: entry.labelColor,
+          background: `${entry.labelColor}18`,
         }}
       >
         {entry.name[0]}
       </span>
       <div className={shared.factionName}>
-        {entry.name}
-        <small style={{ color: entry.color }}>
+        <span style={{ color: entry.labelColor }}>{entry.name}</span>
+        <PowerTag power={entry.power} />
+        <small style={{ color: entry.labelColor }}>
           {entry.islands} đảo · {entry.guilds.length} guild
         </small>
       </div>
@@ -158,6 +180,11 @@ function FactionSummary({
       <ChevronRight size={13} />
     </>
   );
+}
+
+// Tổng lực chiến phe, cùng format tag [LC] của GuildLabel.
+function PowerTag({ power }: { power: number }) {
+  return <> [{power ? compact(power) : "—"}]</>;
 }
 
 function SingleFaction({
@@ -179,13 +206,17 @@ function SingleFaction({
       >
         <span
           className={styles.flag}
-          style={{ color: faction.color, background: `${faction.color}18` }}
+          style={{
+            color: faction.labelColor,
+            background: `${faction.labelColor}18`,
+          }}
         >
           {faction.name[0]}
         </span>
         <div className={shared.factionName}>
-          {faction.name}
-          <small style={{ color: faction.color }}>
+          <span style={{ color: faction.labelColor }}>{faction.name}</span>
+          <PowerTag power={faction.power} />
+          <small style={{ color: faction.labelColor }}>
             {faction.islands} đảo · {faction.guilds.length} guild
           </small>
         </div>

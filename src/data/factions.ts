@@ -1,34 +1,33 @@
 import type { Faction } from "../types";
 
-// Nhận diện màu theo hướng: Bắc đỏ cam, Tây vàng, Đông tím, Nam xanh dương nhạt.
-// Đồng bộ tự động sang icon căn cứ, viền đảo, edge sở hữu, FactionLegend, BXH.
+// Tên phe = tên base in-game (không dùng hướng Đông/Tây/Nam/Bắc). Thứ tự mảng
+// là thứ tự hiển thị cố định (pill + list Tab Phe, legend chân canvas).
+// Hai màu tách biệt (Owner chốt 2026-10-28):
+// - color: swatch/edge/viền đảo/icon căn cứ/bar điểm.
+// - labelColor: mọi text label tên phe (pill, BXH, legend, tooltip, tag).
 export const factions: Faction[] = [
   {
-    id: "north",
-    name: "Phe Bắc",
-    short: "Bắc",
-    color: "#e54a26",
-    direction: "BẮC",
-  },
-  {
     id: "east",
-    name: "Phe Đông",
-    short: "Đông",
+    name: "Vịnh Thao Thiết",
     color: "#9a63d8",
-    direction: "ĐÔNG",
+    labelColor: "#1e9cf0",
   },
   {
     id: "south",
-    name: "Phe Nam",
-    short: "Nam",
+    name: "Long Khư U Ám",
     color: "#54a5d8",
-    direction: "NAM",
+    labelColor: "#e03131",
+  },
+  {
+    id: "north",
+    name: "Thần Tự Lấp Lánh",
+    color: "#e54a26",
+    labelColor: "#e6ad00",
   },
   {
     id: "west",
-    name: "Phe Tây",
-    short: "Tây",
+    name: "Thánh Đảo Lạnh Giá",
     color: "#d1a41c",
-    direction: "TÂY",
+    labelColor: "#8e44d8",
   },
 ];
