@@ -44,7 +44,11 @@ Usage:
 import argparse
 import json
 import re
+import sys
 from pathlib import Path
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 # Defaults neo vào repo root (không phụ thuộc cwd khi gọi từ nơi khác).
 REPO_ROOT = Path(__file__).resolve().parents[3]
