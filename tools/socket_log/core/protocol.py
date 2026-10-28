@@ -52,7 +52,8 @@ def parse_player_briefs(payload: bytes) -> list[dict]:
 
 
 def parse_guild_brief(payload: bytes) -> dict:
-    """0x24/0x0036: f3 = {f2: name, f3: description, f10: member count}."""
+    """0x24/0x0036: f3 = {f2: name, f3: description, f10: member count,
+    f16: tổng lực chiến guild (khớp ~97% tổng power brief member, HUNTERS 39/41)}."""
     sub = {f: v for f, _w, v in decode_proto(payload)}
     info = {f: v for f, _w, v in decode_proto(sub[3])} if isinstance(sub.get(3), bytes) else {}
     name = info.get(2)
@@ -60,6 +61,7 @@ def parse_guild_brief(payload: bytes) -> dict:
     return {
         "name": name.decode("utf-8", "replace") if isinstance(name, bytes) else None,
         "members": info.get(10),
+        "power": info.get(16),
         "description": description.decode("utf-8", "replace") if isinstance(description, bytes) else None,
     }
 

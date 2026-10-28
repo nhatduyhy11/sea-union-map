@@ -25,6 +25,8 @@ Nội dung dump (key → nguồn):
                    [[guildId, điểm ST], ...] sort giảm dần (tab Phe)
 - ``guildNames`` ← ``players.jsonl``: guildId → tên (từ brief member; guild
                    không có member nào được brief thì thiếu tên)
+- ``guildPower`` ← ``guild-names.json`` (0x24/0x0036 f16): guildId → tổng
+                   lực chiến guild do server tính (không phụ thuộc brief member)
 - ``guildRoster`` ← ``map-snapshot.json`` f4: playerId → guildId (mapping đầy
                    đủ 115 guild độc lập với brief — cứu player bị refuse brief)
 - ``briefs``     ← ``players.jsonl``: playerId → tên + guild (+guildId, +power, +server)
@@ -128,6 +130,16 @@ def guild_brief_names(crawl: Path) -> dict:
     return {gid: brief["name"] for gid, brief in raw.items() if brief.get("name")}
 
 
+def guild_brief_power(crawl: Path) -> dict:
+    """guild-names.json f16 — lực chiến guild server-side; run cũ (trước khi
+    parse f16) không có field → {} và FE tự cộng power brief member."""
+    path = crawl / "guild-names.json"
+    if not path.exists():
+        return {}
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {gid: brief["power"] for gid, brief in raw.items() if brief.get("power")}
+
+
 def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
              out: Path = DEV_DUMP_OUT) -> Path:
     """Transform 1 raw run + config baseline thành JSON cho FE, ghi ra ``out``.
@@ -163,6 +175,7 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
             briefs[p["id"]] = entry
     guild_names = {gid: name for gid, name in guild_names.items() if name}
     guild_names.update(guild_brief_names(crawl))
+    guild_power = guild_brief_power(crawl)
     camp_raw = json.loads(config.read_text(encoding="utf-8"))["CampGVGLO"]
     camp = {
         int(rid): {
@@ -205,6 +218,7 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
         "playerBoard": board_rows,
         "factionGuilds": {str(f): g for f, g in guilds_by_faction.items()},
         "guildNames": guild_names,
+        "guildPower": guild_power,
         "guildRoster": roster,
         "briefs": {str(p): b for p, b in briefs.items()},
         "baseDir": BASE_DIR,
@@ -215,7 +229,8 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
     print(f"[sea-to-ui] {out}: {len(camp)} camp rows, {len(owner)} owners, "
           f"{len(rows)} contribution rows, {len(board_rows)} playerBoard rows, "
           f"{sum(len(g) for g in guilds_by_faction.values())} guild scores, "
-          f"{len(guild_names)} guild names, {len(briefs)} briefs, "
+          f"{len(guild_names)} guild names, {len(guild_power)} guild powers, "
+          f"{len(briefs)} briefs, "
           f"{len(unnamed)} players without brief")
     return out
 

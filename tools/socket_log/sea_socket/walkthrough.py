@@ -94,8 +94,9 @@ STAGES: list[tuple[str, list[str]]] = [
         "sleep:8",
         "shot:1-home-init",
         "mark:01-popclose", "popclose:10,0.97,3",
+        "sleep:2",
         "shot:1-home-clean",
-        "expect:2a-event-lobby-start",
+        "expect:2a-event-lobby-start,0.94",
     ]),
     ("open-sea", [
         # popclose's last outside click already entered the event list (see

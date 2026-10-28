@@ -63,7 +63,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 - **Player Full Profile (`0x0d / 0x0019` → `0x001a`):** Trả về đầy đủ tướng, trang bị, lực chiến khi bấm xem một người chơi cụ thể.
 
 ### 3.4. Tra cứu Thông tin Bang Hội (`module 0x24`)
-- **Guild Brief (`0x24 / 0x0035` → `0x0036`):** Request `f1`=guild id; response `f3`={f2: tên bang, f10: số thành viên, f11: server...}. Lưu ý response không echo guild id, map qua `seq` của request.
+- **Guild Brief (`0x24 / 0x0035` → `0x0036`):** Request `f1`=guild id; response `f3`={f1: guild id, f2: tên bang, f3: mô tả, f8: leader id, f10: số thành viên, f11: server, f16: **tổng lực chiến guild**...}. Guild id có echo ở `f3.f1` (code hiện vẫn map qua `seq` của request).
 - **Guild Detail (`0x24 / 0x0033` → `0x0034`):** Mô tả bang, id chủ bang, tổng lực chiến bang, lịch sử thành viên.
 
 ### 3.5. Bảng Xếp Hạng (`module 0x0c`)
