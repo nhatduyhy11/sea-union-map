@@ -6,7 +6,7 @@ on:
       - deploy-fe
   workflow_dispatch:
 
-# Deploys on remote 'lo' (kiennguyenkt/sea-union).
+# Deploys to GitHub Pages (auto-detects repository base path).
 permissions:
   contents: read
   pages: write

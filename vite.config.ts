@@ -15,8 +15,17 @@ export default defineConfig(({ command, mode }) => {
         }),
     ].filter(Boolean),
     esbuild: { jsx: "automatic" },
-    // GitHub Pages project site of remote 'lo': https://kiennguyenkt.github.io/sea-union/
-    base: command === "build" ? "/sea-union/" : "/",
+    // Tự động nhận diện base path:
+    // 1. Ưu tiên BASE_URL nếu được truyền từ CLI/script.
+    // 2. Trên GitHub Actions: tự động lấy /<repo-name>/ từ biến GITHUB_REPOSITORY.
+    // 3. Khi build local không có env: dùng './' (relative) để chạy được ở mọi path.
+    base:
+      command === "build"
+        ? (process.env.BASE_URL ??
+          (process.env.GITHUB_REPOSITORY
+            ? `/${process.env.GITHUB_REPOSITORY.split("/")[1]}/`
+            : "./"))
+        : "/",
     build: {
       target: "es2022",
       rollupOptions: {
