@@ -1,6 +1,12 @@
 // Pure queries: no React, UI state, or data source — everything arrives as
 // arguments.
-import type { Contribution, Faction, FactionScore, Player } from "../../types";
+import type {
+  Attacker,
+  Contribution,
+  Faction,
+  FactionScore,
+  Player,
+} from "../../types";
 
 export function scoresForNode(
   nodeId: string,
@@ -19,6 +25,29 @@ export function scoresForNode(
   }));
 }
 
+export function attackersForNode(
+  nodeId: string,
+  contributions: Contribution[],
+  factions: Faction[]
+): Attacker[] {
+  return contributions
+    .filter((entry) => entry.nodeId === nodeId)
+    .sort((a, b) => b.score - a.score)
+    .map((entry) => ({
+      ...entry,
+      player: {
+        id: entry.playerId,
+        name: entry.name,
+        faction: entry.faction,
+        guild: entry.guild,
+        guildId: entry.guildId,
+        power: entry.power,
+        server: entry.server,
+      },
+      factionInfo: factions.find((faction) => faction.id === entry.faction),
+    }));
+}
+
 export function playerAllocations(
   playerId: string,
   contributions: Contribution[]
@@ -35,7 +64,15 @@ export function playersFromContributions(
   contributions: Contribution[]
 ): Player[] {
   const seen = new Map<string, Player>();
-  for (const { playerId, name, faction, guild, guildId, power, server } of contributions)
+  for (const {
+    playerId,
+    name,
+    faction,
+    guild,
+    guildId,
+    power,
+    server,
+  } of contributions)
     if (!seen.has(playerId))
       seen.set(playerId, {
         id: playerId,

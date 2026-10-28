@@ -101,3 +101,32 @@
   font-weight: 400;
   font-variant-numeric: tabular-nums;
 }
+
+/* Khối BXH player trong expand tab Cứ điểm — tách khỏi bảng điểm 4 phe. */
+.playerBlock {
+  margin-top: 8px;
+  border-top: 1px solid #dfe5e8;
+}
+
+/* Checkbox sort dùng chung (Tab Phe, Tab Cứ điểm). */
+.sortBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
+.sortOption {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: #8b9aa4;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortOption input {
+  margin: 0;
+  accent-color: #0d8a65;
+}

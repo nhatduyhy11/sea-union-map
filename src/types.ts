@@ -164,6 +164,7 @@ export interface NodeBoardEntry {
   island: Island;
   total: number;
   scores: FactionScore[];
+  attackers: Attacker[];
 }
 
 export interface Attacker extends Contribution {

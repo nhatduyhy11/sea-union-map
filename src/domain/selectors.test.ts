@@ -104,17 +104,17 @@ test("Faction board ranks by guild totals and owned islands", () => {
   assert.equal(board[1].islands, 1);
   assert.equal(board[1].score, 200);
 });
-test("Node board ranks islands by total points with faction breakdowns", () => {
+test("Node board lists islands by display id with faction breakdowns", () => {
   const board = buildNodeBoard(islands, contributions, factions);
   assert.deepEqual(
     board.map((entry) => [entry.island.id, entry.total]),
     [
-      ["2-1", 350],
       ["1-1", 300],
+      ["2-1", 350],
     ]
   );
-  assert.equal(board[0].scores.find((f) => f.id === "a")?.score, 350);
-  assert.equal(board[0].scores.find((f) => f.id === "b")?.score, 0);
+  assert.equal(board[1].scores.find((f) => f.id === "a")?.score, 350);
+  assert.equal(board[1].scores.find((f) => f.id === "b")?.score, 0);
 });
 test("Search handles whitespace, casing, indexes, empty queries and result limits", () => {
   assert.deepEqual(searchIslands("   ", islands), []);
@@ -503,4 +503,19 @@ test("Same-named guilds stay separate rows keyed by guild id", () => {
       ["g1", "HUNTERS", 1],
     ]
   );
+});
+
+test("Node board carries per-node attackers for the expanded row", () => {
+  const node = buildNodeBoard(islands, contributions, factions).find(
+    (entry) => entry.island.id === "2-1"
+  )!;
+  // Sort theo điểm đóng góp giảm dần, kèm factionInfo để tô màu phe.
+  assert.deepEqual(
+    node.attackers.map((a) => [a.playerId, a.score]),
+    [
+      ["p1", 300],
+      ["p3", 50],
+    ]
+  );
+  assert.equal(node.attackers[0]?.factionInfo?.id, "a");
 });

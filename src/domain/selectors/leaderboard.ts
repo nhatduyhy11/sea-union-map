@@ -11,6 +11,7 @@ import type {
   ServerPlayerRow,
 } from "../../types";
 import {
+  attackersForNode,
   playerAllocations,
   playersFromContributions,
   scoresForNode,
@@ -41,8 +42,8 @@ export function buildServerLeaderboard(
   });
 }
 
-// Node board ("Cứ điểm"): non-base islands ranked by the total points poured
-// into them, each carrying its per-faction breakdown for the expanded row.
+// Node board ("Cứ điểm"): non-base islands in display-id order (1-1, 1-2 …
+// 2-x, trung tâm); NodeBoard tự sort theo điểm khi bật checkbox.
 export function buildNodeBoard(
   islands: Island[],
   contributions: Contribution[],
@@ -52,18 +53,32 @@ export function buildNodeBoard(
     .filter((node) => !node.base)
     .map((island) => {
       const scores = scoresForNode(island.id, contributions, factions);
+      const attackers = attackersForNode(island.id, contributions, factions);
       return {
         island,
         scores,
         total: scores.reduce((sum, faction) => sum + faction.score, 0),
+        attackers,
       };
     })
-    .sort((a, b) => b.total - a.total);
+    .sort((a, b) => compareNodeId(a.island.id, b.island.id));
+}
+
+// "1-2" < "1-10" < "2-1" < "4": so từng đoạn số.
+function compareNodeId(a: string, b: string): number {
+  const pa = a.split("-").map(Number);
+  const pb = b.split("-").map(Number);
+  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
+    if (diff) return diff;
+  }
+  return 0;
 }
 
 // Faction board ("BXH Phe"). Live: guild rows + điểm guild là truth server
 // (bảng "Tổng quan phe" trong dump; tổng guild khớp per-faction node-state exact);
 // duy nhất member list khi expand guild mới derive từ node boards + briefs.
+// Thứ tự phe giữ nguyên thứ tự cố định của `factions` (không sort theo điểm).
 // Member match qua guildId (brief) — player không brief thì rơi "Không guild".
 // Không có server guild data: path cũ tự tính từ contributions.
 export function buildFactionBoard(

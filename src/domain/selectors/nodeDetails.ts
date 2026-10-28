@@ -4,7 +4,7 @@ import type {
   Island,
   NodeDetailData,
 } from "../../types";
-import { scoresForNode } from "./nodeScores";
+import { attackersForNode, scoresForNode } from "./nodeScores";
 
 export function nodeDetails(
   nodeId: string | null,
@@ -23,19 +23,7 @@ export function nodeDetails(
       connected: connected ? connected.has(faction.id) : undefined,
     })
   );
-  const attackers = contributions
-    .filter((entry) => entry.nodeId === nodeId)
-    .sort((a, b) => b.score - a.score)
-    .map((entry) => ({
-      ...entry,
-      player: {
-        id: entry.playerId,
-        name: entry.name,
-        faction: entry.faction,
-        guild: entry.guild,
-      },
-      factionInfo: factions.find((faction) => faction.id === entry.faction),
-    }));
+  const attackers = attackersForNode(nodeId, contributions, factions);
   return {
     island,
     owner: factions.find((faction) => faction.id === island.owner),

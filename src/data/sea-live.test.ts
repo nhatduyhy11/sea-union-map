@@ -4,6 +4,7 @@ import raw from "./sea-live.json";
 import {
   contributions,
   factionDir,
+  displayNameOf,
   factionGuilds,
   islands,
   layoutIdOf,
@@ -36,13 +37,32 @@ test("layoutIdOf reads the trailing display-id prefix", () => {
   );
 });
 
+test("displayNameOf strips the display-id token", () => {
+  assert.equal(
+    displayNameOf({ name: "1-15Đảo Xích Đu", type: 2, pointRequire: 0 }),
+    "Đảo Xích Đu"
+  );
+  assert.equal(
+    displayNameOf({
+      name: "Khu nghỉ dưỡng Trường Đảo 3-2",
+      type: 4,
+      pointRequire: 0,
+    }),
+    "Khu nghỉ dưỡng Trường Đảo"
+  );
+  assert.equal(
+    displayNameOf({ name: "Vịnh Thao Thiết", type: 1, pointRequire: 0 }),
+    "Vịnh Thao Thiết"
+  );
+});
+
 test("Every non-base island joins exactly one camp and vice versa", () => {
   const dump = raw as {
     camp: Record<string, { name: string; type: number; pointRequire: number }>;
   };
   const layoutIdByGame = new Map(
     Object.values(dump.camp)
-      .map((camp) => [layoutIdOf(camp), camp.name] as const)
+      .map((camp) => [layoutIdOf(camp), displayNameOf(camp)] as const)
       .filter(([layoutId]) => layoutId !== null)
   );
   assert.equal(layoutIdByGame.size, Object.keys(dump.camp).length - 4); // trừ 4 base (type 1)

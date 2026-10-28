@@ -84,6 +84,17 @@ export function layoutIdOf(camp: CampRow): string | null {
   return match ? match[1] : null;
 }
 
+// Tên hiển thị: bỏ token display-id dính trong _name ("1-15Đảo Xích Đu" →
+// "Đảo Xích Đu", "Khu nghỉ dưỡng Trường Đảo 3-2" → "Khu nghỉ dưỡng Trường
+// Đảo") — UI tự ghép id riêng nên giữ nguyên sẽ thành "1-15 1-15Đảo…".
+export function displayNameOf(camp: CampRow): string {
+  if (camp.type === 1) return camp.name;
+  return camp.name
+    .replace(/\d+-\d+/, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 const gameIdByLayout = new Map<string, number>();
 // game faction id (1..4) → hướng của base phe đó đang giữ.
 export const factionDir: Record<number, string> = {};
@@ -107,7 +118,7 @@ export const islands: Island[] = layoutNodes.map((node) => {
   const ownerFaction = gameId !== undefined ? dump.owner[gameId] : undefined;
   return {
     ...node,
-    name: camp?.name ?? node.name,
+    name: camp ? displayNameOf(camp) : node.name,
     owner: node.base
       ? (node.owner ?? null)
       : ownerFaction

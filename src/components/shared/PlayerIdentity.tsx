@@ -28,6 +28,7 @@ export function PlayerIdentity({
         {name}
         <small style={{ color }}>
           {factionName}
+          {player?.guild && ` · ${player.guild}`}
           {nodeCount !== undefined && ` · ${nodeCount} đảo`}
         </small>
       </div>
