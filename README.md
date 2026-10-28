@@ -2,7 +2,7 @@
 
 Giao diện Web tương tác hiển thị bản đồ chiến sự **Tranh Bá Tứ Hải** (Sea Union) và hệ thống bảng xếp hạng thời gian thực, xây dựng bằng **React 19**, **Vite** và **React Flow**.
 
-Tài liệu này hướng dẫn chi tiết về cách chạy, tương tác, cấu trúc dữ liệu và tổ chức mã nguồn phía Frontend (`src/`). Để xem hướng dẫn về tầng crawler socket backend và luồng pipeline dữ liệu, xem [README.md](README.md).
+Tài liệu này hướng dẫn chi tiết về cách chạy, tương tác, cấu trúc dữ liệu và tổ chức mã nguồn phía Frontend (`src/`). Để xem hướng dẫn về tầng crawler socket backend và luồng pipeline dữ liệu, xem [README.BE.md](README.BE.md).
 
 ---
 

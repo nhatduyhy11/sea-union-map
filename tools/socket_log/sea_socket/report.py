@@ -7,9 +7,15 @@ Mặc định dump vào ``public/sea-live-dev.json`` — gitignored, FE dev serv
 fetch lúc runtime (crawl xong, refresh browser là thấy). Để ship snapshot
 chính thức vào bundle, chỉ đích ``--out src/data/sea-live.json``.
 
+Đây là CLI re-dump độc lập; ``crawler.py --dump`` (mặc định bật) gọi cùng
+hàm :func:`dump_run` ngay sau khi crawl xong — 1 lệnh ra cả raw run lẫn JSON.
+
 Nội dung dump (key → nguồn):
 
-- ``camp``       ← ``campgvglo.json``: tên node/_type/_pointRequire, id == server id
+- ``camp``       ← ``campgvg.json`` cạnh module này (baseline CampGVG của BE,
+                   committed; extract lại bằng ``config_extract.py`` khi nghi
+                   drift — FE không biết file này, data tới FE qua key ``camp``):
+                   tên node/_type/_pointRequire, id == server id
 - ``owner``      ← ``map-snapshot.json``: game faction id đang giữ từng node
 - ``nodeRows``   ← ``boards-decoded.json``: [gameNodeId, playerId, score, campId]
                    (server cắt top-20/node)
@@ -28,12 +34,10 @@ Nội dung dump (key → nguồn):
 Usage:
     # Dev: dump vào public/ (gitignored), refresh browser để xem
     uv run python tools/socket_log/sea_socket/report.py \
-        --crawl .tmp/sea-crawl/sea-crawl-v4 \
-        --config .tmp/sea-crawl/campgvglo.json
+        --crawl .tmp/sea-crawl/sea-crawl-v4
     # Ship: bake snapshot chính thức vào bundle
     uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/sea-crawl-v4 \
-        --config .tmp/sea-crawl/campgvglo.json \
         --out src/data/sea-live.json
 """
 
@@ -41,6 +45,11 @@ import argparse
 import json
 import re
 from pathlib import Path
+
+# Defaults neo vào repo root (không phụ thuộc cwd khi gọi từ nơi khác).
+REPO_ROOT = Path(__file__).resolve().parents[3]
+CONFIG_BASELINE = Path(__file__).resolve().parent / "campgvg.json"
+DEV_DUMP_OUT = REPO_ROOT / "public/sea-live-dev.json"
 
 # game faction id → map direction — read off the 4 base rows (ids 1..4) whose
 # corner positions identify them on the spec screenshots.
@@ -115,21 +124,26 @@ def guild_brief_names(crawl: Path) -> dict:
     return {gid: brief["name"] for gid, brief in raw.items() if brief.get("name")}
 
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--crawl", required=True, type=Path)
-    parser.add_argument("--config", required=True, type=Path,
-                        help="campgvglo.json từ config_extract.py")
-    parser.add_argument("--out", default="public/sea-live-dev.json", type=Path)
-    args = parser.parse_args()
+def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
+             out: Path = DEV_DUMP_OUT) -> Path:
+    """Transform 1 raw run + config baseline thành JSON cho FE, ghi ra ``out``.
 
+    Được gọi từ CLI của module này và từ ``crawler.py --dump`` sau khi crawl.
+    Cross-checks raise ``SystemExit`` khi join hỏng — raw run vẫn còn nguyên
+    trên đĩa để chạy lại sau khi xử lý nguyên nhân.
+    """
+    if not config.exists():
+        raise SystemExit(
+            f"config baseline missing: {config}\n"
+            f"  extract lại: uv run python tools/socket_log/config_extract.py "
+            f"--table CampGVGLO --out {config}")
     snapshot = json.loads(
-        (args.crawl / "map-snapshot.json").read_text(encoding="utf-8"))
+        (crawl / "map-snapshot.json").read_text(encoding="utf-8"))
     owner = {n["id"]: n["owner"] for n in snapshot["nodes"]}
-    boards = load_boards_decoded(args.crawl)
+    boards = load_boards_decoded(crawl)
     briefs = {}
     guild_names = {}
-    with (args.crawl / "players.jsonl").open(encoding="utf-8") as fh:
+    with (crawl / "players.jsonl").open(encoding="utf-8") as fh:
         for line in fh:
             p = json.loads(line)
             entry = {"name": p["name"]}
@@ -144,8 +158,8 @@ def main() -> None:
                 entry["server"] = p["server"]
             briefs[p["id"]] = entry
     guild_names = {gid: name for gid, name in guild_names.items() if name}
-    guild_names.update(guild_brief_names(args.crawl))
-    camp_raw = json.loads(args.config.read_text(encoding="utf-8"))["CampGVGLO"]
+    guild_names.update(guild_brief_names(crawl))
+    camp_raw = json.loads(config.read_text(encoding="utf-8"))["CampGVGLO"]
     camp = {
         int(rid): {
             "name": row["_name"],
@@ -173,7 +187,7 @@ def main() -> None:
 
     rows = node_rows(boards)
     board_rows = player_board(boards)
-    guilds_by_faction = faction_guilds(args.crawl)
+    guilds_by_faction = faction_guilds(crawl)
     roster = {str(pid): str(gid)
               for gid, members in snapshot.get("guild_roster", {}).items()
               for pid in members}
@@ -191,14 +205,28 @@ def main() -> None:
         "briefs": {str(p): b for p, b in briefs.items()},
         "baseDir": BASE_DIR,
     }
-    args.out.write_text(
+    out.write_text(
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
-    print(f"[sea-to-ui] {args.out}: {len(camp)} camp rows, {len(owner)} owners, "
+    print(f"[sea-to-ui] {out}: {len(camp)} camp rows, {len(owner)} owners, "
           f"{len(rows)} contribution rows, {len(board_rows)} playerBoard rows, "
           f"{sum(len(g) for g in guilds_by_faction.values())} guild scores, "
           f"{len(guild_names)} guild names, {len(briefs)} briefs, "
           f"{len(unnamed)} players without brief")
+    return out
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--crawl", required=True, type=Path,
+                        help="Run dir của crawler (.tmp/sea-crawl/<run>)")
+    parser.add_argument("--config", default=CONFIG_BASELINE, type=Path,
+                        help="Baseline CampGVG (mặc định campgvg.json cạnh module "
+                             "này, đã committed; truyền file extract riêng khi so drift)")
+    parser.add_argument("--out", default=DEV_DUMP_OUT, type=Path,
+                        help="Đích JSON cho FE (mặc định public/sea-live-dev.json)")
+    args = parser.parse_args()
+    dump_run(args.crawl, args.config, args.out)
 
 
 if __name__ == "__main__":

@@ -8,14 +8,15 @@
 ## Luồng dữ liệu hiện tại
 
 Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join):
-[`README.md`](../../README.md) (mục "Luồng crawl → UI").
+[`README.BE.md`](../../README.BE.md) (mục "Luồng crawl → UI").
 
 ```
 tools/socket_log/sea_socket/crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
-tools/socket_log/config_extract.py → campgvglo.json  (config client CampGVG, 89 row)
-tools/socket_log/sea_socket/report.py → src/data/sea-live.json   (thuần data, không sinh code)
-src/data/sea-live.ts                    (adapter join layout qua prefix display id)
-src/domain/mapData.ts (LIVE = true)     (derive owner/BXH/filter từ contributions)
+                                          └─ --dump (mặc định) → public/sea-live-dev.json
+sea_socket/campgvg.json                  (cache BE config client CampGVG, 89 row — committed)
+tools/socket_log/sea_socket/report.py    (transform + dump: thuần data, không sinh code)
+src/data/sea-live.ts                     (adapter join layout qua prefix display id)
+src/domain/mapData.ts (LIVE = true)      (derive owner/BXH/filter từ contributions)
 ```
 
 Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live-dev.json`
@@ -23,8 +24,10 @@ Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live
 để bake snapshot chính thức vào build):
 
 ```bash
-uv run python tools/socket_log/config_extract.py --table CampGVGLO --out .tmp/sea-crawl/campgvglo.json
-uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> --config .tmp/sea-crawl/campgvglo.json
+# 1 lệnh: crawl + transform + dump (config tự đọc từ baseline committed)
+uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
+# Re-dump run cũ khi cần:
+uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
 ```
 
 ## 1. Tổng điểm node: sum(board) thiếu trên node nóng — server cắt top-20
@@ -121,8 +124,9 @@ Hai phát hiện đi kèm (cùng session 2026-10-27):
 ## Evidence
 
 - Run chuẩn: `.tmp/sea-crawl/sea-crawl-v4/` (89/89 state, 89 board, 243 brief).
-- CampGVG dump: `.tmp/sea-crawl/campgvglo.json` (89 row; base 1=east, 2=south,
-  3=north, 4=west — đối chiếu specs/map-{right,mid,base}.PNG).
+- CampGVG dump: `tools/socket_log/sea_socket/campgvg.json` (cache BE committed,
+  89 row; base 1=east, 2=south, 3=north, 4=west — đối chiếu
+  specs/map-{right,mid,base}.PNG).
 - Join đã verify: game 63 → "1-11Đảo Lều Trại" (khớp GUI shot header,
   `SEA_PACKET_ANALYSE.md` §1.2); UI node 1-23 = game 8: 2.307.224 tổng,
   VNChiến 850.529 top-1 — khớp run GUI 14:29 từng chữ.

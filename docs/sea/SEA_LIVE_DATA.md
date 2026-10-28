@@ -2,12 +2,16 @@
 
 Tài liệu này là nơi chính giải thích các file JSON crawl sea, chúng được dùng ở
 đâu lúc dev và lúc build/deploy. README có sơ đồ tổng quát ở mục
-[Luồng crawl → UI](../../README.md#luồng-crawl--ui); tài liệu này đi sâu chi tiết.
+[Luồng crawl → UI](../../README.BE.md#luồng-crawl--ui); tài liệu này đi sâu chi tiết.
 
 ## Thuật ngữ
 
+Pipeline chuẩn hóa 4 bước (chi tiết ở [`README.BE.md`](../../README.BE.md), mục
+"Mode 1 — sea"): **crawl → extract → transform → dump**.
+
 - **Dump** — file JSON **ghi ra disk** sau mỗi lần crawl
-  (`tools/socket_log/sea_socket/report.py`): "dump" là hành động ghi kết quả crawl ra file, và
+  (`tools/socket_log/sea_socket/report.py`, hoặc `crawler.py --dump` gọi cùng
+  hàm `dump_run`): "dump" là hành động ghi kết quả crawl ra file, và
   cũng chỉ file kết quả đó. Là snapshot dữ liệu server tại thời điểm
   `snapshotAt`, chưa "chốt". Data trong memory của crawler (JSONL thô ở
   `.tmp/sea-crawl/`) không phải dump.
@@ -20,8 +24,8 @@ Tài liệu này là nơi chính giải thích các file JSON crawl sea, chúng 
 
 | File | Git | Ai ghi | Ai đọc | Vai trò |
 | --- | --- | --- | --- | --- |
-| `src/data/sea-live.json` | **committed** | `tools/socket_log/sea_socket/report.py --out src/data/sea-live.json` (chủ động) | import tĩnh trong `src/data/sea-live.ts` | Bản chính thức, **baked vào build** |
-| `public/sea-live-dev.json` | **gitignored** | `tools/socket_log/sea_socket/report.py` (default, mỗi lần crawl) | `fetch` lúc dev server chạy | Dump "xem trước", refresh browser là thấy |
+| `src/data/sea-live.json` | **committed** | `report.py --out src/data/sea-live.json` (chủ động, re-dump run cũ) | import tĩnh trong `src/data/sea-live.ts` | Bản chính thức, **baked vào build** |
+| `public/sea-live-dev.json` | **gitignored** | `crawler.py --dump` (mặc định bật, mỗi lần crawl) hoặc `report.py` default | `fetch` lúc dev server chạy | Dump "xem trước", refresh browser là thấy |
 | `dist/sea-live-dev.json` | gitignored (cả `dist/`) | Vite copy nguyên thư mục `public/` lúc build | không ai đọc | Được ship lên Pages nhưng **chết** — code build không fetch. Vô hại, có thể bỏ bằng cách xoá file trong `public/` trước khi build |
 | `src/data/sea-live.261027-*.json` | committed | copy tay | **không có code nào import** | Snapshot thủ công theo thời điểm, chỉ để lưu lịch sử |
 
@@ -61,9 +65,9 @@ Deploy **không bao giờ** đọc `public/sea-live-dev.json` dù file có bị 
 ## Luồng cập nhật data
 
 ```
-crawl → report.py (default)      → public/sea-live-dev.json   # xem trước ở dev
-chốt → report.py --out src/data/sea-live.json                # bake bản chính thức
-     → git commit → vite build → chunk sea-data → deploy     # bản deploy dùng bản này
+crawl → crawler.py (--dump mặc định bật) → public/sea-live-dev.json  # xem trước ở dev
+chốt → report.py --crawl <run> --out src/data/sea-live.json         # bake bản chính thức
+     → git commit → vite build → chunk sea-data → deploy            # bản deploy dùng bản này
 ```
 
 Cập nhật data trên bản deploy = 3 bước cuối; refresh browser không đủ (khác

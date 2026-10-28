@@ -12,7 +12,7 @@ pipeline crawl → JSON → UI:
 
 Giao diện Web tương tác xem bản đồ và bảng xếp hạng sự kiện Tranh Bá Tứ Hải, xây dựng bằng **React 19**, **Vite** và **React Flow**.
 
-👉 **Tài liệu chi tiết dành riêng cho Frontend:** xem [`README.FE.md`](README.FE.md) (hướng dẫn tương tác chi tiết, cấu trúc bố cục 89 node, kiến trúc `src/` và state management Zustand).
+👉 **Tài liệu chi tiết dành riêng cho Frontend:** xem [`README.md`](README.md) (hướng dẫn tương tác chi tiết, cấu trúc bố cục 89 node, kiến trúc `src/` và state management Zustand).
 
 ### Chạy nhanh Frontend
 
@@ -50,36 +50,58 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 
 ### Mode 1 — sea (`sea_socket/`)
 
-Pipeline chuẩn: crawl → bóc config → dump JSON cho FE — luồng đầy đủ tới UI
-xem mục **Luồng crawl → UI** bên dưới.
+Pipeline chuẩn 4 bước — **crawl → extract → transform → dump**:
+
+- **crawl** — chạy game, bắt/giải mã packet WS thành raw run (JSONL) dưới `.tmp/sea-crawl/<run>/`
+- **extract** — bóc bảng config client (CampGVG…) ra khỏi bundle game; cache BE nội bộ, hiếm khi chạy — xem mục **Cache config CampGVG** bên dưới
+- **transform** — join raw run + config baseline, chạy cross-checks bắt join hỏng (`report.py`)
+- **dump** — ghi kết quả transform ra JSON cho FE (`public/sea-live-dev.json` hoặc `src/data/sea-live.json`)
+
+Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 
 | File                        | Vai trò                                                                                                                                                                                   |
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (chỉ để proof protocol)                                                         |
-| `sea_socket/crawler.py`     | **Collector chính**: mở map 1 lần lấy snapshot 89 node, rồi inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game                            |
+| `sea_socket/crawler.py`     | **Collector chính**: mở map 1 lần lấy snapshot 89 node, rồi inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game; `--dump` (mặc định bật) tự transform + dump ngay sau crawl |
 | `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
-| `sea_socket/report.py`      | Dump crawl JSONL + CampGVG thành JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build); lệch số ở `docs/sea/STATS_MISMATCH.md` |
-| `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON                                                            |
+| `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler; lệch số ở `docs/sea/STATS_MISMATCH.md` |
+| `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"             |
 
 ```bash
-# [1] Crawl đủ 89 node (headed mặc định, cần session đăng nhập)
+# [1] Crawl đủ 89 node + dump JSON cho FE trong 1 lệnh (--dump mặc định bật,
+#     headed, cần session đăng nhập)
 uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
 #    → .tmp/sea-crawl/<run>/: map-snapshot.json, node-states.jsonl,
 #      boards-decoded.json, players.jsonl, summary.json
+#    → public/sea-live-dev.json (transform từ baseline, refresh browser là thấy)
+#    --no-dump: chỉ lấy raw run
 
-# [2] Bóc config CampGVG (không cần login) — chỉ chạy 1 LẦN rồi reuse:
-#    campgvglo.json để nguyên trên đĩa, các lần crawl sau không cần bước này.
-#    Chỉ chạy lại khi game deploy bundle mới mà config đổi (season mới, sửa node).
+# [2] Re-dump run cũ / bake chính thức (report.py là CLI riêng)
+uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
+#    Bake snapshot chính thức vào build:
+uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
+    --out src/data/sea-live.json
+```
+
+### Cache config CampGVG (`sea_socket/campgvg.json`) — BE nội bộ, hiếm khi đụng
+
+`tools/socket_log/sea_socket/campgvg.json` là cache/baseline của riêng tầng
+crawler (FE không biết file này tồn tại — data tới FE chỉ qua key `camp` trong
+JSON dump). Transform đọc nó tự động; **không có bước nào trong pipeline tự
+extract** — cả `crawler.py` lẫn `walkthrough.py` đều không đụng đến, thiếu file
+thì dump fail ngay với lệnh cần chạy. Chỉ phải extract lại khi nghi config đổi
+phía game (deploy bundle mới, season mới, sửa node):
+
+```bash
 uv run python tools/socket_log/config_extract.py --table CampGVGLO \
     --out .tmp/sea-crawl/campgvglo.json
-
-# [3] Dump JSON cho FE (dev: public/sea-live-dev.json, gitignored)
-uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
-    --config .tmp/sea-crawl/campgvglo.json
-#    Bake chính thức vào build:
-uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
-    --config .tmp/sea-crawl/campgvglo.json --out src/data/sea-live.json
+# trùng campgvg.json hiện có → xóa file .tmp, không phải làm gì thêm
+# lệch → đối chiếu, cập nhật campgvg.json và commit lại (drift-detection)
 ```
+
+Extract boot page game headless (cần mạng, không cần login, ~1-2 phút) — vì
+vậy nó đứng ngoài luồng crawl thường ngày. Baseline committed cũng là bản ghi
+lịch sử config theo git, so drift chỉ là `git diff`.
 
 Helper decode offline (nếu cần tách riêng 1 frame board từ capture):
 
@@ -124,10 +146,13 @@ login.
 ## Luồng crawl → UI
 
 ```
-[1] sea_socket/crawler.py ──crawl WS game──▶  .tmp/sea-crawl/<run>/ (JSONL + boards-decoded.json)
-[2] config_extract.py     ──boot game headless──▶ .tmp/sea-crawl/campgvglo.json (CampGVG 89 row)
-[3] sea_socket/report.py  ◀── đọc [1] + [2] ──dump──▶ public/sea-live-dev.json (MẶC ĐỊNH — gitignored)
-                                                     hoặc src/data/sea-live.json (--out, commit = bake vào build)
+[1] crawl:    sea_socket/crawler.py ──crawl WS game──▶ .tmp/sea-crawl/<run>/ (JSONL + boards-decoded.json)
+              └─ --dump (mặc định bật) ──transform + dump──▶ public/sea-live-dev.json (xem trước ở dev)
+[2] extract:  sea_socket/campgvg.json (cache BE committed, FE không biết) ──▶ config cho transform
+              └─ chỉ extract lại khi nghi drift — xem mục "Cache config CampGVG"
+[3] transform + dump CLI riêng: sea_socket/report.py (re-dump run cũ, bake chính thức)
+              ├─ default ──▶ public/sea-live-dev.json (gitignored)
+              └─ --out src/data/sea-live.json ──▶ commit = bake vào build
 [4] src/data/sea-live.ts  (adapter FE, viết tay) + sea-live.test.ts
                           ◀── dev: fetch sea-live-dev.json, thiếu → fallback
                               build: import src/data/sea-live.json (baked)
@@ -158,7 +183,7 @@ chỗ lấy data ở `src/data/sea-live.ts`, join giữ nguyên.
 
 ## Docs
 
-- [`README.FE.md`](README.FE.md) — hướng dẫn chi tiết Web UI: tương tác, cấu trúc 89 node, kiến trúc `src/` và state management
+- [`README.md`](README.md) — hướng dẫn chi tiết Web UI: tương tác, cấu trúc 89 node, kiến trúc `src/` và state management
 - [`docs/DOCS_GUIDE.md`](docs/DOCS_GUIDE.md) — index toàn bộ docs, vai trò từng tài liệu và cách cập nhật
 - [`docs/sea/SOCKET_PROTOCOL.md`](docs/sea/SOCKET_PROTOCOL.md) — reference protocol WS (framing, module/cmd, decode)
 - [`docs/mine_docs/MINE_STRUCTURE.md`](docs/mine_docs/MINE_STRUCTURE.md) — cấu trúc world mỏ: map UI ↔ protocol (kèm [`docs/mine_docs/BACKLOG_MINE.md`](docs/mine_docs/BACKLOG_MINE.md))

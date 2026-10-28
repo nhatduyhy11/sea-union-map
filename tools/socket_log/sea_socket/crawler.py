@@ -26,9 +26,16 @@ Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>):
     players.jsonl        id -> name/guild/power/server briefs
     summary.json         counts + per-faction score rollup
 
+With --dump (default on) the run is transformed right after crawl via
+sea_socket.report.dump_run — one command yields both the raw run and the FE
+JSON at public/sea-live-dev.json (refresh browser to see it). --no-dump keeps
+just the raw run; report.py stays the standalone CLI to re-dump old runs or
+bake src/data/sea-live.json.
+
 Usage:
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --headless
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --no-dump
 """
 
 import argparse
@@ -76,6 +83,7 @@ from sea_socket.protocol import (  # noqa: E402
     parse_map_snapshot,
     parse_node_state,
 )
+from sea_socket.report import DEV_DUMP_OUT, dump_run  # noqa: E402
 from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
@@ -415,6 +423,9 @@ async def main() -> None:
     parser.add_argument("--height", type=int, default=720)
     parser.add_argument("--browser", default="chrome")
     parser.add_argument("--headless", action="store_true")
+    parser.add_argument("--dump", action=argparse.BooleanOptionalAction, default=True,
+                        help="Transform run vừa crawl thành JSON cho FE ngay sau "
+                             "khi crawl (mặc định bật; tắt bằng --no-dump)")
     args = parser.parse_args()
 
     started_at = datetime.now().astimezone()
@@ -476,6 +487,14 @@ async def main() -> None:
                     await run_stages(page, writer, out_dir, entry_stages)
                     summary = await run_crawl(page, router, out_dir)
                     print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
+                    if args.dump:
+                        try:
+                            dump_run(out_dir, out=DEV_DUMP_OUT)
+                        except SystemExit as exc:
+                            # Raw run đã an toàn trên đĩa — chỉ nhắc chỗ re-dump.
+                            print(f"[dump] transform failed, raw run kept at "
+                                  f"{out_dir}: {exc}", flush=True)
+                            raise
                 finally:
                     guard_task.cancel()
             finally:
