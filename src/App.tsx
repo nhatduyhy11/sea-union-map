@@ -1,10 +1,9 @@
 import { AppHeader } from "./components/layout/AppHeader";
 import { AppFooter } from "./components/layout/AppFooter";
 import { NavigationRail } from "./components/layout/NavigationRail";
-import { MapHeading } from "./components/map/MapHeading";
-import { MapToolbar } from "./components/map/MapToolbar";
+import { MapHeader } from "./components/map/map-header";
 import { MapCanvas } from "./components/map/MapCanvas";
-import { FactionLegend } from "./components/map/FactionLegend";
+import { MapFooter } from "./components/map/map-footer";
 import { Sidebar } from "./components/panels/Sidebar";
 import styles from "./App.module.css";
 
@@ -17,10 +16,9 @@ export function App() {
       <div className={styles.workspace}>
         <NavigationRail />
         <main className={styles.mainContent}>
-          <MapHeading />
-          <MapToolbar />
+          <MapHeader />
           <MapCanvas />
-          <FactionLegend />
+          <MapFooter />
         </main>
         <Sidebar />
       </div>

@@ -1,0 +1,22 @@
+/* Debug: đường dash ngang đi qua tâm node 4 (trục hoành) và các đường dựng
+   vuông góc qua tâm từng cứ điểm trên trục giữa để soi node thẳng cột. */
+.debugLine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  border-top: 1.5px dashed #e5484d;
+  pointer-events: none;
+  z-index: 60;
+}
+
+.debugVLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-left: 1px dashed #e5484d;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 60;
+}
