@@ -17,6 +17,5 @@ env.*
 *.env.*
 .playwright-mcp/
 
-# Dump dev cho FE (sea_to_ui.py mặc định ghi vào đây; build dùng bản committed
-# src/data/sea-live.json). Gitignore vì đây là data "chưa chốt" mỗi lần crawl.
+# Dump dev cho FE. Gitignore vì đây là data "chưa chốt" mỗi lần crawl.
 public/sea-live-dev.json
