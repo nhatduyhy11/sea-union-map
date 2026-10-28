@@ -2,7 +2,7 @@ import { ReactFlow, Background, Controls, useStore } from "@xyflow/react";
 import { mapBounds } from "../../data/map-layout";
 import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
 import { useMapGraph } from "./useMapGraph";
-import { useMapView } from "../../stores/mapView";
+import { useDebug } from "../../stores/debug";
 import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
@@ -19,9 +19,9 @@ function ZoomLabel() {
 
 export function MapCanvas() {
   const { nodes, edges } = useMapGraph();
-  const debug = useMapView((state) => state.debug);
+  const debug = useDebug((state) => state.debug);
   // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
-  const canvasBg = useMapView((state) => state.canvasBg);
+  const canvasBg = useDebug((state) => state.canvasBg);
   return (
     <div className={styles.mapCanvas} style={{ background: canvasBg }}>
       <ReactFlow

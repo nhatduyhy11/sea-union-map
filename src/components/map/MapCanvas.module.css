@@ -5,7 +5,7 @@
   overflow: hidden;
   border: 1px solid #f0ebdd;
   border-radius: 9px;
-  /* Trắng nhạt — mặc định khớp canvasBg trong stores/mapView (picker debug
+  /* Trắng nhạt — mặc định khớp canvasBg trong stores/debug (picker debug
      ở DEV ghi đè bằng inline style). */
   background: #fefdfa;
 }

@@ -1,17 +1,17 @@
 import { baseCount, ownedIslands } from "../../../domain/mapData";
-import { useMapView } from "../../../stores/mapView";
+import { useDebug } from "../../../stores/debug";
 import { ColorSwatch } from "./ColorSwatch";
 import styles from "./MapHeading.module.css";
 
 export function MapHeading() {
-  const debug = useMapView((state) => state.debug);
-  const toggleDebug = useMapView((state) => state.toggleDebug);
-  const canvasBg = useMapView((state) => state.canvasBg);
-  const setCanvasBg = useMapView((state) => state.setCanvasBg);
-  const neutralColor = useMapView((state) => state.neutralColor);
-  const setNeutralColor = useMapView((state) => state.setNeutralColor);
-  const neutralOpacity = useMapView((state) => state.neutralOpacity);
-  const setNeutralOpacity = useMapView((state) => state.setNeutralOpacity);
+  const debug = useDebug((state) => state.debug);
+  const toggleDebug = useDebug((state) => state.toggleDebug);
+  const canvasBg = useDebug((state) => state.canvasBg);
+  const setCanvasBg = useDebug((state) => state.setCanvasBg);
+  const neutralColor = useDebug((state) => state.neutralColor);
+  const setNeutralColor = useDebug((state) => state.setNeutralColor);
+  const neutralOpacity = useDebug((state) => state.neutralOpacity);
+  const setNeutralOpacity = useDebug((state) => state.setNeutralOpacity);
 
   // Picker làm việc trên #rrggbbaa; store tách thành màu + opacity 0..1.
   const alphaHex = Math.round(neutralOpacity * 255)

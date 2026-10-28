@@ -9,23 +9,24 @@ import {
   scoresByNode,
 } from "../../domain/mapData";
 import { openIsland } from "../../stores/commands";
+import { useDebug } from "../../stores/debug";
 import { useMapView } from "../../stores/mapView";
 import { useSelection } from "../../stores/selection";
 import type { Edge } from "@xyflow/react";
 import type { AppNode } from "../../types";
 
-// Nodes/edges cho canvas — derived từ mapView (lọc/debug) + selection
-// (chọn/ghim). Component nào cần graph tự subscribe hook này, thay vì App
-// tính rồi truyền xuống.
+// Nodes/edges cho canvas — derived từ mapView (lọc) + debug (màu/overlay) +
+// selection (chọn/ghim). Component nào cần graph tự subscribe hook này, thay
+// vì App tính rồi truyền xuống.
 export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
   const selected = useSelection((state) => state.selected);
   const pinned = useSelection((state) => state.pinned);
   const togglePin = useSelection((state) => state.togglePin);
   const showAll = useMapView((state) => state.showAll);
   const filter = useMapView((state) => state.filter);
-  const debug = useMapView((state) => state.debug);
-  const neutralColor = useMapView((state) => state.neutralColor);
-  const neutralOpacity = useMapView((state) => state.neutralOpacity);
+  const debug = useDebug((state) => state.debug);
+  const neutralColor = useDebug((state) => state.neutralColor);
+  const neutralOpacity = useDebug((state) => state.neutralOpacity);
 
   // Node ids được filter guild/player highlight — dim phần còn lại.
   const matched = useMemo(
