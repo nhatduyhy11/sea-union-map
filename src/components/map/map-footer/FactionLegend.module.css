@@ -2,10 +2,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 55px;
-  font-size: 10px;
-  color: #667884;
-  flex-shrink: 0;
 }
 
 .entry {
@@ -21,18 +17,7 @@
   border-radius: 3px;
 }
 
-.legendHelp {
-  margin-left: auto;
-  font-size: 9px;
-  color: #8b9aa4;
-  white-space: nowrap;
-}
-
 @media (max-width: 1100px) {
-  .legendHelp {
-    display: none;
-  }
-
   .legend {
     gap: 8px;
   }
@@ -40,8 +25,8 @@
 
 @media (max-width: 760px) {
   .legend {
+    width: 100%;
     justify-content: space-between;
     font-size: 9px;
-    height: 46px;
   }
 }

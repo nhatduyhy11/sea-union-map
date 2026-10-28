@@ -1,9 +1,9 @@
 import { Search, Layers, Crosshair } from "lucide-react";
-import { useFitMap } from "../../hooks/useFitMap";
-import { useFocusIsland } from "../../hooks/useFocusIsland";
-import { useIslandMatches } from "../../hooks/useIslandMatches";
-import { useMapView } from "../../stores/mapView";
-import { usePanel } from "../../stores/panel";
+import { useFitMap } from "../../../hooks/useFitMap";
+import { useFocusIsland } from "../../../hooks/useFocusIsland";
+import { useIslandMatches } from "./useIslandMatches";
+import { useMapView } from "../../../stores/mapView";
+import { usePanel } from "../../../stores/panel";
 import styles from "./MapToolbar.module.css";
 
 export function MapToolbar() {

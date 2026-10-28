@@ -1,58 +1,20 @@
-// Pure queries: no React, UI state, or data source — everything arrives as
-// arguments.
 import type {
   Contribution,
   Faction,
   FactionBoardEntry,
-  FactionScore,
   GuildMember,
   Island,
   LeaderboardPlayer,
   NodeBoardEntry,
-  NodeDetailData,
   Player,
   ServerGuildRow,
   ServerPlayerRow,
-} from "../types";
-
-export function scoresForNode(
-  nodeId: string,
-  contributions: Contribution[],
-  factions: Faction[]
-): FactionScore[] {
-  const totals = new Map<string, number>();
-  for (const entry of contributions) {
-    if (entry.nodeId === nodeId) {
-      totals.set(entry.faction, (totals.get(entry.faction) ?? 0) + entry.score);
-    }
-  }
-  return factions.map((faction) => ({
-    ...faction,
-    score: totals.get(faction.id) ?? 0,
-  }));
-}
-
-export function playerAllocations(
-  playerId: string,
-  contributions: Contribution[]
-): Contribution[] {
-  return contributions
-    .filter((entry) => entry.playerId === playerId)
-    .sort((a, b) => b.score - a.score);
-}
-
-// The player universe is the union of every node leaderboard (top-N per node).
-// First row wins on identity — crawl rows of one player describe the same
-// person, dedupe only picks who reported it first.
-export function playersFromContributions(
-  contributions: Contribution[]
-): Player[] {
-  const seen = new Map<string, Player>();
-  for (const { playerId, name, faction, guild, guildId } of contributions)
-    if (!seen.has(playerId))
-      seen.set(playerId, { id: playerId, name, faction, guild, guildId });
-  return [...seen.values()];
-}
+} from "../../types";
+import {
+  playerAllocations,
+  playersFromContributions,
+  scoresForNode,
+} from "./nodeScores";
 
 // Tab Cá nhân live: rows = BXH điểm server (top-200, board 117). Thứ tự và
 // điểm giữ nguyên server — chỉ ghép thêm allocations từ node boards cho phần
@@ -271,57 +233,4 @@ function buildFactionBoardComputed(
       };
     })
     .sort((a, b) => b.score - a.score);
-}
-
-export function nodeDetails(
-  nodeId: string | null,
-  islands: Island[],
-  contributions: Contribution[],
-  factions: Faction[],
-  connectedByNode?: Map<string, Set<string>>
-): NodeDetailData | null {
-  if (!nodeId) return null;
-  const island = islands.find((node) => node.id === nodeId);
-  if (!island) return null;
-  const connected = connectedByNode?.get(nodeId);
-  const scores = scoresForNode(nodeId, contributions, factions).map(
-    (faction) => ({
-      ...faction,
-      connected: connected ? connected.has(faction.id) : undefined,
-    })
-  );
-  const attackers = contributions
-    .filter((entry) => entry.nodeId === nodeId)
-    .sort((a, b) => b.score - a.score)
-    .map((entry) => ({
-      ...entry,
-      player: {
-        id: entry.playerId,
-        name: entry.name,
-        faction: entry.faction,
-        guild: entry.guild,
-      },
-      factionInfo: factions.find((faction) => faction.id === entry.faction),
-    }));
-  return {
-    island,
-    owner: factions.find((faction) => faction.id === island.owner),
-    scores,
-    total: scores.reduce((sum, faction) => sum + faction.score, 0),
-    attackers,
-  };
-}
-
-export function searchIslands(
-  query: string,
-  islands: Island[],
-  limit = 6
-): Island[] {
-  const normalized = query.trim().toLocaleLowerCase("vi");
-  if (!normalized) return [];
-  return islands
-    .filter((node) =>
-      `${node.id} ${node.name}`.toLocaleLowerCase("vi").includes(normalized)
-    )
-    .slice(0, limit);
 }

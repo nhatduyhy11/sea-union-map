@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { Anchor, Castle, Pin } from "lucide-react";
 import { iconBoxSize } from "../../../domain/mapGraph";
-import { useMapView } from "../../../stores/mapView";
+import { useDebug } from "../../../stores/debug";
 import { NodeStats } from "./NodeStats";
 import styles from "./IslandNode.module.css";
 import type { AppNode } from "../../../types";
@@ -10,9 +10,9 @@ import type { AppNode } from "../../../types";
 export function IslandNode({ data }: NodeProps<AppNode>) {
   const [hovered, setHovered] = useState(false);
   // Màu + opacity nhóm trung lập — cùng nguồn với edge (picker debug trong
-  // mapView); fallback của --faction vì inline style luôn ghi đè CSS default.
-  const neutralColor = useMapView((state) => state.neutralColor);
-  const neutralOpacity = useMapView((state) => state.neutralOpacity);
+  // debug store); fallback của --faction vì inline style luôn ghi đè CSS default.
+  const neutralColor = useDebug((state) => state.neutralColor);
+  const neutralOpacity = useDebug((state) => state.neutralOpacity);
   const Icon = data.base || data.central ? Castle : Anchor;
   const direction = data.id === "4" ? "TRUNG TÂM" : "";
   const className = [

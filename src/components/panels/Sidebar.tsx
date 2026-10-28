@@ -1,7 +1,7 @@
 import { Compass, Flag, RotateCcw, Trophy } from "lucide-react";
 import { NodeDetails } from "./NodeDetails";
 import { Leaderboard } from "./leaderboard/Leaderboard";
-import { useNodeDetails } from "../../hooks/useNodeDetails";
+import { useNodeDetails } from "./useNodeDetails";
 import { setPanelTab } from "../../stores/commands";
 import { useSelection } from "../../stores/selection";
 import { usePanel } from "../../stores/panel";
