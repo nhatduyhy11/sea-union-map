@@ -97,6 +97,9 @@ export interface ServerGuildRow {
   // Tên guild từ brief member; guild không có member được brief thì #id.
   name: string;
   score: number;
+  // Lực chiến guild: guild brief server (f16), fallback tổng player brief.
+  power?: number;
+  server?: number;
 }
 
 export interface LeaderboardPlayer extends Player {
@@ -107,6 +110,12 @@ export interface LeaderboardPlayer extends Player {
 }
 
 export interface GuildScore {
+  // Guild identity: guildId từ game (unique sẵn — hai guild cùng tên vẫn tách
+  // biệt); bucket gộp player không guild dùng nguyên chuỗi "Không guild".
+  id: string;
+  // Display name: tên guild (hoặc "Không guild")
+  name: string;
+  // Alias của id — giữ tương thích với code cũ / tests
   guild: string;
   score: number;
   players: number;
@@ -115,6 +124,8 @@ export interface GuildScore {
   // Thành viên sort theo điểm — dữ liệu cho drill-down guild → thành viên.
   members: GuildMember[];
   power?: number;
+  server?: number;
+  guildId?: string;
 }
 
 export interface GuildMember {
@@ -126,17 +137,23 @@ export interface GuildMember {
   server?: number;
 }
 
-// Filter canvas theo guild/player — null = all. Guild dùng tên làm id
-// ("Không guild" gộp mọi player không guild, khớp cách bucket ở BXH Phe).
+// Filter canvas theo guild/player — null = all.
+// Guild dùng guildId từ game làm identity; bucket "Không guild" giữ nguyên
+// chuỗi "Không guild".
 export interface MapFilter {
   kind: "guild" | "player";
   id: string;
 }
 
+// Alias CanvasFilter cho đồng nhất với tài liệu và backlog
+export type CanvasFilter = MapFilter;
+
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'
 // totals (see SEA_STRUCTURE.md §3.2), islands = owned nodes ("Chiếm đảo").
 export interface FactionBoardEntry extends Faction {
   score: number;
+  // Tổng lực chiến các guild trong phe (0 = chưa có power data).
+  power: number;
   islands: number;
   guilds: GuildScore[];
 }

@@ -44,15 +44,13 @@ export function GuildAccordion({
 }
 
 export function GuildLabel({ guild }: { guild: GuildScore }) {
-  const powerTag =
-    guild.power !== undefined && guild.power > 0
-      ? ` [${compact(guild.power)}]`
-      : "";
+  // Luôn hiện — "—" = guild brief rỗng và không member nào có brief power.
+  const powerTag = guild.power ? ` [${compact(guild.power)}]` : " [—]";
   return (
     <span className={styles.guildLabel}>
       <Users size={11} />
       <span>
-        {guild.guild}
+        {guild.name}
         {powerTag}
       </span>
       <small>

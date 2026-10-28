@@ -30,6 +30,8 @@ interface SeaLiveDump {
   playerBoard: [number, number, number, number | null][];
   factionGuilds: Record<string, [number, number][]>;
   guildNames: Record<string, string>;
+  // Optional: dump cũ (trước khi parse guild brief f16) không có key này.
+  guildPower?: Record<string, number>;
   guildRoster: Record<string, string>;
   briefs: Record<
     string,
@@ -164,6 +166,18 @@ export const playerBoard: (ServerPlayerRow & { faction: string })[] =
     ];
   });
 
+// guildId → lực chiến guild: ưu tiên guild brief server (dump guildPower, f16);
+// dump cũ thiếu thì cộng power mọi player brief (guildId brief, fallback
+// guildRoster) — chỉ phủ member đã được brief nên thấp hơn thật.
+const guildPower = new Map<string, number>();
+for (const [playerId, brief] of Object.entries(dump.briefs)) {
+  const guildId = brief.guildId ?? dump.guildRoster[playerId];
+  if (guildId && brief.power)
+    guildPower.set(guildId, (guildPower.get(guildId) ?? 0) + brief.power);
+}
+for (const [guildId, power] of Object.entries(dump.guildPower ?? {}))
+  guildPower.set(guildId, power);
+
 // Guild scores server (dump factionGuilds — bảng "Tổng quan phe"), key theo direction FE.
 // Guild thiếu tên (không member nào được brief) hiện #id — STATS_MISMATCH §5.1.
 export const factionGuilds: Record<string, ServerGuildRow[]> = Object.entries(
@@ -179,6 +193,7 @@ export const factionGuilds: Record<string, ServerGuildRow[]> = Object.entries(
           guildId: String(guildId),
           name: dump.guildNames[String(guildId)] ?? `#${guildId}`,
           score,
+          power: guildPower.get(String(guildId)),
         })),
       ] as const,
     ];

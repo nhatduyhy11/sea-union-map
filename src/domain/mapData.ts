@@ -3,6 +3,7 @@ import {
   contributions as liveContributions,
   playerBoard as serverPlayerBoard,
   factionGuilds as serverFactionGuilds,
+  guildNames,
   routes as liveRoutes,
 } from "../data/sea-live";
 import { factions } from "../data/factions";
@@ -62,9 +63,13 @@ export const baseCount = islands.filter((node) => node.base).length;
 // theo dòng đầu thắng (cùng rule playersFromContributions/buildFactionBoard).
 export const players = playersFromContributions(contributions);
 
+// guildId → tên — tra display name cho chip filter guild.
+export { guildNames };
+
 // Index node ↔ guild/player cho filter canvas: node nào có đóng góp của
-// guild/player nào. Bucket "Không guild" gộp mọi player không guild, khớp
-// cách bucket ở BXH Phe.
+// guild/player nào. Guild key là guildId từ game (định danh unique sẵn — hai
+// guild cùng tên vẫn tách biệt). Player không guildId, hoặc guildId không có
+// row server, rơi bucket "Không guild" — cùng rule strays buildFactionBoard.
 function indexNodeIds(
   map: Map<string, Set<string>>,
   key: string,
@@ -75,16 +80,21 @@ function indexNodeIds(
   else map.set(key, new Set([nodeId]));
 }
 
+const knownGuildIds = new Set(
+  Object.values(serverFactionGuilds).flatMap((rows) =>
+    rows.map((row) => row.guildId)
+  )
+);
+
 export const nodeIdsByGuild = new Map<string, Set<string>>();
 export const nodeIdsByPlayer = new Map<string, Set<string>>();
-const guildByPlayer = new Map(
-  players.map((player) => [player.id, player.guild ?? "Không guild"])
-);
 for (const entry of contributions) {
   indexNodeIds(nodeIdsByPlayer, entry.playerId, entry.nodeId);
   indexNodeIds(
     nodeIdsByGuild,
-    guildByPlayer.get(entry.playerId) ?? "Không guild",
+    entry.guildId && knownGuildIds.has(entry.guildId)
+      ? entry.guildId
+      : "Không guild",
     entry.nodeId
   );
 }

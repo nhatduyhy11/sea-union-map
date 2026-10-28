@@ -314,12 +314,13 @@ test("Server faction board uses server guild scores; members derive from rows", 
   // Điểm phe = tổng guild scores server (không cộng bucket "Không guild").
   assert.equal(factionA.score, 500);
   // Guild rows theo thứ tự + điểm server, bất kể member có bao nhiêu.
+  // identity (id/guild) = guildId game; name giữ tên hiển thị.
   assert.deepEqual(
-    factionA.guilds.map((g) => [g.guild, g.score, g.players]),
+    factionA.guilds.map((g) => [g.id, g.name, g.score, g.players]),
     [
-      ["Beta", 400, 1],
-      ["Alpha", 100, 1],
-      ["Không guild", 5, 1],
+      ["2", "Beta", 400, 1],
+      ["1", "Alpha", 100, 1],
+      ["Không guild", "Không guild", 5, 1],
     ]
   );
   // Member list derive từ node rows + briefs (guildId match).
@@ -336,7 +337,7 @@ test("Server faction board uses server guild scores; members derive from rows", 
   assert.ok(factionB);
   assert.equal(factionB.score, 0);
   assert.deepEqual(
-    factionB.guilds.map((g) => [g.guild, g.score, g.players]),
+    factionB.guilds.map((g) => [g.id, g.score, g.players]),
     [["Không guild", 500, 1]]
   );
 });
@@ -377,9 +378,10 @@ test("Faction board calculates guild power and supports sorting by power or scor
   const boardPower = buildFactionBoard(live, factions, islands, serverGuilds);
   const factionA = boardPower.find((f) => f.id === "a");
   assert.ok(factionA);
-  assert.equal(factionA.guilds[0].guild, "HighPowerLowScore");
+  assert.equal(factionA.guilds[0].id, "g1");
+  assert.equal(factionA.guilds[0].name, "HighPowerLowScore");
   assert.equal(factionA.guilds[0].power, 30_000_000);
-  assert.equal(factionA.guilds[1].guild, "LowPowerHighScore");
+  assert.equal(factionA.guilds[1].id, "g2");
   assert.equal(factionA.guilds[1].power, 5_000_000);
 
   // 2. Sort by score
@@ -392,11 +394,113 @@ test("Faction board calculates guild power and supports sorting by power or scor
   );
   const factionAScore = boardScore.find((f) => f.id === "a");
   assert.ok(factionAScore);
-  assert.equal(factionAScore.guilds[0].guild, "LowPowerHighScore");
-  assert.equal(factionAScore.guilds[1].guild, "HighPowerLowScore");
+  assert.equal(factionAScore.guilds[0].id, "g2");
+  assert.equal(factionAScore.guilds[1].id, "g1");
 
   // 3. Player power and server preserved
   const players = playersFromContributions(live);
   assert.equal(players[0].power, 30_000_000);
   assert.equal(players[0].server, 517);
+
+  // 4. Row power (guild brief) thắng bucket power — guild không member trong
+  // node board vẫn có power và lên đầu khi sort theo power.
+  const boardBrief = buildFactionBoard(live, factions, islands, {
+    a: [
+      ...serverGuilds.a,
+      { guildId: "g3", name: "NoNodeRows", score: 0, power: 50_000_000 },
+    ],
+  });
+  const factionABrief = boardBrief.find((f) => f.id === "a");
+  assert.ok(factionABrief);
+  assert.equal(factionABrief.guilds[0].id, "g3");
+  assert.equal(factionABrief.guilds[0].power, 50_000_000);
+  assert.equal(factionABrief.guilds[0].players, 0);
+});
+
+test("Faction board keys guilds by game guild id", () => {
+  const live: Contribution[] = [
+    {
+      nodeId: "1-1",
+      playerId: "p1",
+      name: "P1",
+      faction: "a",
+      guild: "HighPowerLowScore",
+      guildId: "g1",
+      score: 100,
+    },
+    {
+      nodeId: "1-1",
+      playerId: "p2",
+      name: "P2",
+      faction: "a",
+      guild: "LowPowerHighScore",
+      guildId: "g2",
+      score: 1000,
+    },
+    // guildId không có row server → strays, rơi bucket "Không guild".
+    {
+      nodeId: "1-1",
+      playerId: "p3",
+      name: "P3",
+      faction: "a",
+      guildId: "g9",
+      score: 10,
+    },
+  ];
+  const serverGuilds = {
+    a: [
+      { guildId: "g1", name: "HighPowerLowScore", score: 100 },
+      { guildId: "g2", name: "LowPowerHighScore", score: 1000 },
+    ],
+  };
+  const board = buildFactionBoard(live, factions, islands, serverGuilds);
+  const guildsA = board.find((f) => f.id === "a")!.guilds;
+  // id/guild là guildId từ game; name là display name. Player guildId lạ
+  // (g9) và không guildId cùng về bucket "Không guild".
+  assert.deepEqual(
+    guildsA.map((g) => [g.id, g.name, g.guild]),
+    [
+      ["g2", "LowPowerHighScore", "g2"],
+      ["g1", "HighPowerLowScore", "g1"],
+      ["Không guild", "Không guild", "Không guild"],
+    ]
+  );
+});
+
+test("Same-named guilds stay separate rows keyed by guild id", () => {
+  const live: Contribution[] = [
+    {
+      nodeId: "1-1",
+      playerId: "p1",
+      name: "P1",
+      faction: "a",
+      guild: "HUNTERS",
+      guildId: "g1",
+      score: 100,
+    },
+    {
+      nodeId: "1-1",
+      playerId: "p2",
+      name: "P2",
+      faction: "a",
+      guild: "HUNTERS",
+      guildId: "g2",
+      score: 200,
+    },
+  ];
+  const serverGuilds = {
+    a: [
+      { guildId: "g1", name: "HUNTERS", score: 100 },
+      { guildId: "g2", name: "HUNTERS", score: 200 },
+    ],
+  };
+  const board = buildFactionBoard(live, factions, islands, serverGuilds);
+  const guildsA = board.find((f) => f.id === "a")!.guilds;
+  assert.deepEqual(
+    guildsA.map((g) => [g.id, g.name, g.players]),
+    [
+      ["g2", "HUNTERS", 1],
+      ["g1", "HUNTERS", 1],
+    ]
+  );
 });

@@ -1,17 +1,18 @@
 import { Swords, User, X } from "lucide-react";
-import { players } from "../../domain/mapData";
+import { guildNames, players } from "../../domain/mapData";
 import { resetCanvasFilter } from "../../stores/commands";
 import { useMapView } from "../../stores/mapView";
 import styles from "./FilterChip.module.css";
 
 // Chip filter đang bật, góc trên canvas — ✕ reset về all. Filter chỉ đặt
-// được từ BXH; chip là chiều hiển thị duy nhất trên canvas.
+// được từ BXH; chip là chiều hiển thị duy nhất trên canvas. Guild filter id
+// là guildId — chip tra tên hiển thị từ guildNames.
 export function FilterChip() {
   const filter = useMapView((state) => state.filter);
   if (!filter) return null;
   const label =
     filter.kind === "guild"
-      ? filter.id
+      ? (guildNames[filter.id] ?? filter.id)
       : (players.find((player) => player.id === filter.id)?.name ?? filter.id);
   return (
     <div className={styles.chip}>
