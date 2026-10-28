@@ -48,8 +48,8 @@ Bốn base không có điểm tấn công. Bảng điểm co giãn theo zoom; zo
 - `src/components/map/`: map, custom node/edge, toolbar, bảng điểm nhỏ và chú giải.
 - `src/components/panels/`: panel cứ điểm, bảng điểm phe, player và leaderboard.
 - `src/components/shared/`: UI dùng chung.
-- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc guild/player, điểm toàn map, debug), `panel` (tab, sub-tab BXH, filterMode, accordion expansion), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `setFilterMode`, `resetRankingView`). Chi tiết mô hình tương tác tại [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md).
-- `src/hooks/`: derived data và command cần instance React Flow — `useMapGraph` (nodes/edges), `useNodeDetails`, `useIslandMatches`, `useFocusIsland`, `useFitMap`.
+- `src/stores/`: zustand store chia theo loại state — `mapView` (lọc guild/player, điểm toàn map), `debug` (tâm node, màu canvas, màu trung lập lúc dev), `panel` (tab, sub-tab BXH, filterMode, accordion expansion), `selection` (chọn/ghim đảo); `commands.ts` gom tương tác chạm nhiều store (`openIsland`, `setFilterMode`, `resetRankingView`). Chi tiết mô hình tương tác tại [docs/LEADERBOARD_SPECS.md](docs/LEADERBOARD_SPECS.md).
+- `src/hooks/`: shared command cần instance React Flow (dùng đa module) — `useFitMap`, `useFocusIsland` (các hook đơn-consumer đã co-locate về cạnh component tương ứng).
 - `src/domain/`: hàm thuần tính điểm, truy vấn chi tiết, tìm kiếm, chọn nguồn dữ liệu (`mapData.ts`, cờ `LIVE`) và chuyển dữ liệu sang model React Flow; kèm test.
 - `src/data/`: bố cục theo ảnh, định nghĩa phe, fixture demo và dữ liệu crawl live (`sea-live.json` + adapter `sea-live.ts`).
 - `src/types.ts`: định nghĩa kiểu dữ liệu (model, props, React Flow node data).
@@ -170,7 +170,8 @@ login.
 [5] FE: mapData.ts (LIVE switch) → derive owner/BXH/filter từ contributions
 ```
 
-Hai file JSON dump, cùng schema:
+Hai file JSON dump, cùng schema (chi tiết dev vs build, thuật ngữ dump/baked:
+[`docs/SEA_LIVE_DATA.md`](docs/SEA_LIVE_DATA.md)):
 
 - `public/sea-live-dev.json` — **gitignored**, dump mặc định mỗi lần crawl.
   FE dev server fetch lúc runtime: crawl xong, refresh browser là thấy, không
@@ -198,6 +199,7 @@ chỗ lấy data ở `sea-live.ts`, join giữ nguyên.
 - [`docs/SEA_STRUCTURE.md`](docs/SEA_STRUCTURE.md) — cấu trúc event Tranh Bá Tứ Hải: map UI ↔ protocol
 - [`docs/LEADERBOARD_SPECS.md`](docs/LEADERBOARD_SPECS.md) — đặc tả BXH, cơ chế lọc guild/player canvas và tương tác UI/UX
 - [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md) — quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, derive ownership
+- [`docs/SEA_LIVE_DATA.md`](docs/SEA_LIVE_DATA.md) — các file JSON crawl sea: dump vs baked, dev dùng file nào, build/deploy dùng file nào
 - [`docs/STATS_MISMATCH.md`](docs/STATS_MISMATCH.md) — các lệch số UI vs game đã biết (backlog handoff)
 - `docs/planning/` — research notes và run capture (socket step learn, sea capture)
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol
