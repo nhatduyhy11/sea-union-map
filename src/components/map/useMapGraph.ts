@@ -1,18 +1,18 @@
 import { useMemo } from "react";
-import { factions } from "../data/factions";
-import { buildMapEdges, buildMapNodes, matchNodeIds } from "../domain/mapGraph";
+import { factions } from "../../data/factions";
+import { buildMapEdges, buildMapNodes, matchNodeIds } from "../../domain/mapGraph";
 import {
   nodeIdsByGuild,
   nodeIdsByPlayer,
   ownedIslands,
   routes,
   scoresByNode,
-} from "../domain/mapData";
-import { openIsland } from "../stores/commands";
-import { useMapView } from "../stores/mapView";
-import { useSelection } from "../stores/selection";
+} from "../../domain/mapData";
+import { openIsland } from "../../stores/commands";
+import { useMapView } from "../../stores/mapView";
+import { useSelection } from "../../stores/selection";
 import type { Edge } from "@xyflow/react";
-import type { AppNode } from "../types";
+import type { AppNode } from "../../types";
 
 // Nodes/edges cho canvas — derived từ mapView (lọc/debug) + selection
 // (chọn/ghim). Component nào cần graph tự subscribe hook này, thay vì App

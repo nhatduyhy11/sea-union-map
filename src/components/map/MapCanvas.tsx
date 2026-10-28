@@ -1,7 +1,7 @@
 import { ReactFlow, Background, Controls, useStore } from "@xyflow/react";
 import { mapBounds } from "../../data/map-layout";
 import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
-import { useMapGraph } from "../../hooks/useMapGraph";
+import { useMapGraph } from "./useMapGraph";
 import { useMapView } from "../../stores/mapView";
 import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
