@@ -31,7 +31,16 @@ interface SeaLiveDump {
   factionGuilds: Record<string, [number, number][]>;
   guildNames: Record<string, string>;
   guildRoster: Record<string, string>;
-  briefs: Record<string, { name: string; guildId?: string; guild?: string }>;
+  briefs: Record<
+    string,
+    {
+      name: string;
+      guildId?: string;
+      guild?: string;
+      power?: number;
+      server?: number;
+    }
+  >;
   baseDir: Record<string, string>;
 }
 
@@ -126,6 +135,8 @@ export const contributions: Contribution[] = dump.nodeRows.flatMap(
         faction,
         guild: brief?.guild,
         guildId: brief?.guildId ?? dump.guildRoster[playerId],
+        power: brief?.power,
+        server: brief?.server,
         score,
       },
     ];
@@ -146,6 +157,8 @@ export const playerBoard: (ServerPlayerRow & { faction: string })[] =
         name: brief?.name ?? `#${playerId}`,
         faction,
         guild: brief?.guild,
+        power: brief?.power,
+        server: brief?.server,
         score,
       },
     ];

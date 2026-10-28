@@ -340,3 +340,63 @@ test("Server faction board uses server guild scores; members derive from rows", 
     [["Không guild", 500, 1]]
   );
 });
+
+test("Faction board calculates guild power and supports sorting by power or score", () => {
+  const live: Contribution[] = [
+    {
+      nodeId: "1-1",
+      playerId: "p1",
+      name: "P1",
+      faction: "a",
+      guild: "HighPowerLowScore",
+      guildId: "g1",
+      score: 100,
+      power: 30_000_000,
+      server: 517,
+    },
+    {
+      nodeId: "1-1",
+      playerId: "p2",
+      name: "P2",
+      faction: "a",
+      guild: "LowPowerHighScore",
+      guildId: "g2",
+      score: 1000,
+      power: 5_000_000,
+      server: 517,
+    },
+  ];
+  const serverGuilds = {
+    a: [
+      { guildId: "g2", name: "LowPowerHighScore", score: 1000 },
+      { guildId: "g1", name: "HighPowerLowScore", score: 100 },
+    ],
+  };
+
+  // 1. Default: sort by power
+  const boardPower = buildFactionBoard(live, factions, islands, serverGuilds);
+  const factionA = boardPower.find((f) => f.id === "a");
+  assert.ok(factionA);
+  assert.equal(factionA.guilds[0].guild, "HighPowerLowScore");
+  assert.equal(factionA.guilds[0].power, 30_000_000);
+  assert.equal(factionA.guilds[1].guild, "LowPowerHighScore");
+  assert.equal(factionA.guilds[1].power, 5_000_000);
+
+  // 2. Sort by score
+  const boardScore = buildFactionBoard(
+    live,
+    factions,
+    islands,
+    serverGuilds,
+    "score"
+  );
+  const factionAScore = boardScore.find((f) => f.id === "a");
+  assert.ok(factionAScore);
+  assert.equal(factionAScore.guilds[0].guild, "LowPowerHighScore");
+  assert.equal(factionAScore.guilds[1].guild, "HighPowerLowScore");
+
+  // 3. Player power and server preserved
+  const players = playersFromContributions(live);
+  assert.equal(players[0].power, 30_000_000);
+  assert.equal(players[0].server, 517);
+});

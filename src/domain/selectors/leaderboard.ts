@@ -70,10 +70,11 @@ export function buildFactionBoard(
   contributions: Contribution[],
   factions: Faction[],
   islands: Island[],
-  serverGuilds?: Record<string, ServerGuildRow[]>
+  serverGuilds?: Record<string, ServerGuildRow[]>,
+  sortBy: "power" | "score" = "power"
 ): FactionBoardEntry[] {
   if (!serverGuilds || Object.keys(serverGuilds).length === 0)
-    return buildFactionBoardComputed(contributions, factions, islands);
+    return buildFactionBoardComputed(contributions, factions, islands, sortBy);
   return factions
     .map((faction) => {
       const rows = serverGuilds[faction.id] ?? [];
@@ -93,29 +94,35 @@ export function buildFactionBoard(
         players: number,
         nodes: Set<string>,
         memberList: GuildMember[],
-        score: number
+        score: number,
+        power: number
       ): FactionBoardEntry["guilds"][number] => ({
         guild,
         score,
         players,
         nodes: nodes.size,
         members: memberList.sort((a, b) => b.score - a.score),
+        power,
       });
 
       const buildBucket = (guildKey: string, bucketMembers: Player[]) => {
         const nodes = new Set<string>();
         const memberList: GuildMember[] = [];
         let score = 0;
+        let power = 0;
         for (const player of bucketMembers) {
           const playerScore = scoreByPlayer.get(player.id) ?? 0;
           const allocations = playerAllocations(player.id, contributions);
           score += playerScore;
+          if (player.power) power += player.power;
           for (const allocation of allocations) nodes.add(allocation.nodeId);
           memberList.push({
             id: player.id,
             name: player.name,
             score: playerScore,
             nodes: allocations.length,
+            power: player.power,
+            server: player.server,
           });
         }
         return {
@@ -124,6 +131,7 @@ export function buildFactionBoard(
           memberList,
           score,
           count: bucketMembers.length,
+          power,
         };
       };
 
@@ -139,7 +147,8 @@ export function buildFactionBoard(
           bucket.count,
           bucket.nodes,
           bucket.memberList,
-          row.score
+          row.score,
+          bucket.power
         );
       });
       const strays = members.filter(
@@ -155,14 +164,21 @@ export function buildFactionBoard(
               bucket.count,
               bucket.nodes,
               bucket.memberList,
-              bucket.score
+              bucket.score,
+              bucket.power
             );
           })()
         );
+      const sortedGuilds = [...guilds].sort((a, b) =>
+        sortBy === "power"
+          ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
+          : b.score - a.score
+      );
+
       return {
         ...faction,
         islands: islands.filter((node) => node.owner === faction.id).length,
-        guilds,
+        guilds: sortedGuilds,
         score: rows.reduce((total, row) => total + row.score, 0),
       };
     })
@@ -173,7 +189,8 @@ export function buildFactionBoard(
 function buildFactionBoardComputed(
   contributions: Contribution[],
   factions: Faction[],
-  islands: Island[]
+  islands: Island[],
+  sortBy: "power" | "score" = "power"
 ): FactionBoardEntry[] {
   const players = playersFromContributions(contributions);
   const scoreByPlayer = new Map<string, number>();
@@ -192,19 +209,27 @@ function buildFactionBoardComputed(
           players: number;
           nodes: Set<string>;
           members: GuildMember[];
+          power: number;
         }
       >();
       for (const player of members) {
         const guild = player.guild ?? "Không guild";
         let entry = guilds.get(guild);
         if (!entry) {
-          entry = { score: 0, players: 0, nodes: new Set(), members: [] };
+          entry = {
+            score: 0,
+            players: 0,
+            nodes: new Set(),
+            members: [],
+            power: 0,
+          };
           guilds.set(guild, entry);
         }
         const score = scoreByPlayer.get(player.id) ?? 0;
         const allocations = playerAllocations(player.id, contributions);
         entry.score += score;
         entry.players += 1;
+        if (player.power) entry.power += player.power;
         for (const allocation of allocations)
           entry.nodes.add(allocation.nodeId);
         entry.members.push({
@@ -212,6 +237,8 @@ function buildFactionBoardComputed(
           name: player.name,
           score,
           nodes: allocations.length,
+          power: player.power,
+          server: player.server,
         });
       }
       return {
@@ -224,8 +251,13 @@ function buildFactionBoardComputed(
             players: entry.players,
             nodes: entry.nodes.size,
             members: entry.members.sort((a, b) => b.score - a.score),
+            power: entry.power,
           }))
-          .sort((a, b) => b.score - a.score),
+          .sort((a, b) =>
+            sortBy === "power"
+              ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
+              : b.score - a.score
+          ),
         score: members.reduce(
           (total, player) => total + (scoreByPlayer.get(player.id) ?? 0),
           0

@@ -35,8 +35,16 @@ export function playersFromContributions(
   contributions: Contribution[]
 ): Player[] {
   const seen = new Map<string, Player>();
-  for (const { playerId, name, faction, guild, guildId } of contributions)
+  for (const { playerId, name, faction, guild, guildId, power, server } of contributions)
     if (!seen.has(playerId))
-      seen.set(playerId, { id: playerId, name, faction, guild, guildId });
+      seen.set(playerId, {
+        id: playerId,
+        name,
+        faction,
+        guild,
+        guildId,
+        power,
+        server,
+      });
   return [...seen.values()];
 }

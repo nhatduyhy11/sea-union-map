@@ -57,6 +57,8 @@ export interface Player {
   // Guild id (from the dump briefs) — server guild rows (dump factionGuilds) are keyed
   // by id, so the faction board matches members through it.
   guildId?: string;
+  power?: number;
+  server?: number;
 }
 
 // One row of a node's player leaderboard (SEA_STRUCTURE.md §3.7, top-N per
@@ -70,6 +72,8 @@ export interface Contribution {
   guild?: string;
   guildId?: string;
   score: number;
+  power?: number;
+  server?: number;
 }
 
 // One row of the server's global player board ("BXH điểm", dump playerBoard):
@@ -82,6 +86,8 @@ export interface ServerPlayerRow {
   faction: string | null;
   guild?: string;
   score: number;
+  power?: number;
+  server?: number;
 }
 
 // One row of the server's guild-score roster ("Tổng quan phe", dump factionGuilds):
@@ -108,6 +114,7 @@ export interface GuildScore {
   nodes: number;
   // Thành viên sort theo điểm — dữ liệu cho drill-down guild → thành viên.
   members: GuildMember[];
+  power?: number;
 }
 
 export interface GuildMember {
@@ -115,6 +122,8 @@ export interface GuildMember {
   name: string;
   score: number;
   nodes: number;
+  power?: number;
+  server?: number;
 }
 
 // Filter canvas theo guild/player — null = all. Guild dùng tên làm id

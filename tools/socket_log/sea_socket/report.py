@@ -21,7 +21,7 @@ Nội dung dump (key → nguồn):
                    không có member nào được brief thì thiếu tên)
 - ``guildRoster`` ← ``map-snapshot.json`` f4: playerId → guildId (mapping đầy
                    đủ 115 guild độc lập với brief — cứu player bị refuse brief)
-- ``briefs``     ← ``players.jsonl``: playerId → tên + guild (+guildId)
+- ``briefs``     ← ``players.jsonl``: playerId → tên + guild (+guildId, +power, +server)
 - ``baseDir``    ← tên 4 đảo base → hướng trên layout (specs/map-*.PNG)
 - ``snapshotAt`` ← ``map-snapshot.json``: logged_at (nếu có)
 
@@ -138,6 +138,10 @@ def main() -> None:
                 guild_names.setdefault(str(p["guild_id"]), p.get("guild_name"))
             if p.get("guild_name"):
                 entry["guild"] = p["guild_name"]
+            if p.get("power") is not None:
+                entry["power"] = p["power"]
+            if p.get("server") is not None:
+                entry["server"] = p["server"]
             briefs[p["id"]] = entry
     guild_names = {gid: name for gid, name in guild_names.items() if name}
     guild_names.update(guild_brief_names(args.crawl))

@@ -17,6 +17,28 @@
   color: #fff;
 }
 
+.sortBar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -8px;
+  margin-bottom: 12px;
+}
+
+.sortOption {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 9px;
+  color: #8b9aa4;
+  cursor: pointer;
+  user-select: none;
+}
+
+.sortOption input {
+  margin: 0;
+  accent-color: #0d8a65;
+}
+
 .factionCard {
   display: flex;
   align-items: center;

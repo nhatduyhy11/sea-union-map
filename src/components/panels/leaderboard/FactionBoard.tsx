@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { compact, number } from "../../../utils/format";
 import { toggleFactionView } from "../../../stores/commands";
@@ -17,7 +17,20 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   // Sub-tabs mirror the game's bottom row: "chung" + one tab per faction.
   // Thuần view — không đụng canvas; state local nên tự reset khi rời board.
   const [focus, setFocus] = useState<string | null>(null);
-  const faction = factions.find((entry) => entry.id === focus);
+  const [sortByScore, setSortByScore] = useState(false);
+
+  const displayFactions = useMemo(() => {
+    return factions.map((entry) => ({
+      ...entry,
+      guilds: [...entry.guilds].sort((a, b) =>
+        sortByScore
+          ? b.score - a.score
+          : (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
+      ),
+    }));
+  }, [factions, sortByScore]);
+
+  const faction = displayFactions.find((entry) => entry.id === focus);
   return (
     <>
       <h2>Xếp hạng phe</h2>
@@ -39,6 +52,19 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
           </button>
         ))}
       </div>
+      <div className={styles.sortBar}>
+        <label
+          className={styles.sortOption}
+          title="Bật: sắp xếp guild theo Điểm ST. Tắt: mặc định sắp xếp theo Lực chiến (LC)."
+        >
+          <input
+            type="checkbox"
+            checked={sortByScore}
+            onChange={(event) => setSortByScore(event.target.checked)}
+          />
+          Sort theo Điểm
+        </label>
+      </div>
       {faction ? (
         <SingleFaction
           faction={faction}
@@ -47,7 +73,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
           selectedMember={selectedMember}
         />
       ) : filterMode ? (
-        factions.map((entry, index) => (
+        displayFactions.map((entry, index) => (
           <details
             key={entry.id}
             className={shared.item}
@@ -79,7 +105,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
           </details>
         ))
       ) : (
-        factions.map((entry, index) => (
+        displayFactions.map((entry, index) => (
           <details key={entry.id} className={shared.item}>
             <summary className={shared.summary}>
               <FactionSummary entry={entry} index={index} />

@@ -1,5 +1,5 @@
 import { ChevronRight, Users } from "lucide-react";
-import { number } from "../../../utils/format";
+import { compact, number } from "../../../utils/format";
 import { PlayerIdentity } from "../../shared/PlayerIdentity";
 import { selectGuildMember, toggleGuildFilter } from "../../../stores/commands";
 import styles from "./GuildAccordion.module.css";
@@ -44,9 +44,17 @@ export function GuildAccordion({
 }
 
 export function GuildLabel({ guild }: { guild: GuildScore }) {
+  const powerTag =
+    guild.power !== undefined && guild.power > 0
+      ? ` [${compact(guild.power)}]`
+      : "";
   return (
     <span className={styles.guildLabel}>
-      <Users size={11} /> {guild.guild}
+      <Users size={11} />
+      <span>
+        {guild.guild}
+        {powerTag}
+      </span>
       <small>
         · {guild.players} người · {guild.nodes} đảo
       </small>
