@@ -41,12 +41,23 @@ Usage:
     uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/sea-crawl-v4 \
         --out src/data/sea-live.json
+    # Snapshot lịch sử theo ngày event → src/data/snapshots/<YYMMDD>/<server>.json
+    uv run python tools/socket_log/sea_socket/report.py \
+        --crawl .tmp/sea-crawl/sea-crawl-v4 --snapshot [--server 590]
+
+Snapshot (``--snapshot``) — ngày quy theo thời điểm CHẠY SCRIPT (giờ VN):
+trong khung chiến trường 10:00~22:00 là ngày hôm đó; từ 22:00 tới trước
+10:00 hôm sau (ngoài khung) tính là ngày trước. Cùng rule với FE
+``src/data/eventCalendar.ts``. ``--server`` mặc định 517 — TẠM THỜI: crawler
+chưa ghi cụm vào run, dump cụm khác thì truyền ``--server`` hoặc đổi tên file
+tay sau khi dump.
 """
 
 import argparse
 import json
 import re
 import sys
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -56,6 +67,26 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_BASELINE = Path(__file__).resolve().parent / "campgvg.json"
 DEV_DUMP_OUT = REPO_ROOT / "public/sea-live-dev.json"
+SNAPSHOT_ROOT = REPO_ROOT / "src/data/snapshots"
+# Tạm thời mặc định cụm 517 — cụm khác chỉnh tay (--server / đổi tên file).
+DEFAULT_SERVER = "517"
+VN_TZ = timezone(timedelta(hours=7))
+BATTLE_OPEN_HOUR = 10
+
+
+def event_day(at: datetime | None = None) -> str:
+    """Day key YYMMDD của snapshot: ngày lịch của (t − 10h) theo giờ VN.
+
+    22:00 → trước 10:00 hôm sau quy về ngày trước (ngoài khung chiến trường);
+    10:00~22:00 là ngày hôm đó.
+    """
+    at = (at or datetime.now(VN_TZ)).astimezone(VN_TZ)
+    return (at - timedelta(hours=BATTLE_OPEN_HOUR)).strftime("%y%m%d")
+
+
+def snapshot_out(server: str = DEFAULT_SERVER,
+                 at: datetime | None = None) -> Path:
+    return SNAPSHOT_ROOT / event_day(at) / f"{server}.json"
 
 # game faction id → map direction — read off the 4 base rows (ids 1..4) whose
 # corner positions identify them on the spec screenshots.
@@ -223,6 +254,7 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
         "briefs": {str(p): b for p, b in briefs.items()},
         "baseDir": BASE_DIR,
     }
+    out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
@@ -242,10 +274,18 @@ def main() -> None:
     parser.add_argument("--config", default=CONFIG_BASELINE, type=Path,
                         help="Baseline CampGVG (mặc định campgvg.json cạnh module "
                              "này, đã committed; truyền file extract riêng khi so drift)")
-    parser.add_argument("--out", default=DEV_DUMP_OUT, type=Path,
+    target = parser.add_mutually_exclusive_group()
+    target.add_argument("--out", default=DEV_DUMP_OUT, type=Path,
                         help="Đích JSON cho FE (mặc định public/sea-live-dev.json)")
+    target.add_argument("--snapshot", action="store_true",
+                        help="Ghi snapshot lịch sử vào src/data/snapshots/<YYMMDD>/"
+                             "<server>.json (ngày theo rule 10:00~22:00)")
+    parser.add_argument("--server", default=DEFAULT_SERVER,
+                        help="Cụm server của run khi --snapshot (mặc định 517 — "
+                             "tạm thời, cụm khác chỉnh tay)")
     args = parser.parse_args()
-    dump_run(args.crawl, args.config, args.out)
+    out = snapshot_out(args.server) if args.snapshot else args.out
+    dump_run(args.crawl, args.config, out)
 
 
 if __name__ == "__main__":
