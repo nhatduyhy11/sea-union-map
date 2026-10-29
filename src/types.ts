@@ -163,6 +163,8 @@ export interface FactionBoardEntry extends Faction {
 // into it, with the per-faction breakdown ready for the expanded row.
 export interface NodeBoardEntry {
   island: Island;
+  // Phe đang chiếm (undefined = chưa ai chiếm) — tô màu row.
+  owner?: Faction;
   total: number;
   scores: FactionScore[];
   attackers: Attacker[];

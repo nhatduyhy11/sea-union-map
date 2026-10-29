@@ -56,6 +56,7 @@ export function buildNodeBoard(
       const attackers = attackersForNode(island.id, contributions, factions);
       return {
         island,
+        owner: factions.find((faction) => faction.id === island.owner),
         scores,
         total: scores.reduce((sum, faction) => sum + faction.score, 0),
         attackers,

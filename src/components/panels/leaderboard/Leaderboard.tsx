@@ -54,7 +54,7 @@ export function Leaderboard() {
       ) : board === "player" ? (
         <PlayerBoard players={leaderboard} />
       ) : (
-        <NodeBoard nodes={nodeBoard} />
+        <NodeBoard nodes={nodeBoard} factions={factionBoard} />
       )}
     </div>
   );
