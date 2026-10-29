@@ -1,3 +1,3 @@
 export { buildServerLeaderboard } from "./leaderboard";
 export { buildNodeBoard } from "./nodeBoard";
-export { buildFactionBoard } from "./factionBoard";
+export { buildFactionBoard, NO_GUILD } from "./factionBoard";

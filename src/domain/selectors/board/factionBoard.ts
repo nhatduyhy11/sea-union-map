@@ -9,138 +9,63 @@ import type {
 } from "../../../types";
 import { playerAllocations, playersFromContributions } from "../nodeScores";
 
+type GuildEntry = FactionBoardEntry["guilds"][number];
+type SortBy = "power" | "score";
+
+// Bucket gộp player không guild (hoặc guildId không có row server).
+export const NO_GUILD = "Không guild";
+
 // Faction board ("BXH Phe"). Live: guild rows + điểm guild là truth server
 // (bảng "Tổng quan phe" trong dump; tổng guild khớp per-faction node-state exact);
 // duy nhất member list khi expand guild mới derive từ node boards + briefs.
 // Thứ tự phe giữ nguyên thứ tự cố định của `factions` (không sort theo điểm).
-// Member match qua guildId (brief) — player không brief thì rơi "Không guild".
+// Member match qua guildId (brief) — player không brief thì rơi NO_GUILD.
 // Không có server guild data: path cũ tự tính từ contributions.
 export function buildFactionBoard(
   contributions: Contribution[],
   factions: Faction[],
   islands: Island[],
   serverGuilds?: Record<string, ServerGuildRow[]>,
-  sortBy: "power" | "score" = "power"
+  sortBy: SortBy = "power"
 ): FactionBoardEntry[] {
   if (!serverGuilds || Object.keys(serverGuilds).length === 0)
     return buildFactionBoardComputed(contributions, factions, islands, sortBy);
+  const players = playersFromContributions(contributions);
   return factions.map((faction) => {
     const rows = serverGuilds[faction.id] ?? [];
-    const members = playersFromContributions(contributions).filter(
-      (player) => player.faction === faction.id
-    );
-    const scoreByPlayer = new Map<string, number>();
-    for (const entry of contributions)
-      if (entry.faction === faction.id)
-        scoreByPlayer.set(
-          entry.playerId,
-          (scoreByPlayer.get(entry.playerId) ?? 0) + entry.score
-        );
+    const members = players.filter((player) => player.faction === faction.id);
+    const scores = scoreByPlayer(contributions, faction.id);
 
     // id = guildId từ game (định danh unique sẵn, hai guild cùng tên vẫn
-    // tách biệt); name = display name. "Không guild" là bucket gộp strays.
-    const label = (
-      id: string,
-      name: string,
-      players: number,
-      nodes: Set<string>,
-      memberList: GuildMember[],
-      score: number,
-      power: number
-    ): FactionBoardEntry["guilds"][number] => ({
-      id,
-      name,
-      guild: id,
-      score,
-      players,
-      nodes: nodes.size,
-      members: memberList.sort((a, b) => b.score - a.score),
-      power,
-    });
-
-    const buildBucket = (guildKey: string, bucketMembers: Player[]) => {
-      const nodes = new Set<string>();
-      const memberList: GuildMember[] = [];
-      let score = 0;
-      let power = 0;
-      for (const player of bucketMembers) {
-        const playerScore = scoreByPlayer.get(player.id) ?? 0;
-        const allocations = playerAllocations(player.id, contributions);
-        score += playerScore;
-        if (player.power) power += player.power;
-        for (const allocation of allocations) nodes.add(allocation.nodeId);
-        memberList.push({
-          id: player.id,
-          name: player.name,
-          score: playerScore,
-          nodes: allocations.length,
-          power: player.power,
-          server: player.server,
-        });
-      }
-      return {
-        guildKey,
-        nodes,
-        memberList,
-        score,
-        count: bucketMembers.length,
-        power,
-      };
-    };
-
+    // tách biệt); name = display name.
     const knownIds = new Set(rows.map((row) => row.guildId));
-    const guildEntries = rows.map((row) => {
-      const bucket = buildBucket(
+    const guilds: GuildEntry[] = rows.map((row) => {
+      const bucket = buildGuild(
+        row.guildId,
         row.name,
-        members.filter((player) => player.guildId === row.guildId)
+        members.filter((player) => player.guildId === row.guildId),
+        scores,
+        contributions
       );
       // Điểm guild là server truth — bucket score chỉ dùng cho member list.
       // Power ưu tiên row (guild brief), thiếu thì cộng member trong bucket.
-      return label(
-        row.guildId,
-        row.name,
-        bucket.count,
-        bucket.nodes,
-        bucket.memberList,
-        row.score,
-        row.power ?? bucket.power
-      );
+      return { ...bucket, score: row.score, power: row.power ?? bucket.power };
     });
     const strays = members.filter(
       (player) => !player.guildId || !knownIds.has(player.guildId)
     );
-    const guilds = [...guildEntries];
     if (strays.length)
       guilds.push(
-        (() => {
-          const bucket = buildBucket("Không guild", strays);
-          return label(
-            "Không guild",
-            "Không guild",
-            bucket.count,
-            bucket.nodes,
-            bucket.memberList,
-            bucket.score,
-            bucket.power
-          );
-        })()
+        buildGuild(NO_GUILD, NO_GUILD, strays, scores, contributions)
       );
-    const sortedGuilds = [...guilds].sort((a, b) =>
-      sortBy === "power"
-        ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
-        : b.score - a.score
-    );
 
-    return {
-      ...faction,
-      islands: islands.filter((node) => node.owner === faction.id).length,
-      guilds: sortedGuilds,
-      score: rows.reduce((total, row) => total + row.score, 0),
-      power: sortedGuilds.reduce(
-        (total, guild) => total + (guild.power ?? 0),
-        0
-      ),
-    };
+    return factionEntry(
+      faction,
+      islands,
+      guilds,
+      rows.reduce((total, row) => total + row.score, 0),
+      sortBy
+    );
   });
 }
 
@@ -149,86 +74,109 @@ function buildFactionBoardComputed(
   contributions: Contribution[],
   factions: Faction[],
   islands: Island[],
-  sortBy: "power" | "score" = "power"
+  sortBy: SortBy
 ): FactionBoardEntry[] {
   const players = playersFromContributions(contributions);
-  const scoreByPlayer = new Map<string, number>();
-  for (const entry of contributions)
-    scoreByPlayer.set(
-      entry.playerId,
-      (scoreByPlayer.get(entry.playerId) ?? 0) + entry.score
-    );
+  const scores = scoreByPlayer(contributions);
   return factions.map((faction) => {
     const members = players.filter((player) => player.faction === faction.id);
-    const guilds = new Map<
-      string,
-      {
-        name: string;
-        score: number;
-        players: number;
-        nodes: Set<string>;
-        members: GuildMember[];
-        power: number;
-      }
-    >();
+    const groups = new Map<string, { name: string; players: Player[] }>();
     for (const player of members) {
       // Demo path không có server guild rows — rơi về tên guild khi player
-      // thiếu guildId; "Không guild" gộp mọi player trống cả hai.
-      const guild = player.guildId ?? player.guild ?? "Không guild";
-      let entry = guilds.get(guild);
-      if (!entry) {
-        entry = {
-          name: player.guild ?? guild,
-          score: 0,
-          players: 0,
-          nodes: new Set(),
-          members: [],
-          power: 0,
-        };
-        guilds.set(guild, entry);
-      }
-      const score = scoreByPlayer.get(player.id) ?? 0;
-      const allocations = playerAllocations(player.id, contributions);
-      entry.score += score;
-      entry.players += 1;
-      if (player.power) entry.power += player.power;
-      for (const allocation of allocations) entry.nodes.add(allocation.nodeId);
-      entry.members.push({
-        id: player.id,
-        name: player.name,
-        score,
-        nodes: allocations.length,
-        power: player.power,
-        server: player.server,
-      });
+      // thiếu guildId; NO_GUILD gộp mọi player trống cả hai.
+      const key = player.guildId ?? player.guild ?? NO_GUILD;
+      const group = groups.get(key);
+      if (group) group.players.push(player);
+      else groups.set(key, { name: player.guild ?? key, players: [player] });
     }
-    return {
-      ...faction,
-      islands: islands.filter((node) => node.owner === faction.id).length,
-      guilds: [...guilds]
-        .map(([guild, entry]) => ({
-          id: guild,
-          name: entry.name,
-          guild,
-          score: entry.score,
-          players: entry.players,
-          nodes: entry.nodes.size,
-          members: entry.members.sort((a, b) => b.score - a.score),
-          power: entry.power,
-        }))
-        .sort((a, b) =>
-          sortBy === "power"
-            ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
-            : b.score - a.score
-        ),
-      score: members.reduce(
-        (total, player) => total + (scoreByPlayer.get(player.id) ?? 0),
+    const guilds = [...groups].map(([key, group]) =>
+      buildGuild(key, group.name, group.players, scores, contributions)
+    );
+    return factionEntry(
+      faction,
+      islands,
+      guilds,
+      members.reduce(
+        (total, player) => total + (scores.get(player.id) ?? 0),
         0
       ),
-      power: [...guilds.values()].reduce(
-        (total, entry) => total + entry.power,
-        0
-      ),
-    };
+      sortBy
+    );
   });
+}
+
+// Tổng điểm mỗi player; có factionId thì chỉ tính contributions của phe đó.
+function scoreByPlayer(
+  contributions: Contribution[],
+  factionId?: string
+): Map<string, number> {
+  const scores = new Map<string, number>();
+  for (const entry of contributions)
+    if (!factionId || entry.faction === factionId)
+      scores.set(
+        entry.playerId,
+        (scores.get(entry.playerId) ?? 0) + entry.score
+      );
+  return scores;
+}
+
+// Gộp players thành một guild entry: score/power cộng từ member, nodes đếm
+// node unique, member list sort theo điểm giảm dần.
+function buildGuild(
+  id: string,
+  name: string,
+  players: Player[],
+  scores: Map<string, number>,
+  contributions: Contribution[]
+): GuildEntry {
+  const nodes = new Set<string>();
+  const members: GuildMember[] = [];
+  let score = 0;
+  let power = 0;
+  for (const player of players) {
+    const playerScore = scores.get(player.id) ?? 0;
+    const allocations = playerAllocations(player.id, contributions);
+    score += playerScore;
+    if (player.power) power += player.power;
+    for (const allocation of allocations) nodes.add(allocation.nodeId);
+    members.push({
+      id: player.id,
+      name: player.name,
+      score: playerScore,
+      nodes: allocations.length,
+      power: player.power,
+      server: player.server,
+    });
+  }
+  return {
+    id,
+    name,
+    guild: id,
+    score,
+    players: players.length,
+    nodes: nodes.size,
+    members: members.sort((a, b) => b.score - a.score),
+    power,
+  };
+}
+
+function factionEntry(
+  faction: Faction,
+  islands: Island[],
+  guilds: GuildEntry[],
+  score: number,
+  sortBy: SortBy
+): FactionBoardEntry {
+  const sorted = [...guilds].sort((a, b) =>
+    sortBy === "power"
+      ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
+      : b.score - a.score
+  );
+  return {
+    ...faction,
+    islands: islands.filter((node) => node.owner === faction.id).length,
+    guilds: sorted,
+    score,
+    power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),
+  };
 }
