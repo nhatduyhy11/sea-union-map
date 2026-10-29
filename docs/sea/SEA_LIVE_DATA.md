@@ -28,8 +28,9 @@ Pipeline chuẩn hóa 4 bước (chi tiết ở [`README.BE.md`](../../README.BE
 | `public/sea-live-dev.json` | **gitignored** | `crawler.py --dump` (mặc định bật, mỗi lần crawl) hoặc `report.py` default | `fetch` lúc dev server chạy | Dump "xem trước", refresh browser là thấy |
 | `dist/sea-live-dev.json` | gitignored (cả `dist/`) | Vite copy nguyên thư mục `public/` lúc build | không ai đọc | Được ship lên Pages nhưng **chết** — code build không fetch. Vô hại, có thể bỏ bằng cách xoá file trong `public/` trước khi build |
 | `src/data/sea-live.261027-*.json` | committed | copy tay | **không có code nào import** | Snapshot thủ công theo thời điểm, chỉ để lưu lịch sử |
+| `src/data/snapshots/<YYMMDD>/<server>.json` | committed | `report.py --snapshot [--server N]` | `import.meta.glob` lazy trong `src/data/snapshots.ts` | Snapshot lịch sử theo ngày event × cụm — thanh ngày dưới canvas + server switcher |
 
-Chỉ `src/data/sea-live.json` được import. Chunk `sea-data` (tách trong `vite.config.ts`
+`src/data/sea-live.json` là bản live (ngày hiện tại, cụm 517) import tĩnh; snapshot lịch sử import lazy (mục dưới). Chunk `sea-data` (tách trong `vite.config.ts`
 qua `manualChunks`) chính là bản baked này.
 
 ## Dev local dùng cái nào?
@@ -73,3 +74,28 @@ chốt → report.py --crawl <run> --out src/data/sea-live.json         # bake b
 Cập nhật data trên bản deploy = 3 bước cuối; refresh browser không đủ (khác
 dev). Các lệch số đã biết giữa bản baked và UI game xem
 [STATS_MISMATCH.md](STATS_MISMATCH.md).
+
+## Snapshot lịch sử theo ngày × cụm
+
+Layout: `src/data/snapshots/<YYMMDD>/<server>.json` (vd `261028/590.json`),
+cùng format dump. `src/data/snapshots.ts` quét bằng `import.meta.glob` — thêm
+file là UI tự thấy (không manifest), mỗi file là một chunk lazy, chỉ tải khi
+người dùng chọn ngày/cụm đó.
+
+```
+uv run python tools/socket_log/sea_socket/report.py --crawl <run> --snapshot [--server 590]
+```
+
+- **Quy ngày theo thời điểm chạy script (giờ VN):** trong khung chiến trường
+  10:00~22:00 → ngày hôm đó; từ 22:00 tới trước 10:00 hôm sau → ngày trước.
+  Tương đương ngày lịch của (t − 10h). Rule nằm ở `report.py::event_day` và
+  `src/data/eventCalendar.ts::eventDayOf` — sửa thì sửa cả hai.
+- **`--server` mặc định 517 — TẠM THỜI:** crawler chưa ghi cụm vào run; dump
+  cụm khác thì truyền `--server` hoặc đổi tên file tay sau khi dump.
+- **UI:** server switcher cạnh tiêu đề "Tranh bá Tứ Hải" (danh sách cụm lấy từ
+  snapshot); thanh 7 ngày event dưới legend 4 phe. Ngày hiện tại + cụm 517 =
+  live (`sea-live.json`); cụm khác ở ngày hiện tại chưa hỗ trợ → fallback
+  snapshot gần nhất của cụm đó. Ngày đã qua thiếu snapshot: nút flat, hover
+  "Lịch sử lưu bị thiếu", click → toast lỗi. Ngày chưa tới: nút xám, disable.
+- Event 2026 thiếu snapshot 26 + 27 (không kịp chụp); `sea-live.261027-*.json`
+  ở trên chưa đưa vào thư mục snapshot.

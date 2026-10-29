@@ -67,41 +67,11 @@ Ghi 2026-10-28 (run `.tmp/sea-crawl/sea-crawl-20261028-192132`, profile p545).
     không (inactive cả account hay chỉ guild).
   - Tạm thời lấp tay: `brief_backfill.py --run <run> --guilds` rồi re-dump.
 
----
+### 1c. Crawler chưa ghi cụm server vào run
 
-## II. Canvas & Map
-
-### 2. Thanh Snapshot lịch sử các ngày event dưới label 4 phe của canvas
-
-Hiển thị các mốc lịch sử diễn ra sự kiện để người dùng có thể xem lại diễn biến bản đồ qua các ngày.
-
-- **Vị trí**: Đặt ở phía dưới thanh nhãn màu 4 phe của canvas (`src/components/map/map-footer/FactionLegend.tsx`).
-- **Giao diện**: Dãy nút thể hiện các ngày snapshot trong event, ví dụ: `[26]`, `[27]`, ...
-- **Quy tắc hiển thị**:
-  - Chỉ hiển thị nút của những ngày **đã qua mốc 22:00** (thời điểm kết thúc lượt đánh trong ngày của game). Các ngày chưa tới hoặc chưa qua 22h sẽ không xuất hiện.
-- **Tương tác & Xử lý dữ liệu**:
-  - Khi click vào nút một ngày hợp lệ: nạp lại toàn bộ dữ liệu cũ (snapshot) của ngày đó vào tất cả các tab hiện tại trên UI (canvas, BXH phe, BXH cứ điểm, cá nhân, node details).
-  - Trạng thái nút: Nút của ngày đang được chọn sẽ sáng (active state) để báo hiệu đang xem snapshot lịch sử.
-  - Trường hợp không có dữ liệu: nếu click vào ngày không có data snapshot tương ứng, bắn Toast thông báo lỗi (Toast Error), nút không click được / không đổi trạng thái và không làm xáo trộn màn hình hiện tại.
-- **Chỗ sửa**:
-  - Thêm component SnapshotBar / cập nhật `src/components/map/map-footer/FactionLegend.tsx`.
-  - Store quản lý active snapshot date và logic load dữ liệu lịch sử từ các file `src/data/sea-live.<date>.*.json`.
-  - Tích hợp Toast notification cho trường hợp nạp dữ liệu thất bại.
-
----
-
-## III. Web UI & Layout
-
-### 3. Server Switcher trên Header (`[517]`, `[590]`...) — không có nút manual new
-
-Cho phép chuyển đổi nhanh dữ liệu hiển thị giữa các cụm server đã crawl.
-
-- **Vị trí**: Trên thanh header ứng dụng (`src/components/layout/AppHeader.tsx`).
-- **Giao diện**: Các nút bấm chuyển đổi mang tên/mã số từng server, ví dụ: `[517]`, `[590]`, `[643]`, `[777]`. Nút của server đang kích hoạt có style active riêng.
-- **Nguyên tắc kỹ thuật**: **KHÔNG CÓ NÚT TẠO MỚI THỦ CÔNG (manual new)** — vì toàn bộ logic lấy và bóc tách dữ liệu server được thực hiện manual bằng pipeline backend nội bộ, không expose API hay thao tác tạo server ra phía client.
-- **Hành vi**: Khi click vào một server button: chuyển đổi active server, load bộ dữ liệu tương ứng của server đó vào store và render lại toàn bộ giao diện (map layout, faction scores, leaderboards).
-- **Chỗ sửa**: `src/components/layout/AppHeader.tsx`, store quản lý server hiện tại (`useServerStore` hoặc tích hợp vào app state), data loader trong `src/data/sea-live.ts`.
-- **Phụ thuộc**: guild identity đa server đã hoàn tất theo hướng dùng `guildId` từ game (commit `c8c3fe1`).
+`report.py --snapshot` đang mặc định `--server 517`; crawl cụm khác phải chỉnh
+tay cờ `--server`. Hướng làm: crawler ghi cụm vào metadata run → `report.py`
+tự đọc, `--server` chỉ còn để override.
 
 ---
 
