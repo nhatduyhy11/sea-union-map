@@ -126,6 +126,18 @@ test("playerBoard keeps server top-200 order and joins brief names", () => {
   // đúng hợp đồng là #<id>, không được drop row.
   for (const row of playerBoard)
     if (row.name.startsWith("#")) assert.equal(row.name, `#${row.playerId}`);
+  // guildId cùng rule contribution: brief trước, fallback guildRoster.
+  const roster = raw.guildRoster as Record<string, string>;
+  const briefs = raw.briefs as Record<string, { guildId?: string }>;
+  for (const row of playerBoard)
+    assert.equal(
+      row.guildId,
+      briefs[row.playerId]?.guildId ?? roster[row.playerId]
+    );
+  assert.ok(
+    playerBoard.some((row) => row.guildId),
+    "có row mang guildId"
+  );
 });
 
 test("factionGuilds keys map to directions; scores sum to a plausible total", () => {

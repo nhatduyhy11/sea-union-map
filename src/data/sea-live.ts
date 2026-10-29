@@ -1,51 +1,19 @@
 // Adapter FE cho dữ liệu crawl live. Đầu vào là JSON dump (sea-live.json) —
-// script dump chỉ xuất JSON, không sinh file này. Join game-id → layout-id và
-// faction → hướng là code client: sửa tay được, unit test ở sea-live.test.ts.
-// Live totals sum the per-node boards, which the server caps at top-20 rows —
-// known deviations vs the game numbers live in docs/STATS_MISMATCH.md.
+// script dump chỉ xuất JSON, không sinh file này. File này chọn dump nào được
+// nạp; format ở sea-live/dump.ts, join game-id → layout-id và faction → hướng
+// ở sea-live/join.ts (code client: sửa tay được, unit test ở sea-live.test.ts).
 
 import raw from "./sea-live.json";
-import { layoutNodes, layoutRoutes } from "./map-layout";
-import type {
-  Contribution,
-  Island,
-  Route,
-  ServerGuildRow,
-  ServerPlayerRow,
-} from "../types";
+import type { SeaLiveDump } from "./sea-live/dump";
 
-// CampGVG (client config, id == server node id): tên node, loại, ngưỡng chiếm.
-interface CampRow {
-  name: string;
-  type: number;
-  pointRequire: number;
-}
-
-// Hình dạng file dump — key số đến đây là string (JSON). Snapshot lịch sử
-// (src/data/snapshots/) cùng format.
-export interface SeaLiveDump {
-  snapshotAt: string;
-  camp: Record<string, CampRow>;
-  owner: Record<string, number>;
-  nodeRows: [number, number, number, number][];
-  playerBoard: [number, number, number, number | null][];
-  factionGuilds: Record<string, [number, number][]>;
-  guildNames: Record<string, string>;
-  // Optional: dump cũ (trước khi parse guild brief f16) không có key này.
-  guildPower?: Record<string, number>;
-  guildRoster: Record<string, string>;
-  briefs: Record<
-    string,
-    {
-      name: string;
-      guildId?: string;
-      guild?: string;
-      power?: number;
-      server?: number;
-    }
-  >;
-  baseDir: Record<string, string>;
-}
+export type { CampRow, SeaLiveDump } from "./sea-live/dump";
+export {
+  buildLiveData,
+  displayNameOf,
+  layoutIdOf,
+  type LiveData,
+  type LivePlayerRow,
+} from "./sea-live/join";
 
 // Tuple fields cần downcast (JSON import infer number[][], không biết tuple).
 const bundledDump: SeaLiveDump = {
@@ -77,164 +45,3 @@ async function loadDevDump(): Promise<SeaLiveDump> {
 export const liveDump: SeaLiveDump = import.meta.env?.DEV
   ? await loadDevDump()
   : bundledDump;
-
-// Kết quả join một dump → model UI. Hàm thuần: đổi cụm/ngày là gọi lại với
-// dump khác (store dataset), không còn hằng module-level.
-export interface LiveData {
-  islands: Island[];
-  contributions: Contribution[];
-  playerBoard: (ServerPlayerRow & { faction: string })[];
-  factionGuilds: Record<string, ServerGuildRow[]>;
-  guildNames: Record<string, string>;
-  // game faction id (1..4) → hướng của base phe đó đang giữ.
-  factionDir: Record<number, string>;
-  routes: Route[];
-}
-
-// Prefix display id trong _name ("1-23Đảo Câu Cá" → "1-23") khớp layout id;
-// trung tâm "4-1…" là layout "4"; base (type 1) nối qua dump.baseDir.
-export function layoutIdOf(camp: CampRow): string | null {
-  if (camp.type === 1) return null;
-  if (camp.type === 5) return "4";
-  const match = camp.name.match(/(\d+-\d+)(?!.*\d+-\d+)/);
-  return match ? match[1] : null;
-}
-
-// Tên hiển thị: bỏ token display-id dính trong _name ("1-15Đảo Xích Đu" →
-// "Đảo Xích Đu", "Khu nghỉ dưỡng Trường Đảo 3-2" → "Khu nghỉ dưỡng Trường
-// Đảo") — UI tự ghép id riêng nên giữ nguyên sẽ thành "1-15 1-15Đảo…".
-export function displayNameOf(camp: CampRow): string {
-  if (camp.type === 1) return camp.name;
-  return camp.name
-    .replace(/\d+-\d+/, "")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-export function buildLiveData(dump: SeaLiveDump): LiveData {
-  const gameIdByLayout = new Map<string, number>();
-  const factionDir: Record<number, string> = {};
-  for (const [id, camp] of Object.entries(dump.camp)) {
-    const gameId = Number(id);
-    const layoutId = layoutIdOf(camp);
-    if (layoutId) gameIdByLayout.set(layoutId, gameId);
-    const dir = dump.baseDir[camp.name];
-    if (dir) {
-      gameIdByLayout.set(`base-${dir}`, gameId);
-      factionDir[dump.owner[id]] = dir;
-    }
-  }
-  const layoutIdByGame = new Map<number, string>();
-  for (const [layoutId, gameId] of gameIdByLayout)
-    layoutIdByGame.set(gameId, layoutId);
-
-  const islands: Island[] = layoutNodes.map((node) => {
-    const gameId = gameIdByLayout.get(node.id);
-    const camp = gameId !== undefined ? dump.camp[gameId] : undefined;
-    const ownerFaction = gameId !== undefined ? dump.owner[gameId] : undefined;
-    return {
-      ...node,
-      name: camp ? displayNameOf(camp) : node.name,
-      owner: node.base
-        ? (node.owner ?? null)
-        : ownerFaction
-          ? (factionDir[ownerFaction] ?? null)
-          : null,
-      claimThreshold: camp?.pointRequire ?? 1,
-    };
-  });
-
-  // Node-board rows (dump nodeRows; server cắt top-20/node):
-  // [gameNodeId, playerId, score, campId]. guildId: brief trước, fallback
-  // guildRoster — player bị server từ chối brief vẫn đúng guild.
-  const contributions: Contribution[] = dump.nodeRows.flatMap(
-    ([gameId, playerId, score, camp]) => {
-      const nodeId = layoutIdByGame.get(gameId);
-      const faction = factionDir[camp];
-      if (!nodeId || !faction) return [];
-      const brief = dump.briefs[playerId];
-      return [
-        {
-          nodeId,
-          playerId: String(playerId),
-          name: brief?.name ?? `#${playerId}`,
-          faction,
-          guild: brief?.guild,
-          guildId: brief?.guildId ?? dump.guildRoster[playerId],
-          power: brief?.power,
-          server: brief?.server,
-          score,
-        },
-      ];
-    }
-  );
-
-  // BXH điểm server (board 117, top-200): rank + điểm là truth, tên/phe ghép từ
-  // brief + factionDir. Row phe không xác định (mất base) bị bỏ — không render được.
-  const playerBoard: (ServerPlayerRow & { faction: string })[] =
-    dump.playerBoard.flatMap(([rank, playerId, score, camp]) => {
-      const faction = camp !== null ? (factionDir[camp] ?? null) : null;
-      if (!faction) return [];
-      const brief = dump.briefs[playerId];
-      return [
-        {
-          rank,
-          playerId: String(playerId),
-          name: brief?.name ?? `#${playerId}`,
-          faction,
-          guild: brief?.guild,
-          power: brief?.power,
-          server: brief?.server,
-          score,
-        },
-      ];
-    });
-
-  // guildId → lực chiến guild: ưu tiên guild brief server (dump guildPower, f16);
-  // dump cũ thiếu thì cộng power mọi player brief (guildId brief, fallback
-  // guildRoster) — chỉ phủ member đã được brief nên thấp hơn thật.
-  const guildPower = new Map<string, number>();
-  for (const [playerId, brief] of Object.entries(dump.briefs)) {
-    const guildId = brief.guildId ?? dump.guildRoster[playerId];
-    if (guildId && brief.power)
-      guildPower.set(guildId, (guildPower.get(guildId) ?? 0) + brief.power);
-  }
-  for (const [guildId, power] of Object.entries(dump.guildPower ?? {}))
-    guildPower.set(guildId, power);
-
-  // Guild scores server (dump factionGuilds — bảng "Tổng quan phe"), key theo direction FE.
-  // Guild thiếu tên (không member nào được brief) hiện #id — STATS_MISMATCH §5.1.
-  const factionGuilds: Record<string, ServerGuildRow[]> = Object.entries(
-    dump.factionGuilds
-  )
-    .flatMap(([fid, rows]) => {
-      const dir = factionDir[Number(fid)];
-      if (!dir) return [];
-      return [
-        [
-          dir,
-          rows.map(([guildId, score]) => ({
-            guildId: String(guildId),
-            name: dump.guildNames[String(guildId)] ?? `#${guildId}`,
-            score,
-            power: guildPower.get(String(guildId)),
-          })),
-        ] as const,
-      ];
-    })
-    .reduce<Record<string, ServerGuildRow[]>>(
-      (acc, [dir, rows]) => ({ ...acc, [dir]: rows }),
-      {}
-    );
-
-  return {
-    islands,
-    contributions,
-    playerBoard,
-    factionGuilds,
-    // guildId → tên (từ brief member) — cùng nguồn guildNames trong dump.
-    guildNames: dump.guildNames,
-    factionDir,
-    routes: layoutRoutes,
-  };
-}

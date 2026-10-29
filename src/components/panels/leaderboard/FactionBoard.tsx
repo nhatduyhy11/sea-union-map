@@ -1,75 +1,38 @@
 import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { compact, number } from "../../../utils/format";
+import { compact } from "../../../utils/format";
+import { rankFactions, sortGuilds } from "../../../domain/selectors";
 import { toggleFactionView } from "../../../stores/commands";
 import { usePanel } from "../../../stores/panel";
-import { GuildAccordion, GuildLabel, MemberList } from "./GuildAccordion";
+import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
 import shared from "./shared.module.css";
-import guildStyles from "./GuildAccordion.module.css";
 import type { FactionBoardEntry } from "../../../types";
 
 export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   const filterMode = usePanel((state) => state.filterMode);
   const openFaction = usePanel((state) => state.openFaction);
-  const openGuild = usePanel((state) => state.openGuild);
-  const selectedMember = usePanel((state) => state.selectedMember);
   // Sub-tabs mirror the game's bottom row: "chung" + one tab per faction.
   // Thuần view — không đụng canvas; state local nên tự reset khi rời board.
   const [focus, setFocus] = useState<string | null>(null);
   const [sortByScore, setSortByScore] = useState(false);
 
   const displayFactions = useMemo(() => {
+    const sortBy = sortByScore ? "score" : "power";
     return factions.map((entry) => ({
       ...entry,
-      guilds: [...entry.guilds].sort((a, b) =>
-        sortByScore
-          ? b.score - a.score
-          : (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
-      ),
+      guilds: sortGuilds(entry.guilds, sortBy),
     }));
   }, [factions, sortByScore]);
 
   // List giữ thứ tự cố định; số hạng vẫn là thứ hạng theo điểm phe.
-  const rankById = useMemo(
-    () =>
-      new Map(
-        [...factions]
-          .sort((a, b) => b.score - a.score)
-          .map((entry, index) => [entry.id, index + 1])
-      ),
-    [factions]
-  );
-
-  // Highlight phe dẫn đầu tổng điểm: chỉ viền trái màu phe, không tô nền
-  // (bỏ qua khi chưa ai có điểm).
-  const leaderTint = (entry: FactionBoardEntry) =>
-    entry.score > 0 && rankById.get(entry.id) === 1
-      ? { borderLeftColor: entry.color }
-      : undefined;
+  const rankById = useMemo(() => rankFactions(factions), [factions]);
 
   const faction = displayFactions.find((entry) => entry.id === focus);
   return (
     <>
       <h2>Xếp hạng phe</h2>
-      <div className={shared.subTabs}>
-        <button
-          className={faction ? "" : shared.selected}
-          onClick={() => setFocus(null)}
-        >
-          Chung
-        </button>
-        {factions.map((entry) => (
-          <button
-            key={entry.id}
-            className={`${shared.factionPill} ${faction?.id === entry.id ? shared.selected : ""}`}
-            style={{ "--label": entry.labelColor } as React.CSSProperties}
-            onClick={() => setFocus(faction?.id === entry.id ? null : entry.id)}
-          >
-            {entry.name}
-          </button>
-        ))}
-      </div>
+      <FactionTabs factions={factions} focus={focus} onFocus={setFocus} />
       <div className={shared.sortBar}>
         <label
           className={shared.sortOption}
@@ -84,102 +47,111 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
         </label>
       </div>
       {faction ? (
-        <SingleFaction
-          faction={faction}
-          filterMode={filterMode}
-          openGuild={openGuild}
-          selectedMember={selectedMember}
-        />
-      ) : filterMode ? (
-        displayFactions.map((entry) => (
-          <details
-            key={entry.id}
-            className={shared.item}
-            open={openFaction === entry.id}
-          >
-            <summary
-              className={`${shared.summary} ${shared.tintedSummary}`}
-              style={leaderTint(entry)}
-              onClick={(event) => {
-                event.preventDefault();
-                toggleFactionView(
-                  entry.id,
-                  entry.guilds.map((guild) => guild.guild)
-                );
-              }}
-            >
-              <FactionSummary
-                entry={entry}
-                rank={rankById.get(entry.id) ?? 0}
-              />
-            </summary>
-            <div className={`${shared.allocation} ${shared.allocationTall}`}>
-              {entry.guilds.map((guild) => (
-                <GuildAccordion
-                  key={guild.guild}
-                  guild={guild}
-                  faction={entry}
-                  open={guild.guild === openGuild}
-                  selectedMember={selectedMember}
-                />
-              ))}
-            </div>
-          </details>
-        ))
+        <SingleFaction faction={faction} filterMode={filterMode} />
       ) : (
         displayFactions.map((entry) => (
-          <details key={entry.id} className={shared.item}>
-            <summary
-              className={`${shared.summary} ${shared.tintedSummary}`}
-              style={leaderTint(entry)}
-            >
-              <FactionSummary
-                entry={entry}
-                rank={rankById.get(entry.id) ?? 0}
-              />
-            </summary>
-            <div className={`${shared.allocation} ${shared.allocationTall}`}>
-              {entry.guilds.map((guild) => (
-                <details key={guild.guild} className={guildStyles.guildDetails}>
-                  <summary className={guildStyles.guildToggle}>
-                    <GuildLabel guild={guild} />
-                    <b>{number(guild.score)}</b>
-                    <ChevronRight size={13} />
-                  </summary>
-                  <MemberList guild={guild} faction={entry} inert />
-                </details>
-              ))}
-            </div>
-          </details>
+          <FactionItem
+            key={entry.id}
+            entry={entry}
+            rank={rankById.get(entry.id) ?? 0}
+            filterMode={filterMode}
+            open={openFaction === entry.id}
+          />
         ))
       )}
     </>
   );
 }
 
-function FactionSummary({
+function FactionTabs({
+  factions,
+  focus,
+  onFocus,
+}: {
+  factions: FactionBoardEntry[];
+  focus: string | null;
+  onFocus: (id: string | null) => void;
+}) {
+  return (
+    <div className={shared.subTabs}>
+      <button
+        className={focus ? "" : shared.selected}
+        onClick={() => onFocus(null)}
+      >
+        Chung
+      </button>
+      {factions.map((entry) => (
+        <button
+          key={entry.id}
+          className={`${shared.factionPill} ${focus === entry.id ? shared.selected : ""}`}
+          style={{ "--label": entry.labelColor } as React.CSSProperties}
+          onClick={() => onFocus(focus === entry.id ? null : entry.id)}
+        >
+          {entry.name}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Filter mode: open do store điều khiển, bấm summary = filter canvas theo phe.
+// Free mode: <details> uncontrolled, mở/đóng tự do.
+function FactionItem({
   entry,
   rank,
+  filterMode,
+  open,
 }: {
   entry: FactionBoardEntry;
   rank: number;
+  filterMode: boolean;
+  open: boolean;
 }) {
   return (
-    <>
-      <span className={shared.rank}>{rank}</span>
-      <span
-        className={styles.flag}
-        style={{
-          color: entry.labelColor,
-          background: `${entry.labelColor}18`,
-        }}
+    <details className={shared.item} open={filterMode ? open : undefined}>
+      <summary
+        className={`${shared.summary} ${shared.tintedSummary}`}
+        // Highlight phe dẫn đầu tổng điểm: chỉ viền trái màu phe, không tô nền
+        // (bỏ qua khi chưa ai có điểm).
+        style={
+          entry.score > 0 && rank === 1
+            ? { borderLeftColor: entry.color }
+            : undefined
+        }
+        onClick={
+          filterMode
+            ? (event) => {
+                event.preventDefault();
+                toggleFactionView(
+                  entry.id,
+                  entry.guilds.map((guild) => guild.guild)
+                );
+              }
+            : undefined
+        }
       >
-        {entry.name[0]}
-      </span>
-      <FactionLines entry={entry} />
-      <b>{compact(entry.score)}</b>
-      <ChevronRight size={13} />
-    </>
+        <span className={shared.rank}>{rank}</span>
+        <FactionFlag entry={entry} />
+        <FactionLines entry={entry} />
+        <b>{compact(entry.score)}</b>
+        <ChevronRight size={13} />
+      </summary>
+      <GuildList faction={entry} filterMode={filterMode} />
+    </details>
+  );
+}
+
+function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
+  return (
+    <span
+      className={styles.flag}
+      style={{
+        color: entry.labelColor,
+        background: `${entry.labelColor}18`,
+      }}
+    >
+      {entry.name[0]}
+    </span>
   );
 }
 
@@ -202,13 +174,9 @@ function FactionLines({ entry }: { entry: FactionBoardEntry }) {
 function SingleFaction({
   faction,
   filterMode,
-  openGuild,
-  selectedMember,
 }: {
   faction: FactionBoardEntry;
   filterMode: boolean;
-  openGuild: string | null;
-  selectedMember: string | null;
 }) {
   return (
     <>
@@ -216,40 +184,11 @@ function SingleFaction({
         className={styles.factionCard}
         style={{ borderColor: faction.color }}
       >
-        <span
-          className={styles.flag}
-          style={{
-            color: faction.labelColor,
-            background: `${faction.labelColor}18`,
-          }}
-        >
-          {faction.name[0]}
-        </span>
+        <FactionFlag entry={faction} />
         <FactionLines entry={faction} />
         <b>{compact(faction.score)}</b>
       </div>
-      <div className={`${shared.allocation} ${shared.allocationTall}`}>
-        {filterMode
-          ? faction.guilds.map((guild) => (
-              <GuildAccordion
-                key={guild.guild}
-                guild={guild}
-                faction={faction}
-                open={guild.guild === openGuild}
-                selectedMember={selectedMember}
-              />
-            ))
-          : faction.guilds.map((guild) => (
-              <details key={guild.guild} className={guildStyles.guildDetails}>
-                <summary className={guildStyles.guildToggle}>
-                  <GuildLabel guild={guild} />
-                  <b>{number(guild.score)}</b>
-                  <ChevronRight size={13} />
-                </summary>
-                <MemberList guild={guild} faction={faction} inert />
-              </details>
-            ))}
-      </div>
+      <GuildList faction={faction} filterMode={filterMode} />
     </>
   );
 }

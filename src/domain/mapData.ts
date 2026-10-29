@@ -5,6 +5,7 @@ import {
   buildFactionBoard,
   buildNodeBoard,
   buildServerLeaderboard,
+  NO_GUILD,
   playersFromContributions,
   scoresForNode,
 } from "./selectors";
@@ -12,13 +13,13 @@ import type { Contribution, FactionScore, Island, Route } from "../types";
 
 // Model UI derive từ một dump (live hoặc snapshot lịch sử của một cụm) — store
 // dataset giữ bản đang xem, component đọc qua useMapData(). Join JSON →
-// islands/contributions nằm ở src/data/sea-live.ts.
+// islands/contributions nằm ở src/data/sea-live/join.ts.
 export type MapData = ReturnType<typeof buildMapData>;
 
 // Index node ↔ guild/player cho filter canvas: node nào có đóng góp của
 // guild/player nào. Guild key là guildId từ game (định danh unique sẵn — hai
 // guild cùng tên vẫn tách biệt). Player không guildId, hoặc guildId không có
-// row server, rơi bucket "Không guild" — cùng rule strays buildFactionBoard.
+// row server, rơi bucket NO_GUILD — cùng rule strays buildFactionBoard.
 function indexNodeIds(
   map: Map<string, Set<string>>,
   key: string,
@@ -65,7 +66,7 @@ export function buildMapData(dump: SeaLiveDump) {
       nodeIdsByGuild,
       entry.guildId && knownGuildIds.has(entry.guildId)
         ? entry.guildId
-        : "Không guild",
+        : NO_GUILD,
       entry.nodeId
     );
   }

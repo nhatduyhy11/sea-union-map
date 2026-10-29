@@ -60,7 +60,7 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
 
 ### 1.5. Tên đảo hiển thị
 
-- `_name` của camp in-game dính sẵn display-id (`"1-15Đảo Xích Đu"`, `"Khu nghỉ dưỡng Trường Đảo 3-2"`). Frontend **bỏ token id khỏi tên** (`displayNameOf` trong [`src/data/sea-live.ts`](../src/data/sea-live.ts)) và tự ghép id riêng khi cần → `1-15 Đảo Xích Đu`, không lặp `1-15 1-15Đảo…`.
+- `_name` của camp in-game dính sẵn display-id (`"1-15Đảo Xích Đu"`, `"Khu nghỉ dưỡng Trường Đảo 3-2"`). Frontend **bỏ token id khỏi tên** (`displayNameOf` trong [`src/data/sea-live/join.ts`](../src/data/sea-live/join.ts)) và tự ghép id riêng khi cần → `1-15 Đảo Xích Đu`, không lặp `1-15 1-15Đảo…`.
 
 ---
 

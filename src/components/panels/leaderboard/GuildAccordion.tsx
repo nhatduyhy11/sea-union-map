@@ -2,12 +2,44 @@ import { ChevronRight, Users } from "lucide-react";
 import { compact, number } from "../../../utils/format";
 import { PlayerIdentity } from "../../shared/PlayerIdentity";
 import { selectGuildMember, toggleGuildFilter } from "../../../stores/commands";
+import { usePanel } from "../../../stores/panel";
 import styles from "./GuildAccordion.module.css";
+import shared from "./shared.module.css";
 import type { FactionBoardEntry, GuildScore } from "../../../types";
+
+// Danh sách guild của một phe. Filter mode: row điều khiển canvas
+// (GuildAccordion); free mode: <details> thuần xem, member inert.
+export function GuildList({
+  faction,
+  filterMode,
+}: {
+  faction: FactionBoardEntry;
+  filterMode: boolean;
+}) {
+  const openGuild = usePanel((state) => state.openGuild);
+  const selectedMember = usePanel((state) => state.selectedMember);
+  return (
+    <div className={`${shared.allocation} ${shared.allocationTall}`}>
+      {faction.guilds.map((guild) =>
+        filterMode ? (
+          <GuildAccordion
+            key={guild.guild}
+            guild={guild}
+            faction={faction}
+            open={guild.guild === openGuild}
+            selectedMember={selectedMember}
+          />
+        ) : (
+          <InertGuild key={guild.guild} guild={guild} faction={faction} />
+        )
+      )}
+    </div>
+  );
+}
 
 // Guild row trong filter mode: bấm mở = filter canvas theo guild; member
 // trong đó bấm = filter player (chọn lại = về guild cha).
-export function GuildAccordion({
+function GuildAccordion({
   guild,
   faction,
   open,
@@ -43,8 +75,28 @@ export function GuildAccordion({
   );
 }
 
+// Guild row free mode: mở/đóng tự do, không đụng canvas.
+function InertGuild({
+  guild,
+  faction,
+}: {
+  guild: GuildScore;
+  faction: FactionBoardEntry;
+}) {
+  return (
+    <details className={styles.guildDetails}>
+      <summary className={styles.guildToggle}>
+        <GuildLabel guild={guild} />
+        <b>{number(guild.score)}</b>
+        <ChevronRight size={13} />
+      </summary>
+      <MemberList guild={guild} faction={faction} inert />
+    </details>
+  );
+}
+
 // 2 dòng: tên guild [LC] / số người đóng góp · số đảo.
-export function GuildLabel({ guild }: { guild: GuildScore }) {
+function GuildLabel({ guild }: { guild: GuildScore }) {
   return (
     <span className={styles.guildLabel}>
       <Users size={11} />
@@ -66,7 +118,7 @@ export function GuildLabel({ guild }: { guild: GuildScore }) {
 
 // Danh sách thành viên guild. Filter mode: bấm member = filter player.
 // inert (free mode / xem tự do): chỉ hiển thị, không affordance.
-export function MemberList({
+function MemberList({
   guild,
   faction,
   selectedMember,

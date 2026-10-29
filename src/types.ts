@@ -84,6 +84,7 @@ export interface ServerPlayerRow {
   name: string;
   faction: string | null;
   guild?: string;
+  guildId?: string;
   score: number;
   power?: number;
   server?: number;
