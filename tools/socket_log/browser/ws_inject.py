@@ -2,10 +2,10 @@
 
 WS_SEND_HOOK_JS captures the game socket instance on its first send;
 SEND_FRAME_JS then pushes raw bytes through it (returns false while the socket
-isn't captured/open). Used by core.runner.NameFetcher and the sea crawlers.
+isn't captured/open). Used by core.names.NameService and the sea crawlers.
 """
 
-# Captures the game WebSocket instance so Python can inject frames (NameFetcher).
+# Captures the game WebSocket instance so Python can inject frames (NameService).
 WS_SEND_HOOK_JS = """() => {
     if (window.__wsLoggerHooked) return;
     window.__wsLoggerHooked = true;

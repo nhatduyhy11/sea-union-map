@@ -98,8 +98,8 @@ async def main() -> None:
     done += f", {state_sink.count} state tiles -> {state_path}"
     if tile_sink is not None:
         done += f", {tile_sink.count} tile deltas -> {tiles_path}"
-    done += f", {ctx.brief_sink.count} briefs -> {ctx.brief_sink.out_path}"
-    done += f", {ctx.guild_sink.count} guild briefs -> {ctx.guild_sink.out_path}"
+    done += f", {ctx.names.brief_sink.count} briefs -> {ctx.names.brief_sink.out_path}"
+    done += f", {ctx.names.guild_sink.count} guild briefs -> {ctx.names.guild_sink.out_path}"
     print(done)
     if not args.no_report:
         write_report(args.dir)

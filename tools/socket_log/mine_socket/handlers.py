@@ -24,7 +24,7 @@ SECTOR_MIN, SECTOR_MAX = 2, 7  # sector 1 is the flat 124-slot tile — out of s
 
 
 def occupant_ids(tiles: list[dict]) -> set[int]:
-    """Player ids seated in the tracked sectors (fed to the core's NameFetcher)."""
+    """Player ids seated in the tracked sectors (fed to the core's NameService)."""
     return {
         player_id
         for tile in tiles
@@ -51,14 +51,14 @@ def build_routes(
             _header, body = split_frame("R", payload)
             tiles = parse_tiles(body)
             asyncio.ensure_future(state_sink.add(tiles))
-            ctx.name_fetcher.queue(occupant_ids(tiles))
-            asyncio.ensure_future(ctx.name_fetcher.flush(force=True))
+            ctx.names.queue(occupant_ids(tiles))
+            asyncio.ensure_future(ctx.names.flush(force=True))
         elif tile_sink is not None and frame_is(payload, MINE_MODULE, (TILE_DELTA_CMD,)):
             _header, body = split_frame("R", payload)
             tiles = parse_tiles(body)
             asyncio.ensure_future(tile_sink.add(tiles))
-            ctx.name_fetcher.queue(occupant_ids(tiles))
-            asyncio.ensure_future(ctx.name_fetcher.flush())
+            ctx.names.queue(occupant_ids(tiles))
+            asyncio.ensure_future(ctx.names.flush())
 
     last_retry = 0.0
 
@@ -70,15 +70,15 @@ def build_routes(
             return False  # map state not pushed yet
         if not fetch_names:
             return True  # state is all we wanted
-        if ctx.name_fetcher.pending:
-            if ctx.name_fetcher.page_closed:
+        if ctx.names.pending:
+            if ctx.names.page_closed:
                 print("[logger] game page gone — remaining names unfetchable; exiting with partial data", flush=True)
                 return True
             now = loop.time()
             if now - last_retry > 3.0:
                 last_retry = now
-                await ctx.name_fetcher.flush(force=True)
+                await ctx.names.flush(force=True)
             return False
-        return ctx.name_fetcher.settled()
+        return ctx.names.settled()
 
     return FrameRoutes(on_frame=on_frame, snapshot_done=snapshot_done)
