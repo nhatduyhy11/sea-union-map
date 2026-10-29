@@ -8,7 +8,7 @@ wrong screen must stop the run. Deeper screens stay inside the same lobby
 context — a missed click there is harmless, shots are evidence enough.
 
 Coordinates are initial reads off docs/assets/sea-socket/*.png (viewport 640x720
-→ 1:1); methodology per docs/sea/2026-10-22-socket-step-learn.md:
+→ 1:1); methodology per docs/research/2026-10-22-socket-step-learn.md:
 run stage → Read the shot → fix coords → rerun (--from <stage>).
 
 Usage:
