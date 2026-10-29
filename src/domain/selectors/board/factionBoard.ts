@@ -4,77 +4,10 @@ import type {
   FactionBoardEntry,
   GuildMember,
   Island,
-  LeaderboardPlayer,
-  NodeBoardEntry,
   Player,
   ServerGuildRow,
-  ServerPlayerRow,
-} from "../../types";
-import {
-  attackersForNode,
-  playerAllocations,
-  playersFromContributions,
-  scoresForNode,
-} from "./nodeScores";
-
-// Tab Cá nhân live: rows = BXH điểm server (top-200, board 117). Thứ tự và
-// điểm giữ nguyên server — chỉ ghép thêm allocations từ node boards cho phần
-// expand ("contribute vào đâu"). Player ngoài top-N node nào thì expand rỗng.
-export function buildServerLeaderboard(
-  rows: ServerPlayerRow[],
-  contributions: Contribution[],
-  factions: Faction[]
-): LeaderboardPlayer[] {
-  return rows.map((row) => {
-    const allocations = playerAllocations(row.playerId, contributions);
-    return {
-      id: row.playerId,
-      name: row.name,
-      faction: row.faction ?? "",
-      guild: row.guild,
-      factionInfo: row.faction
-        ? factions.find((faction) => faction.id === row.faction)
-        : undefined,
-      score: row.score,
-      nodes: allocations.length,
-      allocations,
-    };
-  });
-}
-
-// Node board ("Cứ điểm"): non-base islands in display-id order (1-1, 1-2 …
-// 2-x, trung tâm); NodeBoard tự sort theo điểm khi bật checkbox.
-export function buildNodeBoard(
-  islands: Island[],
-  contributions: Contribution[],
-  factions: Faction[]
-): NodeBoardEntry[] {
-  return islands
-    .filter((node) => !node.base)
-    .map((island) => {
-      const scores = scoresForNode(island.id, contributions, factions);
-      const attackers = attackersForNode(island.id, contributions, factions);
-      return {
-        island,
-        owner: factions.find((faction) => faction.id === island.owner),
-        scores,
-        total: scores.reduce((sum, faction) => sum + faction.score, 0),
-        attackers,
-      };
-    })
-    .sort((a, b) => compareNodeId(a.island.id, b.island.id));
-}
-
-// "1-2" < "1-10" < "2-1" < "4": so từng đoạn số.
-function compareNodeId(a: string, b: string): number {
-  const pa = a.split("-").map(Number);
-  const pb = b.split("-").map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
-    if (diff) return diff;
-  }
-  return 0;
-}
+} from "../../../types";
+import { playerAllocations, playersFromContributions } from "../nodeScores";
 
 // Faction board ("BXH Phe"). Live: guild rows + điểm guild là truth server
 // (bảng "Tổng quan phe" trong dump; tổng guild khớp per-faction node-state exact);

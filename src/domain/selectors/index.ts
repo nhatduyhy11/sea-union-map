@@ -7,6 +7,6 @@ export {
   buildServerLeaderboard,
   buildNodeBoard,
   buildFactionBoard,
-} from "./leaderboard";
+} from "./board";
 export { nodeDetails } from "./nodeDetails";
 export { searchIslands } from "./search";
