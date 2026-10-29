@@ -17,7 +17,6 @@ import argparse
 import asyncio
 import json
 import sys
-from datetime import datetime
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -27,23 +26,22 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from playwright.async_api import Page, WebSocket, async_playwright
 
-from browser.navigation import navigate_to_game  # noqa: E402
-from browser.page_guards import (  # noqa: E402
+from browser.navigation import navigate_to_game
+from browser.page_guards import (
     install_game_core_frame_guard_after_delay,
     install_profile_popup_guard,
 )
-from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from capture.frames import FrameWriter  # noqa: E402
-from core.protocol import (  # noqa: E402
+from browser.process_guard import acquire_profile_lock, release_profile_lock
+from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS
+from capture.frames import FrameWriter
+from core.protocol import (
     GUILD_BRIEF_CMD,
     GUILD_MODULE,
     parse_guild_brief,
-    parse_player_briefs,
 )
-from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
-from sea_socket.crawler import CrawlRouter, LOCK_FILENAME  # noqa: E402
-from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
-from sea_socket.protocol import build_brief_frame  # noqa: E402
+from sea_socket.crawler import LOCK_FILENAME, CrawlRouter
+from sea_socket.protocol import build_brief_frame
+from sea_socket.walkthrough import STAGES, run_stages
 
 # Throttle evidence (2026-10-27): the crawler's 60-id batches mostly answered
 # 60/60, but one came back empty — smaller chunks + pacing dodge it.

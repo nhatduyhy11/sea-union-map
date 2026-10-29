@@ -11,23 +11,12 @@ mine_socket/handlers.py for the mine wiring.
 import asyncio
 import pathlib
 import struct
+from collections.abc import Awaitable
 from dataclasses import dataclass
-from typing import Awaitable, Callable, Optional
+from typing import Callable, Optional
 
 from playwright.async_api import Page, WebSocket, async_playwright
 
-from core.protocol import (
-    GUILD_BRIEF_CMD,
-    GUILD_BRIEF_LIST_CMD,
-    GUILD_MODULE,
-    PLAYER_BRIEF_CMD,
-    PLAYER_BRIEF_LIST_CMD,
-    PLAYER_MODULE,
-    build_brief_request,
-    frame_is,
-    parse_guild_brief,
-    parse_player_briefs,
-)
 from browser.navigation import navigate_to_game
 from browser.page_guards import (
     install_game_core_frame_guard_after_delay,
@@ -40,6 +29,18 @@ from browser.process_guard import (
 )
 from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS
 from core.decode import decode_proto, read_packed_varints, split_frame
+from core.protocol import (
+    GUILD_BRIEF_CMD,
+    GUILD_BRIEF_LIST_CMD,
+    GUILD_MODULE,
+    PLAYER_BRIEF_CMD,
+    PLAYER_BRIEF_LIST_CMD,
+    PLAYER_MODULE,
+    build_brief_request,
+    frame_is,
+    parse_guild_brief,
+    parse_player_briefs,
+)
 from core.sinks import JsonlSink
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request

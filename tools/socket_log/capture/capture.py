@@ -26,9 +26,9 @@ from playwright.async_api import async_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from browser.session import close_session, launch_session  # noqa: E402
-from capture.frames import DEFAULT_OUT_DIR, FrameWriter  # noqa: E402
-from gui import steps  # noqa: E402
+from browser.session import close_session, launch_session
+from capture.frames import DEFAULT_OUT_DIR, FrameWriter
+from gui import steps
 
 
 async def main() -> None:

@@ -34,13 +34,12 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
-from core.args import build_parser, resolve_run_dir  # noqa: E402
-from core.runner import GameLogger  # noqa: E402
-from core.sinks import JsonlSink  # noqa: E402
-
-from mine_socket.handlers import build_routes  # noqa: E402
-from mine_socket.report import build_report, print_tree  # noqa: E402
-from mine_socket.sinks import MineEventSink  # noqa: E402
+from core.args import build_parser, resolve_run_dir
+from core.runner import GameLogger
+from core.sinks import JsonlSink
+from mine_socket.handlers import build_routes
+from mine_socket.report import build_report, print_tree
+from mine_socket.sinks import MineEventSink
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # cp1252 consoles choke on player names
 

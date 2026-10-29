@@ -60,22 +60,22 @@ from playwright.async_api import Page, WebSocket, async_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from browser.navigation import navigate_to_game  # noqa: E402
-from browser.page_guards import (  # noqa: E402
+from browser.navigation import navigate_to_game
+from browser.page_guards import (
     install_game_core_frame_guard_after_delay,
     install_profile_popup_guard,
 )
-from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from capture.frames import FrameWriter  # noqa: E402
-from core.decode import decode_proto  # noqa: E402
-from core.protocol import (  # noqa: E402
+from browser.process_guard import acquire_profile_lock, release_profile_lock
+from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS
+from capture.frames import FrameWriter
+from core.decode import decode_proto
+from core.protocol import (
     GUILD_BRIEF_CMD,
     GUILD_MODULE,
     parse_guild_brief,
     parse_player_briefs,
 )
-from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
-from sea_socket.protocol import (  # noqa: E402
+from sea_socket.protocol import (
     BATTLEFIELD_CMD,
     FACTION_DETAIL_CMD,
     LOGIN_DONE_CMD,
@@ -97,8 +97,8 @@ from sea_socket.protocol import (  # noqa: E402
     parse_node_state,
     parse_standings,
 )
-from sea_socket.report import DEV_DUMP_OUT, dump_run  # noqa: E402
-from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
+from sea_socket.report import DEV_DUMP_OUT, dump_run
+from sea_socket.walkthrough import STAGES, run_stages
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
 BRIEF_RETRY_CHUNK = 20  # re-ask size for the post-throttle tail

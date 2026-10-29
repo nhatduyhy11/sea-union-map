@@ -3,12 +3,12 @@
 import asyncio
 import os
 import sys
-from typing import Awaitable, Callable, Optional
+from collections.abc import Awaitable
+from typing import Callable, Optional
 
-from playwright.async_api import Error as PlaywrightError
 from playwright.async_api import BrowserContext, Page
+from playwright.async_api import Error as PlaywrightError
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
-
 
 ORANGE = "\033[38;5;208m"
 RESET = "\033[0m"

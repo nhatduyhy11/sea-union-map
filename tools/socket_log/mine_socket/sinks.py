@@ -1,7 +1,6 @@
 """Mine-specific JSONL sinks: the deduplicating broadcast-event sink."""
 
 import asyncio
-import datetime
 import json
 import pathlib
 from typing import Optional
