@@ -1,5 +1,5 @@
 [project]
-name = "burrito-socket-capture"
+name = "sea-union-map"
 version = "0.1.0"
 description = "WebSocket packet capture and protocol decoding for the Haunted Room H5 game"
 readme = "docs/README.md"

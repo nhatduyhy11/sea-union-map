@@ -9,7 +9,7 @@ resolution-markers = [
 ]
 
 [[package]]
-name = "burrito-socket-capture"
+name = "sea-union-map"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
