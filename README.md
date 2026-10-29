@@ -61,7 +61,7 @@ pnpm run build
 
 ### Nguồn nạp dữ liệu (Data Source)
 * **Live Data (Mặc định):** Dữ liệu được crawl từ server game và bake vào [`src/data/sea-live.json`](src/data/sea-live.json).
-  * Adapter [`src/data/sea-live.ts`](src/data/sea-live.ts) (`buildLiveData(dump)`, hàm thuần) thực hiện ánh xạ ID từ game sang ID bố cục layout canvas, nạp thông tin phe sở hữu (`owner`), điểm đóng góp từng cứ điểm (`contributions`) và bảng xếp hạng.
+  * Adapter [`src/data/sea-live/join.ts`](src/data/sea-live/join.ts) (`buildLiveData(dump)`, hàm thuần) thực hiện ánh xạ ID từ game sang ID bố cục layout canvas, nạp thông tin phe sở hữu (`owner`), điểm đóng góp từng cứ điểm (`contributions`) và bảng xếp hạng.
   * [`src/domain/mapData.ts`](src/domain/mapData.ts) (`buildMapData(dump)`) derive model UI từ một dump; store [`src/stores/dataset.ts`](src/stores/dataset.ts) giữ bộ đang xem (cụm × ngày), component đọc qua `useMapData()`.
   * Khi chạy dev (`pnpm run dev`), nếu tồn tại file `public/sea-live-dev.json` (sinh ra từ crawler, gitignored), ứng dụng sẽ ưu tiên nạp file này để xem trước ngay mà không cần build lại.
   * Chi tiết về cơ chế nạp dev vs build xem [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md).
@@ -97,7 +97,8 @@ src/
 ├── data/                # Dữ liệu tĩnh & adapter nạp data
 │   ├── map-layout.ts    # Toạ độ 89 đảo và danh sách đường nối
 │   ├── factions.ts      # Danh sách 4 phe và màu đại diện
-│   ├── sea-live.ts      # Adapter chuyển đổi dữ liệu crawl sang model ứng dụng (buildLiveData, liveDump)
+│   ├── sea-live.ts      # Entry nạp dump live (liveDump), re-export join
+│   ├── sea-live/        # dump.ts: format dump; join.ts: chuyển dữ liệu crawl sang model ứng dụng (buildLiveData)
 │   ├── sea-live.json    # Bản live chính thức cụm 517 (baked vào bundle)
 │   ├── eventCalendar.ts # 7 ngày event + rule quy ngày snapshot (eventDayOf)
 │   ├── snapshots.ts     # Quét snapshot lịch sử (import.meta.glob lazy), danh sách cụm
