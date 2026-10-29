@@ -183,6 +183,7 @@ export function buildLiveData(dump: SeaLiveDump): LiveData {
           name: brief?.name ?? `#${playerId}`,
           faction,
           guild: brief?.guild,
+          guildId: brief?.guildId ?? dump.guildRoster[playerId],
           power: brief?.power,
           server: brief?.server,
           score,
