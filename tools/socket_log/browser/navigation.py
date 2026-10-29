@@ -3,12 +3,11 @@
 import asyncio
 import os
 import sys
-from typing import Awaitable, Callable, Optional
+from collections.abc import Awaitable, Callable
 
-from playwright.async_api import Error as PlaywrightError
 from playwright.async_api import BrowserContext, Page
+from playwright.async_api import Error as PlaywrightError
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
-
 
 ORANGE = "\033[38;5;208m"
 RESET = "\033[0m"
@@ -35,7 +34,7 @@ async def navigate_to_game(
     attempts: int = NAVIGATION_ATTEMPTS,
     timeout_ms: float = NAVIGATION_TIMEOUT_MS,
     retry_delay_seconds: float = NAVIGATION_RETRY_DELAY_SECONDS,
-    prepare_page: Optional[PageInitializer] = None,
+    prepare_page: PageInitializer | None = None,
 ) -> Page:
     """Navigate through transient hangs seen after quickly restarting Chrome."""
     if attempts < 1:

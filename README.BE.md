@@ -38,7 +38,10 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 
 | File                       | Vai trò                                                                                                                                                                    |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/runner.py`           | Core runner: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`)            |
+| `core/runner.py`           | Core runner: session Chrome persistent, hook WS (chuyển frame cho `NameService` + route event), các chế độ chạy (forever / `--duration` / `--snapshot`)            |
+| `core/names.py`            | `NameService`: resolve id → tên player/guild — inject `0x0d/0x001f` theo lô 60 id, sniff request brief của chính client, ghi reply `0x0020`/`0x0036` ra `player-briefs.jsonl` / `guild-briefs.jsonl` |
+| `core/sinks.py`            | `JsonlSink`: append row JSONL (kèm `logged_at`) — dùng chung cho runner và sink riêng của event logger |
+| `browser/ws_inject.py`     | JS hook `WS_SEND_HOOK_JS` (bắt instance WebSocket game) + `SEND_FRAME_JS` (inject frame) — dùng bởi `NameService`, crawler, brief_backfill |
 | `capture/frames.py`        | `FrameWriter` + `attach_capture`: dump payload WS nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl` — dùng chung cho capture CLI, walkthrough, crawler, brief_backfill |
 | `capture/capture.py`       | CLI bắt frame thô + chạy step DSL (`--step click:X,Y ...`) — tool research/debug protocol (POC decode flow mới), **không thuộc pipeline dump JSON cho FE**: "chạy capture" hàng ngày là `crawler.py` |
 | `gui/steps.py`             | Step DSL vision-action: `sleep/shot/click/scroll/expect/seek/popclose/mark` (dispatch table `STEPS`) — chỉ tool đi bằng click (capture CLI, walkthrough, crawler `--gui-entry` qua walkthrough) mới cần `gui/` |

@@ -19,15 +19,15 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).parent.parent))  # standalone CLI: reach the shared modules
 
-from core.protocol import BROADCAST_MODULE, BROADCAST_PUSH_REPLAY_CMD  # noqa: E402
-from mine_socket.protocol import (  # noqa: E402
+from core.decode import decode_proto, read_packed_varints, split_frame
+from core.protocol import BROADCAST_MODULE, BROADCAST_PUSH_REPLAY_CMD
+from mine_socket.protocol import (
+    MAP_STATE_CMD,
     MINE_EVENT_TYPE,
     MINE_HISTORY_CMD,
     MINE_MODULE,
-    MAP_STATE_CMD,
     SEASON_INFO_CMD,
 )
-from core.decode import decode_proto, read_packed_varints, split_frame  # noqa: E402
 
 
 def extract_mine_state(capture_dir: pathlib.Path) -> dict:

@@ -81,7 +81,7 @@ async def install_profile_popup_guard(page) -> None:
     for frame in page.frames:
         try:
             await frame.evaluate(PROFILE_POPUP_GUARD_SCRIPT)
-        except Exception:
+        except Exception:  # noqa: BLE001, S112
             # A frame can navigate or detach while the guard is being installed.
             continue
 
@@ -121,7 +121,7 @@ async def close_profile_popup_tabs(page, label: str = "blocker") -> int:
     for popup_page in popup_pages:
         try:
             await popup_page.close()
-        except Exception:
+        except Exception:  # noqa: BLE001, S110
             # The popup may already have been closed by the browser/user.
             pass
 

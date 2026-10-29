@@ -33,11 +33,11 @@ from playwright.async_api import Page, async_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from browser.page_guards import close_profile_popup_tabs  # noqa: E402
-from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from browser.session import close_session, launch_session  # noqa: E402
-from capture.frames import DEFAULT_OUT_DIR, FrameWriter  # noqa: E402
-from gui.steps import parse_step, run_step  # noqa: E402
+from browser.page_guards import close_profile_popup_tabs
+from browser.process_guard import acquire_profile_lock, release_profile_lock
+from browser.session import close_session, launch_session
+from capture.frames import DEFAULT_OUT_DIR, FrameWriter
+from gui.steps import parse_step, run_step
 
 DEFAULT_PROFILE = ".tmp/pmain"
 LOCK_FILENAME = ".sea_capture.lock"

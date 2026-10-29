@@ -17,8 +17,8 @@ brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặ
 - **Hiện trạng**:
   - Player brief: fetch theo lô 60 id qua inject `0x0d/0x001f` → `0x0d/0x0020`
     — sea dùng ở brief phase của `tools/socket_log/sea_socket/crawler.py` +
-    `tools/socket_log/sea_socket/brief_backfill.py`; mine dùng `NameFetcher`
-    (`tools/socket_log/core/runner.py`).
+    `tools/socket_log/sea_socket/brief_backfill.py`; mine dùng `NameService`
+    (`tools/socket_log/core/names.py`).
   - Guild brief: `0x24/0x0035 → 0x0036` (`GUILD_BRIEF_CMD`,
     `tools/socket_log/core/protocol.py`).
   - Brief chỉ sống trong output từng run (`players.jsonl`), không có nơi lưu

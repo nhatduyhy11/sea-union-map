@@ -8,7 +8,6 @@ unit-test against captured frame bytes.
 
 import datetime
 import json
-from typing import Optional
 
 from core.decode import decode_proto
 
@@ -27,7 +26,7 @@ def parse_mine_event(payload: bytes) -> list[dict]:
         if not isinstance(value, bytes):
             continue
         entry: dict[int, object] = {}
-        args_text: Optional[str] = None
+        args_text: str | None = None
         for f2, _w2, v2 in decode_proto(value):
             if isinstance(v2, bytes):
                 args_text = v2.decode("utf-8", "replace")

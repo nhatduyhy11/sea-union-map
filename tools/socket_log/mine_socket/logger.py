@@ -34,12 +34,12 @@ import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
-from core.args import build_parser, resolve_run_dir  # noqa: E402
-from core.runner import GameLogger, JsonlSink  # noqa: E402
-
-from mine_socket.handlers import build_routes  # noqa: E402
-from mine_socket.report import build_report, print_tree  # noqa: E402
-from mine_socket.sinks import MineEventSink  # noqa: E402
+from core.args import build_parser, resolve_run_dir
+from core.runner import GameLogger
+from core.sinks import JsonlSink
+from mine_socket.handlers import build_routes
+from mine_socket.report import build_report, print_tree
+from mine_socket.sinks import MineEventSink
 
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")  # cp1252 consoles choke on player names
 
@@ -98,8 +98,8 @@ async def main() -> None:
     done += f", {state_sink.count} state tiles -> {state_path}"
     if tile_sink is not None:
         done += f", {tile_sink.count} tile deltas -> {tiles_path}"
-    done += f", {ctx.brief_sink.count} briefs -> {ctx.brief_sink.out_path}"
-    done += f", {ctx.guild_sink.count} guild briefs -> {ctx.guild_sink.out_path}"
+    done += f", {ctx.names.brief_sink.count} briefs -> {ctx.names.brief_sink.out_path}"
+    done += f", {ctx.names.guild_sink.count} guild briefs -> {ctx.names.guild_sink.out_path}"
     print(done)
     if not args.no_report:
         write_report(args.dir)
