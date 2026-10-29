@@ -140,9 +140,6 @@ export function buildLiveData(dump: SeaLiveDump): LiveData {
         : ownerFaction
           ? (factionDir[ownerFaction] ?? null)
           : null,
-      // Boss detail nằm ở config khác (SkillBuffBossLO) — chưa map.
-      boss: null,
-      level: node.central ? 100 : node.tier === 1 ? 35 : 60,
       claimThreshold: camp?.pointRequire ?? 1,
     };
   });

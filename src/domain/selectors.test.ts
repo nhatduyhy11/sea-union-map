@@ -22,8 +22,6 @@ const islands: Island[] = [
     name: "Đảo Gió",
     position: { x: 0, y: 0 },
     owner: "a",
-    boss: null,
-    level: 35,
     claimThreshold: 1,
   },
   {
@@ -31,8 +29,6 @@ const islands: Island[] = [
     name: "Đảo Biển",
     position: { x: 50, y: 50 },
     owner: "b",
-    boss: null,
-    level: 60,
     claimThreshold: 1,
   },
 ];
@@ -202,8 +198,6 @@ test("Guild/player filter matches nodes by contribution; edges dim under filter"
     name: "Đảo Trung",
     position: { x: 90, y: 90 },
     owner: null,
-    boss: null,
-    level: 60,
     claimThreshold: 1,
   };
   const withNeutral = [...islands, neutral];

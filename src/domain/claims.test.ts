@@ -8,8 +8,6 @@ const node = (id: string, owner: string | null = null): Island => ({
   name: id,
   position: { x: 0, y: 0 },
   owner,
-  boss: null,
-  level: 1,
   claimThreshold: 1,
 });
 const base = (id: string, faction: string): Island => ({

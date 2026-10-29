@@ -3,7 +3,7 @@ import { number } from "../../../utils/format";
 import { FactionScores } from "./FactionScores";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
-import type { NodeDetailData } from "../../../types";
+import type { FactionScore, NodeDetailData } from "../../../types";
 
 export interface NodeDetailsProps {
   details: NodeDetailData;
@@ -19,6 +19,17 @@ export function NodeDetails({
   onTogglePin,
 }: NodeDetailsProps) {
   const { island, owner, scores, total, attackers } = details;
+  // Leading faction for the claim: highest score among factions still linked
+  // to their base — a suspended top scorer yields to the next one.
+  const leader = scores.reduce<FactionScore | undefined>(
+    (best, faction) =>
+      faction.connected !== false &&
+      faction.score > 0 &&
+      (!best || faction.score > best.score)
+        ? faction
+        : best,
+    undefined
+  );
   return (
     <div className={styles.detail}>
       <div className={styles.detailTop}>
@@ -40,13 +51,21 @@ export function NodeDetails({
           {owner?.name || "Trung lập"}
         </span>
       </div>
-      <div className={styles.boss}>
+      <div className={styles.claim}>
         <Shield size={19} />
         <div>
-          <small>{island.base ? "CĂN CỨ PHE" : "BOSS CỨ ĐIỂM"}</small>
-          <b>{island.base ? "Không thể bị chiếm" : island.boss}</b>
+          <small>
+            {island.base ? "CĂN CỨ PHE" : "ĐIỂM CHIẾM ĐÓNG TỐI THIỂU"}
+          </small>
+          {island.base ? (
+            <b>Không thể bị chiếm</b>
+          ) : (
+            <b style={{ color: leader?.labelColor }}>
+              {number(island.claimThreshold)}
+              {leader && ` (${number(leader.score)})`}
+            </b>
+          )}
         </div>
-        {!island.base && <span>Lv. {island.level}</span>}
       </div>
       {!island.base && (
         <>

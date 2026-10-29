@@ -34,8 +34,6 @@ export interface LayoutNode {
 
 export interface Island extends LayoutNode {
   owner: string | null;
-  boss: string | null;
-  level: number;
   // Points a faction needs to claim the node (see domain/claims.ts).
   claimThreshold: number;
 }
