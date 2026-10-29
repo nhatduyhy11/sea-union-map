@@ -1,6 +1,7 @@
 import { useMapData } from "../../../stores/dataset";
 import { useDebug } from "../../../stores/debug";
 import { ColorSwatch } from "./ColorSwatch";
+import { ServerSwitcher } from "./ServerSwitcher";
 import styles from "./MapHeading.module.css";
 
 export function MapHeading() {
@@ -30,9 +31,12 @@ export function MapHeading() {
     <div className={styles.mapHeading}>
       <div>
         <div className={styles.eyebrow}>CHIẾN TRƯỜNG / TỔNG QUAN</div>
-        <h1 className={styles.title}>
-          Tranh bá Tứ Hải<span>01</span>
-        </h1>
+        <div className={styles.titleRow}>
+          <h1 className={styles.title}>
+            Tranh bá Tứ Hải<span>01</span>
+          </h1>
+          <ServerSwitcher />
+        </div>
       </div>
       <div className={styles.headingMeta}>
         {/* Debug chỉ dành cho dev — Vite thay import.meta.env.DEV bằng false khi

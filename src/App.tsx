@@ -5,6 +5,7 @@ import { MapHeader } from "./components/map/map-header";
 import { MapCanvas } from "./components/map/MapCanvas";
 import { MapFooter } from "./components/map/map-footer";
 import { Sidebar } from "./components/panels/Sidebar";
+import { ToastHost } from "./components/shared/ToastHost";
 import styles from "./App.module.css";
 
 // Thuần layout — component nào cần state/command của map tự subscribe store
@@ -23,6 +24,7 @@ export function App() {
         <Sidebar />
       </div>
       <AppFooter />
+      <ToastHost />
     </div>
   );
 }
