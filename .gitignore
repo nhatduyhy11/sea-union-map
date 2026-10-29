@@ -20,3 +20,6 @@ env.*
 
 # Dump dev cho FE. Gitignore vì đây là data "chưa chốt" mỗi lần crawl.
 public/sea-live-dev.json
+
+# Output của `npm run loc` (scripts/loc.mjs), sinh lại mỗi lần chạy.
+scripts/loc-report.md

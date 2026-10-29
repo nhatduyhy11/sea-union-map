@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "tsx --test \"src/**/*.test.ts\"",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "loc": "node scripts/loc.mjs",
+    "cleanup": "bash -c \"bash ./scripts/cleanup-deploy-branch.sh && rm -rf scripts || echo 'cleanup failed'\""
   },
   "dependencies": {
     "@xyflow/react": "^12.9.0",
