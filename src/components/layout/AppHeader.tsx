@@ -1,5 +1,6 @@
 import { Anchor } from "lucide-react";
 import { Watermark } from "../shared/Watermark";
+import { EASTER_EGG_PLAYER_ID } from "../../stores/debug";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
@@ -12,7 +13,7 @@ export function AppHeader() {
         <div>
           SEAWIDE SHOWDOWN
           {/* Easter egg: dev in-game id */}
-          <Watermark id="51921435" variant="badge" />
+          <Watermark id={EASTER_EGG_PLAYER_ID} variant="badge" />
         </div>
       </div>
       <div className={styles.divider} />

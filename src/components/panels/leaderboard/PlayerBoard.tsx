@@ -3,6 +3,7 @@ import { compact, number } from "../../../utils/format";
 import { PlayerIdentity } from "../../shared/PlayerIdentity";
 import { togglePlayerFilter } from "../../../stores/commands";
 import { usePanel } from "../../../stores/panel";
+import { EASTER_EGG_PLAYER_ID, tapEasterEgg } from "../../../stores/debug";
 import styles from "./shared.module.css";
 import type { LeaderboardPlayer } from "../../../types";
 
@@ -20,6 +21,9 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
         điểm.
       </p>
       {players.map((player, index) => {
+        // Easter egg: click liên tiếp dòng của dev mở picker màu (xem debug store).
+        const onEasterEgg =
+          player.id === EASTER_EGG_PLAYER_ID ? tapEasterEgg : undefined;
         const summary = (
           <>
             <span className={styles.rank}>{index + 1}</span>
@@ -53,6 +57,7 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
               onClick={(event) => {
                 event.preventDefault();
                 togglePlayerFilter(player.id);
+                onEasterEgg?.();
               }}
             >
               {summary}
@@ -61,7 +66,9 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
           </details>
         ) : (
           <details key={player.id} className={styles.item}>
-            <summary className={styles.summary}>{summary}</summary>
+            <summary className={styles.summary} onClick={onEasterEgg}>
+              {summary}
+            </summary>
             {allocations}
           </details>
         );

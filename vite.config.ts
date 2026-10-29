@@ -47,6 +47,9 @@ export default defineConfig(({ command, mode }) => {
           manualChunks(id) {
             if (id.includes("sea-live.json")) return "sea-data";
             if (!id.includes("node_modules")) return undefined;
+            // react-colorful load động (picker easter egg) — để Rollup tự tách
+            // chunk riêng, không gom vào vendor tải ngay lúc mở trang.
+            if (id.includes("react-colorful")) return undefined;
             if (id.includes("@xyflow")) return "xyflow";
             if (id.includes("/react-dom/") || id.includes("/react/"))
               return "react";

@@ -14,6 +14,8 @@ export function MapHeading() {
   const setNeutralColor = useDebug((state) => state.setNeutralColor);
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
   const setNeutralOpacity = useDebug((state) => state.setNeutralOpacity);
+  const paletteUnlocked = useDebug((state) => state.paletteUnlocked);
+  const showPalette = import.meta.env.DEV || paletteUnlocked;
 
   // Picker làm việc trên #rrggbbaa; store tách thành màu + opacity 0..1.
   const alphaHex = Math.round(neutralOpacity * 255)
@@ -39,10 +41,10 @@ export function MapHeading() {
         </div>
       </div>
       <div className={styles.headingMeta}>
-        {/* Debug chỉ dành cho dev — Vite thay import.meta.env.DEV bằng false khi
-            build, nên cụm debug (picker + nút) và chunk react-colorful bị loại
-            khỏi bundle prod. */}
-        {import.meta.env.DEV && (
+        {/* Picker màu: DEV, hoặc prod sau khi mở easter egg (BXH cá nhân).
+            Nút debug tâm node chỉ DEV — Vite thay import.meta.env.DEV bằng
+            false khi build nên nút bị loại khỏi bundle prod. */}
+        {showPalette && (
           <div className={styles.debugGroup}>
             <ColorSwatch
               label="Nền canvas"
@@ -54,14 +56,16 @@ export function MapHeading() {
               value={neutralHex8}
               onChange={applyNeutral}
             />
-            <button
-              className={`${styles.debugToggle} ${debug ? styles.debugOn : ""}`}
-              onClick={toggleDebug}
-              aria-pressed={debug}
-              title="Hiện tâm node + đường dash ngang qua node 4 và đường dọc qua các cứ điểm trục giữa"
-            >
-              Debug tâm node
-            </button>
+            {import.meta.env.DEV && (
+              <button
+                className={`${styles.debugToggle} ${debug ? styles.debugOn : ""}`}
+                onClick={toggleDebug}
+                aria-pressed={debug}
+                title="Hiện tâm node + đường dash ngang qua node 4 và đường dọc qua các cứ điểm trục giữa"
+              >
+                Debug tâm node
+              </button>
+            )}
           </div>
         )}
         <div className={styles.mapCount}>

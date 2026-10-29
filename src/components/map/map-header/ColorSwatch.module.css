@@ -48,3 +48,21 @@
   box-shadow: 0 8px 24px rgba(45, 62, 75, 0.16);
   cursor: default;
 }
+
+/* Mã hex dưới picker — override rule `.bgPicker input` của swatch. */
+.pickerPop .hexValue {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  height: auto;
+  margin-top: 10px;
+  padding: 4px 6px;
+  border: 1px solid #d8dfe3;
+  border-radius: 4px;
+  background: #f6f9fa;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  color: #2d3e4b;
+  text-align: center;
+  cursor: text;
+}

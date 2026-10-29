@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
 import styles from "./ColorSwatch.module.css";
 
-// HexAlphaColorPicker của react-colorful — chỉ dùng ở dev, load động.
+// HexAlphaColorPicker của react-colorful — DEV hoặc sau easter egg, load động.
 type HexAlphaPicker = ComponentType<{
   color: string;
   onChange: (color: string) => void;
@@ -21,13 +21,13 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
   const [open, setOpen] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
 
-  // react-colorful chỉ cần lúc dev — dynamic import để prod không bundle:
-  // DEV=false bị dead-code-eliminate, chunk không được sinh ra.
+  // Swatch chỉ mount ở DEV hoặc sau easter egg — dynamic import để react-colorful
+  // thành chunk riêng, user thường không tải. Lỗi tải (vd 404 chunk cũ sau
+  // deploy) thì nuốt: popover không mở, trang không crash.
   useEffect(() => {
-    if (!import.meta.env.DEV) return;
-    import("react-colorful").then((m) =>
-      setPicker(() => m.HexAlphaColorPicker)
-    );
+    import("react-colorful")
+      .then((m) => setPicker(() => m.HexAlphaColorPicker))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -54,6 +54,14 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
       {open && Picker && (
         <div className={styles.pickerPop}>
           <Picker color={value} onChange={onChange} />
+          {/* Mã hex đúng như giá trị đưa vào canvas — click để chọn hết & copy. */}
+          <input
+            className={styles.hexValue}
+            value={value}
+            readOnly
+            onFocus={(e) => e.currentTarget.select()}
+            aria-label={`Mã màu ${label.toLowerCase()}`}
+          />
         </div>
       )}
     </div>
