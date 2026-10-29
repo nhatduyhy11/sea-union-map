@@ -1,14 +1,12 @@
 import { useMemo } from "react";
 import { factions } from "../../data/factions";
-import { buildMapEdges, buildMapNodes, matchNodeIds } from "../../domain/mapGraph";
 import {
-  nodeIdsByGuild,
-  nodeIdsByPlayer,
-  ownedIslands,
-  routes,
-  scoresByNode,
-} from "../../domain/mapData";
+  buildMapEdges,
+  buildMapNodes,
+  matchNodeIds,
+} from "../../domain/mapGraph";
 import { openIsland } from "../../stores/commands";
+import { useMapData } from "../../stores/dataset";
 import { useDebug } from "../../stores/debug";
 import { useMapView } from "../../stores/mapView";
 import { useSelection } from "../../stores/selection";
@@ -27,11 +25,18 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
   const debug = useDebug((state) => state.debug);
   const neutralColor = useDebug((state) => state.neutralColor);
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
+  const {
+    nodeIdsByGuild,
+    nodeIdsByPlayer,
+    ownedIslands,
+    routes,
+    scoresByNode,
+  } = useMapData();
 
   // Node ids được filter guild/player highlight — dim phần còn lại.
   const matched = useMemo(
     () => matchNodeIds(filter, nodeIdsByGuild, nodeIdsByPlayer),
-    [filter]
+    [filter, nodeIdsByGuild, nodeIdsByPlayer]
   );
   const nodes = useMemo(
     () =>
@@ -42,7 +47,16 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
         { selected, pinned, showAll, matched, debug },
         { openIsland, togglePin }
       ),
-    [selected, pinned, showAll, matched, debug, togglePin]
+    [
+      ownedIslands,
+      scoresByNode,
+      selected,
+      pinned,
+      showAll,
+      matched,
+      debug,
+      togglePin,
+    ]
   );
   // Edges không highlight theo filter nhưng dim xuống khi có filter (node
   // highlight nổi lên) — recompute theo matched + màu/opacity trung lập.
@@ -56,7 +70,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
         neutralColor,
         neutralOpacity
       ),
-    [matched, neutralColor, neutralOpacity]
+    [routes, ownedIslands, matched, neutralColor, neutralOpacity]
   );
   return { nodes, edges };
 }

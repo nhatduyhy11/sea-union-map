@@ -1,9 +1,10 @@
-import { baseCount, ownedIslands } from "../../../domain/mapData";
+import { useMapData } from "../../../stores/dataset";
 import { useDebug } from "../../../stores/debug";
 import { ColorSwatch } from "./ColorSwatch";
 import styles from "./MapHeading.module.css";
 
 export function MapHeading() {
+  const { baseCount, ownedIslands } = useMapData();
   const debug = useDebug((state) => state.debug);
   const toggleDebug = useDebug((state) => state.toggleDebug);
   const canvasBg = useDebug((state) => state.canvasBg);

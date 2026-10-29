@@ -1,5 +1,5 @@
-import { factionBoard, leaderboard, nodeBoard } from "../../../domain/mapData";
 import { setFilterMode, setRankingBoard } from "../../../stores/commands";
+import { useMapData } from "../../../stores/dataset";
 import { usePanel } from "../../../stores/panel";
 import { FactionBoard } from "./FactionBoard";
 import { NodeBoard } from "./NodeBoard";
@@ -12,6 +12,7 @@ import styles from "./Leaderboard.module.css";
 export function Leaderboard() {
   const board = usePanel((state) => state.board);
   const filterMode = usePanel((state) => state.filterMode);
+  const { factionBoard, leaderboard, nodeBoard } = useMapData();
   return (
     <div className={`${styles.detail} ${styles.ranking}`}>
       <div className={styles.rankingHead}>

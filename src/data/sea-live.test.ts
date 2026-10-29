@@ -1,15 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import raw from "./sea-live.json";
-import {
-  contributions,
-  factionDir,
-  displayNameOf,
-  factionGuilds,
-  islands,
-  layoutIdOf,
-  playerBoard,
-} from "./sea-live";
+import { buildLiveData, displayNameOf, layoutIdOf, liveDump } from "./sea-live";
+
+// Ngoài Vite liveDump luôn là bản baked (sea-live.json).
+const { contributions, factionDir, factionGuilds, islands, playerBoard } =
+  buildLiveData(liveDump);
 
 // Join game-id → layout-id chạy trong sea-live.ts, dữ liệu từ sea-live.json
 // (Python dump thuần). Test này khoá hợp đồng của join để re-crawl đè JSON

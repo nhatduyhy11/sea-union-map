@@ -1,5 +1,5 @@
 import { Swords, User, X } from "lucide-react";
-import { guildNames, players } from "../../domain/mapData";
+import { useMapData } from "../../stores/dataset";
 import { resetCanvasFilter } from "../../stores/commands";
 import { useMapView } from "../../stores/mapView";
 import styles from "./FilterChip.module.css";
@@ -9,6 +9,7 @@ import styles from "./FilterChip.module.css";
 // là guildId — chip tra tên hiển thị từ guildNames.
 export function FilterChip() {
   const filter = useMapView((state) => state.filter);
+  const { guildNames, players } = useMapData();
   if (!filter) return null;
   const label =
     filter.kind === "guild"
