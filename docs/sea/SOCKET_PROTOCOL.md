@@ -2,7 +2,7 @@
 
 > **Tài liệu tham chiếu tầng mạng WebSocket của game Haunted Room.**
 > Nguồn: Reverse-engineer các phiên capture server VN (`https://hauntedroomvnh5.joynetgame.com/`).
-> Công cụ dùng chung: `tools/socket_log/core/` (decode, runtime codec, runner) + `tools/socket_log/capture/`.
+> Công cụ dùng chung: `tools/socket_log/core/` (decode, runtime codec, runner) + `tools/socket_log/capture/` (ghi frame WS) + `tools/socket_log/gui/` (step DSL click/golden).
 > Các sub-doc nghiệp vụ riêng:
 > - **Khai Thác Guild (Khu Mỏ, module `0x48`):** [`docs/mine_docs/MINE_STRUCTURE.md`](../mine_docs/MINE_STRUCTURE.md) & [`docs/mine_docs/BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md).
 > - **Tranh Bá Tứ Hải (Sea Union, module `0x72`):** [`docs/sea/SEA_PACKET_ANALYSE.md`](SEA_PACKET_ANALYSE.md) & [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md).

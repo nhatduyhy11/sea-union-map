@@ -30,7 +30,7 @@ Có **2 mode** dùng chung một tầng generic — chọn mode theo entry point
 - **Mode sea** — Tranh Bá Tứ Hải (module 0x72 + board 0x0c), kèm pipeline crawl → JSON cho FE
 - **Mode mine** — event world mỏ (module 0x48 + broadcast type 150)
 
-Layout: 3 package generic (`core/`, `browser/`, `capture/`) + 2 package event
+Layout: 4 package generic (`core/`, `browser/`, `capture/`, `gui/`) + 2 package event
 (`sea_socket/`, `mine_socket/`) độc lập nhau — xóa 1 package event thì package
 kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì không đụng socket.
 
@@ -39,7 +39,11 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 | File                       | Vai trò                                                                                                                                                                    |
 | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `core/runner.py`           | Core runner: session Chrome persistent, hook WS, sink JSONL, fetch tên người chơi qua injected request, các chế độ chạy (forever / `--duration` / `--snapshot`)            |
-| `capture/capture.py`       | Bắt frame thô: dump payload nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl`, kèm step DSL (`click:X,Y`, `shot:NAME`, `sleep:S`, `mark:LABEL`) + golden — tool research/debug protocol (POC decode flow mới), **không thuộc pipeline dump JSON cho FE**: "chạy capture" hàng ngày là `crawler.py`; `FrameWriter` của nó được crawler/runner tái sử dụng |
+| `capture/frames.py`        | `FrameWriter` + `attach_capture`: dump payload WS nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl` — dùng chung cho capture CLI, walkthrough, crawler, brief_backfill |
+| `capture/capture.py`       | CLI bắt frame thô + chạy step DSL (`--step click:X,Y ...`) — tool research/debug protocol (POC decode flow mới), **không thuộc pipeline dump JSON cho FE**: "chạy capture" hàng ngày là `crawler.py` |
+| `gui/steps.py`             | Step DSL vision-action: `sleep/shot/click/scroll/expect/seek/popclose/mark` (dispatch table `STEPS`) — chỉ tool đi bằng click (capture CLI, walkthrough, crawler `--gui-entry` qua walkthrough) mới cần `gui/` |
+| `gui/vision.py`            | Template matching thang xám trên screenshot: `resolve_golden` (`gui/goldens/` rồi `docs/assets/sea-socket/`), `screen_similarity`, `best_crop_position` |
+| `gui/popclose.py`          | Verb `popclose`: đóng hàng đợi splash popup lúc login (checkbox "không nhắc lại" / nút X / click ngoài) + hằng calibration `POPUP_*` |
 | `core/decode.py`           | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                                      |
 | `core/protocol.py`         | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`, convention inject ssid `0xF0..0xFF`                |
 | `core/args.py`             | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
@@ -47,6 +51,7 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 | `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |
 | `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                   |
 | `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                                         |
+| `browser/session.py`       | `launch_session` / `close_session`: mở persistent profile, gắn capture WS cho mọi page, cài page guards                                                                   |
 
 ### Mode 1 — sea (`sea_socket/`)
 

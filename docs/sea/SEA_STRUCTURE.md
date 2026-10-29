@@ -53,9 +53,9 @@ Thứ tự thao tác = thứ tự chủ dự án mô tả; mỗi bước có ả
 | 10   | Click **ô tròn xếp chồng** (góc dưới phải node detail)                                             | Node leaderboard                                      | [hình 8](../assets/sea-socket/8-node-leaderboard.png)                                                       |
 
 Ghi chú triển khai (chưa làm): bước 7 cần xử lý 2 trạng thái (chưa mở / đang mở).
-Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_log/capture/capture.py`
-(`click:X,Y`, `scroll:X,Y,DX,DY[,N]`, `seek:…`, `expect:…`, `shot:NAME`, `sleep:S`,
-`mark:LABEL`) đủ để chạy; bước 3→4 dùng `seek` vì list event xoay vòng theo ngày.
+Các thao tác còn lại đều là click/cuộn — step DSL của `tools/socket_log/gui/steps.py`
+(`click:X,Y`, `scroll:X,Y,DX,DY[,N]`, `seek:…`, `expect:…`, `popclose`, `shot:NAME`,
+`sleep:S`, `mark:LABEL`; chạy qua CLI `capture/capture.py` hoặc `sea_socket/walkthrough.py`) đủ để chạy; bước 3→4 dùng `seek` vì list event xoay vòng theo ngày.
 
 ## 3. Màn hình và dữ liệu tương ứng
 
