@@ -24,9 +24,11 @@
 }
 
 @media (max-width: 760px) {
+  /* Tên phe dài, màn hẹp không đủ 1 hàng → wrap thay vì tràn ngang. */
   .legend {
     width: 100%;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 10px;
     font-size: 9px;
   }
 }

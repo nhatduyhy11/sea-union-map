@@ -67,8 +67,18 @@
 }
 
 @media (max-width: 760px) {
+  /* Cụm debug không lọt chung hàng với title → rớt xuống dòng dưới thay vì
+     đẩy page tràn ngang. */
   .mapHeading {
     margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .headingMeta,
+  .debugGroup {
+    flex-wrap: wrap;
+    min-width: 0;
   }
 
   .title {

@@ -74,11 +74,14 @@
 }
 
 @media (max-width: 760px) {
+  /* min-height 1 màn: đổi sang tab/board ngắn hơn thì page không co lại —
+     co lại là browser kẹp scrollY, cả trang giật lên như vừa refresh. */
   .sidebar {
     width: 100%;
     border-left: 0;
     border-top: 1px solid #dfe4e8;
     max-height: none;
+    min-height: 100dvh;
   }
 
   .tabs {

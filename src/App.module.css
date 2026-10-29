@@ -37,6 +37,14 @@
 }
 
 @media (max-width: 760px) {
+  /* Mobile: sidebar xếp dưới map, cao theo nội dung (không scroll riêng) —
+     khung app phải giãn theo, nếu giữ height cố định thì footer kẹt ở đáy
+     viewport và đè lên BXH. */
+  .app {
+    height: auto;
+    min-height: 100dvh;
+  }
+
   .workspace {
     min-height: 520px;
     flex-wrap: wrap;
