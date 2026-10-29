@@ -54,7 +54,20 @@ button.guildToggle:hover {
   min-width: 0;
 }
 
+.guildLines {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Không dùng <i>: style.css biến i thành chấm tròn 6px. */
+.power {
+  font-style: italic;
+  font-weight: 400;
+}
+
 .guildLabel small {
+  font-size: 9px;
   color: #8496a1;
   white-space: nowrap;
 }
