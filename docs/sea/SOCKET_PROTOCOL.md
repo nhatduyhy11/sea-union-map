@@ -60,7 +60,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   - Request `0x001f`: `1 playerIds` = packed player ids (client thường gom tối đa ~60 id/lần).
   - Response `0x0020`: danh sách hồ sơ rút gọn gồm `f1`=id, `f2`=tên, `f4`=power, `f9`=server, `f11`={id guild, tên guild} (bản đọc `f15`=server trước đây là sai).
   - **Schema thật từ bundle [2026-10-25]:** `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` — fields đầy đủ: name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel… Decode qua `uv run python tools/socket_log/core/runtime_codec.py briefs <body.b64>`.
-  - **Cơ chế đã hoàn thiện:** Lớp `NameFetcher` ([`tools/socket_log/core/runner.py`](../../tools/socket_log/core/runner.py)) chủ động inject request này vào WebSocket game để resolve toàn bộ id sang tên tự động mà không cần click UI.
+  - **Cơ chế đã hoàn thiện:** Lớp `NameService` ([`tools/socket_log/core/names.py`](../../tools/socket_log/core/names.py)) chủ động inject request này vào WebSocket game để resolve toàn bộ id sang tên tự động mà không cần click UI.
 - **Player Full Profile (`0x0d / 0x0019` → `0x001a`):** Trả về đầy đủ tướng, trang bị, lực chiến khi bấm xem một người chơi cụ thể.
 
 ### 3.4. Tra cứu Thông tin Bang Hội (`module 0x24`)
@@ -122,9 +122,11 @@ tools/socket_log/
 ├── core/                  # Dùng chung: framing, proto decode, runtime codec, runner, args
 │   ├── decode.py          # Pure proto parser & split_frame
 │   ├── protocol.py        # Shared protocol: broadcast, player/guild brief builders
-│   ├── runner.py          # Shared Playwright session, NameFetcher inject, JsonlSink
+│   ├── names.py           # NameService: inject brief request, log player/guild briefs
+│   ├── runner.py          # Shared Playwright session, WS hookup, run modes
+│   ├── sinks.py           # JsonlSink
 │   └── runtime_codec.py   # Cocos runtime codec (QuickLZ + PBReader decode)
-├── browser/               # Tiện ích Playwright: navigation, profile popup guards
+├── browser/               # Tiện ích Playwright: navigation, profile popup guards, ws_inject (JS hook inject frame)
 ├── capture/               # Bắt frame raw verbatim: capture.py
 ├── mine_socket/           # Nhánh Khai Thác Guild: logger.py, report.py, protocol.py
 ├── sea_socket/            # Nhánh Tranh Bá Tứ Hải: crawler.py, report.py, walkthrough.py
