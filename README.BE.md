@@ -64,14 +64,14 @@ Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 | `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (proof protocol + fallback `--gui-entry` của crawler)                           |
 | `sea_socket/crawler.py`     | **Collector chính**: entry payload mặc định — wait-login `0x72/0x0002` + inject `0x000b`/`0x001b`, 0 click (xem [`docs/sea/EVENT_NAVIGATE_DECODE.md`](docs/sea/EVENT_NAVIGATE_DECODE.md); `--gui-entry` replay stage cũ); vào map xong inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game; `--dump` (mặc định bật) tự transform + dump ngay sau crawl |
 | `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
-| `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler; lệch số ở `docs/sea/STATS_MISMATCH.md` |
+| `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler; lệch số ở `docs/sea/STATS_MISMATCH.md` |
 | `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"             |
 
 ```bash
 # [1] Crawl đủ 89 node + dump JSON cho FE trong 1 lệnh (--dump mặc định bật,
 #     headed, cần session đăng nhập)
 uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
-#    → .tmp/sea-crawl/<run>/: map-snapshot.json, node-states.jsonl,
+#    → .tmp/sea-crawl/<run>/: map-snapshot.json, standings.json, node-states.jsonl,
 #      boards-decoded.json, players.jsonl, summary.json
 #    → public/sea-live-dev.json (transform từ baseline, refresh browser là thấy)
 #    --no-dump: chỉ lấy raw run
@@ -81,6 +81,11 @@ uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
 #    Bake snapshot chính thức vào build:
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
     --out src/data/sea-live.json
+#    Snapshot lịch sử theo ngày event × cụm (--server mặc định 517, tạm thời):
+uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
+    --snapshot [--server 590]
+#    → src/data/snapshots/<YYMMDD>/<server>.json — rule quy ngày ở
+#      docs/sea/SEA_LIVE_DATA.md
 ```
 
 ### Cache config CampGVG (`sea_socket/campgvg.json`) — BE nội bộ, hiếm khi đụng
@@ -152,12 +157,15 @@ login.
               └─ chỉ extract lại khi nghi drift — xem mục "Cache config CampGVG"
 [3] transform + dump CLI riêng: sea_socket/report.py (re-dump run cũ, bake chính thức)
               ├─ default ──▶ public/sea-live-dev.json (gitignored)
-              └─ --out src/data/sea-live.json ──▶ commit = bake vào build
+              ├─ --out src/data/sea-live.json ──▶ commit = bake vào build (live)
+              └─ --snapshot [--server N] ──▶ src/data/snapshots/<YYMMDD>/<server>.json (commit = lịch sử)
 [4] src/data/sea-live.ts  (adapter FE, viết tay) + sea-live.test.ts
-                          ◀── dev: fetch sea-live-dev.json, thiếu → fallback
-                              build: import src/data/sea-live.json (baked)
-                          ──export──▶ islands / contributions / routes
-[5] FE: mapData.ts (LIVE switch) → derive owner/BXH/filter từ contributions
+                          ◀── liveDump — dev: fetch sea-live-dev.json, thiếu → fallback
+                                         build: import src/data/sea-live.json (baked)
+                          ◀── src/data/snapshots.ts: import.meta.glob lazy các snapshot
+                          ──buildLiveData(dump)──▶ islands / contributions / routes / …
+[5] FE: domain/mapData.ts buildMapData(dump) → derive owner/BXH/filter;
+        stores/dataset.ts giữ bộ đang xem (cụm × ngày), component đọc useMapData()
 ```
 
 Hai file JSON dump, cùng schema (chi tiết dev vs build, thuật ngữ dump/baked:

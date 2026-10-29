@@ -15,8 +15,8 @@ tools/socket_log/sea_socket/crawler.py → .tmp/sea-crawl/<run>/  (JSONL + board
                                           └─ --dump (mặc định) → public/sea-live-dev.json
 sea_socket/campgvg.json                  (cache BE config client CampGVG, 89 row — committed)
 tools/socket_log/sea_socket/report.py    (transform + dump: thuần data, không sinh code)
-src/data/sea-live.ts                     (adapter join layout qua prefix display id)
-src/domain/mapData.ts (LIVE = true)      (derive owner/BXH/filter từ contributions)
+src/data/sea-live.ts                     (adapter join layout qua prefix display id — buildLiveData)
+src/domain/mapData.ts                    (buildMapData: derive owner/BXH/filter từ contributions)
 ```
 
 Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live-dev.json`

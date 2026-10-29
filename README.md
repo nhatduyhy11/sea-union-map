@@ -42,6 +42,10 @@ pnpm run build
   * **Cơ chế Filter mode:** Click vào một Bang hội hoặc Thành viên trên BXH sẽ tự động lọc và làm nổi bật (highlight) toàn bộ các đảo mà thực thể đó có đóng góp trên canvas.
   * Chi tiết đặc tả hành vi và cơ chế lọc được quy định tại [`docs/LEADERBOARD_SPECS.md`](docs/LEADERBOARD_SPECS.md).
 * **Nhãn & Trạng thái:** Thanh chú giải (Legend) ở chân màn hình thể hiện màu sắc đại diện cho 4 phe và trạng thái trung lập.
+* **Cụm server & Lịch sử theo ngày:**
+  * **Server switcher** cạnh tiêu đề "Tranh bá Tứ Hải" (`[517]`, `[590]`…): danh sách cụm tự lấy từ các snapshot đã có, không có nút tạo mới. Đổi cụm sẽ reset view BXH (filter canvas + accordion).
+  * **Thanh "Lịch sử"** 7 ngày event dưới legend: ngày hiện tại = live, ngày đã qua = snapshot cuối ngày, ngày chưa tới bị disable; ngày thiếu snapshot hiện flat, click báo toast lỗi.
+  * Chi tiết nguồn data và rule quy ngày tại [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md) (mục "Snapshot lịch sử theo ngày × cụm").
 
 ---
 
@@ -57,9 +61,11 @@ pnpm run build
 
 ### Nguồn nạp dữ liệu (Data Source)
 * **Live Data (Mặc định):** Dữ liệu được crawl từ server game và bake vào [`src/data/sea-live.json`](src/data/sea-live.json).
-  * Adapter [`src/data/sea-live.ts`](src/data/sea-live.ts) thực hiện ánh xạ ID từ game sang ID bố cục layout canvas, nạp thông tin phe sở hữu (`owner`), điểm đóng góp từng cứ điểm (`contributions`) và bảng xếp hạng.
+  * Adapter [`src/data/sea-live.ts`](src/data/sea-live.ts) (`buildLiveData(dump)`, hàm thuần) thực hiện ánh xạ ID từ game sang ID bố cục layout canvas, nạp thông tin phe sở hữu (`owner`), điểm đóng góp từng cứ điểm (`contributions`) và bảng xếp hạng.
+  * [`src/domain/mapData.ts`](src/domain/mapData.ts) (`buildMapData(dump)`) derive model UI từ một dump; store [`src/stores/dataset.ts`](src/stores/dataset.ts) giữ bộ đang xem (cụm × ngày), component đọc qua `useMapData()`.
   * Khi chạy dev (`pnpm run dev`), nếu tồn tại file `public/sea-live-dev.json` (sinh ra từ crawler, gitignored), ứng dụng sẽ ưu tiên nạp file này để xem trước ngay mà không cần build lại.
   * Chi tiết về cơ chế nạp dev vs build xem [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md).
+* **Snapshot lịch sử:** `src/data/snapshots/<YYMMDD>/<server>.json`, nạp lazy qua [`src/data/snapshots.ts`](src/data/snapshots.ts) — xem [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md).
 * **Quy tắc tính toán đường nối & sở hữu:**
   * Phe sở hữu căn cứ và các đảo nối liên tục từ base được xác định thông qua logic duyệt đồ thị tại [`src/domain/claims.ts`](src/domain/claims.ts) theo quy tắc game tại [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md).
 
@@ -73,8 +79,10 @@ src/
 │   ├── layout/          # Header ứng dụng, thanh điều hướng (AppHeader, NavigationRail)
 │   ├── map/             # Canvas React Flow, custom IslandNode, RouteEdge, toolbar, footer
 │   ├── panels/          # Panel bên hông (Sidebar, NodeDetails, Leaderboard tabs)
-│   └── shared/          # UI components tái sử dụng (PlayerIdentity, Watermark...)
+│   └── shared/          # UI components tái sử dụng (PlayerIdentity, Watermark, ToastHost...)
 ├── stores/              # Quản lý trạng thái ứng dụng bằng Zustand
+│   ├── dataset.ts       # Bộ data đang xem (cụm × ngày): live/snapshot, selectServer/selectDay, useMapData()
+│   ├── toast.ts         # Toast thông báo ngắn (showToast), hiển thị qua ToastHost
 │   ├── mapView.ts       # State bộ lọc (guild/player), chế độ hiển thị điểm toàn map
 │   ├── panel.ts         # State tab panel, sub-tab BXH, filterMode, accordion expansion
 │   ├── selection.ts     # State chọn đảo, ghim đảo
@@ -83,14 +91,17 @@ src/
 ├── hooks/               # Custom React hooks (useFitMap, useFocusIsland, v.v.)
 ├── domain/              # Logic nghiệp vụ thuần TypeScript (không phụ thuộc React)
 │   ├── claims.ts        # Thuật toán kiểm tra connectivity đường nối từ base
-│   ├── mapData.ts       # Điểm tập trung dữ liệu chuẩn bị cung cấp cho View layer
+│   ├── mapData.ts       # buildMapData(dump): derive model UI (scores, claims, BXH, index filter) từ một dump
 │   ├── mapGraph.ts      # Adapter chuyển đổi layout & claims sang Node/Edge của React Flow
 │   └── selectors/       # Các hàm truy vấn, tính điểm, sắp xếp BXH và tìm kiếm
 ├── data/                # Dữ liệu tĩnh & adapter nạp data
 │   ├── map-layout.ts    # Toạ độ 89 đảo và danh sách đường nối
 │   ├── factions.ts      # Danh sách 4 phe và màu đại diện
-│   ├── sea-live.ts      # Adapter chuyển đổi dữ liệu crawl sang model ứng dụng
-│   └── sea-live.json    # Snapshot dữ liệu crawl chính thức (baked vào bundle)
+│   ├── sea-live.ts      # Adapter chuyển đổi dữ liệu crawl sang model ứng dụng (buildLiveData, liveDump)
+│   ├── sea-live.json    # Bản live chính thức cụm 517 (baked vào bundle)
+│   ├── eventCalendar.ts # 7 ngày event + rule quy ngày snapshot (eventDayOf)
+│   ├── snapshots.ts     # Quét snapshot lịch sử (import.meta.glob lazy), danh sách cụm
+│   └── snapshots/       # <YYMMDD>/<server>.json — snapshot lịch sử theo ngày × cụm
 ├── types.ts             # Định nghĩa toàn bộ TypeScript Interfaces & Models
 ├── utils/format.ts      # Hàm tiện ích định dạng số, lực chiến, nhãn hiển thị
 ├── App.tsx              # Component gốc bố cục giao diện

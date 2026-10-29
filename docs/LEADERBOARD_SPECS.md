@@ -84,6 +84,7 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
   - Người dùng có thể expand nhiều phe/guild/player cùng lúc để tra cứu số liệu.
   - Thao tác trên BXH không gây bất kỳ side-effect nào lên canvas (canvas giữ nguyên trạng thái `all`).
 - **Trạng thái lưu trữ:** `filterMode` là state của panel ([`src/stores/panel.ts`](../src/stores/panel.ts)), **không bị reset** khi chuyển tab BXH.
+- **Đổi cụm / ngày:** đổi cụm server (server switcher) gọi `resetRankingView()` — filter canvas về all + đóng hết accordion, `filterMode` giữ nguyên (guild/player cụm cũ không còn nghĩa). Đổi ngày (thanh Lịch sử) **không reset**: guildId/playerId ổn định trong cùng cụm nên filter vẫn áp lên data ngày mới.
 
 ### 2.3. Quy tắc chi tiết từng Tab
 
@@ -139,7 +140,8 @@ View và filter sẽ tự động reset về `all` và đóng toàn bộ expansi
 | [`src/stores/panel.ts`](../src/stores/panel.ts)                                                         | Lưu `filterMode: boolean`, state expansion (`openGuild`, `selectedMember`, `openFaction`, `openPlayer`).                                             |
 | [`src/stores/commands.ts`](../src/stores/commands.ts)                                                   | Gom các tương tác đa store: `setRankingBoard`, `setFilterMode`, `resetRankingView`, `toggleGuildFilter`, `toggleMemberFilter`, `togglePlayerFilter`. |
 | [`src/domain/selectors/index.ts`](../src/domain/selectors/index.ts)                                     | Tính toán `GuildScore` kèm danh sách `members` (sort theo điểm) và số lượng đảo; gộp dữ liệu từ `Contribution[]`.                                    |
-| [`src/domain/mapData.ts`](../src/domain/mapData.ts)                                                     | Xây dựng index tra cứu nhanh `nodeIdsByGuild` và `nodeIdsByPlayer`.                                                                                  |
+| [`src/domain/mapData.ts`](../src/domain/mapData.ts)                                                     | `buildMapData(dump)` xây index tra cứu nhanh `nodeIdsByGuild` và `nodeIdsByPlayer` theo từng dump; component đọc qua `useMapData()`. |
+| [`src/stores/dataset.ts`](../src/stores/dataset.ts) | Giữ bộ data đang xem (cụm × ngày); `selectServer` reset view BXH, `selectDay` giữ nguyên filter. |
 | [`src/domain/mapGraph.ts`](../src/domain/mapGraph.ts)                                                   | Áp dụng logic dim/highlight node dựa trên `matchNodeIds`; giữ edges luôn ở trạng thái resting.                                                       |
 | [`src/components/map/FilterChip.tsx`](../src/components/map/FilterChip.tsx)                             | Chip overlay hiển thị filter hiện tại và nút đóng `✕`.                                                                                               |
 | [`src/components/map/map-footer/FactionLegend.tsx`](../src/components/map/map-footer/FactionLegend.tsx) | Legend display-only, bỏ toàn bộ nút bấm lọc.                                                                                                         |
