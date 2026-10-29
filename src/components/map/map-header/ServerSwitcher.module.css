@@ -1,0 +1,35 @@
+.switcher {
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+  margin-left: 12px;
+  vertical-align: middle;
+  border: 1px solid #d8dfe3;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.switcher button {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0;
+  color: #7b8d98;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.switcher button.active,
+.switcher button.active:hover {
+  color: #0d8a65;
+  background: #e0f2ea;
+}
+
+@media (max-width: 760px) {
+  .switcher {
+    margin-left: 8px;
+  }
+
+  .switcher button {
+    padding: 3px 6px;
+  }
+}

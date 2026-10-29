@@ -2,3 +2,5 @@ node_modules
 dist
 pnpm-lock.yaml
 *.diff
+# Data dump do report.py ghi (indent=1) — không format lại
+src/data/**/*.json

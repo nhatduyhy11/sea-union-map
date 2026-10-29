@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useReactFlow, type Edge } from "@xyflow/react";
-import { ownedIslands } from "../domain/mapData";
+import { currentMapData } from "../stores/dataset";
 import { setPanelTab } from "../stores/commands";
 import { usePanel } from "../stores/panel";
 import { useSelection } from "../stores/selection";
@@ -16,7 +16,9 @@ export function useFocusIsland() {
   const { setCenter } = useReactFlow<AppNode, Edge>();
   return useCallback(
     (id: string) => {
-      const island = ownedIslands.find((node) => node.id === id);
+      const island = currentMapData().ownedIslands.find(
+        (node) => node.id === id
+      );
       if (!island) return;
       useSelection.getState().open(id);
       setPanelTab("node");
@@ -34,7 +36,9 @@ export function useFocusIslandOnBoard() {
   const { setCenter } = useReactFlow<AppNode, Edge>();
   return useCallback(
     (id: string) => {
-      const island = ownedIslands.find((node) => node.id === id);
+      const island = currentMapData().ownedIslands.find(
+        (node) => node.id === id
+      );
       if (!island) return;
       useSelection.getState().open(id);
       setCenter(island.position.x, island.position.y, FOCUS_OPTIONS);

@@ -1,11 +1,4 @@
-import {
-  islands as liveIslands,
-  contributions as liveContributions,
-  playerBoard as serverPlayerBoard,
-  factionGuilds as serverFactionGuilds,
-  guildNames,
-  routes as liveRoutes,
-} from "../data/sea-live";
+import { buildLiveData, type SeaLiveDump } from "../data/sea-live";
 import { factions } from "../data/factions";
 import { deriveConnected, type ClaimState } from "./claims";
 import {
@@ -15,56 +8,12 @@ import {
   playersFromContributions,
   scoresForNode,
 } from "./selectors";
-import type { FactionScore } from "../types";
+import type { Contribution, FactionScore, Island, Route } from "../types";
 
-// Nguồn dữ liệu duy nhất: data crawl thật từ JSON dump (sea-live.json —
-// regenerate bằng script dump; join JSON → islands/
-// contributions nằm ở src/data/sea-live.ts).
-const islands = liveIslands;
-export const contributions = liveContributions;
-export const routes = liveRoutes;
-
-export const scoresByNode = new Map<string, FactionScore[]>(
-  islands.map((node) => [
-    node.id,
-    scoresForNode(node.id, contributions, factions),
-  ])
-);
-
-// Owner là truth từ server snapshot (dump owner) — claim rule chỉ còn tính
-// connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
-const ownerByNode = new Map(
-  islands.map((node) => [node.id, node.owner] as const)
-);
-export const claims: ClaimState = {
-  ownerByNode,
-  connectedByNode: deriveConnected(islands, routes, ownerByNode),
-};
-
-export const ownedIslands = islands;
-
-// Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth. Tab
-// Phe: gắn guild scores server (dump factionGuilds).
-export const leaderboard = buildServerLeaderboard(
-  serverPlayerBoard,
-  contributions,
-  factions
-);
-export const factionBoard = buildFactionBoard(
-  contributions,
-  factions,
-  ownedIslands,
-  serverFactionGuilds
-);
-export const nodeBoard = buildNodeBoard(islands, contributions, factions);
-export const baseCount = islands.filter((node) => node.base).length;
-
-// Player universe một lần để tra tên (chip filter) — guild của player lấy
-// theo dòng đầu thắng (cùng rule playersFromContributions/buildFactionBoard).
-export const players = playersFromContributions(contributions);
-
-// guildId → tên — tra display name cho chip filter guild.
-export { guildNames };
+// Model UI derive từ một dump (live hoặc snapshot lịch sử của một cụm) — store
+// dataset giữ bản đang xem, component đọc qua useMapData(). Join JSON →
+// islands/contributions nằm ở src/data/sea-live.ts.
+export type MapData = ReturnType<typeof buildMapData>;
 
 // Index node ↔ guild/player cho filter canvas: node nào có đóng góp của
 // guild/player nào. Guild key là guildId từ game (định danh unique sẵn — hai
@@ -80,21 +29,74 @@ function indexNodeIds(
   else map.set(key, new Set([nodeId]));
 }
 
-const knownGuildIds = new Set(
-  Object.values(serverFactionGuilds).flatMap((rows) =>
-    rows.map((row) => row.guildId)
-  )
-);
+export function buildMapData(dump: SeaLiveDump) {
+  const live = buildLiveData(dump);
+  const islands: Island[] = live.islands;
+  const contributions: Contribution[] = live.contributions;
+  const routes: Route[] = live.routes;
 
-export const nodeIdsByGuild = new Map<string, Set<string>>();
-export const nodeIdsByPlayer = new Map<string, Set<string>>();
-for (const entry of contributions) {
-  indexNodeIds(nodeIdsByPlayer, entry.playerId, entry.nodeId);
-  indexNodeIds(
-    nodeIdsByGuild,
-    entry.guildId && knownGuildIds.has(entry.guildId)
-      ? entry.guildId
-      : "Không guild",
-    entry.nodeId
+  const scoresByNode = new Map<string, FactionScore[]>(
+    islands.map((node) => [
+      node.id,
+      scoresForNode(node.id, contributions, factions),
+    ])
   );
+
+  // Owner là truth từ server snapshot (dump owner) — claim rule chỉ còn tính
+  // connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
+  const ownerByNode = new Map(
+    islands.map((node) => [node.id, node.owner] as const)
+  );
+  const claims: ClaimState = {
+    ownerByNode,
+    connectedByNode: deriveConnected(islands, routes, ownerByNode),
+  };
+
+  const knownGuildIds = new Set(
+    Object.values(live.factionGuilds).flatMap((rows) =>
+      rows.map((row) => row.guildId)
+    )
+  );
+  const nodeIdsByGuild = new Map<string, Set<string>>();
+  const nodeIdsByPlayer = new Map<string, Set<string>>();
+  for (const entry of contributions) {
+    indexNodeIds(nodeIdsByPlayer, entry.playerId, entry.nodeId);
+    indexNodeIds(
+      nodeIdsByGuild,
+      entry.guildId && knownGuildIds.has(entry.guildId)
+        ? entry.guildId
+        : "Không guild",
+      entry.nodeId
+    );
+  }
+
+  return {
+    contributions,
+    routes,
+    scoresByNode,
+    claims,
+    ownedIslands: islands,
+    // Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth.
+    // Tab Phe: gắn guild scores server (dump factionGuilds).
+    leaderboard: buildServerLeaderboard(
+      live.playerBoard,
+      contributions,
+      factions
+    ),
+    factionBoard: buildFactionBoard(
+      contributions,
+      factions,
+      islands,
+      live.factionGuilds
+    ),
+    nodeBoard: buildNodeBoard(islands, contributions, factions),
+    baseCount: islands.filter((node) => node.base).length,
+    // Player universe một lần để tra tên (chip filter) — guild của player lấy
+    // theo dòng đầu thắng (cùng rule playersFromContributions/buildFactionBoard).
+    players: playersFromContributions(contributions),
+    // guildId → tên — tra display name cho chip filter guild.
+    guildNames: live.guildNames,
+    nodeIdsByGuild,
+    nodeIdsByPlayer,
+  };
 }

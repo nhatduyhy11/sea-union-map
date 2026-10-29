@@ -1,0 +1,110 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.label {
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  font-weight: 600;
+  color: #8b9aa4;
+  text-transform: uppercase;
+  margin-right: 2px;
+}
+
+/* Ngày có snapshot / hôm nay: nút nổi. */
+.day {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 30px;
+  justify-content: center;
+  padding: 3px 7px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #33424c;
+  background: #ffffff;
+  border: 1px solid #d8dfe3;
+  border-radius: 5px;
+  box-shadow: 0 1px 2px rgba(20, 35, 44, 0.12);
+  transition:
+    box-shadow 0.15s,
+    transform 0.15s;
+}
+
+.day:hover {
+  border-color: #b9c5cc;
+  box-shadow: 0 2px 5px rgba(20, 35, 44, 0.16);
+  transform: translateY(-1px);
+}
+
+.day.active,
+.day.active:hover {
+  color: #0d8a65;
+  background: #e0f2ea;
+  border-color: #7ccaae;
+}
+
+/* Thiếu snapshot: vẫn sáng chữ nhưng flat — không viền, không nổi. */
+.day.missing,
+.day.missing:hover {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Chưa tới: xám, không bấm được. */
+.day.future {
+  color: #b5c1c8;
+  background: #f1f4f5;
+  border-color: #e3e8eb;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.day.future:hover {
+  transform: none;
+}
+
+.liveDot {
+  width: 5px;
+  height: 5px;
+  background: #e5484d;
+}
+
+/* Tooltip nhãn trạng thái — hiện ngay khi hover (title native chậm). */
+.day[data-tip]:hover::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 500;
+  color: #ffffff;
+  background: #2a3740;
+  padding: 4px 7px;
+  border-radius: 4px;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.loading {
+  font-size: 10px;
+  color: #8b9aa4;
+}
+
+@media (max-width: 760px) {
+  .label {
+    display: none;
+  }
+
+  .day {
+    min-width: 0;
+    padding: 2px 6px;
+  }
+}
