@@ -66,7 +66,7 @@ from browser.page_guards import (  # noqa: E402
     install_profile_popup_guard,
 )
 from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from capture.capture import FrameWriter  # noqa: E402
+from capture.frames import FrameWriter  # noqa: E402
 from core.decode import decode_proto  # noqa: E402
 from core.protocol import (  # noqa: E402
     GUILD_BRIEF_CMD,

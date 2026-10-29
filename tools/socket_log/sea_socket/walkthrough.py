@@ -1,6 +1,7 @@
 """POC walkthrough into the Tranh Bá Tứ Hải (Sea Union) event, capturing raw WS frames.
 
-Thin entry over capture/capture.py — same FrameWriter / step DSL / launch block —
+Thin entry over the capture CLI's pieces — FrameWriter (capture/frames.py), step
+DSL (gui/steps.py), launch block (browser/session.py) —
 plus named STAGES for the navigation flow in docs/sea/SEA_STRUCTURE.md §2 and wheel
 scroll for the event-lobby list. Expect guards cover only the home→sea-lobby
 entry (login + open-sea): that stretch has no fallback if a click misses, so a
@@ -34,14 +35,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from browser.page_guards import close_profile_popup_tabs  # noqa: E402
 from browser.process_guard import acquire_profile_lock, release_profile_lock  # noqa: E402
-from capture.capture import (  # noqa: E402
-    DEFAULT_OUT_DIR,
-    FrameWriter,
-    close_session,
-    launch_session,
-    parse_step,
-    run_step,
-)
+from browser.session import close_session, launch_session  # noqa: E402
+from capture.frames import DEFAULT_OUT_DIR, FrameWriter  # noqa: E402
+from gui.steps import parse_step, run_step  # noqa: E402
 
 DEFAULT_PROFILE = ".tmp/pmain"
 LOCK_FILENAME = ".sea_capture.lock"
