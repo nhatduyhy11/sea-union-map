@@ -16,10 +16,6 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
   return (
     <>
       <h2>Xếp hạng cá nhân</h2>
-      <p>
-        BXH điểm server (top-200). Mở rộng: đảo đóng góp ghép từ BXH từng cứ
-        điểm.
-      </p>
       {players.map((player, index) => {
         // Easter egg: click liên tiếp dòng của dev mở picker màu (xem debug store).
         const onEasterEgg =

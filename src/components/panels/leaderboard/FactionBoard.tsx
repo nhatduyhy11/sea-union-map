@@ -45,10 +45,6 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   return (
     <>
       <h2>Xếp hạng phe</h2>
-      <p>
-        Điểm phe là tổng Điểm ST của các guild thành viên; [LC] là tổng lực
-        chiến các guild.
-      </p>
       <div className={styles.subTabs}>
         <button
           className={faction ? "" : styles.selected}
@@ -77,7 +73,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
             checked={sortByScore}
             onChange={(event) => setSortByScore(event.target.checked)}
           />
-          Sort theo Điểm
+          Sắp xếp Bang theo điểm
         </label>
       </div>
       {faction ? (

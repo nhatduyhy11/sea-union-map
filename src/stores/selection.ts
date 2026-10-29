@@ -9,7 +9,6 @@ interface SelectionState {
   open: (id: string) => void;
   close: () => void;
   togglePin: (id: string) => void;
-  clearPins: () => void;
 }
 
 export const useSelection = create<SelectionState>()((set) => ({
@@ -25,5 +24,4 @@ export const useSelection = create<SelectionState>()((set) => ({
       else pinned.add(id);
       return { pinned };
     }),
-  clearPins: () => set({ pinned: new Set() }),
 }));

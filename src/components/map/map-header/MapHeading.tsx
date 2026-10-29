@@ -34,9 +34,7 @@ export function MapHeading() {
       <div>
         <div className={styles.eyebrow}>CHIẾN TRƯỜNG / TỔNG QUAN</div>
         <div className={styles.titleRow}>
-          <h1 className={styles.title}>
-            Tranh bá Tứ Hải<span>01</span>
-          </h1>
+          <h1 className={styles.title}>Tranh bá Tứ Hải</h1>
           <ServerSwitcher />
         </div>
       </div>
@@ -69,8 +67,7 @@ export function MapHeading() {
           </div>
         )}
         <div className={styles.mapCount}>
-          <b>{ownedIslands.length - baseCount}</b> cứ điểm <span>·</span>{" "}
-          <b>{baseCount}</b> căn cứ
+          <b>{ownedIslands.length - baseCount}</b> cứ điểm
         </div>
       </div>
     </div>

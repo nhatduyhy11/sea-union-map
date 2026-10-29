@@ -3,6 +3,7 @@ node_modules/
 dist/
 stats.html
 build/
+*.tsbuildinfo
 .DS_Store
 
 *.pyc

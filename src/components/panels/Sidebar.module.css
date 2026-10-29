@@ -61,39 +61,6 @@
   line-height: 1.8;
 }
 
-.foot {
-  padding: 14px 22px;
-  border-top: 1px solid #e4e8ea;
-  color: #7d8f9a;
-  font-size: 9px;
-  flex-shrink: 0;
-}
-
-.foot > span {
-  color: #a8791f;
-}
-
-.foot > span i {
-  display: inline-block;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-  margin-right: 7px;
-}
-
-.foot > button {
-  float: right;
-  color: #7d8f9a;
-}
-
-.foot small {
-  display: block;
-  font-size: 8px;
-  margin-top: 8px;
-  line-height: 1.6;
-}
-
 @media (min-width: 1600px) {
   .sidebar {
     width: 370px;
@@ -120,9 +87,5 @@
 
   .empty {
     padding: 40px;
-  }
-
-  .foot {
-    padding-bottom: 20px;
   }
 }

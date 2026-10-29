@@ -24,7 +24,6 @@ export function NodeBoard({ nodes }: { nodes: NodeBoardEntry[] }) {
   return (
     <>
       <h2>Xếp hạng cứ điểm</h2>
-      <p>Mở một cứ điểm để nhìn nó trên map.</p>
       <div className={styles.sortBar}>
         <label
           className={styles.sortOption}
@@ -35,7 +34,7 @@ export function NodeBoard({ nodes }: { nodes: NodeBoardEntry[] }) {
             checked={sortByScore}
             onChange={(event) => setSortByScore(event.target.checked)}
           />
-          Sort theo Điểm
+          Sắp xếp theo điểm
         </label>
       </div>
       {displayNodes.map((entry, index) => (
