@@ -10,7 +10,7 @@ import type {
 import { playerAllocations, playersFromContributions } from "../nodeScores";
 
 type GuildEntry = FactionBoardEntry["guilds"][number];
-type SortBy = "power" | "score";
+export type SortBy = "power" | "score";
 
 // Bucket gộp player không guild (hoặc guildId không có row server).
 export const NO_GUILD = "Không guild";
@@ -167,11 +167,7 @@ function factionEntry(
   score: number,
   sortBy: SortBy
 ): FactionBoardEntry {
-  const sorted = [...guilds].sort((a, b) =>
-    sortBy === "power"
-      ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
-      : b.score - a.score
-  );
+  const sorted = sortGuilds(guilds, sortBy);
   return {
     ...faction,
     islands: islands.filter((node) => node.owner === faction.id).length,
@@ -179,4 +175,24 @@ function factionEntry(
     score,
     power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),
   };
+}
+
+// Sort guild: "power" = lực chiến giảm dần (hoà thì theo điểm), "score" = điểm.
+export function sortGuilds(guilds: GuildEntry[], sortBy: SortBy): GuildEntry[] {
+  return [...guilds].sort((a, b) =>
+    sortBy === "power"
+      ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
+      : b.score - a.score
+  );
+}
+
+// Hạng phe theo tổng điểm (1 = dẫn đầu) — list vẫn giữ thứ tự cố định.
+export function rankFactions(
+  factions: FactionBoardEntry[]
+): Map<string, number> {
+  return new Map(
+    [...factions]
+      .sort((a, b) => b.score - a.score)
+      .map((entry, index) => [entry.id, index + 1])
+  );
 }
