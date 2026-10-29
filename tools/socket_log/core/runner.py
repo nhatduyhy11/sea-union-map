@@ -11,9 +11,8 @@ mine_socket/handlers.py for the mine wiring.
 import asyncio
 import pathlib
 import struct
-from collections.abc import Awaitable
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
-from typing import Callable, Optional
 
 from playwright.async_api import Page, WebSocket, async_playwright
 
@@ -65,7 +64,7 @@ class NameFetcher:
 
     def __init__(self, enabled: bool = True) -> None:
         self.enabled = enabled
-        self.page: Optional[Page] = None
+        self.page: Page | None = None
         self.page_closed = False
         self.pending: set[int] = set()
         self.requested: set[int] = set()
@@ -139,9 +138,9 @@ class LoggerContext:
 class FrameRoutes:
     """Event-specific wiring plugged into the core's websocket + run loop."""
 
-    on_frame: Optional[Callable[[bytes], None]] = None
-    on_sent: Optional[Callable[[bytes], None]] = None
-    snapshot_done: Optional[Callable[[], Awaitable[bool]]] = None  # --snapshot completion check
+    on_frame: Callable[[bytes], None] | None = None
+    on_sent: Callable[[bytes], None] | None = None
+    snapshot_done: Callable[[], Awaitable[bool]] | None = None  # --snapshot completion check
 
 
 async def reload_later(page: Page, delay: float = 10.0) -> None:

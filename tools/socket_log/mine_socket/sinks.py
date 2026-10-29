@@ -3,13 +3,12 @@
 import asyncio
 import json
 import pathlib
-from typing import Optional
 
 
 class MineEventSink:
     """Dedupe by event id, append fresh events to JSONL, optional webhook."""
 
-    def __init__(self, out_path: pathlib.Path, webhook: Optional[str]) -> None:
+    def __init__(self, out_path: pathlib.Path, webhook: str | None) -> None:
         self.out_path = out_path
         self.webhook = webhook
         self.seen_ids: set[int] = set()

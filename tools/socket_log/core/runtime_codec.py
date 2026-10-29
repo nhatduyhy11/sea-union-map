@@ -127,7 +127,7 @@ def cut_frame(capture_dir: str, frame_no: int) -> None:
 
 
 async def decode(mode: str, b64_files: list[str]) -> None:
-    bodies = [open(p).read() for p in b64_files]
+    bodies = [pathlib.Path(p).read_text() for p in b64_files]
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=True, channel="chrome")
         page = await browser.new_page(viewport={"width": 640, "height": 720})

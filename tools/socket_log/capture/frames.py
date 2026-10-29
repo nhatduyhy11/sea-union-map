@@ -6,7 +6,6 @@ import asyncio
 import json
 import time
 from pathlib import Path
-from typing import Union
 
 from playwright.async_api import Page
 
@@ -43,7 +42,7 @@ class FrameWriter:
     async def ws_open(self, ws_url: str) -> None:
         await self._append({"n": None, "t": self.elapsed_ms(), "dir": "O", "ws": ws_url})
 
-    async def write_frame(self, direction: str, ws_url: str, payload: Union[str, bytes]) -> None:
+    async def write_frame(self, direction: str, ws_url: str, payload: str | bytes) -> None:
         self.seq += 1
         seq = self.seq
         if isinstance(payload, str):

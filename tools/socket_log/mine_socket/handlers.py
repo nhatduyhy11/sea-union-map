@@ -7,7 +7,6 @@ settled).
 """
 
 import asyncio
-from typing import Optional
 
 from core.decode import split_frame
 from core.protocol import BROADCAST_MODULE, BROADCAST_PUSH_CMDS, frame_is
@@ -38,7 +37,7 @@ def build_routes(
     ctx: LoggerContext,
     event_sink,
     state_sink: JsonlSink,
-    tile_sink: Optional[JsonlSink],
+    tile_sink: JsonlSink | None,
     *,
     fetch_names: bool = True,
 ) -> FrameRoutes:

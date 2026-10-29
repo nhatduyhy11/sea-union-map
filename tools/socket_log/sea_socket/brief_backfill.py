@@ -172,7 +172,7 @@ async def main() -> None:
                 page = await navigate_to_game(context, page, args.url, prepare_page=prepare)
                 try:
                     await page.evaluate(WS_SEND_HOOK_JS)
-                except Exception:  # noqa: BLE001 — heartbeats retrigger the send hook
+                except Exception:  # noqa: BLE001, S110 — heartbeats retrigger the send hook
                     pass
                 guard_task = asyncio.create_task(
                     install_game_core_frame_guard_after_delay(page))

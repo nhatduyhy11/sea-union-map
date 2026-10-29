@@ -3,7 +3,7 @@ name = "sea-union-map"
 version = "0.1.0"
 description = "WebSocket packet capture and protocol decoding for the Haunted Room H5 game"
 readme = "docs/README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "pillow>=11.3.0",
     "playwright>=1.60.0",
