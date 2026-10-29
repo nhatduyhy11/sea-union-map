@@ -26,13 +26,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from playwright.async_api import Page, WebSocket, async_playwright
 
-from browser.navigation import navigate_to_game
-from browser.page_guards import (
-    install_game_core_frame_guard_after_delay,
-    install_profile_popup_guard,
-)
 from browser.process_guard import acquire_profile_lock, release_profile_lock
-from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS
+from browser.session import open_game_session
+from browser.ws_inject import SEND_FRAME_JS
 from capture.frames import FrameWriter
 from core.protocol import (
     GUILD_BRIEF_CMD,
@@ -147,95 +143,69 @@ async def main() -> None:
         writer = FrameWriter(out_dir)
         router = CrawlRouter(writer)
 
-        async with async_playwright() as playwright:
-            context = await playwright.chromium.launch_persistent_context(
-                user_data_dir=str(profile),
-                channel=args.browser if args.browser != "chromium" else None,
-                viewport={"width": 640, "height": 720},
-                args=["--disable-blink-features=AutomationControlled",
-                      "--hide-crash-restore-bubble"],
-                service_workers="block",
-            )
-            try:
-                page = context.pages[0] if context.pages else await context.new_page()
+        def on_websocket(ws: WebSocket) -> None:
+            print(f"[ws open] {ws.url}", flush=True)
+            router.attach(ws, ws.url)
 
-                async def prepare(new_page: Page) -> None:
-                    await install_profile_popup_guard(new_page)
-                    await new_page.add_init_script(WS_SEND_HOOK_JS)
+        async with async_playwright() as playwright, open_game_session(
+            playwright, profile=profile, url=args.url,
+            on_page=lambda p: p.on("websocket", on_websocket),
+            browser=args.browser,
+        ) as page:
+            await asyncio.sleep(args.settle)
+            await run_stages(page, writer, out_dir, entry_stages)
+            # Refused ids are a server-side cooldown, not a hard block
+            # (2026-10-27: 16 ids empty across 5 rounds, all back in
+            # one dedicated batch ~90min later) — a later --guilds run
+            # closes whatever gap this pass leaves.
+            got = still_missing = 0
+            if wanted:
+                got = await run_backfill(page, router, wanted)
+                merged = {**briefs_before, **router.briefs}
+                with players_path.open("w", encoding="utf-8") as fh:
+                    for pid in sorted(merged, key=int):
+                        fh.write(json.dumps(merged[pid], ensure_ascii=False) + "\n")
+                still_missing = len([p for p in wanted if p not in router.briefs])
+                print(f"[done] backfilled {got}/{len(wanted)}; "
+                      f"players.jsonl now {len(merged)} rows; "
+                      f"still missing: {still_missing}", flush=True)
 
-                def on_websocket(ws: WebSocket) -> None:
-                    print(f"[ws open] {ws.url}", flush=True)
-                    router.attach(ws, ws.url)
-
-                page.on("websocket", on_websocket)
-                context.on("page", lambda p: p.on("websocket", on_websocket))
-                page = await navigate_to_game(context, page, args.url, prepare_page=prepare)
-                try:
-                    await page.evaluate(WS_SEND_HOOK_JS)
-                except Exception:  # noqa: BLE001, S110 — heartbeats retrigger the send hook
-                    pass
-                guard_task = asyncio.create_task(
-                    install_game_core_frame_guard_after_delay(page))
-                await asyncio.sleep(args.settle)
-
-                try:
-                    await run_stages(page, writer, out_dir, entry_stages)
-                    # Refused ids are a server-side cooldown, not a hard block
-                    # (2026-10-27: 16 ids empty across 5 rounds, all back in
-                    # one dedicated batch ~90min later) — a later --guilds run
-                    # closes whatever gap this pass leaves.
-                    got = still_missing = 0
-                    if wanted:
-                        got = await run_backfill(page, router, wanted)
-                        merged = {**briefs_before, **router.briefs}
-                        with players_path.open("w", encoding="utf-8") as fh:
-                            for pid in sorted(merged, key=int):
-                                fh.write(json.dumps(merged[pid], ensure_ascii=False) + "\n")
-                        still_missing = len([p for p in wanted if p not in router.briefs])
-                        print(f"[done] backfilled {got}/{len(wanted)}; "
-                              f"players.jsonl now {len(merged)} rows; "
-                              f"still missing: {still_missing}", flush=True)
-
-                    if guild_ids:
-                        # 0x24/0x0035 empty responses are time-gated, not
-                        # permanent (2026-10-27: 16 guilds empty at 07:26+07:45,
-                        # all 12 still-missing ones returned full briefs the
-                        # same afternoon — dead_guild_probe). So: merge into the
-                        # existing file and never overwrite a known name with a
-                        # null result — a later run (or warm server cache)
-                        # closes the rest.
-                        names_path = run_dir / "guild-names.json"
-                        names: dict = {}
-                        if names_path.exists():
-                            try:
-                                names = json.loads(
-                                    names_path.read_text(encoding="utf-8"))
-                            except (OSError, ValueError):
-                                names = {}
-                        filled = 0
-                        for gid in guild_ids:
-                            try:
-                                _h, body = await router.inject(
-                                    page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
-                                brief = parse_guild_brief(body)
-                            except RuntimeError as exc:
-                                print(f"[guild] {gid}: {exc}", flush=True)
-                                await asyncio.sleep(REQUEST_PACE)
-                                continue
-                            if brief.get("name"):
-                                names[str(gid)] = brief
-                                filled += 1
-                            await asyncio.sleep(REQUEST_PACE)
-                        names_path.write_text(
-                            json.dumps(names, ensure_ascii=False, indent=1),
-                            encoding="utf-8")
-                        print(f"[done] guild briefs {filled}/{len(guild_ids)} filled, "
-                              f"{sum(1 for v in names.values() if v.get('name'))}"
-                              f"/{len(guild_ids)} named total", flush=True)
-                finally:
-                    guard_task.cancel()
-            finally:
-                await context.close()
+            if guild_ids:
+                # 0x24/0x0035 empty responses are time-gated, not
+                # permanent (2026-10-27: 16 guilds empty at 07:26+07:45,
+                # all 12 still-missing ones returned full briefs the
+                # same afternoon — dead_guild_probe). So: merge into the
+                # existing file and never overwrite a known name with a
+                # null result — a later run (or warm server cache)
+                # closes the rest.
+                names_path = run_dir / "guild-names.json"
+                names: dict = {}
+                if names_path.exists():
+                    try:
+                        names = json.loads(
+                            names_path.read_text(encoding="utf-8"))
+                    except (OSError, ValueError):
+                        names = {}
+                filled = 0
+                for gid in guild_ids:
+                    try:
+                        _h, body = await router.inject(
+                            page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
+                        brief = parse_guild_brief(body)
+                    except RuntimeError as exc:
+                        print(f"[guild] {gid}: {exc}", flush=True)
+                        await asyncio.sleep(REQUEST_PACE)
+                        continue
+                    if brief.get("name"):
+                        names[str(gid)] = brief
+                        filled += 1
+                    await asyncio.sleep(REQUEST_PACE)
+                names_path.write_text(
+                    json.dumps(names, ensure_ascii=False, indent=1),
+                    encoding="utf-8")
+                print(f"[done] guild briefs {filled}/{len(guild_ids)} filled, "
+                      f"{sum(1 for v in names.values() if v.get('name'))}"
+                      f"/{len(guild_ids)} named total", flush=True)
     finally:
         release_profile_lock(profile, LOCK_FILENAME)
 

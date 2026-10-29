@@ -60,13 +60,9 @@ from playwright.async_api import Page, WebSocket, async_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from browser.navigation import navigate_to_game
-from browser.page_guards import (
-    install_game_core_frame_guard_after_delay,
-    install_profile_popup_guard,
-)
 from browser.process_guard import acquire_profile_lock, release_profile_lock
-from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS
+from browser.session import open_game_session
+from browser.ws_inject import SEND_FRAME_JS
 from capture.frames import FrameWriter
 from core.decode import decode_proto
 from core.protocol import (
@@ -502,59 +498,31 @@ async def main() -> None:
         writer = FrameWriter(out_dir)
         router = CrawlRouter(writer)
 
-        async with async_playwright() as playwright:
-            context = await playwright.chromium.launch_persistent_context(
-                user_data_dir=str(profile),
-                channel=args.browser if args.browser != "chromium" else None,
-                headless=args.headless,
-                viewport={"width": args.width, "height": args.height},
-                args=["--disable-blink-features=AutomationControlled",
-                      "--hide-crash-restore-bubble"],
-                service_workers="block",
-            )
-            try:
-                page = context.pages[0] if context.pages else await context.new_page()
+        def on_websocket(ws: WebSocket) -> None:
+            print(f"[ws open] {ws.url}", flush=True)
+            router.attach(ws, ws.url)
 
-                async def prepare(new_page: Page) -> None:
-                    await install_profile_popup_guard(new_page)
-                    await new_page.add_init_script(WS_SEND_HOOK_JS)
-
-                def on_websocket(ws: WebSocket) -> None:
-                    print(f"[ws open] {ws.url}", flush=True)
-                    router.attach(ws, ws.url)
-
-                # Router must attach BEFORE navigation — the game socket opens
-                # during it, and Playwright only surfaces brand-new sockets.
-                page.on("websocket", on_websocket)
-                context.on("page", lambda p: p.on("websocket", on_websocket))
-                page = await navigate_to_game(context, page, args.url, prepare_page=prepare)
+        async with async_playwright() as playwright, open_game_session(
+            playwright, profile=profile, url=args.url,
+            on_page=lambda p: p.on("websocket", on_websocket),
+            browser=args.browser, headless=args.headless,
+            width=args.width, height=args.height,
+        ) as page:
+            if args.gui_entry:
+                await asyncio.sleep(args.settle)
+                await run_stages(page, writer, out_dir, entry_stages)
+            else:
+                await payload_entry(page, router, out_dir, args.login_timeout)
+            summary = await run_crawl(page, router, out_dir)
+            print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
+            if args.dump:
                 try:
-                    await page.evaluate(WS_SEND_HOOK_JS)  # belt & suspenders for the live doc
-                except Exception as exc:  # noqa: BLE001 — heartbeats retrigger the send hook
-                    print(f"[hook] send-hook evaluate skipped: {exc}", flush=True)
-                guard_task = asyncio.create_task(
-                    install_game_core_frame_guard_after_delay(page))
-
-                try:
-                    if args.gui_entry:
-                        await asyncio.sleep(args.settle)
-                        await run_stages(page, writer, out_dir, entry_stages)
-                    else:
-                        await payload_entry(page, router, out_dir, args.login_timeout)
-                    summary = await run_crawl(page, router, out_dir)
-                    print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
-                    if args.dump:
-                        try:
-                            dump_run(out_dir, out=DEV_DUMP_OUT)
-                        except SystemExit as exc:
-                            # Raw run đã an toàn trên đĩa — chỉ nhắc chỗ re-dump.
-                            print(f"[dump] transform failed, raw run kept at "
-                                  f"{out_dir}: {exc}", flush=True)
-                            raise
-                finally:
-                    guard_task.cancel()
-            finally:
-                await context.close()
+                    dump_run(out_dir, out=DEV_DUMP_OUT)
+                except SystemExit as exc:
+                    # Raw run đã an toàn trên đĩa — chỉ nhắc chỗ re-dump.
+                    print(f"[dump] transform failed, raw run kept at "
+                          f"{out_dir}: {exc}", flush=True)
+                    raise
     finally:
         release_profile_lock(profile, LOCK_FILENAME)
 

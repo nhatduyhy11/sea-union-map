@@ -1,31 +1,27 @@
-"""Shared runner core for the live event loggers (mine and sea today).
+"""Shared runner core for the live event loggers (mine today).
 
 Owns everything event-independent: profile lock + stop signals, the
-persistent-Chrome session, WebSocket hookup, the player/guild name service
-(core/names.py — this module only forwards frames to it), and the run modes
-(forever / --duration / --snapshot). An event logger plugs in its own sinks + frame
-routing through a routes factory returning FrameRoutes — see
-mine_socket/handlers.py for the mine wiring.
+persistent-Chrome session (browser/session.py open_game_session), WebSocket
+hookup, the player/guild name service (core/names.py — this module only
+forwards frames to it), and the run modes (forever / --duration / --snapshot).
+An event logger plugs in its own sinks + frame routing through a routes factory
+returning FrameRoutes — see mine_socket/handlers.py for the mine wiring.
 """
 
 import asyncio
 import pathlib
-from collections.abc import Awaitable, Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import asynccontextmanager
 from dataclasses import dataclass
 
-from playwright.async_api import Page, WebSocket, async_playwright
+from playwright.async_api import Page, Playwright, WebSocket, async_playwright
 
-from browser.navigation import navigate_to_game
-from browser.page_guards import (
-    install_game_core_frame_guard_after_delay,
-    install_profile_popup_guard,
-)
 from browser.process_guard import (
     acquire_profile_lock,
     install_stop_signals,
     release_profile_lock,
 )
-from browser.ws_inject import WS_SEND_HOOK_JS
+from browser.session import open_game_session
 from core.names import NameService
 from core.sinks import JsonlSink
 
@@ -36,8 +32,8 @@ DEFAULT_LOCK_FILENAME = ".ws_logger.lock"
 class LoggerContext:
     """Shared per-run handles an event logger's routes can use."""
 
-    page: Page
     names: NameService
+    page: Page | None = None  # game page; set once navigation lands
 
 
 @dataclass
@@ -76,93 +72,85 @@ class GameLogger:
         self.args = args
         self.routes_factory = routes_factory
         self.lock_filename = lock_filename
+        self._bg_tasks: set[asyncio.Task] = set()
 
     async def run(self) -> LoggerContext:
         args = self.args
         profile_dir = pathlib.Path(args.profile)
         if not acquire_profile_lock(profile_dir, self.lock_filename):
             raise SystemExit(1)
-        names = NameService(
-            JsonlSink(args.briefs or args.dir / "player-briefs.jsonl", "brief"),
-            JsonlSink(args.guilds or args.dir / "guild-briefs.jsonl", "guild"),
-            enabled=not args.no_fetch_names,
-        )
-        stop = asyncio.Event()
-        install_stop_signals(stop)
-
-        async with async_playwright() as playwright:
-            context = await playwright.chromium.launch_persistent_context(
-                user_data_dir=str(profile_dir),
-                channel="chrome",
-                headless=False,
-                viewport={"width": 640, "height": 720},
-                args=[
-                    "--disable-blink-features=AutomationControlled",
-                    "--hide-crash-restore-bubble",
-                ],
-                service_workers="block",
+        try:
+            names = NameService(
+                JsonlSink(args.briefs or args.dir / "player-briefs.jsonl", "brief"),
+                JsonlSink(args.guilds or args.dir / "guild-briefs.jsonl", "guild"),
+                enabled=not args.no_fetch_names,
             )
-            await context.add_init_script(WS_SEND_HOOK_JS)  # covers pages opened later
-            try:
-                page = context.pages[0] if context.pages else await context.new_page()
+            stop = asyncio.Event()
+            install_stop_signals(stop)
+            ctx = LoggerContext(names=names)
+            routes = self.routes_factory(ctx)
 
-                async def prepare(new_page: Page) -> None:
-                    await install_profile_popup_guard(new_page)
-                    # page-level init script: context-level ones don't reach the pre-existing
-                    # page of a persistent profile (seen 2026-10-23: hook never ran)
-                    await new_page.add_init_script(WS_SEND_HOOK_JS)
-
-                page = await navigate_to_game(context, page, args.url, prepare_page=prepare)
+            async with async_playwright() as playwright, self._open_browser(playwright, ctx, routes):
                 try:
-                    await page.evaluate(WS_SEND_HOOK_JS)  # belt & suspenders for the current doc
-                except Exception as exc:  # noqa: BLE001 — frame not ready yet; heartbeats retrigger send hook
-                    print(f"[names] send-hook evaluate skipped: {exc}", flush=True)
-                names.bind(page)  # provisional; the game-socket open re-binds authoritatively
-                guard_task = asyncio.create_task(install_game_core_frame_guard_after_delay(page))
-
-                ctx = LoggerContext(page=page, names=names)
-                routes = self.routes_factory(ctx)
-
-                def hook(new_page: Page) -> None:
-                    # Do NOT rebind names here: any popup would steal it and die
-                    # with the popup. The game-socket "ws open" path binds instead.
-                    print(f"[page] opened: {new_page.url or '(about:blank)'}", flush=True)
-                    new_page.on(
-                        "close",
-                        lambda p: print(f"[page] closed: {p.url or '(about:blank)'}", flush=True),
-                    )
-                    new_page.on(
-                        "websocket",
-                        lambda ws: self._on_websocket(ws, new_page, ctx, routes),
-                    )
-
-                hook(page)
-                context.on("page", hook)
-
-                if args.snapshot:
-                    loop = asyncio.get_running_loop()
-                    deadline = loop.time() + args.snapshot_timeout
-                    print(f"[logger] snapshot mode — stop when done (max {args.snapshot_timeout:.0f}s)")
-                    while loop.time() < deadline:
-                        await asyncio.sleep(1)
-                        if routes.snapshot_done is None or await routes.snapshot_done():
-                            break
-                    else:
-                        print("[logger] snapshot timeout — exiting with partial data")
-                elif args.duration:
-                    print(f"[logger] running for {args.duration}s...")
-                    try:
-                        await asyncio.wait_for(stop.wait(), timeout=args.duration)
-                    except asyncio.TimeoutError:
-                        pass
-                else:
-                    print("[logger] running forever — Ctrl+C or closing the terminal stops it")
-                    await stop.wait()
-                guard_task.cancel()
-            finally:
-                await context.close()
-                release_profile_lock(profile_dir, self.lock_filename)
+                    await self._wait_until_done(routes, stop)
+                finally:
+                    for task in self._bg_tasks:
+                        task.cancel()
+        finally:
+            release_profile_lock(profile_dir, self.lock_filename)
         return ctx
+
+    @asynccontextmanager
+    async def _open_browser(
+        self,
+        playwright: Playwright,
+        ctx: LoggerContext,
+        routes: FrameRoutes,
+    ) -> AsyncIterator[Page]:
+        """Open the game session with every page wired into the socket hookup."""
+
+        def hook(new_page: Page) -> None:
+            # Do NOT rebind names here: any popup would steal it and die
+            # with the popup. The game-socket "ws open" path binds instead.
+            print(f"[page] opened: {new_page.url or '(about:blank)'}", flush=True)
+            new_page.on(
+                "close",
+                lambda p: print(f"[page] closed: {p.url or '(about:blank)'}", flush=True),
+            )
+            new_page.on(
+                "websocket",
+                lambda ws: self._on_websocket(ws, new_page, ctx, routes),
+            )
+
+        async with open_game_session(
+            playwright, profile=self.args.profile, url=self.args.url, on_page=hook
+        ) as page:
+            ctx.page = page
+            if ctx.names.page is None:
+                ctx.names.bind(page)  # provisional; the game-socket open binds authoritatively
+            yield page
+
+    async def _wait_until_done(self, routes: FrameRoutes, stop: asyncio.Event) -> None:
+        args = self.args
+        if args.snapshot:
+            loop = asyncio.get_running_loop()
+            deadline = loop.time() + args.snapshot_timeout
+            print(f"[logger] snapshot mode — stop when done (max {args.snapshot_timeout:.0f}s)")
+            while loop.time() < deadline:
+                await asyncio.sleep(1)
+                if routes.snapshot_done is None or await routes.snapshot_done():
+                    break
+            else:
+                print("[logger] snapshot timeout — exiting with partial data")
+        elif args.duration:
+            print(f"[logger] running for {args.duration}s...")
+            try:
+                await asyncio.wait_for(stop.wait(), timeout=args.duration)
+            except asyncio.TimeoutError:
+                pass
+        else:
+            print("[logger] running forever — Ctrl+C or closing the terminal stops it")
+            await stop.wait()
 
     def _on_websocket(
         self,
@@ -196,7 +184,9 @@ class GameLogger:
             if not is_game_socket:
                 return
             print("[ws close] game socket dropped; reloading page in 10s...", flush=True)
-            asyncio.ensure_future(reload_later(page))
+            task = asyncio.create_task(reload_later(page))
+            self._bg_tasks.add(task)
+            task.add_done_callback(self._bg_tasks.discard)
 
         ws.on("framereceived", on_frame)
         ws.on("framesent", on_sent)
