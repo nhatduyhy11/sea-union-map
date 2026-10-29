@@ -1,10 +1,15 @@
 """Payload-driven SEA crawler: enumerate the battle map and pull every node by id.
 
 The GUI walkthrough (walkthrough.py) only proves the protocol; this crawler is
-the real collector. It boots the game headed, replays the login -> open-sea ->
-battle-map stages once (the server hands over the full map snapshot 0x72/0x000c
-on map open — 89 node ids + owners in one payload), then injects per-node
-requests straight into the game socket, zero map interaction:
+the real collector. Entry has two modes (docs/sea/EVENT_NAVIGATE_DECODE.md):
+
+    payload (mặc định) — wait_login_done (response 0x72/0x0002 đầu tiên) rồi
+      inject 0x72/0x000b từ Home: snapshot ~9–13s sau nav, 0 click, không phụ
+      thuộc screen/loading; kèm 0x72/0x001b -> standings.json (bảng 4 phe).
+    --gui-entry — replay 3 stage cũ (login -> open-sea -> battle-map), fallback.
+
+Sau entry, crawl loop inject per-node requests straight into the game socket,
+zero map interaction:
 
     0x72/0x0011 {f1: id}        -> 0x0012  node state (art, faction ST scores)
     0x0c/0x0002 {f1:118, f2:id} -> 0x0003  node leaderboard (QuickLZ-compressed)
@@ -20,6 +25,7 @@ page — same approach as core/runtime_codec.py.
 
 Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>):
     map-snapshot.json    89 nodes {id, owner} + factions + guild roster
+    standings.json       0x001c: nhiên liệu/rank/owned 4 phe (payload entry)
     node-states.jsonl    per-node art + faction ST scores
     node-boards.jsonl    per-node leaderboard bodies (b64, evidence)
     boards-decoded.json  every board decoded via the game runtime
@@ -36,6 +42,7 @@ Usage:
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --headless
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --no-dump
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --gui-entry
 """
 
 import argparse
@@ -69,7 +76,9 @@ from core.protocol import (  # noqa: E402
 )
 from core.runner import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
 from sea_socket.protocol import (  # noqa: E402
+    BATTLEFIELD_CMD,
     FACTION_DETAIL_CMD,
+    LOGIN_DONE_CMD,
     MAP_SNAPSHOT_CMD,
     NODE_STATE_CMD,
     PLAYER_MODULE,
@@ -79,12 +88,14 @@ from sea_socket.protocol import (  # noqa: E402
     RANK_NODE,
     RANK_PLAYER,
     SEA_MODULE,
+    STANDINGS_CMD,
     build_brief_frame,
     build_request,
     iter_frames,
     parse_faction_detail,
     parse_map_snapshot,
     parse_node_state,
+    parse_standings,
 )
 from sea_socket.report import DEV_DUMP_OUT, dump_run  # noqa: E402
 from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
@@ -168,6 +179,7 @@ class CrawlRouter:
         self.pending: dict[int, asyncio.Future] = {}
         self.seq = 0xF0  # INJECT_SEQ convention: game client ignores these replies
         self.map_snapshot: dict | None = None
+        self.login_done_ms: int | None = None  # writer ms of first R 0x72/0x0002
         self.briefs: dict[str, dict] = {}
         self.node_states: dict[int, dict] = {}
         self.board_bodies: dict[tuple[int, int], tuple[bytes, bool]] = {}
@@ -206,6 +218,9 @@ class CrawlRouter:
                 module, cmd = header["module"], header["cmd"]
                 if module == SEA_MODULE and cmd == MAP_SNAPSHOT_CMD and self.map_snapshot is None:
                     self.map_snapshot = parse_map_snapshot(body)
+                elif module == SEA_MODULE and cmd == LOGIN_DONE_CMD and self.login_done_ms is None:
+                    self.login_done_ms = self.writer.elapsed_ms()
+                    print(f"[login] R 0x72/0x0002 at +{self.login_done_ms}ms", flush=True)
                 elif module == PLAYER_MODULE and cmd == 0x0020:
                     for brief in parse_player_briefs(body):
                         if brief.get("id") is not None:
@@ -243,6 +258,34 @@ def rollup_factions(states: dict[int, dict]) -> dict[int, int]:
         for faction, score in state["faction_scores"].items():
             totals[faction] = totals.get(faction, 0) + score
     return totals
+
+
+async def payload_entry(page: Page, router: CrawlRouter, out_dir: Path,
+                        login_timeout: float) -> None:
+    """E2 — wait-login + inject thay 3 stage GUI (docs/sea/EVENT_NAVIGATE_DECODE.md).
+
+    Chờ response 0x72/0x0002 đầu tiên (boot sync xong; heartbeat muộn hơn ~2.6s
+    nên không dùng), +0.5s cho nốt boot block, rồi inject 0x000b (snapshot 89
+    node) + 0x001b (bảng 4 phe) từ Home — 0 click, không phụ thuộc screen.
+    """
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + login_timeout
+    while router.login_done_ms is None and loop.time() < deadline:
+        await asyncio.sleep(0.2)
+    if router.login_done_ms is None:
+        fail = out_dir / "FAIL-no-login.png"
+        await page.screenshot(path=str(fail))
+        raise RuntimeError(f"no 0x72/0x0002 within {login_timeout}s; evidence: {fail}")
+    await asyncio.sleep(0.5)  # let the rest of the boot block land
+    _h, body = await router.inject(page, SEA_MODULE, BATTLEFIELD_CMD, [])
+    if router.map_snapshot is None:  # route() parse sẵn rồi; fallback cho chắc
+        router.map_snapshot = parse_map_snapshot(body)
+    _h, body = await router.inject(page, SEA_MODULE, STANDINGS_CMD, [])
+    standings = parse_standings(body)
+    (out_dir / "standings.json").write_text(
+        json.dumps(standings, ensure_ascii=False, indent=1), encoding="utf-8")
+    print(f"[entry] payload: fuel={[(r.get('f1'), r.get('f2')) for r in standings]}",
+          flush=True)
 
 
 async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
@@ -421,7 +464,13 @@ async def main() -> None:
     parser.add_argument("--url", default="https://hauntedroomvnh5.joynetgame.com/")
     parser.add_argument("--out", default=None,
                         help="Output dir (default .tmp/sea-crawl/sea-crawl-<ts>)")
-    parser.add_argument("--settle", type=float, default=8.0)
+    parser.add_argument("--settle", type=float, default=8.0,
+                        help="--gui-entry: giây chờ game ổn định trước khi replay stage")
+    parser.add_argument("--gui-entry", action="store_true",
+                        help="Replay 3 stage GUI cũ (login/open-sea/battle-map) thay "
+                             "payload entry mặc định (wait-login + inject, 0 click)")
+    parser.add_argument("--login-timeout", type=float, default=90.0,
+                        help="Payload entry: giây chờ signal login R 0x72/0x0002")
     parser.add_argument("--width", type=int, default=640)
     parser.add_argument("--height", type=int, default=720)
     parser.add_argument("--browser", default="chrome")
@@ -447,7 +496,8 @@ async def main() -> None:
         (out_dir / "meta.json").write_text(json.dumps({
             "url": args.url, "profile": args.profile,
             "started_at": started_at.isoformat(),
-            "stages": [name for name, _ in entry_stages],
+            "entry": "gui" if args.gui_entry else "payload",
+            "stages": [name for name, _ in entry_stages] if args.gui_entry else [],
         }, indent=2), encoding="utf-8")
         writer = FrameWriter(out_dir)
         router = CrawlRouter(writer)
@@ -484,10 +534,13 @@ async def main() -> None:
                     print(f"[hook] send-hook evaluate skipped: {exc}", flush=True)
                 guard_task = asyncio.create_task(
                     install_game_core_frame_guard_after_delay(page))
-                await asyncio.sleep(args.settle)
 
                 try:
-                    await run_stages(page, writer, out_dir, entry_stages)
+                    if args.gui_entry:
+                        await asyncio.sleep(args.settle)
+                        await run_stages(page, writer, out_dir, entry_stages)
+                    else:
+                        await payload_entry(page, router, out_dir, args.login_timeout)
                     summary = await run_crawl(page, router, out_dir)
                     print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
                     if args.dump:

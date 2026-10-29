@@ -9,12 +9,15 @@ no asyncio — safe to unit-test against captured frame bytes.
 import base64
 import struct
 
-from core.decode import decode_proto, encode_varint, split_frame
+from core.decode import decode_proto, encode_varint, read_packed_varints, split_frame
 from core.protocol import PLAYER_BRIEF_CMD, PLAYER_MODULE
 
 SEA_MODULE = 0x72
+LOGIN_DONE_CMD = 0x0002  # response chốt boot sync — signal login-done payload entry
+BATTLEFIELD_CMD = 0x000B  # request rỗng -> 0x000C snapshot (không cần ở map)
 MAP_SNAPSHOT_CMD = 0x000C  # full battle-map snapshot pushed on map open
 NODE_STATE_CMD = 0x0011  # request {f1: id} -> 0x0012 node state
+STANDINGS_CMD = 0x001B  # request rỗng -> 0x001C bảng nhiên liệu 4 phe
 FACTION_DETAIL_CMD = 0x0024  # request {f1: faction id} -> 0x0025 guild scores
 
 RANK_MODULE = 0x0C
@@ -45,7 +48,9 @@ def iter_frames(direction: str, raw: bytes):
     i = 0
     while i + 2 <= len(raw):
         (length,) = struct.unpack(">H", raw[i : i + 2])
-        if length < 5 or i + 2 + length > len(raw):
+        # length = 4 + body (S) / 7 + body (R): request rỗng dài đúng 4 — guard
+        # cũ `length < 5` drop mất toàn bộ request rỗng chiều S (E6, 2026-10-29)
+        if length < 4 or i + 2 + length > len(raw):
             return
         yield split_frame(direction, raw[i : i + 2 + length])
         i += 2 + length
@@ -85,6 +90,28 @@ def parse_map_snapshot(body: bytes) -> dict:
         "guild_ids": sorted(roster),
         "guild_roster": roster,
     }
+
+
+def parse_standings(body: bytes) -> list[dict]:
+    """0x72/0x001c: repeated f2 rows per phe {f1 id, f2 Tổng Nhiên Liệu
+    (fixed64 double), f3 chưa định danh (double), f4 rank, f5 packed owned
+    node ids — nguồn owner compact thay việc parse 23KB}. Top-level f3 là
+    phe của account (varint, không phải row). F5 khớp 1:1 owner 0x000c
+    (E1 ×3 profile, 2026-10-29)."""
+    rows = []
+    for field, _wire, value in decode_proto(body):
+        if not isinstance(value, bytes):
+            continue
+        row: dict = {}
+        for sf, sw, sv in decode_proto(value):
+            if sw == 1:
+                row[f"f{sf}"] = struct.unpack("<d", struct.pack("<Q", sv))[0]
+            elif sf == 5:
+                row["owned"] = read_packed_varints(sv)
+            else:
+                row[f"f{sf}"] = sv
+        rows.append(row)
+    return rows
 
 
 def parse_node_state(body: bytes, requested_id: int | None = None) -> dict:
