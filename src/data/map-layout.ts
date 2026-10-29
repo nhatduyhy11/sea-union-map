@@ -189,8 +189,8 @@ const chains: string[][] = [
   ["2-20", "2-23"],
   // Nine landmarks on the central axis, including the actual center (4).
   ["2-32", ...center.map(([id]) => id), "2-18"],
-  ["2-15", "3-7", "2-31"],
-  ["2-44", "3-8", "2-10"],
+  ["2-15", "3-7", "2-22"],
+  ["2-44", "3-8", "2-19"],
 ];
 const unique = new Map<string, Route & { id: string }>();
 for (const chain of chains)
