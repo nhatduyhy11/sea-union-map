@@ -5,7 +5,7 @@
 > Đây là spec cho crawler Playwright (tầng `tools/socket_log/`) và nguồn dữ liệu
 > thay mock cho UI `src/`. **[Cập nhật 2026-10-24] Đã có capture POC + decode sơ bộ
 > protocol** — xem `docs/sea/SEA_PACKET_ANALYSE.md` (packet + config node) và
-> `docs/sea/2026-10-24-sea-capture.md` (coords/flow chạy thật); framing chung
+> `docs/research/2026-10-24-sea-capture.md` (nhật ký coords/flow chạy thật); framing chung
 > `docs/sea/SOCKET_PROTOCOL.md`.
 > Chủ dự án đã xác nhận mô tả khớp (2026-10-24): phe acc + cửa sổ giờ đã chốt
 > (mục 1, mục 7); các câu hỏi phụ tạm skip.
@@ -161,8 +161,8 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
 | Nhóm        | Trường                                              | Nguồn trên UI            | Tính chất                                              |
 | ----------- | --------------------------------------------------- | ------------------------ | ------------------------------------------------------ |
 | Tĩnh        | id, tên node                                        | header node detail / map | không đổi trong event                                  |
-| Tĩnh        | boss (tên, trait, hero đề xuất)                     | boss detail (hình 9)     | **không đổi trong suốt event**                         |
-| Tĩnh (nghi) | hiệu suất sản xuất, điểm chiếm đóng tối thiểu       | node detail (hình 7)     | nghi là config cố định theo node — confirm khi capture |
+| Tĩnh        | boss (tên, trait, hero đề xuất)                     | boss detail (hình 9)     | `monsterId` từ `GetCityInfoR` → config `CampGVGMonsterLO` (`SEA_PACKET_ANALYSE.md` §1.6); game không hiện level boss |
+| Tĩnh        | hiệu suất sản xuất, điểm chiếm đóng tối thiểu       | node detail (hình 7)     | config `CampGVGLO` `_points/_interval`, `_pointRequire` (`SEA_PACKET_ANALYSE.md` §1.2) |
 | Động        | trạng thái mở khóa + countdown                      | node detail, map         |                                                        |
 | Động        | sở hữu ("chưa có chủ" / phe), điểm các phe tại node | node detail              | thay đổi theo diễn biến                                |
 | Động        | Điểm ST từng player tại node                        | node leaderboard         | thay đổi theo diễn biến                                |
@@ -170,8 +170,8 @@ Các thao tác còn lại đều là click/cuộn — DSL của `tools/socket_lo
 **Node trung lập:** đảo chưa phe nào chiếm sẽ hiện "Đảo chưa có chủ" + "Điểm chiếm đóng
 tối thiểu" + "Không có phe gây ST" — đúng cảnh ngày đầu event (chưa ai đủ điểm, hoặc phe
 top bị suspend / bị ngắt đường). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
-trong `docs/SEA_EVENT_RULE.md` §2 — demo đang equalize = 1, crawl thật sẽ cho ngưỡng thật
-từng node.
+trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node trong dump
+(`claimThreshold`).
 
 ## 5. Quy tắc crawl (scope bước đầu)
 
@@ -179,8 +179,8 @@ từng node.
   node detail (§3.6) + boss detail (§3.8) + node leaderboard (§3.7), kèm BXH phe/điểm,
   Tổng quan phe ×4, và quét đủ battle map.
 - **Chạy trên profile `pmain`** (`--profile .tmp/pmain`) — không dùng profile event mỏ.
-- **Dedupe boss:** boss node tĩnh suốt event → scrape **1 lần/node**; các lần chạy sau
-  **skip node đã có đủ dữ liệu**, chỉ scrape lại khi missing/thiếu trường.
+- **Boss không cần scrape popup:** `monsterId` đi kèm `GetCityInfoR` mà crawler đã
+  pull mỗi node; tên/trait/hero tra config client.
 - Dữ liệu động (điểm, sở hữu, leaderboard) sẽ re-crawl theo chu kỳ khi tới giai đoạn
   feed UI (không realtime — intent §3); chi tiết kỹ thuật (sink JSONL, tái dùng
   `tools/socket_log/core/runner.py` core như tầng mine) chốt lúc triển khai, không thuộc spec này.
@@ -210,7 +210,7 @@ từng node.
 
 - 4 số stat trên banner mỗi phe; tác dụng icon swap (↔) trong node detail.
 - Tổng số node + pattern pan — crawler tự quét đủ map, không cần chốt trước.
-- Ý nghĩa "Hiệu suất sản xuất: 12/h"; node detail khi battle đang mở; header BXH Phe là rank 1 hay phe đang chọn.
+- Node detail khi battle đang mở; header BXH Phe là rank 1 hay phe đang chọn.
 - ~~BXH Phe khi battle mở~~ **[chốt 2026-10-26, shot `4-leaderboard-faction`]**: vẫn
   list phẳng 4 dòng phe (không đôn guild), cột giữ nguyên Chiếm đảo + Tổng Nhiên Liệu.
   Guild + Tổng điểm ST riêng nằm ở "Tổng quan phe" (mỗi guild 1 dòng — shot `5-faction-1`).

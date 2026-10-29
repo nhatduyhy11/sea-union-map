@@ -37,6 +37,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   - `byte[6..7]`: `cmd:2 BE`.
   - `byte[8]` (tương ứng `body[6]` sau khi bóc len): **`compress flag`**: `1` = body nén thuật toán **QuickLZ**, `0` = protobuf thuần.
 - **Protobuf wire format:** Body là protobuf wire format chuẩn không có schema tĩnh `.proto` (client decode bằng descriptor sinh sẵn trong JS bundle).
+- **Tên message/field thật** có sẵn trong bundle — cách tra (proto, config `*LO`, trace UI → data): [`docs/research/BUNDLE_RESEARCH.md`](../research/BUNDLE_RESEARCH.md) (chỉ cần khi decode thứ mới).
 - **Decode Runtime:** Với các frame nén hoặc cấu trúc phức tạp (như BXH `0x0c`), công cụ giải mã trực tiếp qua headless browser gắn `window.__require` của chính game: [`tools/socket_log/core/runtime_codec.py`](../../tools/socket_log/core/runtime_codec.py).
 
 ---
@@ -55,8 +56,8 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 - **`pos` trong JSON args** = `map*1000 + tile` (vd `5047` = map 5 / Mỏ Đá Cháy, tile 47; `6053` = map 6) — khác với tile state `f1` là id tĩnh trong bảng server (xem [`mine_docs/MINE_STRUCTURE.md`](../mine_docs/MINE_STRUCTURE.md) §1).
 
 ### 3.3. Tra cứu Tên & Hồ sơ Player (`module 0x0d`)
-- **Player Brief (`0x0d / 0x001f` → `0x0020`):**
-  - Request `0x001f`: `f1` = packed player ids (client thường gom tối đa ~60 id/lần).
+- **Player Brief (`0x0d / 0x001f` `GetBasePlayerInfos` → `0x0020` `GetBasePlayerInfosR`):**
+  - Request `0x001f`: `1 playerIds` = packed player ids (client thường gom tối đa ~60 id/lần).
   - Response `0x0020`: danh sách hồ sơ rút gọn gồm `f1`=id, `f2`=tên, `f4`=power, `f9`=server, `f11`={id guild, tên guild} (bản đọc `f15`=server trước đây là sai).
   - **Schema thật từ bundle [2026-10-25]:** `GetBasePlayerInfos{,R}_PlayerInfo` + `BaseInfo_GameDef_S2C` — fields đầy đủ: name/offlineTime/fightCap/avatar URL/level/vip/serverId/guild/title/adventureLevel… Decode qua `uv run python tools/socket_log/core/runtime_codec.py briefs <body.b64>`.
   - **Cơ chế đã hoàn thiện:** Lớp `NameFetcher` ([`tools/socket_log/core/runner.py`](../../tools/socket_log/core/runner.py)) chủ động inject request này vào WebSocket game để resolve toàn bộ id sang tên tự động mà không cần click UI.
@@ -67,7 +68,8 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 - **Guild Detail (`0x24 / 0x0033` → `0x0034`):** Mô tả bang, id chủ bang, tổng lực chiến bang, lịch sử thành viên.
 
 ### 3.5. Bảng Xếp Hạng (`module 0x0c`)
-- Request `0x0c / 0x0002` `{f1: board_id, f2: sub_id}` → response `0x0c / 0x0003` (QuickLZ compressed).
+- Request `0x0c / 0x0002` `GetCommonRank {1 rankType, 2 rankSubType}` → response `0x0c / 0x0003` `GetCommonRankR {1 err, 2 selfRank, 3 ranks, 4 idType, 5 rankLength}` (QuickLZ compressed).
+- Row `CommonRankItem {1 rank, 2 key (điểm, double), 3 rankId (player/phe id), 4 additionInfo (JSON string), 5 idType}`.
 - Các bảng đã map:
   - `116`: BXH Phe (Tranh Bá Tứ Hải).
   - `117`: BXH Điểm Cá Nhân toàn server.
@@ -96,16 +98,16 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   👉 **Tài liệu cấu trúc bản đồ & cứ điểm:** [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md)
   👉 **Payload điều hướng event (bỏ entry GUI):** [`docs/sea/EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md)
 - Tóm tắt packet:
-  - `0x72 / 0x0002` (response lúc boot): block đầu chốt boot sync — signal login-done của payload entry.
-  - `0x72 / 0x000b` → `0x000c`: Snapshot toàn bộ 89 cứ điểm, 4 phe và 115 bang hội (guild roster).
-  - `0x72 / 0x0011` → `0x0012`: Chi tiết 1 cứ điểm (điểm sát thương 4 phe, art boss).
-  - `0x72 / 0x001b` → `0x001c`: Bảng nhiên liệu 4 phe — `{f2 nhiên liệu, f4 rank, f5 packed đảo đang giữ}`, inject được ngay sau login.
-  - `0x72 / 0x0024` → `0x0025`: Điểm số bang hội thuộc từng phe.
-  - `0x72 / 0x003e` → `0x003f`: Trạng thái động cứ điểm trong thời gian chiến sự.
+  - `0x72 / 0x0002` `GetOutInfoR` (response lúc boot): `{isOpen, serverList, startDt, endDt, state, isQualified}` — block đầu chốt boot sync, signal login-done của payload entry.
+  - `0x72 / 0x000b` `GetMapInfos` → `0x000c` `GetMapInfosR`: Snapshot 89 cứ điểm (`cityInfos {cityId, occupyCamp}`), 4 phe (`campInfos {campId, guildIds, score, presidentId, vicePresidentId}`), 115 bang hội (`guildInfos {guildId, memberInfos}`), `campId` của account, `markCityIds`.
+  - `0x72 / 0x0011` `GetCityInfo {cityId}` → `0x0012` `GetCityInfoR`: `CityInfo {cityId, campHurtScores (Điểm ST 4 phe), occupyCamp, monsterId (boss → `CampGVGMonsterLO`), campScores}`.
+  - `0x72 / 0x001b` `GetCampsProduct` → `0x001c` `GetCampsProductR`: Bảng nhiên liệu 4 phe — `CampProductScore {campId, score (nhiên liệu), efficiency, rank, cityIds}`, inject được ngay sau login. Push cùng shape: `0x0019` `UpdateCampScoreP`.
+  - `0x72 / 0x0024` `GetCampInfos {campId}` → `0x0025`: `CampDetailInfo {guildScoreInfos {guildId, hurtScore}, cityNum, score, rank}`.
+  - `0x72 / 0x003e` `GetSweepInfo {cityId}` → `0x003f`: `{cityId, myTotalOutput, hurtScore}` — điểm của **chính account** tại cứ điểm (không phải state chung).
 
 ### 4.3. Đấu Bang Hội & Giao Tranh (`module 0x1f`, `0x65`)
 - `0x1f / 0x0007` (push lúc login): Leaderboard PvP khu mỏ — entry = `{f2: rank, f3: score, f1: profile đầy đủ nhúng (power, skins, avatar, blob config f17)}` — *chưa map đủ*.
-- `0x1f / 0x000a` → `0x000b`: Lịch sử khiêu chiến mỏ (push lúc login) — entry = `{f1: attacker, f2: defender, f3: ts, f5: battle id, f4: bên thắng (1=attacker, 2=defender), f7/f6: JSON '{"rKey","pKey"}' rating attacker/defender, f9: profile defender nhúng}`. Verify: HuAsura đánh OLNaji 2 lần đều `f4=2` (thua) — nguồn chéo xác nhận streak, xem [`mine_docs/2026-10-23-mine-streak-debuff-decode.md`](../mine_docs/2026-10-23-mine-streak-debuff-decode.md) §3.
+- `0x1f / 0x000a` → `0x000b`: Lịch sử khiêu chiến mỏ (push lúc login) — entry = `{f1: attacker, f2: defender, f3: ts, f5: battle id, f4: bên thắng (1=attacker, 2=defender), f7/f6: JSON '{"rKey","pKey"}' rating attacker/defender, f9: profile defender nhúng}`. Verify: HuAsura đánh OLNaji 2 lần đều `f4=2` (thua) — nguồn chéo xác nhận streak, xem [`research/2026-10-23-mine-streak-debuff-decode.md`](../research/2026-10-23-mine-streak-debuff-decode.md) §3.
 - `0x65 / 0x0009`: Summary lượt đánh nhóm 3 tướng — nhóm 3 fighter `{f1: id, f3: cờ thắng, f2: ?}` + `f3` = id winner — *chưa map đầy đủ*.
 - `0x65 / 0x000c`: Danh sách bang tham chiến — list guild `{f4: id chủ guild, f3 repeated: {f1: id thành viên, f2–f6: stat}}` — *chưa map đầy đủ*.
 
@@ -125,7 +127,9 @@ tools/socket_log/
 ├── browser/               # Tiện ích Playwright: navigation, profile popup guards
 ├── capture/               # Bắt frame raw verbatim: capture.py
 ├── mine_socket/           # Nhánh Khai Thác Guild: logger.py, report.py, protocol.py
-└── sea_socket/            # Nhánh Tranh Bá Tứ Hải: crawler.py, report.py, walkthrough.py
+├── sea_socket/            # Nhánh Tranh Bá Tứ Hải: crawler.py, report.py, walkthrough.py
+├── config_extract.py      # Dump bảng config *LO (headless)
+└── research/              # Tool đào local, ngoài flow chính: proto_extract.py
 ```
 
 ---

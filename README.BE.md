@@ -202,6 +202,6 @@ chỗ lấy data ở `src/data/sea-live.ts`, join giữ nguyên.
 - [`docs/sea/STATS_MISMATCH.md`](docs/sea/STATS_MISMATCH.md) — các lệch số UI vs game đã biết (backlog handoff)
 - [`docs/sea/`](docs/sea/) — docs tầng crawler/decode: protocol WS, phân tích packet, research notes & run capture
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol
-- [`docs/sea/BACKLOG_SEA.md`](docs/sea/BACKLOG_SEA.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI
+- [`docs/sea/BACKLOG_SEA.BE.md`](docs/sea/BACKLOG_SEA.BE.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI
 
 Điểm còn mở/câu hỏi cần chủ dự án xác nhận được ghi ở tài liệu liên quan kèm nguồn, phương án tạm và trạng thái — xem [`docs/DOCS_GUIDE.md`](docs/DOCS_GUIDE.md).

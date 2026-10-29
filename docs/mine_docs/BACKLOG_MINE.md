@@ -4,8 +4,8 @@
 > Được merge từ `docs/sea/SOCKET_PROTOCOL.md` (§ Đang mở), `docs/mine_docs/MINE_STRUCTURE.md` (§ 6), và `BACKLOG_MINE.md` cũ.
 >
 > ⚠️ **Ưu tiên:** Thấp hơn nhánh Tranh Bá Tứ Hải (Sea Union) & Web UI; chỉ thực hiện khi có nhu cầu mở rộng tính năng dashboard/bot mỏ.
-> Backlog nhánh Tranh Bá Tứ Hải & Web UI xem tại: [`docs/sea/BACKLOG_SEA.md`](../sea/BACKLOG_SEA.md).
-> Cache brief guild + player dùng chung cho cả mine được track tại [`docs/sea/BACKLOG_SEA.md`](../sea/BACKLOG_SEA.md) (§I mục 1).
+> Backlog nhánh Tranh Bá Tứ Hải & Web UI xem tại: [`docs/sea/BACKLOG_SEA.BE.md`](../sea/BACKLOG_SEA.BE.md).
+> Cache brief guild + player dùng chung cho cả mine được track tại [`docs/sea/BACKLOG_SEA.BE.md`](../sea/BACKLOG_SEA.BE.md) (§I mục 1).
 > Cấu trúc world mỏ xem tại: [`MINE_STRUCTURE.md`](MINE_STRUCTURE.md).
 
 ---
@@ -21,7 +21,7 @@
   - Tầng debuff: trong submessage của slot, `f5` = packed varints chứa các mốc timestamp hết hạn trong tương lai (+3600s/tầng). `tiers = len(chain)` (số tầng); `next_expiry = min(chain)` (thời gian đếm ngược = `next_expiry - now`).
 - **Hướng fix:**
   - `tools/socket_log/mine_socket/protocol.py`: trong hàm `parse_tile()`, trích xuất thêm `f7` (dict `slot_no -> streak`) và `f5` (parse packed varints thành list timestamp, hoặc gán luôn `tiers` và `next_expiry`) cho mỗi slot.
-- **Tham chiếu:** [`2026-10-23-mine-streak-debuff-decode.md`](2026-10-23-mine-streak-debuff-decode.md), [`MINE_STRUCTURE.md`](MINE_STRUCTURE.md) §4.
+- **Tham chiếu:** [`2026-10-23-mine-streak-debuff-decode.md`](../research/2026-10-23-mine-streak-debuff-decode.md), [`MINE_STRUCTURE.md`](MINE_STRUCTURE.md) §4.
 
 ---
 

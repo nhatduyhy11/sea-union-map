@@ -15,8 +15,9 @@
 | [docs/LEADERBOARD_SPECS.md](LEADERBOARD_SPECS.md)               | Đặc tả BXH, cơ chế lọc guild/player canvas, filter mode và tương tác UI/UX                | Khi thay đổi cơ chế lọc bản đồ hoặc tương tác BXH                   |
 | [docs/sea/SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md)           | Tham chiếu protocol WS: framing, module/cmd, kết quả decode                               | Khi decode thêm module/cmd hoặc chốt một nghi vấn                   |
 | [docs/sea/SEA_PACKET_ANALYSE.md](sea/SEA_PACKET_ANALYSE.md)     | Phân tích packet sea: module/cmd, config node, NEED_CONFIRM                               | Khi decode thêm packet sea hoặc chốt một nghi vấn                   |
-| [docs/sea/EVENT_NAVIGATE_DECODE.md](sea/EVENT_NAVIGATE_DECODE.md) | Payload "key" điều hướng event (bỏ entry GUI), quy trình tìm key chung cho event khác   | Khi test inject entry hoặc tìm key cho event mới                    |
-| [docs/sea/BACKLOG_SEA.md](sea/BACKLOG_SEA.md)                   | Kế hoạch & các việc tồn đọng nhánh Tranh Bá Tứ Hải & Web UI                               | Khi phát hiện hoặc chốt việc cần làm của nhánh sea                  |
+| [docs/sea/EVENT_NAVIGATE_DECODE.md](sea/EVENT_NAVIGATE_DECODE.md) | Payload entry crawler sea (bỏ entry GUI): flow + bản đồ payload key                     | Khi đổi flow entry hoặc chốt key mới                                |
+| [docs/sea/BACKLOG_SEA.BE.md](sea/BACKLOG_SEA.BE.md)                   | Kế hoạch & các việc tồn đọng nhánh Tranh Bá Tứ Hải & Web UI                               | Khi phát hiện hoặc chốt việc cần làm của nhánh sea                  |
+| [docs/research/](research/)                                     | **Research — ngoài flow chính.** `BUNDLE_RESEARCH.md` (cách đào bundle: config `*LO`, schema proto, trace UI → data + manh mối chưa đào) và nhật ký prefix ngày (phương pháp reverse WS, capture POC, thí nghiệm entry, điều tra brief, decode streak mỏ) | Khi đào thêm cách/manh mối mới; kết quả đã chốt ghi về doc nhánh, không để lại ở đây |
 | [docs/mine_docs/MINE_STRUCTURE.md](mine_docs/MINE_STRUCTURE.md) | Cấu trúc event mỏ (Khai Thác Guild): map UI ↔ protocol                                    | Khi capture mới xác minh thêm field                                 |
 | [docs/mine_docs/BACKLOG_MINE.md](mine_docs/BACKLOG_MINE.md)     | Backlog nhánh phụ Khai Thác Guild (hợp nhất toàn bộ open issues mỏ)       | Khi phát hiện việc cần làm ở nhánh mỏ                               |
 | [specs/](../specs/)                                             | Ảnh tham chiếu từ game, làm căn cứ cho map và dữ liệu điểm                                | Khi có thêm ảnh hoặc cập nhật nguồn từ game                         |
@@ -35,6 +36,7 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 5. Đọc `docs/sea/SEA_STRUCTURE.md` khi làm việc với event Tranh Bá Tứ Hải (crawl dữ liệu hoặc feed UI).
 6. Đọc `docs/sea/SOCKET_PROTOCOL.md` / `docs/mine_docs/MINE_STRUCTURE.md` khi làm việc với tầng bắt socket và decode.
 7. Xem các ảnh được liên kết khi công việc liên quan tới bố cục map hoặc dữ liệu game.
+8. `docs/research/` **chỉ đọc khi cần decode thứ mới** (packet/field/bảng config chưa biết) — không cần cho flow crawl → dump → UI hay việc FE.
 
 ## Cách ghi nội dung mới
 
@@ -42,6 +44,7 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 - **Quyết định đã chốt:** lựa chọn đã được chủ dự án xác nhận; ghi vào spec hoặc README tương ứng.
 - **Đề xuất:** hướng AI hoặc người làm đưa ra nhưng chưa được chốt; ghi rõ là đề xuất trong plan/spec.
 - **Điểm còn mở:** thông tin thiếu hoặc hành vi chưa rõ; ghi ở tài liệu liên quan kèm nguồn, phương án tạm và trạng thái, không tự biến thành yêu cầu đã xác nhận.
+- **Research (cách làm, diễn biến điều tra, số đo thí nghiệm, manh mối chưa đào):** ghi vào `docs/research/` (nhật ký prefix ngày `YYYY-MM-DD-<chủ đề>.md`). Doc nhánh (`docs/sea/`, `docs/mine_docs/`) chỉ giữ kết quả đã chốt + việc còn mở, kèm 1 dòng link sang research khi cần — tránh agent phải nạp cả quá trình khi chỉ cần kết quả.
 
 Ví dụ hiện tại: node cố định, hover/click và toggle thông tin là yêu cầu; React Flow là lựa chọn công nghệ đã chốt; cách trình bày bảng stat và hành vi click chi tiết vẫn còn mở.
 

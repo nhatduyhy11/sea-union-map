@@ -1,5 +1,9 @@
 # Mine claimer — Streak & Debuff tiers (decode reference + backlog)
 
+> **Nhật ký research.** Kết quả đã chốt nằm ở
+> [`../mine_docs/MINE_STRUCTURE.md`](../mine_docs/MINE_STRUCTURE.md) §4; việc còn mở ở
+> [`../mine_docs/BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md) §1/§3/§5.
+
 > Key finding 2026-10-23. **Chưa implement** — backlog về sau. Doc này giữ cách decode để
 > lát nữa bỏ vào `mine_logger.py` / `mine_report.py` mà không phải reverse lại.
 > Capture tham chiếu: `.tmp/socket-capture/run-s7-lv8-v3` (战神), `run-s7-lv8-v2` (OLNaji),
@@ -62,11 +66,11 @@ click(345,285) = zoomin mỏ (sàn của mình) → click(163,63) = minimap → 
   Click dòng 2 (320,371) = HUNTERS lv8 = 7054 (đích của 战神/HU.BON).
 - Click điểm trên overview → **nhảy thẳng vào sàn đó**, click máy giữa sàn (345,285) → popup.
 
-## 5. Backlog (chính thức theo dõi tại [`BACKLOG_MINE.md`](BACKLOG_MINE.md))
+## 5. Backlog (chính thức theo dõi tại [`BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md))
 
-> Toàn bộ các việc tồn đọng đã được hợp nhất vào [`BACKLOG_MINE.md`](BACKLOG_MINE.md) (mục 1 và 5).
+> Toàn bộ các việc tồn đọng đã được hợp nhất vào [`BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md) (mục 1 và 5).
 
 - [ ] `mine_logger.parse_tile`: giữ thêm `f7` (dict slot→streak) và `f5` (chain ts, hoặc
-      đã suy ra `tiers` + `next_expiry`) — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §1.
-- [ ] `mine_report`: thêm vào mỗi point `streak` + `debuff_tiers`/`debuff_expiry` và cảnh báo biến động — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §5.
-- [ ] Giải nốt `f6`, `f8/f9`, `f3` (luôn 0) — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §3.
+      đã suy ra `tiers` + `next_expiry`) — xem [`BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md) §1.
+- [ ] `mine_report`: thêm vào mỗi point `streak` + `debuff_tiers`/`debuff_expiry` và cảnh báo biến động — xem [`BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md) §5.
+- [ ] Giải nốt `f6`, `f8/f9`, `f3` (luôn 0) — xem [`BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md) §3.

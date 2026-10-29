@@ -1,5 +1,10 @@
 # Sea capture POC — walkthrough chạy thành công + phân tích frame (2026-10-24)
 
+> **Nhật ký research (lịch sử, không cập nhật).** Tên tool/đường dẫn và cách gọi field
+> `fN`/"art" ở đây là của thời điểm ghi — kết quả đã chốt và tên field thật xem
+> [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md); throttle / pool dao
+> động / top-K xem [`../sea/STATS_MISMATCH.md`](../sea/STATS_MISMATCH.md).
+
 > Run chuẩn: `.tmp/socket-capture/sea-20261024-100433` — 8/8 stage, 634 frame, toàn bộ
 > shot theo `docs/sea/SEA_STRUCTURE.md` §2. Script: `tools/socket_log/sea_capture.py`
 > (branch `socket-capture`). Phân tích packet + kết luận data: `docs/sea/SEA_PACKET_ANALYSE.md`.

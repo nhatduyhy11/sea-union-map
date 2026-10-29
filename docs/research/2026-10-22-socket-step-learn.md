@@ -1,5 +1,9 @@
 # Socket Step Learn — Quy Trình Reverse-Engineer Binary WS Của Game H5 (POC 2026-10-22)
 
+> **Nhật ký research — phương pháp.** Tên file tool là của lúc ghi (nay ở
+> `tools/socket_log/capture/`, `core/decode.py`, `mine_socket/`). Bước 5 "decode mù"
+> giờ có thể thay bằng tra schema thật: [`BUNDLE_RESEARCH.md`](BUNDLE_RESEARCH.md) §3.
+
 > Bài học rút ra từ phiên POC lấy lịch sử khu mỏ (xem `docs/sea/SOCKET_PROTOCOL.md`).
 > Ghi lại từng bước CÁCH LÀM để tái sử dụng cho feature/dashboard tiếp theo.
 > Toàn bộ step chạy trên server VN, profile `.tmp/m535`, không cần mitmproxy hay sửa payload.

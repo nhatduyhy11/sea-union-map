@@ -5,20 +5,28 @@
 > drop khỏi danh sách việc; chỉ giữ NEED_CONFIRM.
 >
 > Nguồn dữ liệu: capture `.tmp/socket-capture/sea-20261024-100433` (634 frame, pre-war
-> 2026-10-24) + config table client bóc từ bundle game (hướng dẫn §5). Framing chung xem
+> 2026-10-24) + config table client bóc từ bundle game. Framing chung xem
 > `docs/sea/SOCKET_PROTOCOL.md`; cấu trúc nghiệp vụ xem `docs/sea/SEA_STRUCTURE.md`.
+> Tên message/field lấy từ schema proto trong bundle [2026-10-29]. Cách đào bundle,
+> config, proto + manh mối chưa đào: [`../research/BUNDLE_RESEARCH.md`](../research/BUNDLE_RESEARCH.md)
+> (chỉ cần khi decode thứ mới).
 
 ## 1. Kết quả chính (ĐÃ CHỨNG MINH — không cần làm lại)
 
 ### 1.1. List node đầy đủ KHÔNG cần click map
 
-- Mở battle map (click tâm lobby) → client gửi `0x72/0x000b` (rỗng) → server đẩy
-  **`0x72/0x000c` (~23KB) = full state map**:
-  - `f2` repeated ×89 — **89 node, id 1..89**: `{f1: node id, f2: owner faction}`.
-    Pre-war chỉ id 1..4 có owner (faction 1..4) — **id 1..4 = 4 base (skip đúng như
-    chủ dự án nói)**, node thường = **5..89**.
-  - `f3` ×4 — 4 phe: `{f1: faction id, f4: id chủ phe, f2: packed member ids}`.
-  - `f4` ×115 — guild roster: `{f1: guild id (7 chữ số), f2: repeated player id}`.
+- Mở battle map (click tâm lobby) → client gửi `0x72/0x000b` `GetMapInfos` (rỗng) →
+  server trả **`0x72/0x000c` `GetMapInfosR` (~23KB) = full state map**:
+  - `2 cityInfos` ×89 `CitySimpleInfo {1 cityId, 2 occupyCamp}` — **89 node, id
+    1..89**. Pre-war chỉ id 1..4 có owner (faction 1..4) — **id 1..4 = 4 base (skip
+    đúng như chủ dự án nói)**, node thường = **5..89**.
+  - `3 campInfos` ×4 `CampInfo {1 campId, 2 guildIds (packed), 3 score (double),
+    4 presidentId, 5 vicePresidentId}` — `f2` là **guild id** của phe, không phải
+    member id như bản đọc cũ.
+  - `4 guildInfos` ×115 `GuildInfo {1 guildId, 2 memberInfos: {1 playerId,
+    2 hurtScore}}` — guild roster; `hurtScore` không thấy trong crawl 10/29 (= 0,
+    proto bỏ field mặc định).
+  - `5 campId` = phe của account đang crawl; `6 markCityIds` = đảo phe đánh dấu.
   - Request tái sử dụng được: gửi thẳng `0x72/0x000b` bất kỳ lúc nào để re-sync map.
 - → **Không zoom/pan nào là cần thiết để enumerate node.** List id = 5..89 lấy từ 1 frame.
 
@@ -36,27 +44,34 @@
   (`1-23`, `2-41`, `3-1`, `4`) → join frontend ↔ game = nối thẳng, không cần suy đoán
   vị trí. Map hex `ghostWar/maps/map_ghost_01/02.bin` trong bundle KHÔNG phải map đảo
   (battlefield gameplay khác) — bỏ qua.
-- Verify chéo capture: 10 cặp (WS id ↔ shot header) khớp CampGVG, trong đó cặp quyết
-  định `n14: WS id 63 → "1-11Đảo Lều Trại"` == CampGVG id 63. Ba shot `7-n03/7-n04/
-7-n13` lệch tên (Champagne/Nhà Gỗ/Lều Trại xoay vòng) là **artifact render popup lag**
-  khi auto-click nhanh — KHÔNG phải mapping khác (bằng chứng: cùng id 63, n14 render
-  đúng, f4 art-class của 63 = rabbit không thể là Champagne).
+- Verify chéo capture: 10 cặp (WS id ↔ shot header) khớp CampGVG, vd `WS id 63 →
+  "1-11Đảo Lều Trại"` == CampGVG id 63 (vụ 3 shot lệch tên = artifact popup lag:
+  [`../research/2026-10-24-sea-capture.md`](../research/2026-10-24-sea-capture.md) §3).
+- **Hiệu suất sản xuất** (popup node "12/h") = `_points` điểm mỗi `_interval` phút:
+  type 2 `1/5` = **12/h** (4M-require: `2/5` = 24/h), type 3 `4/10`·`6/10` =
+  **24/36/h**, type 4 `15/15` = **60/h**, type 5 `30/15` = **120/h**.
+- **`_monsterType`** `[[lo,hi,group],…]` = nhóm boss theo khoảng (nghi open-day
+  server); `group` == `CampGVGMonsterLO._type`: group 1 = pool random 1001..1007,
+  group 2..7 = boss cố định 1008..1013 (§1.6).
 
 ### 1.3. Request per-node bằng payload thẳng (thay click)
 
 Client click đảo chỉ sinh các request sau — đều gửi được thủ công nếu hook được socket:
 
-| Request       | Payload                   | Response      | Nội dung                                                                                            |
-| ------------- | ------------------------- | ------------- | --------------------------------------------------------------------------------------------------- |
-| `0x72/0x0011` | `{f1: node id}`           | `0x72/0x0012` | state node: `{f2: {f4: 1001..1009, f1: id, f2: 4×{f1: faction, f2: Điểm ST của phe tại node}, f3}}` |
-| `0x72/0x003e` | `{f1: node id}`           | `0x72/0x003f` | `{f2: id, f1, f3, f4}` — toàn 0 pre-war (nghi locked/battle state)                                  |
-| `0x0c/0x0002` | `{f1: 118, f2: node id}`  | `0x0c/0x0003` | node leaderboard; pre-war 32B (rỗng)                                                                |
-| `0x0c/0x0002` | `{f1: 116 / 117, f2: 0}`  | `0x0c/0x0003` | BXH Phe / BXH điểm (331B, có data thật)                                                             |
-| `0x0d/0x001f` | `{f1: packed player ids}` | `0x0d/0x0020` | id→tên player (POC xong ở event mỏ, tái dùng)                                                       |
+| Request                          | Payload                          | Response                          | Nội dung                                                                                                                                                                                 |
+| -------------------------------- | -------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `0x72/0x0011` `GetCityInfo`      | `{1 cityId}`                     | `0x72/0x0012` `GetCityInfoR`      | `{1 err, 2 cityInfo: CityInfo {1 cityId, 2 campHurtScores: map<campId, Điểm ST>, 3 occupyCamp, 4 monsterId, 5 campScores: map<campId, double>}, 3 occupyRewardCampId}` |
+| `0x72/0x003e` `GetSweepInfo`     | `{1 cityId}`                     | `0x72/0x003f` `GetSweepInfoR`     | `{1 err, 2 cityId, 3 myTotalOutput (double), 4 hurtScore}` — **của chính account crawl** (càn quét), không phải state node → toàn 0 khi acc chưa đánh node đó                            |
+| `0x0c/0x0002` `GetCommonRank`    | `{1 rankType: 118, 2 rankSubType: cityId}` | `0x0c/0x0003` `GetCommonRankR` | node leaderboard; pre-war 32B (rỗng)                                                                                                                                      |
+| `0x0c/0x0002` `GetCommonRank`    | `{1 rankType: 116 / 117, 2 rankSubType: 0}` | `0x0c/0x0003` `GetCommonRankR` | BXH Phe / BXH điểm (331B, có data thật)                                                                                                                                 |
+| `0x0d/0x001f` `GetBasePlayerInfos` | `{1 playerIds (packed)}`       | `0x0d/0x0020` `GetBasePlayerInfosR` | `{1 err, 2 baseInfos: BaseInfo_GameDef}` id→tên player (POC xong ở event mỏ, tái dùng)                                                                                                |
 
-- `f1: 118/116/117` = **board id**: 118 = per-node, 116 = BXH phe, 117 = BXH điểm.
+- `rankType 118/116/117` = **board id**: 118 = per-node, 116 = BXH phe, 117 = BXH điểm.
+  `GetCommonRankR {1 err, 2 selfRank, 3 ranks, 4 idType, 5 rankLength}`, mỗi row
+  `CommonRankItem {1 rank, 2 key (điểm, double), 3 rankId (player/phe id),
+  4 additionInfo (JSON string), 5 idType}`.
 - Kính lúp (boss detail) và các nút phụ trong popup **không sinh request** — render từ
-  config client (xem NEED_CONFIRM 3).
+  config client theo `monsterId` (§1.6).
 - Cơ chế inject frame vào game socket đã POC ở event mỏ (`tools/socket_log/mine_socket/logger.py` hook
   `WebSocket.prototype.send` + `page.add_init_script`) — áp nguyên cho sea.
 
@@ -71,57 +86,51 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 
 ### 1.5. Bảng nhiên liệu 4 phe + signal login (chốt 2026-10-29)
 
-- `0x72/0x001b` (rỗng) → `0x001c` (~181B): repeated row/phe `{f1 id, f2 Tổng
-  Nhiên Liệu (double), f3 chưa định danh, f4 rank, f5 packed đảo đang giữ}` —
-  `f5` là nguồn owner compact thay việc parse `0x000c` 23KB; top-level `f3` =
-  phe của account. Inject được từ Home ngay sau login (E1 PASS ×2, crawler
+- `0x72/0x001b` `GetCampsProduct` (rỗng) → `0x001c` `GetCampsProductR` (~181B):
+  `2 camps` ×4 `CampProductScore {1 campId, 2 score (Tổng Nhiên Liệu, double),
+  3 efficiency (double — hiệu suất sản xuất của phe), 4 rank, 5 cityIds (packed
+  đảo đang giữ)}` — `cityIds` là nguồn owner compact thay việc parse `0x000c` 23KB;
+  top-level `3 campId` = phe của account. Push cùng shape: `0x0019`
+  `UpdateCampScoreP`. Inject được từ Home ngay sau login (E1 PASS ×2, crawler
   dump ra `standings.json`) — chi tiết [`EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md) §2.
 - `0x72/0x0002` đầu tiên lúc boot = **signal login-done** (boot sync xong) —
   signal chờ của payload entry; heartbeat `0x02/0x0009` muộn hơn ~2.6s nên
   không dùng.
-- Lưu ý parse: field `f4` "fight_cap" của `0x72/0x0025` cũng là nhiên liệu phe,
-  không phải lực chiến (misnomer trong `parse_faction_detail`).
+- `0x72/0x0024` `GetCampInfos {1 campId}` → `0x0025` `GetCampInfosR {2 campDetailInfo:
+  CampDetailInfo {1 campId, 2 guildScoreInfos: {guildId, hurtScore}, 3 cityNum,
+  4 score, 5 rank}}` — field `f4` mà `parse_faction_detail` đặt tên "fight_cap"
+  thực ra là **`score`** (nhiên liệu phe), không phải lực chiến.
+
+### 1.6. Boss node = `monsterId` → `CampGVGMonsterLO` (chốt 2026-10-29)
+
+- `CityInfo.4 monsterId` (doc cũ gọi "art", 1001..1013) là id boss →
+  `CampGVGMonsterLO.get(id)` (tên) → `.showBoss` → `CreepLO` (avatar, mô tả, hero đề
+  xuất). Verify: node 8 (1-23) `monsterId 1001` = "Tứ Hải-Oán Linh" khớp shot
+  `9-boss-node.png`.
+- `CampGVGMonsterLO` 13 row: 1001 Oán Linh, 1002 Nữ Hoàng Alien, 1003 Vô Diện Giả,
+  1004 Pharaoh Cổ Đại, 1005 Thỏ Cưa Máy, 1006 Bọ Cạp Hoàng Tuyền, 1007 Khỉ Điên Đánh
+  Trống (pool `_type` 1), 1008 Vô Diện Tử Thần, 1009 Hắc Trảo, 1010 Hắc Nữ Tăng Ca,
+  1011 Cổ Thần, 1012 Kỵ Sĩ Không Đầu, 1013 U Ảnh Phu Nhân (tên đều có tiền tố
+  "Tứ Hải-"). `_limitTime` 180s, `_battleGroundCode` 131001..131013.
 
 ## 2. NEED_CONFIRM (việc mở — làm/xác nhận thì xóa dòng)
 
 | #   | Vấn đề                                                                                                                                                                                | Trạng thái   |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 1   | **`f4` (1001..1009) trong `0x72/0x0012` là gì** — art/boss class (không khớp production tier: 1001 xuất hiện ở cả node 12/h lẫn 36/h). Đối chiếu với bảng boss/art khi có tên boss    | Cần decode   |
-| 2   | **"Hiệu suất sản xuất 12/24/36/h" không nằm trong CampGVGLO** — chỉ thấy `_pointRequire` 2/4/6/10/15M tỉ lệ thuận. Tìm bảng nguồn (config còn lại) hoặc derive từ `_pointRequire`     | Cần decode   |
-| 3   | **Boss detail** (tên "Tứ Hải-Oán Linh", trait, hero đề xuất): popup không sinh request → nguồn là config client. Ứng viên: `SkillBuffBossLO` (67 row) / `_monsterType`. Chưa map xong | Cần decode   |
-| 4   | **`0x72/0x003e→0x003f` toàn 0 pre-war** — ý nghĩa 4 trường chỉ đọc được sau khai chiến. Capture lại sau 10/26 10:00                                                                   | Chờ war      |
 | 5   | **Base ↔ hướng (north/east/south/west)**: CampGVG chỉ cho id 1..4 = 4 phe, không có toạ độ. Tự đối chiếu màu cờ trên `docs/assets/sea-socket/6-battle-map.png` khi build `src/`       | Tự đối chiếu |
 | 6   | **War-time delta**: sau 10/26 10:00 capture lại xem `0x72/0x000c` push interval + `0x72/0x0012` khi node có chủ / có ST                                                               | Chờ war      |
 | 7   | Server CN có cùng module không (open item chung của SOCKET_PROTOCOL)                                                                                                                  | Backlog      |
 
 ## 3. Deliverables của phase
 
-- [ ] Crawl full 89 node (id, tên, display id, type, threshold, owner, Điểm ST theo phe)
-      bằng flow §1.4 → JSON/JSONL thay mock `src/data/`.
-- [ ] `src/data/map-layout.ts`: join CampGVG `_name` prefix ↔ layout id hiện có; bổ sung
-      `gameId` (server id) + `_pointRequire` (claimThreshold thật) + tên thật.
-- [x] Cập nhật `docs/sea/SOCKET_PROTOCOL.md` section sea (module 0x72/0x0c) — hoàn tất khi
-      SOCKET_PROTOCOL tách thành doc dùng chung (§4.2 + §3.5).
-- [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 4/6.
+- [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 6.
+- [ ] Đưa `monsterId` (node-states) + bảng `CampGVGMonsterLO` vào dump → UI hiện tên
+      boss thật + hiệu suất sản xuất (`_points/_interval`).
 
-## 4. Bóc config client (hướng dẫn tái sử dụng)
-
-Game = Cocos Creator 2.x, bundle trên cùng host. Trích CampGVGLO không cần login:
-
-1. `manifest.<ClientVer>.js` (ClientVer trong `h5SB_4399_sea_vn.js`) → `main.<hash>.js`
-   (loader) → code game nằm ở **`assets/main/index.<hash>.js` (~24MB, `window.__require`)**.
-2. Config bảng nén **QuickLZ + stream custom (`StreamMgr.getVo`)**, nhưng KHÔNG cần tự
-   parse: boot page headless (Chrome channel, không cần profile) → game tự tải
-   `remoteConfig/sea/config.<ConfigVer>.bin` → `window.__require("CampGVGLO").CampGVGLO.store`.
-3. Script mẫu đã chạy: lưu `/tmp/sea_lo_scan.py`, `/tmp/sea_camp_extract.py` (scan toàn bộ
-   ~476 bảng LO + dump store). Output mẫu: `/tmp/sea-extract-campgvg.json`.
-4. Chú ý version: hash bundle (`index.8dd7c.js`, `config.62613.bin`) đổi theo đợt deploy
-   (`ConfigVer`/`ClientVer` trong `localConfig`) — luôn đọc lại manifest trước khi fetch cứng.
-
-## 5. Phụ lục — evidence paths
+## 4. Phụ lục — evidence paths
 
 - Capture run: `.tmp/socket-capture/sea-20261024-100433/` (index.jsonl + screens/).
 - Node-open request samples: `#443 {08 3f}` = id 63 (n03), `#455 {08 47}` = id 71 (n04).
 - Board request samples: `#379 {f1:116,f2:0}` (BXH phe), `#425 {f1:118,f2:8}` (node 8).
 - Map state: frame `#415` `0x72/0x000c` 23132B (f2×89, f3×4, f4×115).
-- Chi tiết điều hướng/coords màn hình: `docs/sea/2026-10-24-sea-capture.md`.
+- Chi tiết điều hướng/coords màn hình: [`../research/2026-10-24-sea-capture.md`](../research/2026-10-24-sea-capture.md).
