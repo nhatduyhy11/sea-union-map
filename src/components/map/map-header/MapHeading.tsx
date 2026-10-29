@@ -1,11 +1,9 @@
-import { useMapData } from "../../../stores/dataset";
 import { useDebug } from "../../../stores/debug";
 import { ColorSwatch } from "./ColorSwatch";
 import { ServerSwitcher } from "./ServerSwitcher";
 import styles from "./MapHeading.module.css";
 
 export function MapHeading() {
-  const { baseCount, ownedIslands } = useMapData();
   const debug = useDebug((state) => state.debug);
   const toggleDebug = useDebug((state) => state.toggleDebug);
   const canvasBg = useDebug((state) => state.canvasBg);
@@ -66,9 +64,6 @@ export function MapHeading() {
             )}
           </div>
         )}
-        <div className={styles.mapCount}>
-          <b>{ownedIslands.length - baseCount}</b> cứ điểm
-        </div>
       </div>
     </div>
   );

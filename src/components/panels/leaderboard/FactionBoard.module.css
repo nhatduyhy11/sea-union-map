@@ -1,36 +1,3 @@
-.subTabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.subTabs button {
-  padding: 4px 9px;
-  border-radius: 20px;
-  background: #eff2f4;
-  color: #7d8f9a;
-  font-size: 10px;
-}
-
-.subTabs button.selected {
-  background: #0d8a65;
-  color: #fff;
-}
-
-/* Pill phe: text + tint theo labelColor (inline var), selected = viền đậm. */
-.subTabs button.factionPill {
-  color: var(--label);
-  background: color-mix(in srgb, var(--label) 9%, transparent);
-  font-weight: 500;
-}
-
-.subTabs button.factionPill.selected {
-  color: var(--label);
-  background: color-mix(in srgb, var(--label) 18%, transparent);
-  box-shadow: inset 0 0 0 1px var(--label);
-}
-
 .factionCard {
   display: flex;
   align-items: center;
@@ -57,4 +24,9 @@
   font-size: 13px;
   font-weight: 600;
   flex-shrink: 0;
+}
+
+.power {
+  font-style: italic;
+  font-weight: 400;
 }

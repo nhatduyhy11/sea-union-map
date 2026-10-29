@@ -66,22 +66,6 @@
   background: #fdf1f1;
 }
 
-.mapCount {
-  font-size: 11px;
-  color: #6c7f8a;
-}
-
-.mapCount b {
-  font-weight: 600;
-  color: #33424c;
-}
-
-@media (max-width: 1100px) {
-  .mapCount {
-    display: none;
-  }
-}
-
 @media (max-width: 760px) {
   .mapHeading {
     margin-bottom: 16px;

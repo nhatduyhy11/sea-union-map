@@ -41,13 +41,20 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
     [factions]
   );
 
+  // Highlight phe dẫn đầu tổng điểm: chỉ viền trái màu phe, không tô nền
+  // (bỏ qua khi chưa ai có điểm).
+  const leaderTint = (entry: FactionBoardEntry) =>
+    entry.score > 0 && rankById.get(entry.id) === 1
+      ? { borderLeftColor: entry.color }
+      : undefined;
+
   const faction = displayFactions.find((entry) => entry.id === focus);
   return (
     <>
       <h2>Xếp hạng phe</h2>
-      <div className={styles.subTabs}>
+      <div className={shared.subTabs}>
         <button
-          className={faction ? "" : styles.selected}
+          className={faction ? "" : shared.selected}
           onClick={() => setFocus(null)}
         >
           Chung
@@ -55,7 +62,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
         {factions.map((entry) => (
           <button
             key={entry.id}
-            className={`${styles.factionPill} ${faction?.id === entry.id ? styles.selected : ""}`}
+            className={`${shared.factionPill} ${faction?.id === entry.id ? shared.selected : ""}`}
             style={{ "--label": entry.labelColor } as React.CSSProperties}
             onClick={() => setFocus(faction?.id === entry.id ? null : entry.id)}
           >
@@ -91,7 +98,8 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
             open={openFaction === entry.id}
           >
             <summary
-              className={shared.summary}
+              className={`${shared.summary} ${shared.tintedSummary}`}
+              style={leaderTint(entry)}
               onClick={(event) => {
                 event.preventDefault();
                 toggleFactionView(
@@ -121,7 +129,10 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
       ) : (
         displayFactions.map((entry) => (
           <details key={entry.id} className={shared.item}>
-            <summary className={shared.summary}>
+            <summary
+              className={`${shared.summary} ${shared.tintedSummary}`}
+              style={leaderTint(entry)}
+            >
               <FactionSummary
                 entry={entry}
                 rank={rankById.get(entry.id) ?? 0}
@@ -165,22 +176,27 @@ function FactionSummary({
       >
         {entry.name[0]}
       </span>
-      <div className={shared.factionName}>
-        <span style={{ color: entry.labelColor }}>{entry.name}</span>
-        <PowerTag power={entry.power} />
-        <small style={{ color: entry.labelColor }}>
-          {entry.islands} đảo · {entry.guilds.length} guild
-        </small>
-      </div>
+      <FactionLines entry={entry} />
       <b>{compact(entry.score)}</b>
       <ChevronRight size={13} />
     </>
   );
 }
 
-// Tổng lực chiến phe, cùng format tag [LC] của GuildLabel.
-function PowerTag({ power }: { power: number }) {
-  return <> [{power ? compact(power) : "—"}]</>;
+// 3 dòng: tên phe / số guild + tổng lực chiến [LC] / số đảo đang chiếm.
+function FactionLines({ entry }: { entry: FactionBoardEntry }) {
+  return (
+    <div className={shared.factionName} style={{ color: entry.labelColor }}>
+      {entry.name}
+      <small>
+        {entry.guilds.length} guild{" "}
+        <span className={styles.power}>
+          [{entry.power ? compact(entry.power) : "—"}]
+        </span>
+      </small>
+      <small>{entry.islands} đảo</small>
+    </div>
+  );
 }
 
 function SingleFaction({
@@ -209,13 +225,7 @@ function SingleFaction({
         >
           {faction.name[0]}
         </span>
-        <div className={shared.factionName}>
-          <span style={{ color: faction.labelColor }}>{faction.name}</span>
-          <PowerTag power={faction.power} />
-          <small style={{ color: faction.labelColor }}>
-            {faction.islands} đảo · {faction.guilds.length} guild
-          </small>
-        </div>
+        <FactionLines entry={faction} />
         <b>{compact(faction.score)}</b>
       </div>
       <div className={`${shared.allocation} ${shared.allocationTall}`}>

@@ -16,6 +16,14 @@
   list-style: none;
 }
 
+/* Row tô màu phe (inline style qua tintStyle): Tab Cứ điểm = phe đang chiếm,
+   Tab Phe = phe dẫn đầu. Viền trong suốt cho row không tô để thẳng hàng. */
+.tintedSummary {
+  padding-left: 6px;
+  padding-right: 6px;
+  border-left: 3px solid transparent;
+}
+
 .summary::-webkit-details-marker {
   display: none;
 }
@@ -129,4 +137,42 @@
 .sortOption input {
   margin: 0;
   accent-color: #0d8a65;
+}
+
+/* Pill filter dùng chung (sub-tab Tab Phe, filter phe Tab Cứ điểm). */
+.subTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.subTabs button {
+  padding: 4px 9px;
+  border-radius: 20px;
+  background: #eff2f4;
+  color: #7d8f9a;
+  font-size: 10px;
+}
+
+.subTabs button.selected {
+  background: #0d8a65;
+  color: #fff;
+}
+
+/* Pill phe: text + tint theo labelColor (inline var), selected = viền đậm. */
+.subTabs button.factionPill {
+  color: var(--label);
+  background: color-mix(in srgb, var(--label) 9%, transparent);
+  font-weight: 500;
+}
+
+.subTabs button.factionPill.selected {
+  color: var(--label);
+  background: color-mix(in srgb, var(--label) 18%, transparent);
+  box-shadow: inset 0 0 0 1px var(--label);
+}
+
+.topShare {
+  font-weight: 500;
 }

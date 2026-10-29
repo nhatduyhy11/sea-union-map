@@ -43,19 +43,23 @@ export function GuildAccordion({
   );
 }
 
+// 2 dòng: tên guild [LC] / số người đóng góp · số đảo.
 export function GuildLabel({ guild }: { guild: GuildScore }) {
-  // Luôn hiện — "—" = guild brief rỗng và không member nào có brief power.
-  const powerTag = guild.power ? ` [${compact(guild.power)}]` : " [—]";
   return (
     <span className={styles.guildLabel}>
       <Users size={11} />
-      <span>
-        {guild.name}
-        {powerTag}
+      <span className={styles.guildLines}>
+        <span>
+          {guild.name}{" "}
+          {/* Luôn hiện — "—" = guild brief rỗng và không member nào có brief power. */}
+          <span className={styles.power}>
+            [{guild.power ? compact(guild.power) : "—"}]
+          </span>
+        </span>
+        <small>
+          {guild.players} người · {guild.nodes} đảo
+        </small>
       </span>
-      <small>
-        · {guild.players} người · {guild.nodes} đảo
-      </small>
     </span>
   );
 }
