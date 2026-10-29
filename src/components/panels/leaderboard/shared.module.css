@@ -134,6 +134,12 @@
   user-select: none;
 }
 
+/* Nút sort 3 trạng thái (Tab Cứ điểm): đang sort thì tô màu nhấn. */
+.sortActive {
+  color: #0d8a65;
+  font-weight: 500;
+}
+
 .sortOption input {
   margin: 0;
   accent-color: #0d8a65;

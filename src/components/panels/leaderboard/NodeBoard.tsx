@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from "lucide-react";
 import { compact, number } from "../../../utils/format";
 import { useFocusIslandOnBoard } from "../../../hooks/useFocusIsland";
 import { useSelection } from "../../../stores/selection";
@@ -12,8 +12,8 @@ import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
 // selected), panel giữ nguyên ở bảng. Focus chỉ xảy ra khi toggle mở; đa mở
 // được — camera theo lần expand cuối. Đóng expand của đảo đang selected thì
 // gỡ selection (viền active) — đảo khác đang chọn thì giữ nguyên.
-// Không phụ thuộc Filter mode. Mặc định theo id đảo (1-1, 1-2 …); checkbox
-// bật thì sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm; tiêu
+// Không phụ thuộc Filter mode. Mặc định theo id đảo (1-1, 1-2 …); nút sort
+// xoay vòng tăng dần → giảm dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm; tiêu
 // đề đếm số cứ điểm đang hiển thị. State local, rời board là reset.
 export function NodeBoard({
   nodes,
@@ -24,14 +24,19 @@ export function NodeBoard({
 }) {
   const focusIslandOnBoard = useFocusIslandOnBoard();
   const selected = useSelection((state) => state.selected);
-  const [sortByScore, setSortByScore] = useState(false);
+  const [scoreSort, setScoreSort] = useState<ScoreSort>("none");
   const [ownerFilter, setOwnerFilter] = useState<string | null>(null);
   const displayNodes = useMemo(() => {
-    const owned = ownerFilter
-      ? nodes.filter((entry) => entry.owner?.id === ownerFilter)
-      : nodes;
-    return sortByScore ? [...owned].sort((a, b) => b.total - a.total) : owned;
-  }, [nodes, sortByScore, ownerFilter]);
+    const owned =
+      ownerFilter === UNCLAIMED
+        ? nodes.filter((entry) => !reachedClaim(entry))
+        : ownerFilter
+          ? nodes.filter((entry) => entry.owner?.id === ownerFilter)
+          : nodes;
+    if (scoreSort === "none") return owned;
+    const sign = scoreSort === "asc" ? 1 : -1;
+    return [...owned].sort((a, b) => sign * (a.total - b.total));
+  }, [nodes, scoreSort, ownerFilter]);
   return (
     <>
       <h2>Xếp hạng cứ điểm ({displayNodes.length})</h2>
@@ -54,83 +59,136 @@ export function NodeBoard({
             {faction.name}
           </button>
         ))}
+        <button
+          className={ownerFilter === UNCLAIMED ? styles.selected : ""}
+          onClick={() =>
+            setOwnerFilter(ownerFilter === UNCLAIMED ? null : UNCLAIMED)
+          }
+        >
+          Chưa chiếm
+        </button>
       </div>
       <div className={styles.sortBar}>
-        <label
-          className={styles.sortOption}
-          title="Bật: sắp xếp theo tổng Điểm ST. Tắt: theo số đảo (1-1, 1-2 …)."
+        <button
+          className={`${styles.sortOption} ${scoreSort !== "none" ? styles.sortActive : ""}`}
+          title="Bấm để đổi: tăng dần → giảm dần → không sort (theo số đảo 1-1, 1-2 …)."
+          onClick={() => setScoreSort(NEXT_SORT[scoreSort])}
         >
-          <input
-            type="checkbox"
-            checked={sortByScore}
-            onChange={(event) => setSortByScore(event.target.checked)}
-          />
+          {scoreSort === "asc" ? (
+            <ArrowUp size={11} />
+          ) : scoreSort === "desc" ? (
+            <ArrowDown size={11} />
+          ) : (
+            <ArrowUpDown size={11} />
+          )}
           Sắp xếp theo điểm
-        </label>
+          {scoreSort === "asc" && " (tăng dần)"}
+          {scoreSort === "desc" && " (giảm dần)"}
+        </button>
       </div>
-      {displayNodes.map((entry, index) => (
-        <details
-          key={entry.island.id}
-          className={styles.item}
-          onToggle={(event) => {
-            if ((event.target as HTMLDetailsElement).open)
-              focusIslandOnBoard(entry.island.id);
-            else if (selected === entry.island.id)
-              useSelection.getState().close();
-          }}
-        >
-          <summary
-            className={`${styles.summary} ${styles.tintedSummary}`}
-            style={tintStyle(entry.owner?.color)}
+      {displayNodes.map((entry, index) => {
+        const claimed = reachedClaim(entry);
+        return (
+          <details
+            key={entry.island.id}
+            className={styles.item}
+            onToggle={(event) => {
+              if ((event.target as HTMLDetailsElement).open)
+                focusIslandOnBoard(entry.island.id);
+              else if (selected === entry.island.id)
+                useSelection.getState().close();
+            }}
           >
-            <span className={styles.rank}>{index + 1}</span>
-            <div className={styles.factionName}>
-              {entry.island.id} {entry.island.name}
-              <small>
-                {entry.total > 0 ? (
-                  <>
-                    {entry.scores.filter((s) => s.score > 0).length} phe
-                    <TopShare entry={entry} />
-                  </>
-                ) : (
-                  "chưa có điểm"
-                )}
-              </small>
-            </div>
-            <b>{compact(entry.total)}</b>
-            <ChevronRight size={13} />
-          </summary>
-          <div className={styles.allocation}>
-            {entry.scores
-              .filter((score) => score.score > 0)
-              .map((score) => (
-                <FactionScoreRow key={score.id} score={score} />
-              ))}
-            {entry.attackers.length > 0 && (
-              <div className={styles.playerBlock}>
-                <PlayerTable attackers={entry.attackers} />
+            <summary
+              className={`${styles.summary} ${styles.tintedSummary}`}
+              style={tintStyle(claimed ? entry.owner?.color : undefined)}
+            >
+              <span className={styles.rank}>{index + 1}</span>
+              <div className={styles.factionName}>
+                {entry.island.id} {entry.island.name}
+                <small>
+                  {entry.scores.filter((s) => s.score > 0).length} phe
+                  {entry.total > 0 ? (
+                    <TopShare entry={entry} claimed={claimed} />
+                  ) : (
+                    <ClaimNeed entry={entry} />
+                  )}
+                </small>
               </div>
-            )}
-          </div>
-        </details>
-      ))}
+              <b>{compact(entry.total)}</b>
+              <ChevronRight size={13} />
+            </summary>
+            <div className={styles.allocation}>
+              {entry.scores
+                .filter((score) => score.score > 0)
+                .map((score) => (
+                  <FactionScoreRow key={score.id} score={score} />
+                ))}
+              {entry.attackers.length > 0 && (
+                <div className={styles.playerBlock}>
+                  <PlayerTable attackers={entry.attackers} />
+                </div>
+              )}
+            </div>
+          </details>
+        );
+      })}
     </>
   );
 }
 
-// Điểm phe góp cao nhất (màu label phe đó) + % so với tổng điểm đảo, làm tròn
-// xuống số nguyên.
-function TopShare({ entry }: { entry: NodeBoardEntry }) {
-  const top = entry.scores.reduce((best, score) =>
+function topScore(entry: NodeBoardEntry): FactionScore {
+  return entry.scores.reduce((best, score) =>
     score.score > best.score ? score : best
   );
+}
+
+type ScoreSort = "none" | "asc" | "desc";
+const NEXT_SORT: Record<ScoreSort, ScoreSort> = {
+  none: "asc",
+  asc: "desc",
+  desc: "none",
+};
+
+// Giá trị filter riêng cho pill "Chưa chiếm" (đảo chưa phe nào đủ điểm claim).
+const UNCLAIMED = "__unclaimed";
+
+// Phe cao nhất đã chạm claimThreshold chưa — chưa thì row không tô màu phe.
+function reachedClaim(entry: NodeBoardEntry): boolean {
+  return (
+    entry.scores.length > 0 &&
+    topScore(entry).score >= entry.island.claimThreshold
+  );
+}
+
+// Điểm phe góp cao nhất (màu label phe đó) + % so với tổng điểm đảo, làm
+// tròn xuống số nguyên. Chưa đủ điểm claim thì nối thêm "/ điểm cần claim".
+function TopShare({
+  entry,
+  claimed,
+}: {
+  entry: NodeBoardEntry;
+  claimed: boolean;
+}) {
+  const top = topScore(entry);
   return (
     <>
       {" · "}
       <span className={styles.topShare} style={{ color: top.labelColor }}>
         {compact(top.score)} ({Math.floor((top.score / entry.total) * 100)}%)
       </span>
+      {!claimed && <ClaimNeed entry={entry} />}
     </>
+  );
+}
+
+// "/ điểm cần claim" — chữ đen, không theo màu phe.
+function ClaimNeed({ entry }: { entry: NodeBoardEntry }) {
+  return (
+    <span className={styles.topShare} style={{ color: "#000" }}>
+      {" / "}
+      {compact(entry.island.claimThreshold)}
+    </span>
   );
 }
 
