@@ -9,8 +9,6 @@ mine_socket/handlers.py for the mine wiring.
 """
 
 import asyncio
-import datetime
-import json
 import pathlib
 import struct
 from dataclasses import dataclass
@@ -40,50 +38,14 @@ from browser.process_guard import (
     install_stop_signals,
     release_profile_lock,
 )
+from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS
 from core.decode import decode_proto, read_packed_varints, split_frame
+from core.sinks import JsonlSink
 
 BRIEF_CHUNK = 60  # client batches ~59 ids per request
 NAME_FETCH_MIN_INTERVAL = 5.0  # seconds between injected batches
 SETTLE_SECONDS = 5.0  # grace after the last injected batch for stray replies to land
 DEFAULT_LOCK_FILENAME = ".ws_logger.lock"
-
-# Captures the game WebSocket instance so Python can inject frames (NameFetcher).
-WS_SEND_HOOK_JS = """() => {
-    if (window.__wsLoggerHooked) return;
-    window.__wsLoggerHooked = true;
-    const send = WebSocket.prototype.send;
-    WebSocket.prototype.send = function (data) {
-        window.__wsLoggerWs = this;
-        return send.call(this, data);
-    };
-}"""
-
-SEND_FRAME_JS = """(bytes) => {
-    const ws = window.__wsLoggerWs;
-    if (!ws || ws.readyState !== 1) return false;
-    ws.send(new Uint8Array(bytes));
-    return true;
-}"""
-
-
-class JsonlSink:
-    """Append dicts as JSONL lines; every push is new data (no dedupe)."""
-
-    def __init__(self, out_path: pathlib.Path, tag: str) -> None:
-        self.out_path = out_path
-        self.tag = tag
-        self.count = 0
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-
-    async def add(self, rows: list[dict]) -> None:
-        if not rows:
-            return
-        logged_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
-        with self.out_path.open("a", encoding="utf-8") as fh:
-            for row in rows:
-                fh.write(json.dumps({**row, "logged_at": logged_at}, ensure_ascii=False) + "\n")
-        self.count += len(rows)
-        print(f"[{self.tag}] {len(rows)} rows (total {self.count})", flush=True)
 
 
 class NameFetcher:

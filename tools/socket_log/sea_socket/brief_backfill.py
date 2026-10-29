@@ -40,7 +40,7 @@ from core.protocol import (  # noqa: E402
     parse_guild_brief,
     parse_player_briefs,
 )
-from core.runner import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
+from browser.ws_inject import SEND_FRAME_JS, WS_SEND_HOOK_JS  # noqa: E402
 from sea_socket.crawler import CrawlRouter, LOCK_FILENAME  # noqa: E402
 from sea_socket.walkthrough import STAGES, run_stages  # noqa: E402
 from sea_socket.protocol import build_brief_frame  # noqa: E402

@@ -11,7 +11,8 @@ from typing import Optional
 
 from core.protocol import BROADCAST_MODULE, BROADCAST_PUSH_CMDS, frame_is
 from core.decode import split_frame
-from core.runner import FrameRoutes, JsonlSink, LoggerContext
+from core.runner import FrameRoutes, LoggerContext
+from core.sinks import JsonlSink
 
 from mine_socket.protocol import (
     MINE_MODULE,

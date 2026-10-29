@@ -35,7 +35,8 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1]))
 from core.args import build_parser, resolve_run_dir  # noqa: E402
-from core.runner import GameLogger, JsonlSink  # noqa: E402
+from core.runner import GameLogger  # noqa: E402
+from core.sinks import JsonlSink  # noqa: E402
 
 from mine_socket.handlers import build_routes  # noqa: E402
 from mine_socket.report import build_report, print_tree  # noqa: E402
