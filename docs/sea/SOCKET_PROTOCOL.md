@@ -94,9 +94,12 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 - Chi tiết luồng crawl, phân tích 89 cứ điểm, config `CampGVGLO` và live data adapter:
   👉 **Tài liệu packet:** [`docs/sea/SEA_PACKET_ANALYSE.md`](SEA_PACKET_ANALYSE.md)
   👉 **Tài liệu cấu trúc bản đồ & cứ điểm:** [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md)
+  👉 **Payload điều hướng event (bỏ entry GUI):** [`docs/sea/EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md)
 - Tóm tắt packet:
+  - `0x72 / 0x0002` (response lúc boot): block đầu chốt boot sync — signal login-done của payload entry.
   - `0x72 / 0x000b` → `0x000c`: Snapshot toàn bộ 89 cứ điểm, 4 phe và 115 bang hội (guild roster).
   - `0x72 / 0x0011` → `0x0012`: Chi tiết 1 cứ điểm (điểm sát thương 4 phe, art boss).
+  - `0x72 / 0x001b` → `0x001c`: Bảng nhiên liệu 4 phe — `{f2 nhiên liệu, f4 rank, f5 packed đảo đang giữ}`, inject được ngay sau login.
   - `0x72 / 0x0024` → `0x0025`: Điểm số bang hội thuộc từng phe.
   - `0x72 / 0x003e` → `0x003f`: Trạng thái động cứ điểm trong thời gian chiến sự.
 

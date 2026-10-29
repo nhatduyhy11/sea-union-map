@@ -5,6 +5,7 @@
 >
 > ⚠️ **Ưu tiên:** Thấp hơn nhánh Tranh Bá Tứ Hải (Sea Union) & Web UI; chỉ thực hiện khi có nhu cầu mở rộng tính năng dashboard/bot mỏ.
 > Backlog nhánh Tranh Bá Tứ Hải & Web UI xem tại: [`docs/sea/BACKLOG_SEA.md`](../sea/BACKLOG_SEA.md).
+> Cache brief guild + player dùng chung cho cả mine được track tại [`docs/sea/BACKLOG_SEA.md`](../sea/BACKLOG_SEA.md) (§I mục 1).
 > Cấu trúc world mỏ xem tại: [`MINE_STRUCTURE.md`](MINE_STRUCTURE.md).
 
 ---

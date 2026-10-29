@@ -56,29 +56,43 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 
 - `f1: 118/116/117` = **board id**: 118 = per-node, 116 = BXH phe, 117 = BXH điểm.
 - Kính lúp (boss detail) và các nút phụ trong popup **không sinh request** — render từ
-  config client (xem NEED_CONFIRM 4).
+  config client (xem NEED_CONFIRM 3).
 - Cơ chế inject frame vào game socket đã POC ở event mỏ (`tools/socket_log/mine_socket/logger.py` hook
   `WebSocket.prototype.send` + `page.add_init_script`) — áp nguyên cho sea.
 
-### 1.4. Flow crawl đề xuất (dùng cho giai đoạn feed UI)
+### 1.4. Flow crawl (đang chạy trong crawler)
 
-1. Vào battle map (điều hướng như `tools/socket_log/sea_socket/walkthrough.py`) → đọc `0x72/0x000c` → list id + owner.
+1. Vào battle map bằng **payload entry** (wait-login + inject `0x72/0x000b`, 0
+   click — xem [`EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md)); GUI
+   walkthrough chỉ còn là fallback `--gui-entry` → đọc `0x72/0x000c` → list id + owner.
 2. Với mỗi id 5..89: inject `0x72/0x0011` + `0x0c/0x0002{118}` → thu detail + leaderboard.
 3. Inject `0x0c/0x0002{116/117}` cho 2 BXH; `0x0d/0x001f` theo id player xuất hiện.
 4. Sink JSONL tái dùng lõi `tools/socket_log/core/runner.py` (như mine) — re-crawl định kỳ khi war diễn ra.
+
+### 1.5. Bảng nhiên liệu 4 phe + signal login (chốt 2026-10-29)
+
+- `0x72/0x001b` (rỗng) → `0x001c` (~181B): repeated row/phe `{f1 id, f2 Tổng
+  Nhiên Liệu (double), f3 chưa định danh, f4 rank, f5 packed đảo đang giữ}` —
+  `f5` là nguồn owner compact thay việc parse `0x000c` 23KB; top-level `f3` =
+  phe của account. Inject được từ Home ngay sau login (E1 PASS ×2, crawler
+  dump ra `standings.json`) — chi tiết [`EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md) §2.
+- `0x72/0x0002` đầu tiên lúc boot = **signal login-done** (boot sync xong) —
+  signal chờ của payload entry; heartbeat `0x02/0x0009` muộn hơn ~2.6s nên
+  không dùng.
+- Lưu ý parse: field `f4` "fight_cap" của `0x72/0x0025` cũng là nhiên liệu phe,
+  không phải lực chiến (misnomer trong `parse_faction_detail`).
 
 ## 2. NEED_CONFIRM (việc mở — làm/xác nhận thì xóa dòng)
 
 | #   | Vấn đề                                                                                                                                                                                | Trạng thái   |
 | --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 1   | **Inject chủ động `0x72/0x0011` + `0x0c/0x0002` trên sea chưa test** — chỉ mới quan sát client tự gửi. Cần 1 run test hook `send` (mechanism đã POC ở mine, rủi ro thấp)              | Cần test     |
-| 2   | **`f4` (1001..1009) trong `0x72/0x0012` là gì** — art/boss class (không khớp production tier: 1001 xuất hiện ở cả node 12/h lẫn 36/h). Đối chiếu với bảng boss/art khi có tên boss    | Cần decode   |
-| 3   | **"Hiệu suất sản xuất 12/24/36/h" không nằm trong CampGVGLO** — chỉ thấy `_pointRequire` 2/4/6/10/15M tỉ lệ thuận. Tìm bảng nguồn (config còn lại) hoặc derive từ `_pointRequire`     | Cần decode   |
-| 4   | **Boss detail** (tên "Tứ Hải-Oán Linh", trait, hero đề xuất): popup không sinh request → nguồn là config client. Ứng viên: `SkillBuffBossLO` (67 row) / `_monsterType`. Chưa map xong | Cần decode   |
-| 5   | **`0x72/0x003e→0x003f` toàn 0 pre-war** — ý nghĩa 4 trường chỉ đọc được sau khai chiến. Capture lại sau 10/26 10:00                                                                   | Chờ war      |
-| 6   | **Base ↔ hướng (north/east/south/west)**: CampGVG chỉ cho id 1..4 = 4 phe, không có toạ độ. Tự đối chiếu màu cờ trên `docs/assets/sea-socket/6-battle-map.png` khi build `src/`       | Tự đối chiếu |
-| 7   | **War-time delta**: sau 10/26 10:00 capture lại xem `0x72/0x000c` push interval + `0x72/0x0012` khi node có chủ / có ST                                                               | Chờ war      |
-| 8   | Server CN có cùng module không (open item chung của SOCKET_PROTOCOL)                                                                                                                  | Backlog      |
+| 1   | **`f4` (1001..1009) trong `0x72/0x0012` là gì** — art/boss class (không khớp production tier: 1001 xuất hiện ở cả node 12/h lẫn 36/h). Đối chiếu với bảng boss/art khi có tên boss    | Cần decode   |
+| 2   | **"Hiệu suất sản xuất 12/24/36/h" không nằm trong CampGVGLO** — chỉ thấy `_pointRequire` 2/4/6/10/15M tỉ lệ thuận. Tìm bảng nguồn (config còn lại) hoặc derive từ `_pointRequire`     | Cần decode   |
+| 3   | **Boss detail** (tên "Tứ Hải-Oán Linh", trait, hero đề xuất): popup không sinh request → nguồn là config client. Ứng viên: `SkillBuffBossLO` (67 row) / `_monsterType`. Chưa map xong | Cần decode   |
+| 4   | **`0x72/0x003e→0x003f` toàn 0 pre-war** — ý nghĩa 4 trường chỉ đọc được sau khai chiến. Capture lại sau 10/26 10:00                                                                   | Chờ war      |
+| 5   | **Base ↔ hướng (north/east/south/west)**: CampGVG chỉ cho id 1..4 = 4 phe, không có toạ độ. Tự đối chiếu màu cờ trên `docs/assets/sea-socket/6-battle-map.png` khi build `src/`       | Tự đối chiếu |
+| 6   | **War-time delta**: sau 10/26 10:00 capture lại xem `0x72/0x000c` push interval + `0x72/0x0012` khi node có chủ / có ST                                                               | Chờ war      |
+| 7   | Server CN có cùng module không (open item chung của SOCKET_PROTOCOL)                                                                                                                  | Backlog      |
 
 ## 3. Deliverables của phase
 
@@ -88,7 +102,7 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
       `gameId` (server id) + `_pointRequire` (claimThreshold thật) + tên thật.
 - [x] Cập nhật `docs/sea/SOCKET_PROTOCOL.md` section sea (module 0x72/0x0c) — hoàn tất khi
       SOCKET_PROTOCOL tách thành doc dùng chung (§4.2 + §3.5).
-- [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 5/7.
+- [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 4/6.
 
 ## 4. Bóc config client (hướng dẫn tái sử dụng)
 

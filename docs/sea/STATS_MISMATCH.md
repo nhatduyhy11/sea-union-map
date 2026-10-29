@@ -116,9 +116,9 @@ Hai phát hiện đi kèm (cùng session 2026-10-27):
   tên cũ bằng null.
 
 - **Boss node = null**: tên/trait boss nằm ở config khác (`SkillBuffBossLO`,
-  NEED_CONFIRM 4 trong `SEA_PACKET_ANALYSE.md`) — chưa map. Level node đang
+  NEED_CONFIRM 3 trong `SEA_PACKET_ANALYSE.md`) — chưa map. Level node đang
   theo tier demo (35/60/100), không phải số game.
-- **"Hiệu suất sản xuất 12/24/36/h"** không nằm trong CampGVG (NEED_CONFIRM 3).
+- **"Hiệu suất sản xuất 12/24/36/h"** không nằm trong CampGVG (NEED_CONFIRM 2).
 - **`_monsterType`** ([[1,60,1],…]) nghi là nhóm quái theo mốc power — chưa decode.
 
 ## Evidence

@@ -4,36 +4,68 @@
 > hướng fix để người sau pick up không phải đào lại. Lệch số UI vs game riêng
 > một file: [`docs/sea/STATS_MISMATCH.md`](STATS_MISMATCH.md).
 >
-> Các mục quick-win UI đã xử lý xong (map init, màu 4 phe, tên căn cứ,
-> watermark, footer, tab mặc định, sidebar scroll, sort vùng member, collapse
-> guild) đã drop khỏi danh sách — xem git log các commit `feat(canvas)`,
-> `feat(ui)`, `fix(leaderboard)`, `feat(layout)` (2026-10-27). Mục "CampGVG
-> config nằm ở `.tmp`" đã xử lý 2026-10-28 (`sea_socket/campgvg.json` committed,
-> `crawler.py --dump`) — xem commit `feat(sea)` + `README.BE.md`.
 
 ---
 
 ## I. Crawler & Backend Python
 
-### 1. Crawler entry fail khi game load chậm — `sleep:8` cứng, không có bước chờ home ready
+### 1. Cache brief guild + player dùng chung cho pipeline mine & sea (default cụm 517)
 
-Phát hiện 2026-10-26, run `sea-crawl-20261026-195342`.
+Ý tưởng chốt 2026-10-28 — giảm thời gian fetch nói chung của cả hai nhánh:
+brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặp.
 
-- **Hiện tượng**: fail ở `expect:2a-event-lobby-start` (stage `login`) — evidence
-  `screens/FAIL-expect-2a-event-lobby-start.png` vẫn là màn hình loading 73%.
-  Game socket mở ở t+19.7s trong khi stage `login` chỉ `sleep:8` rồi chạy
-  popclose; popclose "queue drained" trên loading screen (checkbox score 0.821
-  < 0.97 — không có splash nào để khớp), click outside (424,688) bị nuốt khi
-  loading chưa xong → không vào được event lobby.
-- **Điều kiện tái**: cache profile ngu (lần chạy đầu của phiên, asset chưa
-  cached). Run kế tiếp `sea-crawl-20261026-195529` với cùng lệnh pass toàn bộ.
-  Rerun tay hiện là workaround tạm thời.
-- **Hướng fix**: thay `sleep:8` cứng trong STAGES bằng bước chờ sẵn sàng —
-  ví dụ verb `await:<golden>` (loop expect đến khi similarity ≥ ngưỡng hoặc hết
-  hạn, screenshot evidence mỗi lần thử), hoặc tối thiểu chờ WS game mở + thêm
-  expect-retry trước khi vào popclose. Sửa ở `tools/socket_log/sea_socket/walkthrough.py` (STAGES) +
-  `tools/socket_log/capture/capture.py` (run_step) — vẫn thuần Python/template matching, không
-  đụng phần inject của `tools/socket_log/sea_socket/crawler.py`.
+- **Hiện trạng**:
+  - Player brief: fetch theo lô 60 id qua inject `0x0d/0x001f` → `0x0d/0x0020`
+    — sea dùng ở brief phase của `tools/socket_log/sea_socket/crawler.py` +
+    `tools/socket_log/sea_socket/brief_backfill.py`; mine dùng `NameFetcher`
+    (`tools/socket_log/core/runner.py`).
+  - Guild brief: `0x24/0x0035 → 0x0036` (`GUILD_BRIEF_CMD`,
+    `tools/socket_log/core/protocol.py`).
+  - Brief chỉ sống trong output từng run (`players.jsonl`), không có nơi lưu
+    chung → lần crawl sau hỏi lại từ đầu. Throttle risk: batch 60 id từng trả
+    về rỗng (seq=169), phải backfill bằng chunk 20 + pace 0.8s (evidence
+    2026-10-27 trong `brief_backfill.py`).
+- **Hướng làm**:
+  - Persistent brief cache theo cụm server: **mặc định `517`**, nhận input
+    khác qua CLI (vd `--server 590`) — 1 file/cụm, format `{id: brief}` cho
+    cả player lẫn guild (vd `tools/socket_log/briefs/517.json`; tên/chỗ để
+    chốt khi làm).
+  - Flow chuẩn: load cache → lọc bỏ id đã có → chỉ fetch phần thiếu → merge
+    bổ sung vào cache ngay khi có response. Gặp id nào chưa có trong cache
+    thì tự động update bổ sung.
+  - Option `--force-rebuild`: bỏ qua cache, hỏi lại toàn bộ rồi ghi đè (khi
+    nghi stale — đổi tên guild, power drift, cache hỏng).
+  - Module dùng chung đặt ở `tools/socket_log/core/` để cả `sea_socket/` lẫn
+    `mine_socket/` import được.
+- **Lưu ý**: cache phải tách theo cụm server (brief có field server, id có
+  thể trùng giữa các cụm); khớp với hướng multi-server (guild identity dùng
+  `guildId` từ game).
+
+### 1b. Guild brief trả rỗng với guild inactive — crawler cần retry riêng
+
+Ghi 2026-10-28 (run `.tmp/sea-crawl/sea-crawl-20261028-192132`, profile p545).
+
+- **Hiện trạng**: guild brief `0x24/0x0035 → 0x0036` giờ là nguồn lực chiến
+  guild (`f3.f16`, parse trong `core/protocol.py` → dump key `guildPower`).
+  Run này 114/115 guild trả đủ; guild `5270018` (phe 4, điểm 0) trả `f3` rỗng
+  → thiếu cả tên lẫn power, UI hiện `#5270018 [—]`.
+  - Roster 4 member: `52709342`, `52719518`, `52749342`, `52799012` — không
+    ai có brief, không ai lọt `nodeRows`/`playerBoard` (guild không hoạt động
+    trong event).
+  - Crawler (`sea_socket/crawler.py`, vòng guild brief) hỏi mỗi guild **1 lần,
+    không retry** — response rỗng là mất luôn tới run sau.
+- **Giả thuyết (chưa xác nhận)**: server xếp brief guild inactive vào hàng
+  low-priority / cache lạnh → lần hỏi đầu trả rỗng, hỏi lại sau mới có. Khớp
+  evidence cũ trong `brief_backfill.py`: 2026-10-27 16 guild rỗng lúc
+  07:26 + 07:45, 12 guild còn thiếu trả đủ ngay chiều cùng ngày.
+- **Hướng làm**:
+  - Crawler: guild nào response rỗng (`name` null) thì đưa vào hàng retry
+    cuối phase, backoff tăng dần (cùng kiểu `RETRY_BACKOFF` của backfill), vài
+    vòng; vẫn rỗng thì log id + giữ fallback FE (cộng power brief member).
+  - Kiểm chứng giả thuyết: thử hỏi lại `5270018` vài lần cách nhau (ngay /
+    vài phút / vài giờ); thử brief player 4 member để xem có cùng bị rỗng
+    không (inactive cả account hay chỉ guild).
+  - Tạm thời lấp tay: `brief_backfill.py --run <run> --guilds` rồi re-dump.
 
 ---
 
@@ -69,30 +101,7 @@ Cho phép chuyển đổi nhanh dữ liệu hiển thị giữa các cụm serve
 - **Nguyên tắc kỹ thuật**: **KHÔNG CÓ NÚT TẠO MỚI THỦ CÔNG (manual new)** — vì toàn bộ logic lấy và bóc tách dữ liệu server được thực hiện manual bằng pipeline backend nội bộ, không expose API hay thao tác tạo server ra phía client.
 - **Hành vi**: Khi click vào một server button: chuyển đổi active server, load bộ dữ liệu tương ứng của server đó vào store và render lại toàn bộ giao diện (map layout, faction scores, leaderboards).
 - **Chỗ sửa**: `src/components/layout/AppHeader.tsx`, store quản lý server hiện tại (`useServerStore` hoặc tích hợp vào app state), data loader trong `src/data/sea-live.ts`.
-- **Phụ thuộc**: nên chốt guild identity đa server (mục 4) trước khi làm để tránh đổi identity hai lần.
-
----
-
-## IV. Bảng Xếp Hạng (BXH / Leaderboard)
-
-### 4. Nhận diện Guild đa server: đổi identity sang `guildName_serverNumber`
-
-Phát hiện 2026-10-26 — tránh xung đột dữ liệu giữa các server.
-
-- **Vấn đề**: Hiện đang dùng tên bang làm id (`CanvasFilter`, `src/domain/selectors/` nhóm theo `player.guild`). Khi chạy multi-server, hai guild cùng tên ở hai server khác nhau (vd `HUNTERS` ở S517 và S590) sẽ bị gộp chung làm một row, gây sai lệch điểm và drill-down.
-- **Hướng fix**:
-  - Đổi guild identity nội bộ thành dạng `guildName_serverNumber` (vd: `HUNTERS_517`), trong khi display name trên UI vẫn giữ nguyên là `guildName`.
-  - Cập nhật `CanvasFilter` (`src/types.ts`), bucket & drill-down (`src/domain/selectors/`), filter matching ở canvas và legend.
-  - Bucket `"Không guild"` vẫn giữ nguyên; `guild_id` số từ game giữ làm evidence.
-
-### 5. BXH Cứ điểm: Expand hiển thị BXH player fetch in-game & clear selection khi đóng
-
-Cung cấp thông tin chi tiết người chơi tấn công cứ điểm và gỡ viền highlight khi đóng hàng.
-
-- **Vấn đề / Việc cần làm**:
-  1. **Hiển thị BXH người chơi của node**: Khi expand một cứ điểm trong tab Cứ điểm (`src/components/panels/leaderboard/NodeBoard.tsx`), mục `.allocation` hiện tại chỉ hiển thị điểm 4 phe, thiếu danh sách người chơi. Cần bổ sung bảng người chơi tham gia đóng góp/tấn công cứ điểm đó (tương tự `PlayerTable` trong `NodeDetails`, hiển thị tên, phe, guild, điểm đóng góp).
-  2. **Clear selection khi đóng hàng**: Khi toggle đóng một cứ điểm trong `src/components/panels/leaderboard/NodeBoard.tsx`, nếu node đó đang là node được chọn trên map (`selected === entry.island.id`) thì gọi `close()` để gỡ viền active.
-- **Chỗ sửa**: `src/components/panels/leaderboard/NodeBoard.tsx`, `src/domain/selectors/` (query player contributions cho từng node).
+- **Phụ thuộc**: guild identity đa server đã hoàn tất theo hướng dùng `guildId` từ game (commit `c8c3fe1`).
 
 ---
 

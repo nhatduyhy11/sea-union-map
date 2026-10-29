@@ -21,7 +21,7 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
 
 - **Tab Phe:** Đưa lên đầu vì là góc nhìn chiến thuật tổng quan quan trọng nhất; có sub-tab "Chung" + 4 phe, drill-down từ Phe → Guild → Thành viên.
 - **Tab Cá nhân:** Theo dõi phân bố đóng góp của các top player toàn bản đồ.
-- **Tab Cứ điểm:** Danh sách các đảo sắp xếp theo mức độ cạnh tranh (tổng Điểm ST).
+- **Tab Cứ điểm:** Danh sách các đảo, mặc định theo số đảo (`1-1 → 1-2 → … → 2-x → trung tâm`); checkbox "Sort theo Điểm" để xếp theo tổng Điểm ST.
 
 ### 1.3. Nguồn dữ liệu & Giới hạn đối chiếu
 
@@ -42,6 +42,25 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
 - **Giới hạn đã biết:** server cắt top-20/node, top-200 global; player/guild
   ngoài ngưỡng không có dữ liệu — xem [docs/sea/STATS_MISMATCH.md](sea/STATS_MISMATCH.md)
   (bao gồm 16 player S513/S514 server không trả brief).
+
+### 1.4. Tên phe & màu (Owner chốt 2026-10-28)
+
+- **Không dùng hướng** (Đông/Tây/Nam/Bắc) ở bất kỳ text UI nào. Tên phe = **tên đầy đủ của base in-game**. `id` nội bộ (`east`/`south`/`north`/`west`) giữ nguyên, chỉ là khoá dữ liệu.
+- **Thứ tự hiển thị cố định** (pill sub-tab Tab Phe, list "Chung", legend chân canvas): **Vịnh Thao Thiết → Long Khư U Ám → Thần Tự Lấp Lánh → Thánh Đảo Lạnh Giá**. List phe không sort lại theo điểm; số hạng ở đầu row vẫn là thứ hạng theo Điểm phe.
+- **Hai màu tách biệt** mỗi phe ([`src/data/factions.ts`](../src/data/factions.ts)):
+  - `color` — edge, swatch, viền đảo, icon căn cứ, bar điểm (giữ nguyên như cũ).
+  - `labelColor` — **mọi text label tên phe**: pill, row BXH, legend chân canvas (swatch giữ `color`, text dùng `labelColor`), tooltip node, tag chủ đảo, dòng phe của player.
+
+| Phe (base)         | `id`    | `color` (edge) | `labelColor` (text)     |
+| ------------------ | ------- | -------------- | ----------------------- |
+| Vịnh Thao Thiết    | `east`  | `#9a63d8`      | xanh lam sáng `#1e9cf0` |
+| Long Khư U Ám      | `south` | `#54a5d8`      | đỏ `#e03131`            |
+| Thần Tự Lấp Lánh   | `north` | `#e54a26`      | vàng sáng `#e6ad00`     |
+| Thánh Đảo Lạnh Giá | `west`  | `#d1a41c`      | tím `#8e44d8`           |
+
+### 1.5. Tên đảo hiển thị
+
+- `_name` của camp in-game dính sẵn display-id (`"1-15Đảo Xích Đu"`, `"Khu nghỉ dưỡng Trường Đảo 3-2"`). Frontend **bỏ token id khỏi tên** (`displayNameOf` trong [`src/data/sea-live.ts`](../src/data/sea-live.ts)) và tự ghép id riêng khi cần → `1-15 Đảo Xích Đu`, không lặp `1-15 1-15Đảo…`.
 
 ---
 
@@ -70,7 +89,8 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
 
 #### Tab Phe (Drill-down: Phe → Guild → Thành viên)
 
-- **Sub-tab Phe (Chung + 4 phe):** Thuần túy là bộ lọc góc nhìn panel (view-local), không tác động lên canvas ở cả 2 mode.
+- **Sub-tab Phe (Chung + 4 phe):** Thuần túy là bộ lọc góc nhìn panel (view-local), không tác động lên canvas ở cả 2 mode. Pill phe dùng tên đầy đủ, text + tint theo `labelColor`, thứ tự cố định (§1.4).
+- **Row phe:** tên phe kèm **`[tổng lực chiến]`** = tổng LC các guild trong phe (cùng format tag `[LC]` của guild; `[—]` khi chưa có power data), dòng phụ `N đảo · M guild`.
 - **Click Guild row:** Mở rộng danh sách thành viên của guild đó, đồng thời kích hoạt filter canvas theo guild:
   - Highlight toàn bộ các node mà thành viên trong guild có đóng góp.
   - Row guild được tint màu phe nhẹ và hiển thị số lượng đảo có đóng góp (`· N đảo`).
@@ -86,6 +106,8 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
 - Danh sách đảo trong phần expand của player là **row tĩnh** (chỉ hiển thị tên đảo + điểm đóng góp), **không điều khiển camera pan**.
 
 #### Tab Cứ điểm (Phân vai camera focus duy nhất)
+
+- **Thứ tự mặc định:** theo số đảo (`1-1, 1-2, …, 1-n, 2-1, …`, trung tâm cuối) — so từng đoạn số, không so chuỗi. Checkbox **"Sort theo Điểm"** (mặc định tắt, state local của board): bật thì xếp theo tổng Điểm ST giảm dần.
 
 - Mở expand của một đảo = **Focus đảo trên canvas map** (camera pan mượt tới đảo + đảo được chọn/highlight).
 - Panel **giữ nguyên ở bảng xếp hạng**, không tự động chuyển sang tab "Cứ điểm chi tiết" (nếu muốn xem chi tiết đảo, người dùng tự bấm tab Cứ điểm trên thanh điều hướng).
@@ -110,15 +132,15 @@ View và filter sẽ tự động reset về `all` và đóng toàn bộ expansi
 
 ## 3. Kiến trúc Code & Ánh xạ triển khai
 
-| Tầng / File                                                                       | Trách nhiệm triển khai                                                                                                                               |
-| :-------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`src/types.ts`](../src/types.ts)                                                 | Định nghĩa union `MapFilter = { kind: "guild" \| "player", id: string }`.                                                                            |
-| [`src/stores/mapView.ts`](../src/stores/mapView.ts)                               | Quản lý state `filter: MapFilter \| null`, các action `setFilter`, `toggleFilter`, `resetFilter`.                                                    |
-| [`src/stores/panel.ts`](../src/stores/panel.ts)                                   | Lưu `filterMode: boolean`, state expansion (`openGuild`, `selectedMember`, `openFaction`, `openPlayer`).                                             |
-| [`src/stores/commands.ts`](../src/stores/commands.ts)                             | Gom các tương tác đa store: `setRankingBoard`, `setFilterMode`, `resetRankingView`, `toggleGuildFilter`, `toggleMemberFilter`, `togglePlayerFilter`. |
-| [`src/domain/selectors/index.ts`](../src/domain/selectors/index.ts)                           | Tính toán `GuildScore` kèm danh sách `members` (sort theo điểm) và số lượng đảo; gộp dữ liệu từ `Contribution[]`.                                    |
-| [`src/domain/mapData.ts`](../src/domain/mapData.ts)                               | Xây dựng index tra cứu nhanh `nodeIdsByGuild` và `nodeIdsByPlayer`.                                                                                  |
-| [`src/domain/mapGraph.ts`](../src/domain/mapGraph.ts)                             | Áp dụng logic dim/highlight node dựa trên `matchNodeIds`; giữ edges luôn ở trạng thái resting.                                                       |
-| [`src/components/map/FilterChip.tsx`](../src/components/map/FilterChip.tsx)       | Chip overlay hiển thị filter hiện tại và nút đóng `✕`.                                                                                               |
+| Tầng / File                                                                                             | Trách nhiệm triển khai                                                                                                                               |
+| :------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`src/types.ts`](../src/types.ts)                                                                       | Định nghĩa union `MapFilter = { kind: "guild" \| "player", id: string }`.                                                                            |
+| [`src/stores/mapView.ts`](../src/stores/mapView.ts)                                                     | Quản lý state `filter: MapFilter \| null`, các action `setFilter`, `toggleFilter`, `resetFilter`.                                                    |
+| [`src/stores/panel.ts`](../src/stores/panel.ts)                                                         | Lưu `filterMode: boolean`, state expansion (`openGuild`, `selectedMember`, `openFaction`, `openPlayer`).                                             |
+| [`src/stores/commands.ts`](../src/stores/commands.ts)                                                   | Gom các tương tác đa store: `setRankingBoard`, `setFilterMode`, `resetRankingView`, `toggleGuildFilter`, `toggleMemberFilter`, `togglePlayerFilter`. |
+| [`src/domain/selectors/index.ts`](../src/domain/selectors/index.ts)                                     | Tính toán `GuildScore` kèm danh sách `members` (sort theo điểm) và số lượng đảo; gộp dữ liệu từ `Contribution[]`.                                    |
+| [`src/domain/mapData.ts`](../src/domain/mapData.ts)                                                     | Xây dựng index tra cứu nhanh `nodeIdsByGuild` và `nodeIdsByPlayer`.                                                                                  |
+| [`src/domain/mapGraph.ts`](../src/domain/mapGraph.ts)                                                   | Áp dụng logic dim/highlight node dựa trên `matchNodeIds`; giữ edges luôn ở trạng thái resting.                                                       |
+| [`src/components/map/FilterChip.tsx`](../src/components/map/FilterChip.tsx)                             | Chip overlay hiển thị filter hiện tại và nút đóng `✕`.                                                                                               |
 | [`src/components/map/map-footer/FactionLegend.tsx`](../src/components/map/map-footer/FactionLegend.tsx) | Legend display-only, bỏ toàn bộ nút bấm lọc.                                                                                                         |
-| [`src/components/panels/leaderboard/`](../src/components/panels/leaderboard/)     | Các component `FactionBoard`, `PlayerBoard`, `IslandBoard` thực thi accordion và filter mode.                                                        |
+| [`src/components/panels/leaderboard/`](../src/components/panels/leaderboard/)                           | Các component `FactionBoard`, `PlayerBoard`, `IslandBoard` thực thi accordion và filter mode.                                                        |
