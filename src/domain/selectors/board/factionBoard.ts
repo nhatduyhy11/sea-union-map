@@ -2,18 +2,19 @@ import type {
   Contribution,
   Faction,
   FactionBoardEntry,
-  GuildMember,
+  GuildScore,
   Island,
   Player,
   ServerGuildRow,
 } from "../../../types";
-import { playerAllocations, playersFromContributions } from "../nodeScores";
-
-type GuildEntry = FactionBoardEntry["guilds"][number];
-export type SortBy = "power" | "score";
-
-// Bucket gộp player không guild (hoặc guildId không có row server).
-export const NO_GUILD = "Không guild";
+import { playersFromContributions } from "../nodeScores";
+import {
+  buildGuild,
+  NO_GUILD,
+  scoreByPlayer,
+  sortGuilds,
+  type SortBy,
+} from "./guild";
 
 // Faction board ("BXH Phe"). Live: guild rows + điểm guild là truth server
 // (bảng "Tổng quan phe" trong dump; tổng guild khớp per-faction node-state exact);
@@ -39,7 +40,7 @@ export function buildFactionBoard(
     // id = guildId từ game (định danh unique sẵn, hai guild cùng tên vẫn
     // tách biệt); name = display name.
     const knownIds = new Set(rows.map((row) => row.guildId));
-    const guilds: GuildEntry[] = rows.map((row) => {
+    const guilds: GuildScore[] = rows.map((row) => {
       const bucket = buildGuild(
         row.guildId,
         row.name,
@@ -105,65 +106,10 @@ function buildFactionBoardComputed(
   });
 }
 
-// Tổng điểm mỗi player; có factionId thì chỉ tính contributions của phe đó.
-function scoreByPlayer(
-  contributions: Contribution[],
-  factionId?: string
-): Map<string, number> {
-  const scores = new Map<string, number>();
-  for (const entry of contributions)
-    if (!factionId || entry.faction === factionId)
-      scores.set(
-        entry.playerId,
-        (scores.get(entry.playerId) ?? 0) + entry.score
-      );
-  return scores;
-}
-
-// Gộp players thành một guild entry: score/power cộng từ member, nodes đếm
-// node unique, member list sort theo điểm giảm dần.
-function buildGuild(
-  id: string,
-  name: string,
-  players: Player[],
-  scores: Map<string, number>,
-  contributions: Contribution[]
-): GuildEntry {
-  const nodes = new Set<string>();
-  const members: GuildMember[] = [];
-  let score = 0;
-  let power = 0;
-  for (const player of players) {
-    const playerScore = scores.get(player.id) ?? 0;
-    const allocations = playerAllocations(player.id, contributions);
-    score += playerScore;
-    if (player.power) power += player.power;
-    for (const allocation of allocations) nodes.add(allocation.nodeId);
-    members.push({
-      id: player.id,
-      name: player.name,
-      score: playerScore,
-      nodes: allocations.length,
-      power: player.power,
-      server: player.server,
-    });
-  }
-  return {
-    id,
-    name,
-    guild: id,
-    score,
-    players: players.length,
-    nodes: nodes.size,
-    members: members.sort((a, b) => b.score - a.score),
-    power,
-  };
-}
-
 function factionEntry(
   faction: Faction,
   islands: Island[],
-  guilds: GuildEntry[],
+  guilds: GuildScore[],
   score: number,
   sortBy: SortBy
 ): FactionBoardEntry {
@@ -175,15 +121,6 @@ function factionEntry(
     score,
     power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),
   };
-}
-
-// Sort guild: "power" = lực chiến giảm dần (hoà thì theo điểm), "score" = điểm.
-export function sortGuilds(guilds: GuildEntry[], sortBy: SortBy): GuildEntry[] {
-  return [...guilds].sort((a, b) =>
-    sortBy === "power"
-      ? (b.power ?? 0) - (a.power ?? 0) || b.score - a.score
-      : b.score - a.score
-  );
 }
 
 // Hạng phe theo tổng điểm (1 = dẫn đầu) — list vẫn giữ thứ tự cố định.
