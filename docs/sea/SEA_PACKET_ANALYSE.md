@@ -1,8 +1,7 @@
-# SEA_PACKET_ANALYSE — Spec phân tích packet Tranh Bá Tứ Hải
+# SEA_PACKET_ANALYSE — Phân tích packet Tranh Bá Tứ Hải
 
-> Mục tiêu phase: **liệt kê đủ node + lấy dữ liệu per-node bằng payload thẳng**, không
-> giả lập zoom/pan/click trên map (last-worse solution). Mọi mục đã chứng minh xong bị
-> drop khỏi danh sách việc; chỉ giữ NEED_CONFIRM.
+> Ghi chú finding: **liệt kê đủ node + lấy dữ liệu per-node bằng payload thẳng**, không
+> giả lập zoom/pan/click trên map.
 >
 > Nguồn dữ liệu: capture walkthrough 634 frame (pre-war 2026-10-24) + config table client bóc từ bundle game. Framing chung xem
 > `docs/sea/SOCKET_PROTOCOL.md`; cấu trúc nghiệp vụ xem `docs/sea/SEA_STRUCTURE.md`.
@@ -10,7 +9,7 @@
 > config, proto + manh mối chưa đào: [`../research/BUNDLE_RESEARCH.md`](../research/BUNDLE_RESEARCH.md)
 > (chỉ cần khi decode thứ mới).
 
-## 1. Kết quả chính (ĐÃ CHỨNG MINH — không cần làm lại)
+## 1. Kết quả chính
 
 ### 1.1. List node đầy đủ KHÔNG cần click map
 
@@ -118,23 +117,3 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
   Trống (pool `_type` 1), 1008 Vô Diện Tử Thần, 1009 Hắc Trảo, 1010 Hắc Nữ Tăng Ca,
   1011 Cổ Thần, 1012 Kỵ Sĩ Không Đầu, 1013 U Ảnh Phu Nhân (tên đều có tiền tố
   "Tứ Hải-"). `_limitTime` 180s, `_battleGroundCode` 131001..131013.
-
-## 2. NEED_CONFIRM (việc mở — làm/xác nhận thì xóa dòng)
-
-| #   | Vấn đề                                                                                                                                                                                | Trạng thái   |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
-| 5   | **Base ↔ hướng (north/east/south/west)**: CampGVG chỉ cho id 1..4 = 4 phe, không có toạ độ. Tự đối chiếu màu cờ trên `docs/assets/sea-socket/6-battle-map.png` khi build `src/`       | Tự đối chiếu |
-| 6   | **War-time delta**: sau 10/26 10:00 capture lại xem `0x72/0x000c` push interval + `0x72/0x0012` khi node có chủ / có ST                                                               | Chờ war      |
-| 7   | Server CN có cùng module không (open item chung của SOCKET_PROTOCOL)                                                                                                                  | Backlog      |
-
-## 3. Deliverables của phase
-
-- [ ] (Sau 10/26) Bổ sung dữ liệu động theo NEED_CONFIRM 6.
-- [ ] Đưa `monsterId` (node-states) + bảng `CampGVGMonsterLO` vào dump → UI hiện tên
-      boss thật + hiệu suất sản xuất (`_points/_interval`).
-
-## 4. Phụ lục — evidence paths
-
-- Node-open request samples: `{08 3f}` = id 63 (n03), `{08 47}` = id 71 (n04).
-- Board request samples: `{f1:116,f2:0}` (BXH phe), `{f1:118,f2:8}` (node 8).
-- Map state: `0x72/0x000c` 23132B (f2×89, f3×4, f4×115).

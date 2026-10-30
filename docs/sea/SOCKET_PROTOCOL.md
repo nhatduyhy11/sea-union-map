@@ -141,7 +141,6 @@ tools/socket_log/
 
 > *Lưu ý: Mọi open issue riêng của nhánh mỏ (action 1–12, template 28000, tile f6/f8/f9, streak/debuff parser) đã được chuyển về theo dõi tại [`docs/mine_docs/BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md).*
 
-- [ ] **Kiểm tra server CN (`hauntheroesweb.acenetgame.com`):** Xác nhận framing header 8-byte và các module `0x02`, `0x13`, `0x0d`, `0x72` có hoạt động tương tự server VN hay không.
 - [ ] **Session idle & Auto-refresh token:**
   - Token đăng nhập trong `localStorage` có hạn 28 ngày (`expires_in: 2419200`). Hiện tại bot dựa vào persistent profile Chrome để tái sử dụng token.
   - Cần kiểm chứng hành vi của server khi phiên chạy liên tục nhiều giờ (có kick AFK không khi vẫn có heartbeat `0x02/0x0008`).
