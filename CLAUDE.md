@@ -7,3 +7,13 @@
   without re-tracing from the specs. Positions are locked by `src/domain/data.test.ts`.
 - `src/data/map-layout.ts` holds the logic (`layoutNodes`, `layoutRoutes`, `mapBounds`)
   built on top of that data — start there for anything else map-related.
+
+## Writing docs, commit messages and code comments
+
+- Never cite gitignored data as evidence or reference: crawl run dirs (`.tmp/...`,
+  e.g. `sea-crawl-20261030-122836`), `public/sea-live-dev.json`, local profiles,
+  frame dumps. Readers of the repo cannot open them. State the finding itself
+  (what was checked, the numbers, a date if useful) instead.
+- Avoid commit hashes, quoting commit messages, or "previously / earlier version"
+  history narration. Docs and comments describe the current state; history lives
+  in git.
