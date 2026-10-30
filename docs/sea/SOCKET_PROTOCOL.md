@@ -129,7 +129,8 @@ tools/socket_log/
 ├── browser/               # Tiện ích Playwright: navigation, profile popup guards, ws_inject (JS hook inject frame)
 ├── capture/               # Bắt frame raw verbatim: capture.py
 ├── mine_socket/           # Nhánh Khai Thác Guild: logger.py, report.py, protocol.py
-├── sea_socket/            # Nhánh Tranh Bá Tứ Hải: crawler.py, report.py, walkthrough.py
+├── sea_socket/            # Nhánh Tranh Bá Tứ Hải: crawler.py, brief_backfill.py, report.py, walkthrough.py
+│   └── crawl/             # Engine inject online: router, board_codec, briefs, phases
 ├── config_extract.py      # Dump bảng config *LO (headless)
 └── research/              # Tool đào local, ngoài flow chính: proto_extract.py
 ```

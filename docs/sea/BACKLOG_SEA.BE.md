@@ -15,8 +15,8 @@ brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặ
 
 - **Hiện trạng**:
   - Player brief: fetch theo lô 60 id qua inject `0x0d/0x001f` → `0x0d/0x0020`
-    — sea dùng ở brief phase của `tools/socket_log/sea_socket/crawler.py` +
-    `tools/socket_log/sea_socket/brief_backfill.py`; mine dùng `NameService`
+    — sea dùng ở `tools/socket_log/sea_socket/crawl/briefs.py` (crawler +
+    `brief_backfill.py` dùng chung); mine dùng `NameService`
     (`tools/socket_log/core/names.py`).
   - Guild brief: `0x24/0x0035 → 0x0036` (`GUILD_BRIEF_CMD`,
     `tools/socket_log/core/protocol.py`).
@@ -51,7 +51,7 @@ Ghi 2026-10-28.
   - Roster 4 member: `52709342`, `52719518`, `52749342`, `52799012` — không
     ai có brief, không ai lọt `nodeRows`/`playerBoard` (guild không hoạt động
     trong event).
-  - Crawler (`sea_socket/crawler.py`, vòng guild brief) hỏi mỗi guild **1 lần,
+  - Crawler (`sea_socket/crawl/briefs.py` `fetch_guild_briefs`) hỏi mỗi guild **1 lần,
     không retry** — response rỗng là mất luôn tới run sau.
 - **Giả thuyết (chưa xác nhận)**: server xếp brief guild inactive vào hàng
   low-priority / cache lạnh → lần hỏi đầu trả rỗng, hỏi lại sau mới có. Khớp

@@ -1,10 +1,10 @@
 """Backfill missing player briefs for an existing sea crawl run.
 
-The crawler's brief phase has no retry (crawler.py brief loop), so one
-throttled batch (server answers 0x0d/0x0020 with an empty list — seen
-2026-10-27: 60 ids -> 0 briefs) leaves those players nameless in players.jsonl
-forever. This tool re-opens the session, asks ONLY the missing ids, and
-merges the answers back into the run's players.jsonl. No map crawl.
+The crawler's brief phase retries a throttled tail within the same session,
+but server-refused ids stay refused there (cooldown, not a hard block), so
+those players stay nameless in players.jsonl. This tool re-opens the session
+later, asks ONLY the missing ids, and merges the answers back into the run's
+players.jsonl. No map crawl.
 
     uv run python tools/socket_log/sea_socket/brief_backfill.py \
         --run .tmp/sea-crawl/sea-crawl-<ts> --profile .tmp/p545
@@ -24,39 +24,30 @@ sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from playwright.async_api import Page, WebSocket, async_playwright
+from playwright.async_api import WebSocket, async_playwright
 
 from browser.process_guard import acquire_profile_lock, release_profile_lock
 from browser.session import open_game_session
-from browser.ws_inject import SEND_FRAME_JS
 from capture.frames import FrameWriter
-from core.protocol import (
-    GUILD_BRIEF_CMD,
-    GUILD_MODULE,
-    parse_guild_brief,
+from sea_socket.crawl import LOCK_FILENAME
+from sea_socket.crawl.briefs import (
+    fetch_guild_briefs,
+    fetch_player_briefs,
+    player_ids_from_boards,
 )
-from sea_socket.crawler import LOCK_FILENAME, CrawlRouter
-from sea_socket.protocol import build_brief_frame
+from sea_socket.crawl.router import CrawlRouter
 from sea_socket.walkthrough import STAGES, run_stages
 
 # Throttle evidence (2026-10-27): the crawler's 60-id batches mostly answered
 # 60/60, but one came back empty — smaller chunks + pacing dodge it.
 BRIEF_CHUNK = 20
 REQUEST_PACE = 0.8
-ROUNDS = 5  # whole-pass retries for the still-missing tail
-RETRY_BACKOFF = 4.0  # linear +4s per round: 4s -> 8s -> 12s -> ... (matches crawler)
+ROUNDS = 5  # whole passes over the still-missing tail, linear backoff between
 
 
 def rank_ids(run_dir: Path) -> set[str]:
     boards = json.loads((run_dir / "boards-decoded.json").read_text(encoding="utf-8"))
-    ids: set[str] = set()
-    for row in boards.values():
-        for entry in row.get("rows", []):
-            if entry.get("id_type") == 1:  # skip faction pseudo-rows (ids 1..4)
-                ids.add(str(entry["player_id"]))
-        if row.get("self"):
-            ids.add(str(row["self"]["player_id"]))
-    return ids
+    return player_ids_from_boards(boards)
 
 
 def load_briefs(path: Path) -> dict[str, dict]:
@@ -64,40 +55,6 @@ def load_briefs(path: Path) -> dict[str, dict]:
         return {}
     rows = [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
     return {str(row["id"]): row for row in rows}
-
-
-async def brief_pass(page: Page, router: CrawlRouter, wanted: list[str],
-                     chunk: int) -> None:
-    """One pass of brief requests; router.briefs accumulates whatever returns."""
-    loop = asyncio.get_running_loop()
-    for start in range(0, len(wanted), chunk):
-        batch = wanted[start : start + chunk]
-        seq = router.next_seq()
-        fut: asyncio.Future = loop.create_future()
-        router.pending[seq] = fut
-        await page.evaluate(SEND_FRAME_JS, list(build_brief_frame(seq, batch)))
-        try:
-            await asyncio.wait_for(fut, 8.0)
-        except asyncio.TimeoutError:
-            router.pending.pop(seq, None)
-            print(f"[briefs] timeout for {len(batch)} ids", flush=True)
-        await asyncio.sleep(REQUEST_PACE)
-
-
-async def run_backfill(page: Page, router: CrawlRouter, wanted: list[str]) -> int:
-    for attempt in range(1, ROUNDS + 1):
-        missing = [pid for pid in wanted if pid not in router.briefs]
-        if not missing:
-            break
-        print(f"[round {attempt}] asking {len(missing)} ids", flush=True)
-        await brief_pass(page, router, missing, BRIEF_CHUNK)
-        still = [pid for pid in wanted if pid not in router.briefs]
-        if still:
-            wait = RETRY_BACKOFF * attempt
-            print(f"[round {attempt}] {len(still)} still missing — backoff {wait:.0f}s",
-                  flush=True)
-            await asyncio.sleep(wait)
-    return sum(1 for pid in wanted if pid in router.briefs)
 
 
 async def main() -> None:
@@ -160,7 +117,11 @@ async def main() -> None:
             # closes whatever gap this pass leaves.
             got = still_missing = 0
             if wanted:
-                got = await run_backfill(page, router, wanted)
+                print(f"[backfill] asking {len(wanted)} ids", flush=True)
+                await fetch_player_briefs(
+                    page, router, wanted, chunk=BRIEF_CHUNK, retry_chunk=BRIEF_CHUNK,
+                    rounds=ROUNDS - 1, pace=REQUEST_PACE)
+                got = sum(1 for pid in wanted if pid in router.briefs)
                 merged = {**briefs_before, **router.briefs}
                 with players_path.open("w", encoding="utf-8") as fh:
                     for pid in sorted(merged, key=int):
@@ -186,20 +147,11 @@ async def main() -> None:
                             names_path.read_text(encoding="utf-8"))
                     except (OSError, ValueError):
                         names = {}
-                filled = 0
-                for gid in guild_ids:
-                    try:
-                        _h, body = await router.inject(
-                            page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
-                        brief = parse_guild_brief(body)
-                    except RuntimeError as exc:
-                        print(f"[guild] {gid}: {exc}", flush=True)
-                        await asyncio.sleep(REQUEST_PACE)
-                        continue
-                    if brief.get("name"):
-                        names[str(gid)] = brief
-                        filled += 1
-                    await asyncio.sleep(REQUEST_PACE)
+                answered = await fetch_guild_briefs(
+                    page, router, guild_ids, pace=REQUEST_PACE)
+                named = {gid: b for gid, b in answered.items() if b.get("name")}
+                names.update(named)
+                filled = len(named)
                 names_path.write_text(
                     json.dumps(names, ensure_ascii=False, indent=1),
                     encoding="utf-8")

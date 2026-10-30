@@ -71,6 +71,7 @@ Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (proof protocol + fallback `--gui-entry` của crawler)                           |
 | `sea_socket/crawler.py`     | **Collector chính**: entry payload mặc định — wait-login `0x72/0x0002` + inject `0x000b`/`0x001b`, 0 click (xem [`docs/sea/EVENT_NAVIGATE_DECODE.md`](docs/sea/EVENT_NAVIGATE_DECODE.md); `--gui-entry` replay stage cũ); vào map xong inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game; `--dump` (mặc định bật) tự transform + dump ngay sau crawl |
+| `sea_socket/crawl/`         | Engine online sau `crawler.py` + `brief_backfill.py`: `router.py` (inject theo ssid + retry throttle), `board_codec.py` (decode board bằng runtime game), `briefs.py` (player/guild brief), `phases.py` (các phase crawl, ghi file output) |
 | `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
 | `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler |
 | `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"             |
@@ -80,7 +81,8 @@ Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 #     headed, cần session đăng nhập)
 uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 #    → .tmp/sea-crawl/<run>/: map-snapshot.json, standings.json, node-states.jsonl,
-#      boards-decoded.json, players.jsonl, summary.json
+#      guild-scores.json, guild-names.json, boards-decoded.json, players.jsonl,
+#      summary.json
 #    → public/sea-live-dev.json (transform từ baseline, refresh browser là thấy)
 #    --no-dump: chỉ lấy raw run
 
