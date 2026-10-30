@@ -1,8 +1,7 @@
 # SEA_STATS_RECONCILE — Đối chiếu các nguồn "tổng điểm"
 
 > Nguồn sự thật cho câu hỏi "tổng điểm X lấy từ đâu" trên Web UI. Ghi hiện trạng
-> BE/FE, số đo đối chiếu và các điểm còn mở. Việc cần làm nằm ở
-> [BACKLOG_SEA.BE.md §2](BACKLOG_SEA.BE.md).
+> BE/FE, số đo đối chiếu và các điểm còn mở.
 
 ## 1. Nguyên tắc (chủ dự án chốt 2026-10-30)
 
@@ -29,26 +28,34 @@
 - `parse_node_state` (`tools/socket_log/sea_socket/protocol.py`) đọc f2 thành
   `faction_scores`; crawler ghi `node-states.jsonl` và cộng thành
   `per_faction_scores` trong `summary.json`.
-- `report.py` (`dump_run`) **không đọc `node-states.jsonl`** → JSON FE không có
-  điểm phe theo node.
+- `report.py` (`dump_run`) dump key `nodeFactionScores: {gameNodeId: {campId:
+  score}}` từ `node-states.jsonl`. Run không có file thì bỏ key; node bị khoá
+  hoặc parse rỗng thì bỏ node đó.
 
 ### FE
 
-Mọi tổng node đi qua `scoresForNode` (`src/domain/selectors/nodeScores.ts`) =
-Σ `nodeRows` theo phe:
+`join.ts` gắn số server vào `Island.factionScores` (key theo direction).
+Mọi tổng node đi qua `scoresForNode` (`src/domain/selectors/nodeScores.ts`): có
+`factionScores` thì dùng, không có (dump thiếu key / node thiếu state) thì cộng
+`nodeRows` theo phe.
 
-| Chỗ hiển thị | Code | Nguồn hiện tại |
+| Chỗ hiển thị | Code | Nguồn |
 | --- | --- | --- |
-| Popup điểm 4 phe trên canvas | `src/domain/mapData.ts` → `IslandNode/NodeStats.tsx` | Σ rows ❌ |
-| Tab Cứ điểm: tổng, % phe dẫn, sort theo điểm | `selectors/board/nodeBoard.ts` | Σ rows ❌ |
-| Tab Cứ điểm: pill "Chưa chiếm", tô màu row | `reachedClaim` / `topScore` trong `NodeBoard.tsx` | Σ rows so với `claimThreshold` ❌ |
-| NodeDetails: điểm phe, tổng, phe dẫn | `selectors/nodeDetails.ts`, `NodeDetails/index.tsx` | Σ rows ❌ |
+| Popup điểm 4 phe trên canvas | `src/domain/mapData.ts` → `IslandNode/NodeStats.tsx` | Node state ✅ |
+| Tab Cứ điểm: tổng, % phe dẫn, sort theo điểm | `selectors/board/nodeBoard.ts` | Node state ✅ |
+| Tab Cứ điểm: pill "Chưa chiếm", tô màu row | `reachedClaim` / `topScore` trong `NodeBoard.tsx` | Node state so với `claimThreshold` ✅ |
+| NodeDetails: điểm phe, tổng, phe dẫn | `selectors/nodeDetails.ts`, `NodeDetails/index.tsx` | Node state ✅ |
 | Owner node | `dump.owner` (`src/data/sea-live/join.ts`) | Server ✅ |
-| Tổng phe (tab Phe) | `selectors/board/factionBoard.ts` | Σ guild `0x0025` — server ✅ |
-| BXH cá nhân | `dump.playerBoard` | Board 117 — server ✅ |
+| Tổng phe, điểm guild (tab Phe) | `selectors/board/factionBoard.ts` | Σ guild `0x0025` ✅ |
+| BXH cá nhân | `dump.playerBoard` | Board 117 ✅ |
+| Danh sách player tại node, expand player, member guild | `attackersForNode`, `playerAllocations`, `buildGuild` | Board 118 — best-effort |
 
-Hệ quả: ở node bị cắt, tổng và % thấp hơn thật; phe có điểm nhưng không lọt
-top-20 hiện 0; pill "Chưa chiếm" có thể báo sai vì so ngưỡng với tổng đã bị cắt.
+Phần best-effort: ở node bị cắt, Σ điểm player trong danh sách < điểm phe; player
+không lọt top-20 của node nào thì không có dòng expand; điểm member guild là Σ
+row của member đó.
+
+Snapshot đã commit không có `nodeFactionScores` (không còn run gốc để dump lại)
+nên FE cộng `nodeRows` như trước; crawl mới dump đủ key.
 
 ## 4. Số đo đối chiếu (crawl cụm 517, 2026-10-29 19:41)
 
@@ -64,7 +71,10 @@ So `faction_scores` với Σ board 118 cùng run, theo cặp (node, phe) có đi
   khớp từng điểm; phe 2 lệch 72K (0.008%, nghi do 2 request khác thời điểm).
   → Điểm node-state là phân bổ theo node của đúng điểm phe ở tab Phe.
 
-Đo ở run 2026-10-30: 30/89 node thiếu, nặng nhất node 54 thiếu 20.6%.
+Đo crawl cụm 590 2026-10-30 15:29: 68 cặp khớp, **61 cặp thiếu trên 35/89
+node**, 0 cặp Σ rows > server, mọi node thiếu đều đủ 20 row. 7 cặp phe có điểm
+mà 0 row, nặng nhất node 59 phe 2 (30.57M). Σ `faction_scores` khớp Σ guild
+`0x0025` từng điểm ở cả 4 phe.
 
 ## 5. Điểm còn mở
 
@@ -76,17 +86,3 @@ So `faction_scores` với Σ board 118 cùng run, theo cặp (node, phe) có đi
 2. **f5 `campScores`**: decode thêm vào `parse_node_state`, đối chiếu với f2.
 3. **Hiển thị phần thiếu**: có hiện dòng "khác" = điểm phe − Σ rows ở node bị cắt
    không (đề xuất, chưa chốt).
-
-## 6. Đề xuất triển khai
-
-- `report.py`: dump key `nodeFactionScores: {gameNodeId: {campId: score}}` từ
-  `node-states.jsonl`.
-- FE: `scoresForNode` ưu tiên `nodeFactionScores`, fallback Σ rows khi dump cũ
-  thiếu key; `reachedClaim`, tổng, % đều dùng số này. Board rows chỉ còn cho danh
-  sách player.
-- Docs cập nhật cùng lúc: [LEADERBOARD_SPECS.md §1.3](../LEADERBOARD_SPECS.md)
-  (tab Cứ điểm hiện ghi "list + expand đều là board 118"),
-  [SEA_STRUCTURE.md §3.2](SEA_STRUCTURE.md) (đoạn "mọi thống kê derive từ BXH
-  player từng node"), [CONNECTION_UI_BACKLOG.md §2–3](../CONNECTION_UI_BACKLOG.md)
-  (nguồn `entry.scores` / `reachedClaim`), [SEA_LIVE_DATA.md](SEA_LIVE_DATA.md)
-  và docstring `report.py` (key dump mới).

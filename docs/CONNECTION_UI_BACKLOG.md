@@ -13,7 +13,7 @@ Rule gốc nằm ở [SEA_EVENT_RULE.md](SEA_EVENT_RULE.md); tài liệu này kh
 | Dữ liệu | Nguồn | Ghi chú |
 | --- | --- | --- |
 | `entry.owner` | Server snapshot (`dump.owner`, [`join.ts`](../src/data/sea-live/join.ts)) | Truth — server đã áp rule ngắt đường / tie. FE không tự contest ([`mapData.ts`](../src/domain/mapData.ts)). |
-| `entry.scores` | `scoresForNode` ([`nodeScores.ts`](../src/domain/selectors/nodeScores.ts)) | Điểm **thô** của mọi phe (kể cả 0), không có cờ `connected`. |
+| `entry.scores` | `scoresForNode` ([`nodeScores.ts`](../src/domain/selectors/nodeScores.ts)) | Điểm **thô** của mọi phe (kể cả 0) do server tính (node state `0x72/0x0012`, dump `nodeFactionScores`); dump thiếu key thì cộng board 118. Không có cờ `connected`. |
 | `connected` | `deriveConnected` ([`claims.ts`](../src/domain/claims.ts)) | FE tự derive từ owner + route. Chỉ NodeDetails dùng (`FactionScore.connected`); `buildNodeBoard` **không** nhận. |
 
 ## 3. Logic UI hiện tại

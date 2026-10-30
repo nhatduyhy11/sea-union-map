@@ -86,14 +86,17 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
   điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
   Chung + 4 phe. **Mô hình tương tác, cơ chế Filter mode và quy tắc lọc canvas theo guild/thành viên**
   (thay thế hoàn toàn việc lọc theo phe cũ) được đặc tả chi tiết tại [docs/LEADERBOARD_SPECS.md](../LEADERBOARD_SPECS.md).
-- **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
-  cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
-  trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K
-  đủ bắt mọi player có impact). `Contribution` = 1 dòng node leaderboard mang
-  sẵn tên/phe/guild; BXH cá nhân (top-K), BXH phe, thống kê theo guild/faction
-  đều quy về từ đó (`playersFromContributions` / `buildLeaderboard` /
-  `buildFactionBoard` / `buildNodeBoard` trong `src/domain/selectors/`);
-  guild theo player lấy từ brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm"
+- **Số tổng lấy từ server, player chỉ là chi tiết best-effort** [chủ dự án
+  2026-10-30]: điểm phe và điểm guild lấy từ bảng "Tổng quan phe" `0x72/0x0025`;
+  điểm từng phe tại node lấy từ node state `0x72/0x0012`; BXH cá nhân là board
+  117 (top-200). Node leaderboard (board 118, server cắt top-20/node, §3.7) chỉ
+  dùng cho danh sách player: expand player, member guild, player tại node.
+  `Contribution` = 1 dòng node leaderboard mang sẵn tên/phe/guild; không số
+  tổng nào được cộng từ đó, trừ khi dump thiếu key server tương ứng. Selector ở
+  `src/domain/selectors/` (`buildServerLeaderboard` / `buildFactionBoard` /
+  `buildNodeBoard` / `scoresForNode`); nguồn từng số xem
+  [SEA_STATS_RECONCILE.md](SEA_STATS_RECONCILE.md). Guild theo player lấy từ
+  brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm"
   phía frontend là diễn giải (node xếp theo tổng Điểm ST) — chưa có ảnh game,
   xem mục 7.
 - Đây là leaderboard **theo phe** ("chung") như intent §6.

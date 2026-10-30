@@ -72,23 +72,6 @@ Ghi 2026-10-28.
 tay cờ `--server`. Hướng làm: crawler ghi cụm vào metadata run → `report.py`
 tự đọc, `--server` chỉ còn để override.
 
-### 2. Lấy tổng điểm node từ `faction_scores` thay vì cộng board rows (key finding 2026-10-30)
-
-Node state (`0x72/0x0012`) có sẵn **tổng điểm từng phe tại node**, là 4 con số do
-server tính. Board 118 thì server cắt ở top-20/node
-([SOCKET_PROTOCOL.md](SOCKET_PROTOCOL.md) §3.5), nên cộng row không ra tổng đúng.
-Hiện trạng chi tiết, số đo và điểm mở: [SEA_STATS_RECONCILE.md](SEA_STATS_RECONCILE.md).
-
-- **Hiện trạng**: crawler đã lưu `faction_scores` (`node-states.jsonl`) nhưng
-  `report.py` không dump; FE tính tổng node bằng sum(board rows). Đo 2026-10-30:
-  30/89 node bị thiếu, nặng nhất node 54 thiếu 20.6%.
-- **Hướng làm**:
-  - `report.py`: dump thêm điểm phe per (node, phe).
-  - FE: tổng điểm node (tab Cứ điểm, NodeDetail) và derive ownership lấy từ số
-    này; board rows chỉ dùng cho chi tiết player.
-  - Có thể hiện phần "khác" = điểm phe − Σ board rows ở node bị cắt, để người xem
-    biết danh sách player không đủ.
-
 ---
 
 ## Nhánh phụ: Khai Thác Guild (Mine)

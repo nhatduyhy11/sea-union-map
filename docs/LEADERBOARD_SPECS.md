@@ -32,7 +32,7 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
 
 - **Tab Cá nhân:** rows = **board 117 của server** (BXH điểm, top-200: rank, player id, điểm, phe từ `additionInfo`; dump `playerBoard`). Không tự cộng điểm. Phần **expand** ("player này contribute vào đâu") mới match node boards 118 theo player id — node board là top-N/node nên đảo có thể thiếu nếu player không lọt top-N.
 - **Tab Phe:** guild rows + điểm guild = bảng **"Tổng quan phe"** của server (dump `factionGuilds`, key theo `guildId`); board 116 chỉ trả 4 row phe nên không đủ cho guild. Điểm phe = tổng điểm các guild row. Lực chiến guild lấy từ guild brief, thiếu thì cộng LC của member. **Duy nhất** danh sách thành viên trong guild expand được derive từ node boards (match guild qua `guildId` trong brief của member); player không có `guildId` hoặc `guildId` không có row server rơi vào bucket **"Không guild"**.
-- **Tab Cứ điểm:** list + expand đều là **board 118 per-node của server**.
+- **Tab Cứ điểm:** điểm từng phe tại node, tổng, % phe dẫn và ngưỡng chiếm = **node state `0x72/0x0012` của server** (dump `nodeFactionScores`); NodeDetails và popup trên canvas dùng cùng số này. Danh sách player khi expand là **board 118 per-node** nên ở node bị cắt Σ điểm player < điểm phe. Dump không có `nodeFactionScores` thì FE cộng board 118 (thấp hơn thật ở node đông).
 - **Giới hạn đã biết:** server cắt top-20/node (verify:
   [SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md) §3.5), top-200 global; player/guild
   ngoài ngưỡng không có dữ liệu, chấp nhận lệch (intent §5). 16 player S513/S514
