@@ -15,6 +15,9 @@ export interface SeaLiveDump {
   camp: Record<string, CampRow>;
   owner: Record<string, number>;
   nodeRows: [number, number, number, number][];
+  // Tổng điểm từng phe tại node do server tính (0x72/0x0012, không cắt):
+  // gameNodeId → campId → điểm. Optional: dump cũ không có key này.
+  nodeFactionScores?: Record<string, Record<string, number>>;
   playerBoard: [number, number, number, number | null][];
   factionGuilds: Record<string, [number, number][]>;
   guildNames: Record<string, string>;

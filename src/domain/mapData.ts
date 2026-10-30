@@ -39,7 +39,7 @@ export function buildMapData(dump: SeaLiveDump) {
   const scoresByNode = new Map<string, FactionScore[]>(
     islands.map((node) => [
       node.id,
-      scoresForNode(node.id, contributions, factions),
+      scoresForNode(node, contributions, factions),
     ])
   );
 

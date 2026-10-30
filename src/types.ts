@@ -36,6 +36,9 @@ export interface Island extends LayoutNode {
   owner: string | null;
   // Points a faction needs to claim the node (see domain/claims.ts).
   claimThreshold: number;
+  // Server total per faction at this node (faction id → score). Undefined when
+  // the dump lacks it; selectors then sum the capped node-board rows.
+  factionScores?: Record<string, number>;
 }
 
 export interface Route {

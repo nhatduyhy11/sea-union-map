@@ -17,7 +17,7 @@ export function nodeDetails(
   const island = islands.find((node) => node.id === nodeId);
   if (!island) return null;
   const connected = connectedByNode?.get(nodeId);
-  const scores = scoresForNode(nodeId, contributions, factions).map(
+  const scores = scoresForNode(island, contributions, factions).map(
     (faction) => ({
       ...faction,
       connected: connected ? connected.has(faction.id) : undefined,

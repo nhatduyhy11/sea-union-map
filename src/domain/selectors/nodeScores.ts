@@ -5,23 +5,29 @@ import type {
   Contribution,
   Faction,
   FactionScore,
+  Island,
   Player,
 } from "../../types";
 
+// Điểm phe tại node: số server (island.factionScores) khi dump có; không thì
+// cộng node-board rows — server cắt top-20/node nên thấp hơn thật ở node đông.
 export function scoresForNode(
-  nodeId: string,
+  island: Island,
   contributions: Contribution[],
   factions: Faction[]
 ): FactionScore[] {
+  const server = island.factionScores;
   const totals = new Map<string, number>();
-  for (const entry of contributions) {
-    if (entry.nodeId === nodeId) {
-      totals.set(entry.faction, (totals.get(entry.faction) ?? 0) + entry.score);
-    }
-  }
+  if (!server)
+    for (const entry of contributions)
+      if (entry.nodeId === island.id)
+        totals.set(
+          entry.faction,
+          (totals.get(entry.faction) ?? 0) + entry.score
+        );
   return factions.map((faction) => ({
     ...faction,
-    score: totals.get(faction.id) ?? 0,
+    score: (server ? server[faction.id] : totals.get(faction.id)) ?? 0,
   }));
 }
 
