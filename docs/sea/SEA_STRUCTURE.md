@@ -104,8 +104,9 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 
 - Podium top 3 (hộp rank 2/1/3) + list xếp hạng bên dưới — lúc chụp toàn "Trống" (chưa khai chiến).
 - Dòng cố định đáy màn: chính mình (HuAsura) + **"Điểm ST: 0"** — điểm tổng của player.
-- Đây là bảng "thống kê tổng điểm các player" của intent §6; ràng buộc đối chiếu
-  intent §7 áp dụng: tổng Điểm ST của một player trên mọi node = Điểm ST trên BXH này.
+- Đây là bảng "thống kê tổng điểm các player" của intent §4. Tổng Điểm ST của một
+  player qua các node board **không** bắt buộc bằng Điểm ST trên BXH này (server cắt
+  top-K, chấp nhận lệch — intent §5, [STATS_MISMATCH.md](STATS_MISMATCH.md)).
 
 ### 3.4. Tổng quan phe — `docs/assets/sea-socket/5-4faction-detail.png` (detail faction)
 

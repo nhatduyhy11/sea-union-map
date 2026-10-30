@@ -4,6 +4,9 @@
 > rows** (đúng semantic hiện có của `src/domain/selectors/`), chấp nhận lệch với
 > số server ở những chỗ ghi dưới đây. Đây là note bàn giao: ai pick up việc "khớp
 > số 100%" bắt đầu từ đây, không cần đào lại capture.
+>
+> Cập nhật 2026-10-27: BXH Cá nhân / Phe chuyển sang board server (xem §2);
+> tổng điểm node (tab Cứ điểm, NodeDetail) vẫn từ node-board rows.
 
 ## Luồng dữ liệu hiện tại
 
@@ -13,7 +16,7 @@ Chi tiết luồng + ranh giới vai trò Python (dump JSON) / FE (adapter join)
 ```
 tools/socket_log/sea_socket/crawler.py → .tmp/sea-crawl/<run>/  (JSONL + boards-decoded.json)
                                           └─ --dump (mặc định) → public/sea-live-dev.json
-sea_socket/campgvg.json                  (cache BE config client CampGVG, 89 row — committed)
+tools/socket_log/sea_socket/campgvg.json (cache BE config client CampGVG, 89 row — committed)
 tools/socket_log/sea_socket/report.py    (transform + dump: thuần data, không sinh code)
 src/data/sea-live/join.ts                (adapter join layout qua prefix display id — buildLiveData)
 src/domain/mapData.ts                    (buildMapData: derive owner/BXH/filter từ contributions)
@@ -33,16 +36,21 @@ uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
 ## 1. Tổng điểm node: sum(board) thiếu trên node nóng — server cắt top-20
 
 Node board (`0x0c/0x0002 {f1:118}`) trả **tối đa 20 row/node**. Node có ≤20 người
-đóng góp thì `sum(rows)` == pool "Điểm chiếm đóng" — ví dụ node 8: 2.307.224 vs
+đóng góp thì `sum(rows)` == pool Điểm ST phe (`GetCityInfoR` `0x72/0x0012`
+`campHurtScores`) — ví dụ node 8: 2.307.224 vs
 pool 2.307.379 (lệch 155 do pool mutate giữa 2 lần pull cách ~20s). Node đông hơn
 thì thiếu: run v4 có **9/(node,faction) under-count, tập trung đúng 5 node chạm
 mốc 20 row** (48/54/57/64/65), nặng nhất node 64 Phe 3: board 22.29M vs pool
 22.99M (**-3.0%**).
 
 - UI hiện tại: "Cứ điểm" + NodeDetail tính tổng từ sum(rows) → node nóng hiện thiếu.
-- **Fix khi cần khớp 100%**: lấy pool per (node, faction) từ node-state
-  `0x72/0x0011` f2 (field này **exact, không top-K**) làm tổng; board rows chỉ
-  dùng cho chi tiết player. Cần mở rộng adapter + selectors nhận pool override.
+- **Fix khi cần khớp 100%** (đề xuất, chưa chốt): lấy pool per (node, faction)
+  từ `campHurtScores` (không top-K) làm tổng; board rows chỉ dùng cho chi tiết
+  player. Cần mở rộng adapter + selectors nhận pool override.
+  ⚠ Mâu thuẫn với §3: pool này dao động (có thể tụt về 0) trong khi board rows
+  tích lũy, nên lệch còn do pool bị trừ khi tranh đoạt, không chỉ do top-20
+  (khi đó `sum(rows)` có thể **lớn hơn** pool). Cần chốt pool có phải đúng số
+  "điểm phe" game hiển thị ở node-info không trước khi dùng làm tổng.
 - Chi tiết player hạng 21+ thì **không có nguồn nào** — chấp nhận mất tên, chỉ
   còn tổng (đúng ý "chấp nhận lệch" của chủ dự án).
 
@@ -65,7 +73,7 @@ không phản ánh rank game.
 
 ## 3. Pool "Điểm ST" dao động — mọi con số là instant snapshot
 
-Pool per (node, faction) trong `0x72/0x0012` **không lũy tiến**: node 64 Phe 3
+Pool per (node, faction) trong `0x72/0x0012` (`campHurtScores`, cùng field §1) **không lũy tiến**: node 64 Phe 3
 tụt 21.8M → 0 giữa 2 run cách nhau vài phút mà không đổi chủ (pool đang tranh
 đoạt). Ngược lại board per-player ổn định/tích lũy (node 8: VNChiến 850.529 giữ
 nguyên từ 14:29 đến 16:49). So sánh 2 run cách xa nhau phải hiểu là 2 thời điểm,
