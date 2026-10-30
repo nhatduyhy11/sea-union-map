@@ -1,8 +1,11 @@
 .mapHeading {
+  margin-bottom: 21px;
+}
+
+.topRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 21px;
 }
 
 .eyebrow {
@@ -12,21 +15,23 @@
   font-weight: 600;
 }
 
-/* Dải server dài (10+ cụm) → wrap xuống dòng thay vì đẩy page tràn ngang. */
-.titleRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  row-gap: 6px;
-  margin-top: 8px;
-}
-
 .title {
+  margin-top: 8px;
   font-size: 24px;
   letter-spacing: -0.7px;
   font-weight: 600;
-  margin: 0;
+  margin-bottom: 0;
   white-space: nowrap;
+}
+
+/* Dòng riêng dưới title: server switcher bên trái, đồng hồ event sát phải.
+   Dải server dài (10+ cụm) → wrap, đồng hồ rớt xuống cuối. */
+.serverRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 10px;
 }
 
 .headingMeta {
@@ -71,11 +76,26 @@
 }
 
 @media (max-width: 1100px) {
-  /* Cụm debug không lọt chung hàng với title → rớt xuống dòng dưới thay vì
-     đẩy page tràn ngang / đè sidebar (tablet: cột map chỉ còn ~420px). */
+  /* Cụm debug không lọt chung hàng với title → rớt xuống dưới dòng server +
+     đồng hồ thay vì đẩy page tràn ngang / đè sidebar (tablet: cột map chỉ còn
+     ~420px). topRow tan ra để headingMeta xếp sau serverRow. */
   .mapHeading {
-    flex-wrap: wrap;
-    gap: 12px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .topRow {
+    display: contents;
+  }
+
+  .headingMeta {
+    order: 1;
+    margin-top: 12px;
+  }
+
+  /* Prod chưa mở easter egg: không có cụm debug → khỏi chừa khoảng trống. */
+  .headingMeta:empty {
+    display: none;
   }
 
   .headingMeta,
