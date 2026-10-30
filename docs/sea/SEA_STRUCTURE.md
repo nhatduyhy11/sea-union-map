@@ -3,10 +3,8 @@
 > Mô tả nghiệp vụ do chủ dự án truyền đạt (2026-10-24) đối chiếu với ảnh in-game
 > `docs/assets/sea-socket/` (chụp 2026-10-24, trước giờ khai chiến 10/26 10:00).
 > Đây là spec cho crawler Playwright (tầng `tools/socket_log/`) và nguồn dữ liệu
-> thay mock cho UI `src/`. **[Cập nhật 2026-10-24] Đã có capture POC + decode sơ bộ
-> protocol** — xem `docs/sea/SEA_PACKET_ANALYSE.md` (packet + config node) và
-> `docs/research/2026-10-24-sea-capture.md` (nhật ký coords/flow chạy thật); framing chung
-> `docs/sea/SOCKET_PROTOCOL.md`.
+> thay mock cho UI `src/`. Packet sea (module `0x72`) + framing: `docs/sea/SOCKET_PROTOCOL.md`
+> §4.2; config node + boss: §4.1 / §4.2 doc này.
 > Chủ dự án đã xác nhận mô tả khớp (2026-10-24): phe acc + cửa sổ giờ đã chốt
 > (mục 1, mục 7); các câu hỏi phụ tạm skip.
 
@@ -162,8 +160,8 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 | Nhóm        | Trường                                              | Nguồn trên UI            | Tính chất                                              |
 | ----------- | --------------------------------------------------- | ------------------------ | ------------------------------------------------------ |
 | Tĩnh        | id, tên node                                        | header node detail / map | không đổi trong event                                  |
-| Tĩnh        | boss (tên, trait, hero đề xuất)                     | boss detail (hình 9)     | `monsterId` từ `GetCityInfoR` → config `CampGVGMonsterLO` (`SEA_PACKET_ANALYSE.md` §1.6); game không hiện level boss |
-| Tĩnh        | hiệu suất sản xuất, điểm chiếm đóng tối thiểu       | node detail (hình 7)     | config `CampGVGLO` `_points/_interval`, `_pointRequire` (`SEA_PACKET_ANALYSE.md` §1.2) |
+| Tĩnh        | boss (tên, trait, hero đề xuất)                     | boss detail (hình 9)     | `monsterId` từ `GetCityInfoR` → config `CampGVGMonsterLO` (§4.2); game không hiện level boss |
+| Tĩnh        | hiệu suất sản xuất, điểm chiếm đóng tối thiểu       | node detail (hình 7)     | config `CampGVGLO` `_points/_interval`, `_pointRequire` (§4.1) |
 | Động        | trạng thái mở khóa + countdown                      | node detail, map         |                                                        |
 | Động        | sở hữu ("chưa có chủ" / phe), điểm các phe tại node | node detail              | thay đổi theo diễn biến                                |
 | Động        | Điểm ST từng player tại node                        | node leaderboard         | thay đổi theo diễn biến                                |
@@ -173,6 +171,52 @@ tối thiểu" + "Không có phe gây ST" — đúng cảnh ngày đầu event (
 top bị suspend / bị ngắt đường). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
 trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node trong dump
 (`claimThreshold`).
+
+### 4.1. Config node `CampGVGLO`
+
+- Bảng config client **89 row, `id` == server `cityId` 1:1** (dump bằng
+  `tools/socket_log/config_extract.py`, cách đào bảng `*LO`:
+  [`../research/BUNDLE_RESEARCH.md`](../research/BUNDLE_RESEARCH.md) §2). Cột dùng:
+  `_name`, `_type`, `_points`, `_interval`, `_pointRequire` (Điểm chiếm đóng tối thiểu),
+  `_unlockTime` (day), `_monsterType`, `_occupyReward` / `_firstOccupyReward`.
+- `_name` = **"{display id}{tên}"** (vd `1-23Đảo Câu Cá`) — prefix display id khớp định
+  danh `src/data/map-layout.ts` (`1-23`, `2-41`, `3-1`, `4`) → join game ↔ layout nối
+  thẳng, không suy vị trí. Verify chéo capture: id request khi click node khớp header
+  popup (vd id 63 → `1-11Đảo Lều Trại`).
+- Phân loại `_type`:
+
+| `_type` | Số node | Loại                                            | Hiệu suất (`_points`/`_interval` phút) |
+| ------- | ------- | ----------------------------------------------- | -------------------------------------- |
+| 1       | 4       | base 4 phe (id 1..4) — node thường là id 5..89  | —                                      |
+| 2       | 24      | đảo "1-x" (vành ngoài)                          | `1/5` = **12/h** (require 4M: `2/5` = 24/h) |
+| 3       | 52      | đảo "2-x" (vành trong)                          | `4/10`·`6/10` = **24/36/h**            |
+| 4       | 8       | "Khu nghỉ dưỡng 3-x"                            | `15/15` = **60/h**                     |
+| 5       | 1       | trung tâm `4-1Khách Sạn Cực Lạc` (require 15M, unlock day 6) | `30/15` = **120/h**       |
+
+- "Hiệu suất sản xuất: 12/h" trên node detail (§3.6) = `_points` điểm mỗi `_interval` phút.
+- `_monsterType` `[[lo,hi,group],…]` = nhóm boss theo khoảng (nghi open-day server);
+  `group` == `CampGVGMonsterLO._type` (§4.2).
+- Map hex `ghostWar/maps/map_ghost_01/02.bin` trong bundle **không** phải map đảo
+  (battlefield gameplay khác).
+
+### 4.2. Boss node `CampGVGMonsterLO`
+
+- `CityInfo.monsterId` (từ `GetCityInfoR`, 1001..1013) → `CampGVGMonsterLO.get(id)` (tên)
+  → `.showBoss` → `CreepLO` (avatar, mô tả, hero đề xuất). Kính lúp boss detail (§3.8)
+  không sinh request — render từ config theo `monsterId`. Verify: node 8 (1-23)
+  `monsterId 1001` = "Tứ Hải-Oán Linh" khớp hình 9.
+- 13 row, tên đều có tiền tố "Tứ Hải-". `_type` 1 = pool random 1001..1007; `_type`
+  2..7 = boss cố định 1008..1013. `_limitTime` 180s, `_battleGroundCode` 131001..131013.
+
+| id   | Tên                  | id   | Tên              |
+| ---- | -------------------- | ---- | ---------------- |
+| 1001 | Oán Linh             | 1008 | Vô Diện Tử Thần  |
+| 1002 | Nữ Hoàng Alien       | 1009 | Hắc Trảo         |
+| 1003 | Vô Diện Giả          | 1010 | Hắc Nữ Tăng Ca   |
+| 1004 | Pharaoh Cổ Đại       | 1011 | Cổ Thần          |
+| 1005 | Thỏ Cưa Máy          | 1012 | Kỵ Sĩ Không Đầu  |
+| 1006 | Bọ Cạp Hoàng Tuyền   | 1013 | U Ảnh Phu Nhân   |
+| 1007 | Khỉ Điên Đánh Trống  |      |                  |
 
 ## 5. Quy tắc crawl (scope bước đầu)
 

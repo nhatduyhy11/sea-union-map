@@ -60,7 +60,7 @@ async def fail_with_screenshot(page: Page, out_dir: Path, name: str, message: st
 
 async def payload_entry(page: Page, router: CrawlRouter, out_dir: Path,
                         login_timeout: float) -> None:
-    """E2 — wait-login + inject thay 3 stage GUI (docs/sea/EVENT_NAVIGATE_DECODE.md).
+    """E2 — wait-login + inject thay 3 stage GUI (docs/sea/SOCKET_PROTOCOL.md §4.2).
 
     Chờ response 0x72/0x0002 đầu tiên (boot sync xong; heartbeat muộn hơn ~2.6s
     nên không dùng), +0.5s cho nốt boot block, rồi inject 0x000b (snapshot 89

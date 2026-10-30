@@ -4,7 +4,7 @@ Boots the game page headless, waits for the remote config bundle to load, then
 reads ``window.__require("<TABLE>").<TABLE>.store`` per requested table and
 writes JSON. Bundle hashes (``index.*.js``/``config.*.bin``) rotate per deploy,
 so booting the real page sidesteps versioning entirely — see
-docs/sea/SEA_PACKET_ANALYSE.md §4 for the bundle-chain background.
+docs/research/BUNDLE_RESEARCH.md §1 for the bundle-chain background.
 
 Usage:
     uv run python tools/socket_log/config_extract.py --table CampGVGLO \

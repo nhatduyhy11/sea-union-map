@@ -8,7 +8,7 @@ metadata:
 Spec và planning doc đặt trong thư mục docs của nhánh tương ứng (`docs/sea/`,
 `docs/mine_docs/`); backlog chung của nhánh là `BACKLOG_*.md`. Nhật ký research (cách
 làm, diễn biến điều tra, số đo) đặt ở `docs/research/` với prefix ngày (ví dụ
-`docs/research/2026-10-24-sea-capture.md`) — doc nhánh chỉ giữ kết quả chốt + việc mở.
+`docs/research/2026-10-29-event-navigate-experiment.md`) — doc nhánh chỉ giữ kết quả chốt + việc mở.
 Xem `docs/DOCS_GUIDE.md`.
 
 Nội dung planning doc chỉ ghi lại các **issue / việc còn tồn động (open items)** —

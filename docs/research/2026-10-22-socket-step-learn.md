@@ -15,7 +15,7 @@ nằm ở `tools/hauntedroom_runner.py` + `hauntedroom/core/cli.py`, đã xoá c
 logic bot cũ) để biết:
 
 - Browser launch thế nào: `launch_persistent_context(user_data_dir=.tmp/<profile>)`,
-  viewport 640x720, channel `chrome`, `service_workers: block`, URL VN/CN mặc định.
+  viewport 640x720, channel `chrome`, `service_workers: block`, URL VN mặc định.
 - Profile đã có session đăng nhập → không cần xử lý auth thủ công.
 
 **Bài học:** tái dùng đúng cách runner launch browser thay vì viết riêng — giữ nguyên

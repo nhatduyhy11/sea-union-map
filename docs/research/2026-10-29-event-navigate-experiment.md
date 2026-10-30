@@ -1,7 +1,8 @@
 # Event navigate — thí nghiệm payload entry E1/E2 + quy trình tìm key (2026-10-29)
 
-> **Nhật ký research.** Kết quả đang dùng (flow entry + bản đồ payload sea) ở
-> [`../sea/EVENT_NAVIGATE_DECODE.md`](../sea/EVENT_NAVIGATE_DECODE.md). Doc này giữ cách
+> **Nhật ký research.** Kết quả đang dùng: flow entry ở `payload_entry`
+> (`tools/socket_log/sea_socket/crawl/phases.py`), boot sync + request key sea ở
+> [`../sea/SOCKET_PROTOCOL.md`](../sea/SOCKET_PROTOCOL.md) §4.2. Doc này giữ cách
 > làm + số đo để tái dùng khi tìm key cho event khác.
 >
 > Nguồn: capture walkthrough 2026-10-29 + experiment E1/E2 (số đo ở §4).

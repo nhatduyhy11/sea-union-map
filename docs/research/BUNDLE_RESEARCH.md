@@ -2,8 +2,8 @@
 
 > **Chỉ đọc khi cần decode thứ mới** (packet chưa biết, bảng config mới, field `fN`
 > chưa có tên). Flow chính crawl → dump → UI không cần doc này; kết quả đã chốt nằm ở
-> [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md) /
-> [`../sea/SOCKET_PROTOCOL.md`](../sea/SOCKET_PROTOCOL.md).
+> [`../sea/SOCKET_PROTOCOL.md`](../sea/SOCKET_PROTOCOL.md) /
+> [`../sea/SEA_STRUCTURE.md`](../sea/SEA_STRUCTURE.md) §4.
 > Áp dụng chung cho mọi module (sea, mỏ…) — cùng một bundle.
 
 ## 1. Bundle game
