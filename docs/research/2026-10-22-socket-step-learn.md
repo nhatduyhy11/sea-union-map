@@ -6,7 +6,7 @@
 
 > Bài học rút ra từ phiên POC lấy lịch sử khu mỏ (xem `docs/sea/SOCKET_PROTOCOL.md`).
 > Ghi lại từng bước CÁCH LÀM để tái sử dụng cho feature/dashboard tiếp theo.
-> Toàn bộ step chạy trên server VN, profile `.tmp/m535`, không cần mitmproxy hay sửa payload.
+> Toàn bộ step chạy trên server VN, profile đã đăng nhập sẵn, không cần mitmproxy hay sửa payload.
 
 ## Bước 0: Dựng lại bối cảnh từ code có sẵn (5 phút)
 
@@ -16,7 +16,7 @@ logic bot cũ) để biết:
 
 - Browser launch thế nào: `launch_persistent_context(user_data_dir=.tmp/<profile>)`,
   viewport 640x720, channel `chrome`, `service_workers: block`, URL VN/CN mặc định.
-- Profile `.tmp/m535` đã có session đăng nhập → không cần xử lý auth thủ công.
+- Profile đã có session đăng nhập → không cần xử lý auth thủ công.
 
 **Bài học:** tái dùng đúng cách runner launch browser thay vì viết riêng — giữ nguyên
 hành vi (popup guard, retry navigation) và session cũ vẫn còn hiệu lực.
@@ -41,7 +41,7 @@ hành vi (popup guard, retry navigation) và session cũ vẫn còn hiệu lực
 Chạy:
 
 ```bash
-uv run python tools/socket_log/socket_capture.py --profile .tmp/m535 --settle 12 --step shot:... --step sleep:...
+uv run python tools/socket_log/socket_capture.py --profile .tmp/<profile> --settle 12 --step shot:... --step sleep:...
 ```
 
 → Xem screenshot các mốc để biết trạng thái sau login (có popup AFK không, đã vào home chưa).
@@ -90,7 +90,7 @@ Trình tự đã dùng khi tìm "lịch sử khu mỏ":
 1. **Timeline quanh mark `clicked-log`:** chỉ thấy heartbeat → popup KHÔNG request gì
    → suy ra data đã nằm trong client từ lúc login → đổi hướng tìm trong login burst.
 2. **Grep nhị phân bằng chuỗi đã biết từ UI:** tên "AEMìn" hiện trên popup → `bytes.find`
-   trong mọi frame → frame `#099`, `#209`... chứa tên này.
+   trong mọi frame → ra các frame chứa tên này.
 3. **Lọc theo cửa sổ timestamp:** popup ghi "19 phút trước", login lúc 15:55:17Z
    → scan cây decode mọi frame, chỉ giữ giá trị 15:2x–15:3xZ → còn vài ứng viên.
 4. **Đối chiếu chặt UI ↔ decoded:** event `AEMìn @ pos 5047, 15:35:38` là event DUY NHẤT
@@ -104,7 +104,7 @@ Luôn kiểm tra "thao tác có sinh request không" trước khi giả định 
 ## Bước 7: Extractor + xác minh tái lập
 
 Thêm lệnh `mine-events` vào decoder → JSON `{id, time, player, pos, action}`.
-Chạy trên 2 capture khác nhau (run-mine1, probe1) → cùng 32 events → dữ liệu ổn định,
+Chạy trên 2 capture khác nhau → cùng 32 events → dữ liệu ổn định,
 không phụ thuộc phiên bắt.
 
 ## Bước 8: Ghi doc

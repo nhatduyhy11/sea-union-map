@@ -72,8 +72,7 @@ chốt → report.py --crawl <run> --out src/data/sea-live.json         # bake b
 ```
 
 Cập nhật data trên bản deploy = 3 bước cuối; refresh browser không đủ (khác
-dev). Các lệch số đã biết giữa bản baked và UI game xem
-[STATS_MISMATCH.md](STATS_MISMATCH.md).
+dev).
 
 ## Snapshot lịch sử theo ngày × cụm
 

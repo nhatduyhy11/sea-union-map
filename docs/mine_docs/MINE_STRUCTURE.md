@@ -4,7 +4,7 @@
 > đối chiếu với state server đẩy về (`0x48/0x0002`, xem [`../sea/SOCKET_PROTOCOL.md`](../sea/SOCKET_PROTOCOL.md)).
 > Ảnh tham chiếu: profile chính, acc **HuAsura** (id `51921435`, guild **HUNTERS**),
 > đang ngồi **sector 7 — mỏ Mỏ Huyền Quang — điểm 4 (lv9)**, slot 10.
-> Verify lần cuối: capture `run-20261023-050330` — tile `7057` slot `10` chứa đúng id `51921435`. ✓
+> Verify lần cuối 2026-10-23: tile `7057` slot `10` chứa đúng id `51921435`. ✓
 
 ## 1. World = 7 sector, 17 mỏ, 65 tile, 1084 slot
 
@@ -67,14 +67,14 @@ Mỗi điểm là 1 "sàn Máy Đào Chính" với 15 slot = 12 slot thường +
   tên guild qua `0x24/0x0035→0x0036` (nhận đúng id dạng f4).
 - **Owner guild của điểm = `f4`** (đã chốt, xem bảng).
 
-## 5. Packet flow khi thao tác trong mỏ (capture `run-mine-detail-1`, có mark từng click)
+## 5. Packet flow khi thao tác trong mỏ (capture có mark từng click)
 
 | Thao tác                      | Packet phát sinh                                                                                                                                                                                                                                                                                              |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Login**                     | `0x48/0x0001→0002` (map state) + `0x48/0x0013→0014` (season) + `0x48/0x001a→001b` (history) + brief `0x0d/0x001f` cho 6 id **quân đoàn** (51729833 = chủ guild HUNTERS…) — không phải người trong mỏ                                                                                                          |
 | **Click guild icon**          | `0x13/0x0007` guild chat feed                                                                                                                                                                                                                                                                                 |
 | **Click "Khai Thác Guild"**   | `0x48/0x0013→0014` refresh season — `f5`=start, `f4`=end (unix s), `f3`=packed list season tile id (513–544, encoding chưa chốt — xem [`BACKLOG_MINE.md`](BACKLOG_MINE.md) §3)                                                                                                                                |
-| **Click nút Log (popup Lịch Sử)** | *(từ POC run-mine1, không phải capture của bảng này)* popup **TRỐNG** thì không sinh request (render từ state); khi **có entry** mới fetch `0x0d/0x001f` (packed = đúng các player id trong history feed) → `0x0020` briefs để render tên. Popup lọc sự kiện theo **map đang mở**                               |
+| **Click nút Log (popup Lịch Sử)** | *(từ POC mỏ, không phải capture của bảng này)* popup **TRỐNG** thì không sinh request (render từ state); khi **có entry** mới fetch `0x0d/0x001f` (packed = đúng các player id trong history feed) → `0x0020` briefs để render tên. Popup lọc sự kiện theo **map đang mở**                               |
 | **Click vào mỏ (zoomin)**     | ① `0x48/0x0006` [4 tile id] → `0x0007` **chi tiết 4 điểm**: như login state + slot `f5` = đầy đủ chuỗi phiên đào ② `0x48/0x0015` [4 tile id] → `0x0016` **RỖNG (11B, no-op)** ③ `0x0d/0x001f` **59 id = toàn bộ người của 4 điểm** → `0x0020` 24KB tên ④ `0x0d/0x001f` lô 2 (11 id, nguồn chưa rõ) → `0x0020` |
 | **Click minimap (overview)**  | `0x24/0x0035` theo **f4 từng điểm** [5170010, 5170010, 5140005, 5320011] → `0x0036` tên guild (HUNTERS/HUNTERS/OLYMPUS/LxVN). Expand ▼ **không sinh packet** — tên đã có sẵn                                                                                                                                  |
 | **Click máy của player khác** | `0x0d/0x0019` {id} → `0x001a` **profile đầy đủ** (heroes, items, power…) + `0x24/0x0033` {f4 guild} → `0x0034` guild detail (tên, mô tả, chủ guild, power, log thành viên, cửa sổ season)                                                                                                                     |

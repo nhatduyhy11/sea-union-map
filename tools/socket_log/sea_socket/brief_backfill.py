@@ -1,8 +1,8 @@
 """Backfill missing player briefs for an existing sea crawl run.
 
 The crawler's brief phase has no retry (crawler.py brief loop), so one
-throttled batch (server answers 0x0d/0x0020 with an empty list — seen as
-seq=169: 60 ids -> 0 briefs) leaves those players nameless in players.jsonl
+throttled batch (server answers 0x0d/0x0020 with an empty list — seen
+2026-10-27: 60 ids -> 0 briefs) leaves those players nameless in players.jsonl
 forever. This tool re-opens the session, asks ONLY the missing ids, and
 merges the answers back into the run's players.jsonl. No map crawl.
 

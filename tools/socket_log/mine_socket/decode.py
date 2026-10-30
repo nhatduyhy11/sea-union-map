@@ -6,8 +6,8 @@ Mine-specific extractors (core/decode.py keeps only the generic frame dumpers):
   - extract_mine_events: guild-mine history events (broadcast type 150).
 
 Usage:
-    uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/run-mine1 mine-events
-    uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/run-mine1 mine-state > state.json
+    uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/<run> mine-events
+    uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/<run> mine-state > state.json
 """
 
 import argparse

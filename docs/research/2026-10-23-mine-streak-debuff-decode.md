@@ -6,9 +6,8 @@
 
 > Key finding 2026-10-23. **Chưa implement** — backlog về sau. Doc này giữ cách decode để
 > lát nữa bỏ vào `mine_logger.py` / `mine_report.py` mà không phải reverse lại.
-> Capture tham chiếu: `.tmp/socket-capture/run-s7-lv8-v3` (战神), `run-s7-lv8-v2` (OLNaji),
-> `run-check-streak` (streak 9→11 trong 5h). Probe: `.tmp/probe_tile_fields.py`,
-> `.tmp/probe_olnaji_frames.py`.
+> Đối chiếu trên capture tile 7 lv8 (战神, OLNaji) và một capture theo dõi streak 9→11
+> trong 5h.
 
 ## 1. UI → packet mapping (đã verify số thật)
 

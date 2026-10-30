@@ -51,7 +51,7 @@ BOARD_STACK = "487,479"
 BOARD_CLOSE = "487,88"
 # Closing the node detail is an outside click on the dark area below the
 # popup (owner-confirmed; popup spans ~140-530 x 225-505). (80,620) does NOT
-# work — probe 20261024-095825 showed the popup still open after it (some
+# work — a probe showed the popup still open after it (some
 # dimmed element there eats the click); (318,560) closed it for real. On the
 # plain map that point is the non-node bottom island, whose click sends no
 # frame — a harmless no-op if close is ever called with nothing open.
@@ -135,7 +135,7 @@ STAGES: list[tuple[str, list[str]]] = [
         # Four regular nodes visible in 6-battle-map.png; coords target the
         # island icons, not their "Chưa mở khóa" labels. NOT clickable nodes:
         # the central temple (310,225) — its click never opened a node detail
-        # (run 20261024-093346: later clicks surfaced the strategic "Chi tiết /
+        # (later clicks surfaced the strategic "Chi tiết /
         # Hiệu suất của phe ta" popup instead) — and the bottom island
         # (318,570): clicking it sends no WS frame at all, likely the south
         # faction base (PROJECT_INTENT §4.1). The old "every node shows
@@ -158,7 +158,7 @@ STAGES: list[tuple[str, list[str]]] = [
     ]),
     ("nodes-2", [
         # Every island position visible in the zoomed view (6-map-pan-1, which
-        # 20261024-094110 showed == 6-map-pan-2 — the second wheel clamps, so
+        # a probe showed == 6-map-pan-2 — the second wheel clamps, so
         # this stage always runs in exactly that view). The zoomed icons are
         # ~40px; coords target their centers. Whether each opens a detail, and
         # whether the details differ from the default-view nodes, gets read

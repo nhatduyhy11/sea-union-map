@@ -1,8 +1,7 @@
 # BACKLOG SEA — Kế hoạch & Các việc tồn đọng
 
 > Việc ghi vào đây khi phát hiện hoặc chốt yêu cầu mới; mỗi mục ghi đủ context +
-> hướng fix để người sau pick up không phải đào lại. Lệch số UI vs game riêng
-> một file: [`docs/sea/STATS_MISMATCH.md`](STATS_MISMATCH.md).
+> hướng fix để người sau pick up không phải đào lại.
 >
 
 ---
@@ -23,7 +22,7 @@ brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặ
     `tools/socket_log/core/protocol.py`).
   - Brief chỉ sống trong output từng run (`players.jsonl`), không có nơi lưu
     chung → lần crawl sau hỏi lại từ đầu. Throttle risk: batch 60 id từng trả
-    về rỗng (seq=169), phải backfill bằng chunk 20 + pace 0.8s (evidence
+    về rỗng, phải backfill bằng chunk 20 + pace 0.8s (evidence
     2026-10-27 trong `brief_backfill.py`).
 - **Hướng làm**:
   - Persistent brief cache theo cụm server: **mặc định `517`**, nhận input
@@ -43,11 +42,11 @@ brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặ
 
 ### 1b. Guild brief trả rỗng với guild inactive — crawler cần retry riêng
 
-Ghi 2026-10-28 (run `.tmp/sea-crawl/sea-crawl-20261028-192132`, profile p545).
+Ghi 2026-10-28.
 
 - **Hiện trạng**: guild brief `0x24/0x0035 → 0x0036` giờ là nguồn lực chiến
   guild (`f3.f16`, parse trong `core/protocol.py` → dump key `guildPower`).
-  Run này 114/115 guild trả đủ; guild `5270018` (phe 4, điểm 0) trả `f3` rỗng
+  Crawl 2026-10-28: 114/115 guild trả đủ; guild `5270018` (phe 4, điểm 0) trả `f3` rỗng
   → thiếu cả tên lẫn power, UI hiện `#5270018 [—]`.
   - Roster 4 member: `52709342`, `52719518`, `52749342`, `52799012` — không
     ai có brief, không ai lọt `nodeRows`/`playerBoard` (guild không hoạt động
@@ -72,6 +71,22 @@ Ghi 2026-10-28 (run `.tmp/sea-crawl/sea-crawl-20261028-192132`, profile p545).
 `report.py --snapshot` đang mặc định `--server 517`; crawl cụm khác phải chỉnh
 tay cờ `--server`. Hướng làm: crawler ghi cụm vào metadata run → `report.py`
 tự đọc, `--server` chỉ còn để override.
+
+### 2. Lấy tổng điểm node từ `faction_scores` thay vì cộng board rows (key finding 2026-10-30)
+
+Node state (`0x72/0x0012`) có sẵn **tổng điểm từng phe tại node**, là 4 con số do
+server tính. Board 118 thì server cắt ở top-20/node
+([SEA_PACKET_ANALYSE.md](SEA_PACKET_ANALYSE.md)), nên cộng row không ra tổng đúng.
+
+- **Hiện trạng**: crawler đã lưu `faction_scores` (`node-states.jsonl`) nhưng
+  `report.py` không dump; FE tính tổng node bằng sum(board rows). Đo 2026-10-30:
+  30/89 node bị thiếu, nặng nhất node 54 thiếu 20.6%.
+- **Hướng làm**:
+  - `report.py`: dump thêm điểm phe per (node, phe).
+  - FE: tổng điểm node (tab Cứ điểm, NodeDetail) và derive ownership lấy từ số
+    này; board rows chỉ dùng cho chi tiết player.
+  - Có thể hiện phần "khác" = điểm phe − Σ board rows ở node bị cắt, để người xem
+    biết danh sách player không đủ.
 
 ---
 

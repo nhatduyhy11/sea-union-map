@@ -104,8 +104,9 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 
 - Podium top 3 (hộp rank 2/1/3) + list xếp hạng bên dưới — lúc chụp toàn "Trống" (chưa khai chiến).
 - Dòng cố định đáy màn: chính mình (HuAsura) + **"Điểm ST: 0"** — điểm tổng của player.
-- Đây là bảng "thống kê tổng điểm các player" của intent §6; ràng buộc đối chiếu
-  intent §7 áp dụng: tổng Điểm ST của một player trên mọi node = Điểm ST trên BXH này.
+- Đây là bảng "thống kê tổng điểm các player" của intent §4. Tổng Điểm ST của một
+  player qua các node board **không** bắt buộc bằng Điểm ST trên BXH này (server cắt
+  top-K, chấp nhận lệch — intent §5).
 
 ### 3.4. Tổng quan phe — `docs/assets/sea-socket/5-4faction-detail.png` (detail faction)
 
@@ -215,6 +216,6 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
   list phẳng 4 dòng phe (không đôn guild), cột giữ nguyên Chiếm đảo + Tổng Nhiên Liệu.
   Guild + Tổng điểm ST riêng nằm ở "Tổng quan phe" (mỗi guild 1 dòng — shot `5-faction-1`).
 - ~~Màn BXH lúc war~~ **[chốt 2026-10-26]**: game chỉ 2 tab "XH Phe | XH điểm" cả
-  khi war (capture 20261026-142917); 3-tab + sub-tab là tổng hợp phía UI mình — §3.2.
+  khi war (capture 2026-10-26); 3-tab + sub-tab là tổng hợp phía UI mình — §3.2.
   Câu hỏi "Cứ điểm xếp theo gì" không còn áp dụng cho game — do frontend tự định nghĩa.
 - Các nút phụ (Thưởng / Nhiệm Vụ / Báo Cáo / Bản đồ / Mô tả…) — ngoài phạm vi crawl hiện tại.

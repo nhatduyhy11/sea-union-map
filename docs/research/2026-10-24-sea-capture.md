@@ -2,12 +2,11 @@
 
 > **Nhật ký research (lịch sử, không cập nhật).** Tên tool/đường dẫn và cách gọi field
 > `fN`/"art" ở đây là của thời điểm ghi — kết quả đã chốt và tên field thật xem
-> [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md); throttle / pool dao
-> động / top-K xem [`../sea/STATS_MISMATCH.md`](../sea/STATS_MISMATCH.md).
+> [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md) (gồm cả top-K).
 
-> Run chuẩn: `.tmp/socket-capture/sea-20261024-100433` — 8/8 stage, 634 frame, toàn bộ
-> shot theo `docs/sea/SEA_STRUCTURE.md` §2. Script: `tools/socket_log/sea_capture.py`
-> (branch `socket-capture`). Phân tích packet + kết luận data: `docs/sea/SEA_PACKET_ANALYSE.md`.
+> Capture chuẩn 2026-10-24: 8/8 stage, 634 frame, toàn bộ shot theo
+> `docs/sea/SEA_STRUCTURE.md` §2. Phân tích packet + kết luận data:
+> `docs/sea/SEA_PACKET_ANALYSE.md`.
 
 ## 1. Chạy gì, ra gì
 
@@ -68,7 +67,7 @@ nền góc phải trên (600,90). **Tuyệt đối không click "Đến" (319,62
   bằng payload thẳng, join `CampGVGLO` vào `src/data/map-layout.ts`.
 - Capture lại sau **10/26 10:00** (khai chiến) cho dữ liệu động.
 
-## 6. Run war-day 20261026-142917 — chốt hướng crawl payload-driven (2026-10-26)
+## 6. Run war-day — chốt hướng crawl payload-driven (2026-10-26)
 
 > Run đầu trong cửa sổ chiến trường mở (14:29, khung 10:00~22:00 ngày khai chiến).
 > Headed `pmain`, 8/8 stage, 549 frame, 82 shot, exit 0 — fix headed-run chạy tốt.
@@ -82,10 +81,10 @@ thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi pay
 
 | Request                        | Response                                                                                                                             | Verify trong run                                                                                                                     |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `0x72/0x000b` (mở map)         | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | #393R 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4                                                   |
+| `0x72/0x000b` (mở map)         | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4                                                   |
 | `0x72/0x0011 {f1: id}`         | `0x0012` state node: f4 art 1001..1009, f1 id, f2×4 `{faction, Điểm ST}`                                                             | 13 click → **9 node distinct** (8/53/62/63/70/71/74/82/85); phe ta (f3) có ST: node 8=2.31M, 53=6.39M, 62=5.89M, 63=4.88M, còn lại 0 |
 | `0x0c/0x0002 {f1:118, f2: id}` | `0x0003` node leaderboard                                                                                                            | 9 board: 32B (rỗng) → 352B (node 8, có data)                                                                                         |
-| `0x0d/0x001f {packed ids}`     | `0x0020` id→tên                                                                                                                      | #405S 92B → #406R 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`)                                                                        |
+| `0x0d/0x001f {packed ids}`     | `0x0020` id→tên                                                                                                                      | 92B → 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`)                                                                        |
 
 → **Crawler kế tiếp = vòng lặp ids 1..89** (snapshot `0x000b` lấy enum + owner,
 `0x0011` + board `118` per node theo chu kỳ), zero GUI interaction.
@@ -93,8 +92,8 @@ thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi pay
 ### 6.2. QuickLZ: một số response nén (status flag `01`)
 
 Header R 8B `seq|flags|module|cmd|status` — status `01` = payload QuickLZ-compressed:
-board node 8 #404R 352B không parse được (`<unparseable>`), trong khi names #406R
-status `00` là protobuf thuần. Khớp commit `f61dd7a`. Crawler cần bước decompress
+board node 8 (352B) không parse được (`<unparseable>`), trong khi response names
+status `00` là protobuf thuần. Crawler cần bước decompress
 trước khi decode board/phe snapshot.
 
 ### 6.3. BXH game = 2 tab [chủ dự án xác nhận 2026-10-26]
@@ -150,7 +149,7 @@ error** — 6 lần throttle đều qua được ở retry đầu (backoff 1s). 
 BXH phe 4 hàng (additionInfo đủ `fightCap/president/cityNum/guilds/vicePresidents`,
 `cityNum` khớp tuyệt đối owner count: f3=8 đảo rank 1, f1=5 rank 2); BXH điểm
 top-200; 24 node board có data (332 hàng), 65 board rỗng (node không chủ, không ai
-đóng góp); 243 brief người chơi. Chuẩn hoá dataset so sánh: `.tmp/sea-crawl/sea-crawl-v4`.
+đóng góp); 243 brief người chơi.
 
 ### 6.8. Adapter crawl → UI đã lên sóng (2026-10-26)
 
@@ -167,8 +166,7 @@ crawl + CampGVG → `src/data/sea-live.ts`; `mapData.ts` có công tắc `LIVE`.
   "tự đối chiếu" khép lại.
 - Verify UI: node 1-23 = game 8 hiện 2.307.224 tổng, top-1 VNChiến 850.529
   (khớp run GUI 14:29 từng chữ); game 63 → "1-11Đảo Lều Trại" khớp §1.2.
-- Lệch số đã biết (board top-20, BXH top-200, boss chưa map…) liệt kê +
-  phương án fix trong `docs/sea/STATS_MISMATCH.md` — handoff cho phase sau.
+- Lệch số đã biết (board top-20, BXH top-200, boss chưa map…) — handoff cho phase sau.
 
 ### 6.7. Finding dữ liệu: pool "Điểm ST" node dao động, board theo người chơi ổn định
 

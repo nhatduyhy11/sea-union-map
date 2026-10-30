@@ -46,7 +46,7 @@
   - Tile `f8/f9`: hiếm gặp; khi có thì `f8 - f9 = đúng 3600s` (thấy trên tile 1060, 4044, 6052 — nghi cửa sổ bảo vệ hoặc thời hạn chiếm điểm 1 giờ).
   - Slot `f3`: luôn = 0 (2 captures kiểm tra đều = 0, xác nhận không phải tầng debuff).
   - Season tile ids `513–544` trong `0x48/0x0014` (field `f3`): 32 giá trị liên tiếp (chưa rõ quy luật ánh xạ sang pos, khả năng là `map*100+tile`).
-  - Timestamp mốc 05:23:35 "tương lai" ở slot `f5` (run-050330): kiểm tra lại cờ `[start, end]` vs window đặt trước.
+  - Timestamp mốc 05:23:35 "tương lai" ở slot `f5` (capture 2026-10-23): kiểm tra lại cờ `[start, end]` vs window đặt trước.
 - **Hướng fix:** Trích xuất thêm mẫu capture khi có biến động chiếm mỏ trực tiếp để decode dứt điểm.
 
 ---
