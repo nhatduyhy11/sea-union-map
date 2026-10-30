@@ -22,7 +22,7 @@ brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặ
     `tools/socket_log/core/protocol.py`).
   - Brief chỉ sống trong output từng run (`players.jsonl`), không có nơi lưu
     chung → lần crawl sau hỏi lại từ đầu. Throttle risk: batch 60 id từng trả
-    về rỗng (seq=169), phải backfill bằng chunk 20 + pace 0.8s (evidence
+    về rỗng, phải backfill bằng chunk 20 + pace 0.8s (evidence
     2026-10-27 trong `brief_backfill.py`).
 - **Hướng làm**:
   - Persistent brief cache theo cụm server: **mặc định `517`**, nhận input
@@ -46,7 +46,7 @@ Ghi 2026-10-28.
 
 - **Hiện trạng**: guild brief `0x24/0x0035 → 0x0036` giờ là nguồn lực chiến
   guild (`f3.f16`, parse trong `core/protocol.py` → dump key `guildPower`).
-  Run này 114/115 guild trả đủ; guild `5270018` (phe 4, điểm 0) trả `f3` rỗng
+  Crawl 2026-10-28: 114/115 guild trả đủ; guild `5270018` (phe 4, điểm 0) trả `f3` rỗng
   → thiếu cả tên lẫn power, UI hiện `#5270018 [—]`.
   - Roster 4 member: `52709342`, `52719518`, `52749342`, `52799012` — không
     ai có brief, không ai lọt `nodeRows`/`playerBoard` (guild không hoạt động

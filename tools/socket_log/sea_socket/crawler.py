@@ -19,7 +19,7 @@ zero map interaction:
 Injected requests use ssid bytes 0xF0..0xFF (core.protocol.INJECT_SEQ
 convention): the server echoes the ssid in the response header, the game client
 ignores stray replies, so responses correlate by ssid. Board bodies carry the
-compress flag (response header byte 7, commit f61dd7a); they are decoded with
+compress flag (response header byte 7); they are decoded with
 the game's own runtime (QuickLZ + BufferUtils via window.__require) in the live
 page — same approach as core/runtime_codec.py.
 

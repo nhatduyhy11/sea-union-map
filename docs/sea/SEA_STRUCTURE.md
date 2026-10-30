@@ -216,6 +216,6 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
   list phẳng 4 dòng phe (không đôn guild), cột giữ nguyên Chiếm đảo + Tổng Nhiên Liệu.
   Guild + Tổng điểm ST riêng nằm ở "Tổng quan phe" (mỗi guild 1 dòng — shot `5-faction-1`).
 - ~~Màn BXH lúc war~~ **[chốt 2026-10-26]**: game chỉ 2 tab "XH Phe | XH điểm" cả
-  khi war (capture 20261026-142917); 3-tab + sub-tab là tổng hợp phía UI mình — §3.2.
+  khi war (capture 2026-10-26); 3-tab + sub-tab là tổng hợp phía UI mình — §3.2.
   Câu hỏi "Cứ điểm xếp theo gì" không còn áp dụng cho game — do frontend tự định nghĩa.
 - Các nút phụ (Thưởng / Nhiệm Vụ / Báo Cáo / Bản đồ / Mô tả…) — ngoài phạm vi crawl hiện tại.

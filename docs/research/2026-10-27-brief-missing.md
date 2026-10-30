@@ -3,7 +3,7 @@
 > **Nhật ký research.** Kết luận đã áp dụng vào crawler + `brief_backfill.py`;
 > việc còn mở (guild brief rỗng) ở [`../sea/BACKLOG_SEA.BE.md`](../sea/BACKLOG_SEA.BE.md) §1b.
 
-Crawler cũ gom id brief không retry, server nuốt 1 batch 60 id (seq=169 trả 0
+Crawler cũ gom id brief không retry, server nuốt 1 batch 60 id (trả 0
 brief) → 55 player mất tên. Quá trình xử lý:
 
 - **Throttle:** tool `tools/socket_log/sea_socket/brief_backfill.py` re-request ids

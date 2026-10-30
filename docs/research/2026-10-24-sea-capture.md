@@ -67,7 +67,7 @@ nền góc phải trên (600,90). **Tuyệt đối không click "Đến" (319,62
   bằng payload thẳng, join `CampGVGLO` vào `src/data/map-layout.ts`.
 - Capture lại sau **10/26 10:00** (khai chiến) cho dữ liệu động.
 
-## 6. Run war-day 20261026-142917 — chốt hướng crawl payload-driven (2026-10-26)
+## 6. Run war-day — chốt hướng crawl payload-driven (2026-10-26)
 
 > Run đầu trong cửa sổ chiến trường mở (14:29, khung 10:00~22:00 ngày khai chiến).
 > Headed `pmain`, 8/8 stage, 549 frame, 82 shot, exit 0 — fix headed-run chạy tốt.
@@ -81,10 +81,10 @@ thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi pay
 
 | Request                        | Response                                                                                                                             | Verify trong run                                                                                                                     |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `0x72/0x000b` (mở map)         | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | #393R 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4                                                   |
+| `0x72/0x000b` (mở map)         | `0x000c` **full map**: f2×89 `{f1 id, f2 owner}` — **ids 1..89 đủ tuyệt đối**, không field nào khác per node; f3×4 phe; f4×115 guild | 23KB; owner distribution 1:5, 2:4, 3:8, 4:5, trống 67 — khớp BXH Phe 8/5/5/4                                                   |
 | `0x72/0x0011 {f1: id}`         | `0x0012` state node: f4 art 1001..1009, f1 id, f2×4 `{faction, Điểm ST}`                                                             | 13 click → **9 node distinct** (8/53/62/63/70/71/74/82/85); phe ta (f3) có ST: node 8=2.31M, 53=6.39M, 62=5.89M, 63=4.88M, còn lại 0 |
 | `0x0c/0x0002 {f1:118, f2: id}` | `0x0003` node leaderboard                                                                                                            | 9 board: 32B (rỗng) → 352B (node 8, có data)                                                                                         |
-| `0x0d/0x001f {packed ids}`     | `0x0020` id→tên                                                                                                                      | #405S 92B → #406R 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`)                                                                        |
+| `0x0d/0x001f {packed ids}`     | `0x0020` id→tên                                                                                                                      | 92B → 8.6KB, tên inline (`"VNLight"`, `"VNs1st"`)                                                                        |
 
 → **Crawler kế tiếp = vòng lặp ids 1..89** (snapshot `0x000b` lấy enum + owner,
 `0x0011` + board `118` per node theo chu kỳ), zero GUI interaction.
@@ -92,8 +92,8 @@ thẳng theo node id, khỏi scroll/click map. Run này verify đủ chuỗi pay
 ### 6.2. QuickLZ: một số response nén (status flag `01`)
 
 Header R 8B `seq|flags|module|cmd|status` — status `01` = payload QuickLZ-compressed:
-board node 8 #404R 352B không parse được (`<unparseable>`), trong khi names #406R
-status `00` là protobuf thuần. Khớp commit `f61dd7a`. Crawler cần bước decompress
+board node 8 (352B) không parse được (`<unparseable>`), trong khi response names
+status `00` là protobuf thuần. Crawler cần bước decompress
 trước khi decode board/phe snapshot.
 
 ### 6.3. BXH game = 2 tab [chủ dự án xác nhận 2026-10-26]
