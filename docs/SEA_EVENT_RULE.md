@@ -2,7 +2,7 @@
 
 ## 1. Trạng thái của tài liệu
 
-Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự án xác nhận, làm căn cứ cho logic tính toán quyền sở hữu (ownership) và tính liên tục của đường nối (connectivity). Khi rule thay đổi, cập nhật tài liệu này trước khi sửa code.
+Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự án xác nhận, để đọc hiểu ownership server trả về. FE không tự áp các rule này (xem §8). Khi rule thay đổi, cập nhật tài liệu này.
 
 ## 2. Ngưỡng claim và phe thắng
 
@@ -36,6 +36,17 @@ Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự á
 
 ## 8. Triển khai trong code
 
-- Xác định đường nối: `deriveConnected` tại [`src/domain/claims.ts`](../src/domain/claims.ts) kiểm tra tính liên tục từ base của từng phe tới từng node.
-- Exact tie giữa các phe đủ điều kiện → node tạm chưa ai chiếm (neutral): cách xử lý đã triển khai, chưa được chủ dự án chốt riêng.
-- Tests rule nằm tại [`src/domain/claims.test.ts`](../src/domain/claims.test.ts); node panel đánh mờ phe đang bị ngắt ([`src/components/panels/NodeDetails/FactionScores.tsx`](../src/components/panels/NodeDetails/FactionScores.tsx)); leaderboard tổng điểm thô tại [`src/domain/selectors/`](../src/domain/selectors/).
+- Server đã áp toàn bộ rule trên: owner mỗi node lấy từ snapshot `0x72/0x000c`
+  ([SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md)), dump key `owner`. Mỗi node là
+  **một giá trị** (0 = trung lập, 1..4 = phe), trạng thái hiện tại, không có
+  lịch sử. FE chỉ hiển thị owner, không tự tính đường nối hay contest.
+- Đối chiếu 2026-10-29/30 (9 crawl, cụm 517 và 590): 801 node đều có đúng 1 field
+  owner; danh sách node từng phe trong `0x72/0x001c` khớp 100%. Với điểm phe
+  server (`0x72/0x0012`) và đường nối tính từ owner: không node nào trái §2–§4.
+  Gặp cả hai dạng do cắt đường — node trung lập dù phe bị cắt vượt ngưỡng, và
+  node của phe thấp hơn trong khi phe cao nhất bị cắt. Không gặp hoà điểm, không
+  gặp owner đang bị cắt khỏi base.
+- UI: màu đảo và tab Cứ điểm (pill phe, "Chưa chiếm", tô màu row) theo owner;
+  đường nối tô màu phe khi hai đầu cùng owner
+  ([`src/domain/mapGraph.ts`](../src/domain/mapGraph.ts)). Leaderboard dùng điểm
+  thô tại [`src/domain/selectors/`](../src/domain/selectors/).

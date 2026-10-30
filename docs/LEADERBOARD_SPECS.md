@@ -111,9 +111,9 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
 
 - **Không phụ thuộc Filter mode**, không đụng filter canvas. State local của board (pill lọc, sort) — rời board là reset.
 - **Tiêu đề** đếm số cứ điểm đang hiển thị: `Xếp hạng cứ điểm (N)`.
-- **Pill lọc theo phe chiếm:** `Tất cả` + 4 phe (thứ tự cố định, text theo `labelColor`) + `Chưa chiếm` (đảo mà phe cao điểm nhất chưa chạm `claimThreshold`). Bấm lại pill đang chọn → về `Tất cả`.
+- **Pill lọc theo phe chiếm:** `Tất cả` + 4 phe (thứ tự cố định, text theo `labelColor`) + `Chưa chiếm` (đảo trung lập — owner server rỗng). Bấm lại pill đang chọn → về `Tất cả`.
 - **Thứ tự mặc định:** theo số đảo (`1-1, 1-2, …, 1-n, 2-1, …`, trung tâm cuối) — so từng đoạn số, không so chuỗi. Nút **"Sắp xếp theo điểm"** xoay vòng theo tổng Điểm ST: không sort → tăng dần → giảm dần → không sort.
-- **Row đảo:** `<id> <tên đảo>` / `K phe · <điểm phe cao nhất> (x%)` (màu `labelColor` của phe đó, % so với tổng điểm đảo, làm tròn xuống). Chưa đủ điểm claim thì nối thêm `/ <claimThreshold>`; đảo chưa có điểm chỉ hiển thị `/ <claimThreshold>`. Đảo đã chạm ngưỡng claim được tint màu phe chủ (nền nhạt + viền trái).
+- **Row đảo:** `<id> <tên đảo>` / `K phe · <điểm phe cao nhất> (x%)` (màu `labelColor` của phe đó, % so với tổng điểm đảo, làm tròn xuống). Đảo trung lập thì nối thêm `/ <claimThreshold>`; đảo chưa có điểm chỉ hiển thị `/ <claimThreshold>`. Đảo có owner được tint màu phe chủ (nền nhạt + viền trái).
 - **Expand đảo:** điểm từng phe (phe có điểm > 0) + bảng người chơi tấn công (top-N của node board).
 - **Mở expand = focus đảo trên canvas** (camera pan mượt tới đảo + đảo thành selected). Đa mở được — camera theo lần expand cuối. Panel **giữ nguyên ở bảng xếp hạng**, không tự chuyển sang tab "Cứ điểm" chi tiết.
 - **Đóng expand** không focus; nếu đảo đó đang selected thì gỡ selection, đảo khác đang selected thì giữ nguyên.

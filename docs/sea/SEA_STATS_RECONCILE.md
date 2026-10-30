@@ -43,7 +43,7 @@ Mọi tổng node đi qua `scoresForNode` (`src/domain/selectors/nodeScores.ts`)
 | --- | --- | --- |
 | Popup điểm 4 phe trên canvas | `src/domain/mapData.ts` → `IslandNode/NodeStats.tsx` | Node state ✅ |
 | Tab Cứ điểm: tổng, % phe dẫn, sort theo điểm | `selectors/board/nodeBoard.ts` | Node state ✅ |
-| Tab Cứ điểm: pill "Chưa chiếm", tô màu row | `reachedClaim` / `topScore` trong `NodeBoard.tsx` | Node state so với `claimThreshold` ✅ |
+| Tab Cứ điểm: pill "Chưa chiếm", tô màu row | `NodeBoard.tsx` | Owner server ✅ |
 | NodeDetails: điểm phe, tổng, phe dẫn | `selectors/nodeDetails.ts`, `NodeDetails/index.tsx` | Node state ✅ |
 | Owner node | `dump.owner` (`src/data/sea-live/join.ts`) | Server ✅ |
 | Tổng phe, điểm guild (tab Phe) | `selectors/board/factionBoard.ts` | Σ guild `0x0025` ✅ |

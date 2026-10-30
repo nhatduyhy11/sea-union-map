@@ -66,8 +66,8 @@ pnpm run build
   * Khi chạy dev (`pnpm run dev`), nếu tồn tại file `public/sea-live-dev.json` (sinh ra từ crawler, gitignored), ứng dụng sẽ ưu tiên nạp file này để xem trước ngay mà không cần build lại.
   * Chi tiết về cơ chế nạp dev vs build xem [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md).
 * **Snapshot lịch sử:** `src/data/snapshots/<YYMMDD>/<server>.json`, nạp lazy qua [`src/data/snapshots.ts`](src/data/snapshots.ts) — xem [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md).
-* **Quy tắc tính toán đường nối & sở hữu:**
-  * Phe sở hữu căn cứ và các đảo nối liên tục từ base được xác định thông qua logic duyệt đồ thị tại [`src/domain/claims.ts`](src/domain/claims.ts) theo quy tắc game tại [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md).
+* **Sở hữu node:**
+  * Owner từng node lấy từ server (dump `owner`), server đã áp quy tắc ngưỡng và cắt đường tại [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md); FE không tự tính đường nối.
 
 ---
 
@@ -90,9 +90,8 @@ src/
 │   └── commands.ts      # Action handler điều phối nhiều store (openIsland, setFilterMode...)
 ├── hooks/               # Custom React hooks (useFitMap, useFocusIsland, v.v.)
 ├── domain/              # Logic nghiệp vụ thuần TypeScript (không phụ thuộc React)
-│   ├── claims.ts        # Thuật toán kiểm tra connectivity đường nối từ base
-│   ├── mapData.ts       # buildMapData(dump): derive model UI (scores, claims, BXH, index filter) từ một dump
-│   ├── mapGraph.ts      # Adapter chuyển đổi layout & claims sang Node/Edge của React Flow
+│   ├── mapData.ts       # buildMapData(dump): derive model UI (scores, BXH, index filter) từ một dump
+│   ├── mapGraph.ts      # Adapter chuyển đổi layout & owner sang Node/Edge của React Flow
 │   └── selectors/       # Các hàm truy vấn, tính điểm, sắp xếp BXH và tìm kiếm
 ├── data/                # Dữ liệu tĩnh & adapter nạp data
 │   ├── map-layout.ts    # Toạ độ 89 đảo và danh sách đường nối

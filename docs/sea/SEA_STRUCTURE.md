@@ -171,7 +171,7 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 
 **Node trung lập:** đảo chưa phe nào chiếm sẽ hiện "Đảo chưa có chủ" + "Điểm chiếm đóng
 tối thiểu" + "Không có phe gây ST" — đúng cảnh ngày đầu event (chưa ai đủ điểm, hoặc phe
-top bị suspend / bị ngắt đường). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
+top bị ngắt đường — server đã áp rule, FE chỉ đọc owner). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
 trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node trong dump
 (`claimThreshold`).
 
@@ -240,9 +240,10 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
 | Bố cục node + đường nối            | `src/data/map-layout.ts` → `MapCanvas` / `IslandNode` / `RouteEdge`             |
 | Tên node thật (`1-23 Đảo Câu Cá`…) | thay tên mock (demo chưa transcribe tên)                                        |
 | Điểm chiếm đóng tối thiểu          | `claimThreshold` (đang equalize = 1)                                            |
-| Điểm phe/player tại node, sở hữu   | `NodeStats` + `src/domain/claims.ts` (derive ownership)                         |
-| Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — nguồn duy nhất của mọi thống kê           |
-| Điểm ST tổng player (BXH top-K)    | `buildLeaderboard(contributions)` — gộp node rows, xấp xỉ BXH in-game           |
+| Sở hữu node                        | `Island.owner` ← dump `owner` (`0x72/0x000c`, server đã áp rule ngắt đường)     |
+| Điểm phe tại node                  | `Island.factionScores` ← dump `nodeFactionScores` → `scoresForNode`, `NodeStats` |
+| Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — chỉ cho danh sách player                  |
+| Điểm ST tổng player (BXH top-200)  | `buildServerLeaderboard` ← dump `playerBoard` (board 117)                       |
 | BXH Phe (điểm phe = tổng guild)    | `buildFactionBoard` `src/domain/selectors/` → tab "BXH Phe" `src/components/panels/leaderboard/Leaderboard.tsx` |
 | Guild theo player (brief f11)      | `Player.guild` — demo fill tay, crawl qua `0x0d/0x001f`                         |
 | Phe + thành viên + tổng điểm       | `src/data/factions.ts`                                                          |
