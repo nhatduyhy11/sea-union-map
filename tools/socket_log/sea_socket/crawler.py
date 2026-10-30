@@ -43,6 +43,7 @@ Usage:
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --headless
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --no-dump
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --gui-entry
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --dump-out out/other.json
 """
 
 import argparse
@@ -95,6 +96,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dump", action=argparse.BooleanOptionalAction, default=True,
                         help="Transform run vừa crawl thành JSON cho FE ngay sau "
                              "khi crawl (mặc định bật; tắt bằng --no-dump)")
+    parser.add_argument("--dump-out", default=None, type=Path,
+                        help="Đích JSON khi --dump (mặc định public/sea-live-dev.json)")
     return parser.parse_args()
 
 
@@ -144,7 +147,7 @@ async def main() -> None:
             print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
             if args.dump:
                 try:
-                    dump_run(out_dir, out=DEV_DUMP_OUT)
+                    dump_run(out_dir, out=args.dump_out or DEV_DUMP_OUT)
                 except SystemExit as exc:
                     # Raw run đã an toàn trên đĩa — chỉ nhắc chỗ re-dump.
                     print(f"[dump] transform failed, raw run kept at "

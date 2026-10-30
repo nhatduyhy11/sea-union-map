@@ -24,6 +24,9 @@ Nội dung dump (key → nguồn):
                    (không cắt); run không có file thì bỏ key, FE cộng nodeRows
 - ``playerBoard`` ← ``boards-decoded.json`` (117, 0): [rank, playerId, score, campId]
                    (BXH điểm server top-200 — nguồn sự thật tab Cá nhân)
+- ``fuel``        ← ``standings.json`` (0x72/0x001c): factionId → Tổng Nhiên Liệu
+                   phe (cột "Tổng Nhiên Liệu" bảng BXH Phe); run cũ không có
+                   file thì bỏ key, FE coi như không có nhiên liệu
 - ``factionGuilds`` ← ``guild-scores.json`` (0x72/0x0025): factionId →
                    [[guildId, điểm ST], ...] sort giảm dần (tab Phe)
 - ``guildNames`` ← ``players.jsonl``: guildId → tên (từ brief member; guild
@@ -170,6 +173,17 @@ def node_faction_scores(crawl: Path) -> dict | None:
     return scores
 
 
+def camp_fuel(crawl: Path) -> dict | None:
+    """standings.json (0x72/0x001c, parse_standings) — Tổng Nhiên Liệu từng
+    phe (f2). Run cũ / payload entry lỗi không có file → None để dump bỏ hẳn
+    key; FE hiển thị "—" và không highlight theo nhiên liệu."""
+    path = crawl / "standings.json"
+    if not path.exists():
+        return None
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    return {str(row["f1"]): row["f2"] for row in raw if "f2" in row}
+
+
 def guild_brief_names(crawl: Path) -> dict:
     """guild-names.json (0x24/0x0035) — tên guild trực tiếp, không cần member
     brief; phủ cả guild mà mọi member đều bị refuse brief chéo server."""
@@ -276,13 +290,16 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
     node_scores = node_faction_scores(crawl)
     if node_scores is not None:
         payload["nodeFactionScores"] = node_scores
+    fuel = camp_fuel(crawl)
+    if fuel is not None:
+        payload["fuel"] = fuel
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
     print(f"[sea-to-ui] {out}: {len(camp)} camp rows, {len(owner)} owners, "
           f"{len(rows)} contribution rows, {len(board_rows)} playerBoard rows, "
-          f"{len(node_scores or {})} node faction scores, "
+          f"{len(node_scores or {})} node faction scores, {len(fuel or {})} fuel rows, "
           f"{sum(len(g) for g in guilds_by_faction.values())} guild scores, "
           f"{len(guild_names)} guild names, {len(guild_power)} guild powers, "
           f"{len(briefs)} briefs, "

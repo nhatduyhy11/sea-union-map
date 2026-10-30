@@ -112,7 +112,7 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   - `0x72 / 0x0011` `GetCityInfo {cityId}` → `0x0012` `GetCityInfoR`: `CityInfo {cityId, campHurtScores (Điểm ST 4 phe), occupyCamp, monsterId (boss → `CampGVGMonsterLO`), campScores}` + top-level f3 `occupyRewardCampId`. Đo 9 crawl 2026-10-29/30 (cụm 517, 590):
     - `occupyCamp` trùng owner `0x000c` ở mọi node; `campScores` luôn rỗng.
     - `occupyRewardCampId` = **phe chiếm node lần đầu**: 0 ở base và node chưa từng có chủ; gán khi node bị chiếm lần đầu, giữ nguyên khi node đổi chủ (kể cả đổi qua lại) hoặc mất về trung lập. Parser `parse_node_state` chưa đọc field này.
-  - `0x72 / 0x001b` `GetCampsProduct` → `0x001c` `GetCampsProductR`: Bảng nhiên liệu 4 phe — `CampProductScore {campId, score (nhiên liệu), efficiency, rank, cityIds}`, inject được ngay sau login. Push cùng shape: `0x0019` `UpdateCampScoreP`.
+  - `0x72 / 0x001b` `GetCampsProduct` → `0x001c` `GetCampsProductR`: Bảng nhiên liệu 4 phe — `CampProductScore {campId, score (nhiên liệu), efficiency, rank, cityIds}`, inject được ngay sau login. Push cùng shape: `0x0019` `UpdateCampScoreP`. Crawler ghi `standings.json`; `report.py` dump cho FE qua key `fuel` (campId → nhiên liệu).
   - `0x72 / 0x0024` `GetCampInfos {campId}` → `0x0025`: `CampDetailInfo {guildScoreInfos {guildId, hurtScore}, cityNum, score, rank}`. Field 4 `score` là nhiên liệu phe, không phải lực chiến — `parse_faction_detail` (`tools/socket_log/sea_socket/protocol.py`) đang đặt key cho field này là `fight_cap`.
   - `0x72 / 0x003e` `GetSweepInfo {cityId}` → `0x003f`: `{cityId, myTotalOutput, hurtScore}` — điểm của **chính account** tại cứ điểm (không phải state chung) → toàn 0 khi acc chưa đánh node đó.
 
