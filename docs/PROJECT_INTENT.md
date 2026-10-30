@@ -55,4 +55,4 @@ Server chỉ trả một phần dữ liệu chi tiết (node-board chỉ top pla
 - Tổng điểm player trong node-board của một phe có thể **nhỏ hơn** điểm phe đó trong node-info.
 - Tổng điểm một player qua các node có thể không bằng điểm của player đó trên leaderboard tổng.
 
-Chủ dự án chấp nhận độ lệch này. Top-20/node đã verify là server cắt, không lấy thêm được: [docs/sea/SEA_PACKET_ANALYSE.md](sea/SEA_PACKET_ANALYSE.md).
+Chủ dự án chấp nhận độ lệch này. Top-20/node đã verify là server cắt, không lấy thêm được: [docs/sea/SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md) §3.5.

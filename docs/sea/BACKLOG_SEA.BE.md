@@ -76,7 +76,7 @@ tự đọc, `--server` chỉ còn để override.
 
 Node state (`0x72/0x0012`) có sẵn **tổng điểm từng phe tại node**, là 4 con số do
 server tính. Board 118 thì server cắt ở top-20/node
-([SEA_PACKET_ANALYSE.md](SEA_PACKET_ANALYSE.md)), nên cộng row không ra tổng đúng.
+([SOCKET_PROTOCOL.md](SOCKET_PROTOCOL.md) §3.5), nên cộng row không ra tổng đúng.
 
 - **Hiện trạng**: crawler đã lưu `faction_scores` (`node-states.jsonl`) nhưng
   `report.py` không dump; FE tính tổng node bằng sum(board rows). Đo 2026-10-30:

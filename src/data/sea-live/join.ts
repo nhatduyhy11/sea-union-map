@@ -1,7 +1,7 @@
 // Join dump → model UI: game-id → layout-id, faction → hướng, ghép brief
 // player/guild. Hàm thuần, unit test ở ../sea-live.test.ts.
 // Live totals sum the per-node boards, which the server caps at top-20 rows —
-// verified server-side, see docs/sea/SEA_PACKET_ANALYSE.md.
+// verified server-side, see docs/sea/SOCKET_PROTOCOL.md §3.5.
 
 import { layoutNodes, layoutRoutes } from "../map-layout";
 import type {

@@ -34,7 +34,7 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
 - **Tab Phe:** guild rows + điểm guild = bảng **"Tổng quan phe"** của server (dump `factionGuilds`, key theo `guildId`); board 116 chỉ trả 4 row phe nên không đủ cho guild. Điểm phe = tổng điểm các guild row. Lực chiến guild lấy từ guild brief, thiếu thì cộng LC của member. **Duy nhất** danh sách thành viên trong guild expand được derive từ node boards (match guild qua `guildId` trong brief của member); player không có `guildId` hoặc `guildId` không có row server rơi vào bucket **"Không guild"**.
 - **Tab Cứ điểm:** list + expand đều là **board 118 per-node của server**.
 - **Giới hạn đã biết:** server cắt top-20/node (verify:
-  [SEA_PACKET_ANALYSE.md](sea/SEA_PACKET_ANALYSE.md)), top-200 global; player/guild
+  [SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md) §3.5), top-200 global; player/guild
   ngoài ngưỡng không có dữ liệu, chấp nhận lệch (intent §5). 16 player S513/S514
   server không trả brief. Guild không member nào có brief hiển thị tên `#<guildId>`.
 

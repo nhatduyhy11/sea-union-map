@@ -5,7 +5,7 @@
 > Công cụ dùng chung: `tools/socket_log/core/` (decode, runtime codec, runner) + `tools/socket_log/capture/` (ghi frame WS) + `tools/socket_log/gui/` (step DSL click/golden).
 > Các sub-doc nghiệp vụ riêng:
 > - **Khai Thác Guild (Khu Mỏ, module `0x48`):** [`docs/mine_docs/MINE_STRUCTURE.md`](../mine_docs/MINE_STRUCTURE.md) & [`docs/mine_docs/BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md).
-> - **Tranh Bá Tứ Hải (Sea Union, module `0x72`):** [`docs/sea/SEA_PACKET_ANALYSE.md`](SEA_PACKET_ANALYSE.md) & [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md).
+> - **Tranh Bá Tứ Hải (Sea Union, module `0x72`):** [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md) (packet tóm tắt ở §4.2 doc này).
 
 ---
 
@@ -70,11 +70,17 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 ### 3.5. Bảng Xếp Hạng (`module 0x0c`)
 - Request `0x0c / 0x0002` `GetCommonRank {1 rankType, 2 rankSubType}` → response `0x0c / 0x0003` `GetCommonRankR {1 err, 2 selfRank, 3 ranks, 4 idType, 5 rankLength}` (QuickLZ compressed).
 - Row `CommonRankItem {1 rank, 2 key (điểm, double), 3 rankId (player/phe id), 4 additionInfo (JSON string), 5 idType}`.
-- Các bảng đã map:
-  - `116`: BXH Phe (Tranh Bá Tứ Hải).
-  - `117`: BXH Điểm Cá Nhân toàn server.
-  - `118`: BXH đóng góp theo từng Cứ Điểm (node).
+- Các bảng đã map (`rankType` = board id):
+  - `116` (`rankSubType 0`): BXH Phe (Tranh Bá Tứ Hải).
+  - `117` (`rankSubType 0`): BXH Điểm Cá Nhân toàn server — top-200.
+  - `118` (`rankSubType = cityId`): BXH đóng góp theo từng Cứ Điểm (node) — **top-20/node, gộp mọi phe**.
   - `0x1f / 0x0007`: Leaderboard PvP khu mỏ.
+- **Top-20 của board 118 là do server cắt, không phải client** (verify 2026-10-30):
+  crawler lưu nguyên body response rồi decode hết mảng `ranks`, không giới hạn số row;
+  cùng decoder trả đủ 200 row cho board 117, còn mọi board 118 tối đa 20 row. Request
+  không có tham số phân trang → không lấy thêm được. Hệ quả: Σ row của node thấp hơn
+  `campHurtScores` (§4.2) ở node có trên 20 người chơi, và một phe có thể có điểm tại
+  node nhưng 0 row (node 14: phe 2 có 12.473 điểm, 0 row).
 
 ---
 
@@ -93,17 +99,16 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   - `0x48 / 0x001a` → `0x001b`: Feed lịch sử phụ khu mỏ — entry = `{f1: type, f2: JSON string}`; type 4 = `[player_id, pos, action, ts]` (action 9001/9002/9003), type 1 = `[pos, slot_no, ts]` (nghi log cá nhân acc — xem [`mine_docs/BACKLOG_MINE.md`](../mine_docs/BACKLOG_MINE.md) §4).
 
 ### 4.2. Tranh Bá Tứ Hải / Sea Union (`module 0x72`)
-- Chi tiết luồng crawl, phân tích 89 cứ điểm, config `CampGVGLO` và live data adapter:
-  👉 **Tài liệu packet:** [`docs/sea/SEA_PACKET_ANALYSE.md`](SEA_PACKET_ANALYSE.md)
-  👉 **Tài liệu cấu trúc bản đồ & cứ điểm:** [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md)
+- Tài liệu nghiệp vụ:
+  👉 **Tài liệu cấu trúc bản đồ & cứ điểm, config `CampGVGLO` + boss:** [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md)
   👉 **Payload điều hướng event (bỏ entry GUI):** [`docs/sea/EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md)
 - Tóm tắt packet:
   - `0x72 / 0x0002` `GetOutInfoR` (response lúc boot): `{isOpen, serverList, startDt, endDt, state, isQualified}` — block đầu chốt boot sync, signal login-done của payload entry.
-  - `0x72 / 0x000b` `GetMapInfos` → `0x000c` `GetMapInfosR`: Snapshot 89 cứ điểm (`cityInfos {cityId, occupyCamp}`), 4 phe (`campInfos {campId, guildIds, score, presidentId, vicePresidentId}`), 115 bang hội (`guildInfos {guildId, memberInfos}`), `campId` của account, `markCityIds`.
+  - `0x72 / 0x000b` `GetMapInfos` → `0x000c` `GetMapInfosR`: Snapshot 89 cứ điểm (`cityInfos {cityId, occupyCamp}`), 4 phe (`campInfos {campId, guildIds, score, presidentId, vicePresidentId}`), 115 bang hội (`guildInfos {guildId, memberInfos}`), `campId` của account, `markCityIds`. `cityId` 1..89 trùng id config `CampGVGLO` ([`SEA_STRUCTURE.md`](SEA_STRUCTURE.md) §4.1): **1..4 = base 4 phe**, node thường = **5..89** → enumerate đủ node từ 1 frame, không cần zoom/pan map. Gửi lại `0x000b` bất kỳ lúc nào để re-sync.
   - `0x72 / 0x0011` `GetCityInfo {cityId}` → `0x0012` `GetCityInfoR`: `CityInfo {cityId, campHurtScores (Điểm ST 4 phe), occupyCamp, monsterId (boss → `CampGVGMonsterLO`), campScores}`.
   - `0x72 / 0x001b` `GetCampsProduct` → `0x001c` `GetCampsProductR`: Bảng nhiên liệu 4 phe — `CampProductScore {campId, score (nhiên liệu), efficiency, rank, cityIds}`, inject được ngay sau login. Push cùng shape: `0x0019` `UpdateCampScoreP`.
-  - `0x72 / 0x0024` `GetCampInfos {campId}` → `0x0025`: `CampDetailInfo {guildScoreInfos {guildId, hurtScore}, cityNum, score, rank}`.
-  - `0x72 / 0x003e` `GetSweepInfo {cityId}` → `0x003f`: `{cityId, myTotalOutput, hurtScore}` — điểm của **chính account** tại cứ điểm (không phải state chung).
+  - `0x72 / 0x0024` `GetCampInfos {campId}` → `0x0025`: `CampDetailInfo {guildScoreInfos {guildId, hurtScore}, cityNum, score, rank}`. Field 4 `score` là nhiên liệu phe, không phải lực chiến — `parse_faction_detail` (`tools/socket_log/sea_socket/protocol.py`) đang đặt key cho field này là `fight_cap`.
+  - `0x72 / 0x003e` `GetSweepInfo {cityId}` → `0x003f`: `{cityId, myTotalOutput, hurtScore}` — điểm của **chính account** tại cứ điểm (không phải state chung) → toàn 0 khi acc chưa đánh node đó.
 
 ### 4.3. Đấu Bang Hội & Giao Tranh (`module 0x1f`, `0x65`)
 - `0x1f / 0x0007` (push lúc login): Leaderboard PvP khu mỏ — entry = `{f2: rank, f3: score, f1: profile đầy đủ nhúng (power, skins, avatar, blob config f17)}` — *chưa map đủ*.

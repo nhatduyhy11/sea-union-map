@@ -26,7 +26,7 @@ launch + hook WS
 | Click banner vào sea lobby | **`0x72/0x001b`** GetCampsProduct (rỗng) | **`0x001c`** bảng nhiên liệu 4 phe + `cityIds` | **KEY** (`0x0036` cùng gửi nhưng boot cũng gửi, không kéo `0x001c`) |
 | Click tâm map vào battlefield | **`0x72/0x000b`** GetMapInfos (rỗng) + `0x0013` EnterScene | **`0x000c`** snapshot 23KB; `0x0014 {err:0}` + push `0x0019` UpdateCampScoreP | **KEY `0x000b`** (`0x0006` cùng gửi nhưng boot cũng gửi) |
 
-Field từng response: [`SEA_PACKET_ANALYSE.md`](SEA_PACKET_ANALYSE.md) §1.1 / §1.5.
+Field từng response: [`SOCKET_PROTOCOL.md`](SOCKET_PROTOCOL.md) §4.2.
 `0x0007` GetPlayerInfoR = `{playerId, power (thể lực event), buyPowerNum}` — không cần
 cho entry.
 
