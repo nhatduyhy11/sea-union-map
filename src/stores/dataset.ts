@@ -1,5 +1,10 @@
 import { create } from "zustand";
-import { EVENT_DAYS, dayLabel, eventDayOf } from "../data/eventCalendar";
+import {
+  EVENT_DAYS,
+  battleCountdown,
+  dayLabel,
+  eventDayOf,
+} from "../data/eventCalendar";
 import { liveDump } from "../data/sea-live";
 import {
   LIVE_SERVER,
@@ -15,7 +20,10 @@ import { showToast } from "./toast";
 // cá nhân / cứ điểm, chi tiết node) đọc data qua useMapData() nên đổi cụm /
 // ngày là cả UI render lại theo bộ mới.
 //
-// Nguồn: ngày hiện tại + LIVE_SERVER → live dump; còn lại → snapshot
+// Nguồn: ngày hiện tại + LIVE_SERVER → live dump, trừ khi ngoài khung chiến
+// trường (10:00~22:00) mà ngày đó đã có snapshot — snapshot chốt sau war là
+// bản đầy đủ nhất, live dump có thể bake giữa war → ưu tiên snapshot, không
+// có mới dùng live; còn lại → snapshot
 // src/data/snapshots/<day>/<server>.json. Cụm khác LIVE_SERVER ở ngày hiện
 // tại chưa hỗ trợ live → fallback snapshot gần nhất của cụm đó.
 export type DataSource = "live" | "snapshot";
@@ -48,9 +56,27 @@ export const useMapData = () => useDataset((state) => state.data);
 // Đọc ngoài React (command/callback) — luôn là bản đang hiển thị.
 export const currentMapData = () => useDataset.getState().data;
 
+// Re-resolve nguồn của bộ (cụm, ngày) đang xem theo đồng hồ: ngoài khung chiến
+// trường today + LIVE_SERVER ưu tiên snapshot hôm nay (xem resolve). Chỉ đụng
+// khi đang xem đúng ngày hiện tại mà nguồn đang hiển thị khác nguồn resolve
+// yêu cầu — mở trang lúc 22:05 hay vừa qua mốc 22:00/10:00 đều tự chỉnh; đang
+// xem ngày cũ thì bỏ qua, không giật người dùng khỏi lịch sử.
+export function syncSourceWithClock() {
+  const { server, day, source } = useDataset.getState();
+  if (day === null || day !== today()) return;
+  const want = resolve(server, day);
+  if (want && want !== source) void apply(server, day, want);
+}
+
 // Nguồn của (cụm, ngày) nếu có data; null = không có.
 function resolve(server: string, day: string): DataSource | null {
-  if (day === today() && server === LIVE_SERVER) return "live";
+  if (day === today() && server === LIVE_SERVER) {
+    // Ngoài khung chiến trường (kể cả sau khi event kết thúc) snapshot của
+    // ngày hiện tại là bản chốt sau war → ưu tiên hơn live dump.
+    if (battleCountdown(new Date()).phase !== "open" && hasSnapshot(day, server))
+      return "snapshot";
+    return "live";
+  }
   return hasSnapshot(day, server) ? "snapshot" : null;
 }
 

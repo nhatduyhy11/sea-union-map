@@ -49,6 +49,25 @@
   cursor: default;
 }
 
+@media (max-width: 1100px) {
+  /* Màn hẹp: cụm debug rớt xuống hàng riêng sát mép trái viewport — neo phải
+     đẩy popover (rộng ~226px) tràn qua mép trái, mất vùng chọn màu. Neo góc
+     trái chip thì popover trải sang phải, lọt hết trong màn. */
+  .pickerPop {
+    right: auto;
+    left: 0;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Siêu hẹp: chip "Đảo" lệch phải hơn (sau chip "Nền") — popover 226px vẫn
+     tràn phải vài px. Thu picker xuống 180px (pointer của react-colorful
+     tính theo % nên co giãn an toàn). */
+  .pickerPop :global(.react-colorful) {
+    width: 180px;
+  }
+}
+
 /* Mã hex dưới picker — override rule `.bgPicker input` của swatch. */
 .pickerPop .hexValue {
   display: block;
