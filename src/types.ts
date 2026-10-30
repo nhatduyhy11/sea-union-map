@@ -16,9 +16,6 @@ export interface Faction {
 
 export interface FactionScore extends Faction {
   score: number;
-  // False when the faction lost its base link, suspending the score for the
-  // node's claim; undefined where the rule was not evaluated.
-  connected?: boolean;
 }
 
 export interface LayoutNode {
@@ -34,8 +31,11 @@ export interface LayoutNode {
 
 export interface Island extends LayoutNode {
   owner: string | null;
-  // Points a faction needs to claim the node (see domain/claims.ts).
+  // Points a faction needs to claim the node (CampGVG pointRequire).
   claimThreshold: number;
+  // Server total per faction at this node (faction id → score). Undefined when
+  // the dump lacks it; selectors then sum the capped node-board rows.
+  factionScores?: Record<string, number>;
 }
 
 export interface Route {

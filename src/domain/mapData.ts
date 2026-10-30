@@ -1,6 +1,5 @@
 import { buildLiveData, type SeaLiveDump } from "../data/sea-live";
 import { factions } from "../data/factions";
-import { deriveConnected, type ClaimState } from "./claims";
 import {
   buildFactionBoard,
   buildNodeBoard,
@@ -39,19 +38,9 @@ export function buildMapData(dump: SeaLiveDump) {
   const scoresByNode = new Map<string, FactionScore[]>(
     islands.map((node) => [
       node.id,
-      scoresForNode(node.id, contributions, factions),
+      scoresForNode(node, contributions, factions),
     ])
   );
-
-  // Owner là truth từ server snapshot (dump owner) — claim rule chỉ còn tính
-  // connectivity (phe nào còn nối base tới node qua chuỗi node mình own).
-  const ownerByNode = new Map(
-    islands.map((node) => [node.id, node.owner] as const)
-  );
-  const claims: ClaimState = {
-    ownerByNode,
-    connectedByNode: deriveConnected(islands, routes, ownerByNode),
-  };
 
   const knownGuildIds = new Set(
     Object.values(live.factionGuilds).flatMap((rows) =>
@@ -75,7 +64,6 @@ export function buildMapData(dump: SeaLiveDump) {
     contributions,
     routes,
     scoresByNode,
-    claims,
     ownedIslands: islands,
     // Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth.
     // Tab Phe: gắn guild scores server (dump factionGuilds).

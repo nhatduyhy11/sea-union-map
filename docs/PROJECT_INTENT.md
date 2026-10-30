@@ -29,7 +29,7 @@ Tham chiếu: [node-camp-info](../specs/node-camp-info.PNG).
 - Mỗi node có thông tin chi tiết về boss cứ điểm; thông tin này cố định.
 - Điểm của các phe tại node thay đổi theo diễn biến sự kiện.
 
-Quy tắc claim — ngưỡng điểm, đường nối từ base, tạm ngắt khi bị cắt và cách derive ownership — được ghi riêng tại [docs/SEA_EVENT_RULE.md](SEA_EVENT_RULE.md).
+Quy tắc claim — ngưỡng điểm, đường nối từ base, tạm ngắt khi bị cắt — được ghi riêng tại [docs/SEA_EVENT_RULE.md](SEA_EVENT_RULE.md); ownership lấy từ server, FE không tự derive.
 
 ### 3.2. Bảng người chơi tấn công cứ điểm
 

@@ -18,7 +18,10 @@ Nội dung dump (key → nguồn):
                    tên node/_type/_pointRequire, id == server id
 - ``owner``      ← ``map-snapshot.json``: game faction id đang giữ từng node
 - ``nodeRows``   ← ``boards-decoded.json``: [gameNodeId, playerId, score, campId]
-                   (server cắt top-20/node)
+                   (server cắt top-20/node — chỉ dùng cho danh sách player)
+- ``nodeFactionScores`` ← ``node-states.jsonl`` (0x72/0x0012 f2): gameNodeId →
+                   {campId: điểm} — tổng điểm từng phe tại node do server tính
+                   (không cắt); run không có file thì bỏ key, FE cộng nodeRows
 - ``playerBoard`` ← ``boards-decoded.json`` (117, 0): [rank, playerId, score, campId]
                    (BXH điểm server top-200 — nguồn sự thật tab Cá nhân)
 - ``factionGuilds`` ← ``guild-scores.json`` (0x72/0x0025): factionId →
@@ -151,6 +154,22 @@ def faction_guilds(crawl: Path) -> dict:
             for fid, detail in factions.items()}
 
 
+def node_faction_scores(crawl: Path) -> dict | None:
+    """node-states.jsonl (0x72/0x0012 f2) — điểm 4 phe tại từng node. Node bị
+    khoá/parse rỗng thì bỏ (FE tự cộng nodeRows cho node đó); run không có file
+    → None để dump bỏ hẳn key."""
+    path = crawl / "node-states.jsonl"
+    if not path.exists():
+        return None
+    scores = {}
+    with path.open(encoding="utf-8") as fh:
+        for line in fh:
+            state = json.loads(line)
+            if state.get("faction_scores"):
+                scores[str(state["id"])] = state["faction_scores"]
+    return scores
+
+
 def guild_brief_names(crawl: Path) -> dict:
     """guild-names.json (0x24/0x0035) — tên guild trực tiếp, không cần member
     brief; phủ cả guild mà mọi member đều bị refuse brief chéo server."""
@@ -254,12 +273,16 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
         "briefs": {str(p): b for p, b in briefs.items()},
         "baseDir": BASE_DIR,
     }
+    node_scores = node_faction_scores(crawl)
+    if node_scores is not None:
+        payload["nodeFactionScores"] = node_scores
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(
         json.dumps(payload, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8")
     print(f"[sea-to-ui] {out}: {len(camp)} camp rows, {len(owner)} owners, "
           f"{len(rows)} contribution rows, {len(board_rows)} playerBoard rows, "
+          f"{len(node_scores or {})} node faction scores, "
           f"{sum(len(g) for g in guilds_by_faction.values())} guild scores, "
           f"{len(guild_names)} guild names, {len(guild_power)} guild powers, "
           f"{len(briefs)} briefs, "

@@ -86,14 +86,17 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
   điểm trước; UI đưa Phe lên đầu vì là aggregate chính), tab Phe có sub-tab
   Chung + 4 phe. **Mô hình tương tác, cơ chế Filter mode và quy tắc lọc canvas theo guild/thành viên**
   (thay thế hoàn toàn việc lọc theo phe cũ) được đặc tả chi tiết tại [docs/LEADERBOARD_SPECS.md](../LEADERBOARD_SPECS.md).
-- **Mọi thống kê derive từ BXH player từng node** [chủ dự án 2026-10-25]: BXH
-  cá nhân in-game chỉ là top-K (K chưa biết tới khi vào event, không quan
-  trọng); nguồn dữ liệu thật là node leaderboard top-N mỗi node (§3.7, N ≥ K
-  đủ bắt mọi player có impact). `Contribution` = 1 dòng node leaderboard mang
-  sẵn tên/phe/guild; BXH cá nhân (top-K), BXH phe, thống kê theo guild/faction
-  đều quy về từ đó (`playersFromContributions` / `buildLeaderboard` /
-  `buildFactionBoard` / `buildNodeBoard` trong `src/domain/selectors/`);
-  guild theo player lấy từ brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm"
+- **Số tổng lấy từ server, player chỉ là chi tiết best-effort** [chủ dự án
+  2026-10-30]: điểm phe và điểm guild lấy từ bảng "Tổng quan phe" `0x72/0x0025`;
+  điểm từng phe tại node lấy từ node state `0x72/0x0012`; BXH cá nhân là board
+  117 (top-200). Node leaderboard (board 118, server cắt top-20/node, §3.7) chỉ
+  dùng cho danh sách player: expand player, member guild, player tại node.
+  `Contribution` = 1 dòng node leaderboard mang sẵn tên/phe/guild; không số
+  tổng nào được cộng từ đó, trừ khi dump thiếu key server tương ứng. Selector ở
+  `src/domain/selectors/` (`buildServerLeaderboard` / `buildFactionBoard` /
+  `buildNodeBoard` / `scoresForNode`); nguồn từng số xem
+  [SEA_STATS_RECONCILE.md](SEA_STATS_RECONCILE.md). Guild theo player lấy từ
+  brief `0x0d/0x001f` f11. Nội dung tab "Cứ điểm"
   phía frontend là diễn giải (node xếp theo tổng Điểm ST) — chưa có ảnh game,
   xem mục 7.
 - Đây là leaderboard **theo phe** ("chung") như intent §6.
@@ -168,7 +171,7 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 
 **Node trung lập:** đảo chưa phe nào chiếm sẽ hiện "Đảo chưa có chủ" + "Điểm chiếm đóng
 tối thiểu" + "Không có phe gây ST" — đúng cảnh ngày đầu event (chưa ai đủ điểm, hoặc phe
-top bị suspend / bị ngắt đường). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
+top bị ngắt đường — server đã áp rule, FE chỉ đọc owner). "Điểm chiếm đóng tối thiểu" chính là **claim threshold**
 trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node trong dump
 (`claimThreshold`).
 
@@ -237,9 +240,10 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
 | Bố cục node + đường nối            | `src/data/map-layout.ts` → `MapCanvas` / `IslandNode` / `RouteEdge`             |
 | Tên node thật (`1-23 Đảo Câu Cá`…) | thay tên mock (demo chưa transcribe tên)                                        |
 | Điểm chiếm đóng tối thiểu          | `claimThreshold` (đang equalize = 1)                                            |
-| Điểm phe/player tại node, sở hữu   | `NodeStats` + `src/domain/claims.ts` (derive ownership)                         |
-| Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — nguồn duy nhất của mọi thống kê           |
-| Điểm ST tổng player (BXH top-K)    | `buildLeaderboard(contributions)` — gộp node rows, xấp xỉ BXH in-game           |
+| Sở hữu node                        | `Island.owner` ← dump `owner` (`0x72/0x000c`, server đã áp rule ngắt đường)     |
+| Điểm phe tại node                  | `Island.factionScores` ← dump `nodeFactionScores` → `scoresForNode`, `NodeStats` |
+| Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — chỉ cho danh sách player                  |
+| Điểm ST tổng player (BXH top-200)  | `buildServerLeaderboard` ← dump `playerBoard` (board 117)                       |
 | BXH Phe (điểm phe = tổng guild)    | `buildFactionBoard` `src/domain/selectors/` → tab "BXH Phe" `src/components/panels/leaderboard/Leaderboard.tsx` |
 | Guild theo player (brief f11)      | `Player.guild` — demo fill tay, crawl qua `0x0d/0x001f`                         |
 | Phe + thành viên + tổng điểm       | `src/data/factions.ts`                                                          |

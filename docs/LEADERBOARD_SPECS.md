@@ -32,7 +32,7 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
 
 - **Tab Cá nhân:** rows = **board 117 của server** (BXH điểm, top-200: rank, player id, điểm, phe từ `additionInfo`; dump `playerBoard`). Không tự cộng điểm. Phần **expand** ("player này contribute vào đâu") mới match node boards 118 theo player id — node board là top-N/node nên đảo có thể thiếu nếu player không lọt top-N.
 - **Tab Phe:** guild rows + điểm guild = bảng **"Tổng quan phe"** của server (dump `factionGuilds`, key theo `guildId`); board 116 chỉ trả 4 row phe nên không đủ cho guild. Điểm phe = tổng điểm các guild row. Lực chiến guild lấy từ guild brief, thiếu thì cộng LC của member. **Duy nhất** danh sách thành viên trong guild expand được derive từ node boards (match guild qua `guildId` trong brief của member); player không có `guildId` hoặc `guildId` không có row server rơi vào bucket **"Không guild"**.
-- **Tab Cứ điểm:** list + expand đều là **board 118 per-node của server**.
+- **Tab Cứ điểm:** điểm từng phe tại node, tổng, % phe dẫn và ngưỡng chiếm = **node state `0x72/0x0012` của server** (dump `nodeFactionScores`); NodeDetails và popup trên canvas dùng cùng số này. Danh sách player khi expand là **board 118 per-node** nên ở node bị cắt Σ điểm player < điểm phe. Dump không có `nodeFactionScores` thì FE cộng board 118 (thấp hơn thật ở node đông).
 - **Giới hạn đã biết:** server cắt top-20/node (verify:
   [SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md) §3.5), top-200 global; player/guild
   ngoài ngưỡng không có dữ liệu, chấp nhận lệch (intent §5). 16 player S513/S514
@@ -111,9 +111,9 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
 
 - **Không phụ thuộc Filter mode**, không đụng filter canvas. State local của board (pill lọc, sort) — rời board là reset.
 - **Tiêu đề** đếm số cứ điểm đang hiển thị: `Xếp hạng cứ điểm (N)`.
-- **Pill lọc theo phe chiếm:** `Tất cả` + 4 phe (thứ tự cố định, text theo `labelColor`) + `Chưa chiếm` (đảo mà phe cao điểm nhất chưa chạm `claimThreshold`). Bấm lại pill đang chọn → về `Tất cả`.
+- **Pill lọc theo phe chiếm:** `Tất cả` + 4 phe (thứ tự cố định, text theo `labelColor`) + `Chưa chiếm` (đảo trung lập — owner server rỗng). Bấm lại pill đang chọn → về `Tất cả`.
 - **Thứ tự mặc định:** theo số đảo (`1-1, 1-2, …, 1-n, 2-1, …`, trung tâm cuối) — so từng đoạn số, không so chuỗi. Nút **"Sắp xếp theo điểm"** xoay vòng theo tổng Điểm ST: không sort → tăng dần → giảm dần → không sort.
-- **Row đảo:** `<id> <tên đảo>` / `K phe · <điểm phe cao nhất> (x%)` (màu `labelColor` của phe đó, % so với tổng điểm đảo, làm tròn xuống). Chưa đủ điểm claim thì nối thêm `/ <claimThreshold>`; đảo chưa có điểm chỉ hiển thị `/ <claimThreshold>`. Đảo đã chạm ngưỡng claim được tint màu phe chủ (nền nhạt + viền trái).
+- **Row đảo:** `<id> <tên đảo>` / `K phe · <điểm phe cao nhất> (x%)` (màu `labelColor` của phe đó, % so với tổng điểm đảo, làm tròn xuống). Đảo trung lập thì nối thêm `/ <claimThreshold>`; đảo chưa có điểm chỉ hiển thị `/ <claimThreshold>`. Đảo có owner được tint màu phe chủ (nền nhạt + viền trái).
 - **Expand đảo:** điểm từng phe (phe có điểm > 0) + bảng người chơi tấn công (top-N của node board).
 - **Mở expand = focus đảo trên canvas** (camera pan mượt tới đảo + đảo thành selected). Đa mở được — camera theo lần expand cuối. Panel **giữ nguyên ở bảng xếp hạng**, không tự chuyển sang tab "Cứ điểm" chi tiết.
 - **Đóng expand** không focus; nếu đảo đó đang selected thì gỡ selection, đảo khác đang selected thì giữ nguyên.

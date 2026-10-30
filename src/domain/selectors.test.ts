@@ -37,19 +37,14 @@ test("Queries prepare detail and allocation data without mutating the source", (
   assert.equal(details.attackers[0]?.player?.name, "Two");
   assert.equal(details.attackers[0]?.factionInfo?.id, "b");
   assert.deepEqual(
-    scoresForNode("missing", contributions, factions).map((f) => f.score),
+    scoresForNode(
+      { ...islands[0], id: "missing" },
+      contributions,
+      factions
+    ).map((f) => f.score),
     [0, 0]
   );
   assert.equal(nodeDetails("missing", islands, contributions, factions), null);
-  const flagged = nodeDetails(
-    "1-1",
-    islands,
-    contributions,
-    factions,
-    new Map([["1-1", new Set(["b"])]])
-  );
-  assert.equal(flagged?.scores.find((f) => f.id === "a")?.connected, false);
-  assert.equal(flagged?.scores.find((f) => f.id === "b")?.connected, true);
 });
 
 test("Node board lists islands by display id with faction breakdowns", () => {
@@ -63,6 +58,33 @@ test("Node board lists islands by display id with faction breakdowns", () => {
   );
   assert.equal(board[1].scores.find((f) => f.id === "a")?.score, 350);
   assert.equal(board[1].scores.find((f) => f.id === "b")?.score, 0);
+});
+
+test("Server faction scores override the capped node-board sum", () => {
+  // Server total cho "1-1" cao hơn Σ rows (a: 100, b: 200) — row bị cắt top-N.
+  const withServer = islands.map((island) =>
+    island.id === "1-1"
+      ? { ...island, factionScores: { a: 1_000, b: 500 } }
+      : island
+  );
+  const board = buildNodeBoard(withServer, contributions, factions);
+  assert.deepEqual(
+    board.map((entry) => [entry.island.id, entry.total]),
+    [
+      ["1-1", 1_500],
+      ["2-1", 350],
+    ]
+  );
+  const details = nodeDetails("1-1", withServer, contributions, factions);
+  assert.deepEqual(
+    details?.scores.map((f) => f.score),
+    [1_000, 500]
+  );
+  // Danh sách player vẫn là node-board rows.
+  assert.deepEqual(
+    details?.attackers.map((a) => a.playerId),
+    ["p2", "p1"]
+  );
 });
 
 test("Node board carries per-node attackers for the expanded row", () => {

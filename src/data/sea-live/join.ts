@@ -1,7 +1,8 @@
 // Join dump → model UI: game-id → layout-id, faction → hướng, ghép brief
 // player/guild. Hàm thuần, unit test ở ../sea-live.test.ts.
-// Live totals sum the per-node boards, which the server caps at top-20 rows —
-// verified server-side, see docs/sea/SOCKET_PROTOCOL.md §3.5.
+// Node totals come from the server node state (dump nodeFactionScores); the
+// per-node boards are capped at top-20 rows (docs/sea/SOCKET_PROTOCOL.md §3.5)
+// and only list players.
 
 import { layoutNodes, layoutRoutes } from "../map-layout";
 import type {
@@ -107,8 +108,27 @@ function buildIslands(dump: SeaLiveDump, index: CampIndex): Island[] {
       name: camp ? displayNameOf(camp) : node.name,
       owner: node.base ? (node.owner ?? null) : ownerDir,
       claimThreshold: camp?.pointRequire ?? 1,
+      factionScores:
+        gameId !== undefined ? factionScoresOf(dump, index, gameId) : undefined,
     };
   });
+}
+
+// Điểm phe server tại node, key theo direction FE; dump cũ / node thiếu state
+// → undefined (selector cộng nodeRows).
+function factionScoresOf(
+  dump: SeaLiveDump,
+  index: CampIndex,
+  gameId: number
+): Record<string, number> | undefined {
+  const raw = dump.nodeFactionScores?.[gameId];
+  if (!raw) return undefined;
+  const scores: Record<string, number> = {};
+  for (const [camp, score] of Object.entries(raw)) {
+    const dir = index.factionDir[Number(camp)];
+    if (dir) scores[dir] = score;
+  }
+  return scores;
 }
 
 // Node-board rows (dump nodeRows; server cắt top-20/node):

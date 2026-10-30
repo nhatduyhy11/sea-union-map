@@ -16,7 +16,7 @@ export function buildNodeBoard(
   return islands
     .filter((node) => !node.base)
     .map((island) => {
-      const scores = scoresForNode(island.id, contributions, factions);
+      const scores = scoresForNode(island, contributions, factions);
       const attackers = attackersForNode(island.id, contributions, factions);
       return {
         island,

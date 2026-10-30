@@ -6,10 +6,12 @@ import type { Island } from "../types";
 import { contributions, factions, islands } from "./testFixtures";
 
 test("Map projection keeps pinning independent from global stats and filtering", () => {
-  const scoresByNode = new Map([
-    ["1-1", scoresForNode("1-1", contributions, factions)],
-    ["2-1", scoresForNode("2-1", contributions, factions)],
-  ]);
+  const scoresByNode = new Map(
+    islands.map((island) => [
+      island.id,
+      scoresForNode(island, contributions, factions),
+    ])
+  );
   const nodes = buildMapNodes(
     islands,
     scoresByNode,
