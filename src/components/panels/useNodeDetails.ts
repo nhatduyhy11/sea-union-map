@@ -8,16 +8,9 @@ import { useSelection } from "../../stores/selection";
 // nhận kết quả làm prop.
 export function useNodeDetails() {
   const selected = useSelection((state) => state.selected);
-  const { claims, contributions, ownedIslands } = useMapData();
+  const { contributions, ownedIslands } = useMapData();
   return useMemo(
-    () =>
-      nodeDetails(
-        selected,
-        ownedIslands,
-        contributions,
-        factions,
-        claims.connectedByNode
-      ),
-    [selected, ownedIslands, contributions, claims]
+    () => nodeDetails(selected, ownedIslands, contributions, factions),
+    [selected, ownedIslands, contributions]
   );
 }

@@ -3,7 +3,7 @@ import { number } from "../../../utils/format";
 import { FactionScores } from "./FactionScores";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
-import type { FactionScore, NodeDetailData } from "../../../types";
+import type { NodeDetailData } from "../../../types";
 
 export interface NodeDetailsProps {
   details: NodeDetailData;
@@ -19,17 +19,9 @@ export function NodeDetails({
   onTogglePin,
 }: NodeDetailsProps) {
   const { island, owner, scores, total, attackers } = details;
-  // Leading faction for the claim: highest score among factions still linked
-  // to their base — a suspended top scorer yields to the next one.
-  const leader = scores.reduce<FactionScore | undefined>(
-    (best, faction) =>
-      faction.connected !== false &&
-      faction.score > 0 &&
-      (!best || faction.score > best.score)
-        ? faction
-        : best,
-    undefined
-  );
+  // Owner là truth server (đã áp rule ngắt đường) — hiện điểm của owner cạnh
+  // ngưỡng chiếm; node trung lập chỉ hiện ngưỡng.
+  const ownerScore = scores.find((faction) => faction.id === owner?.id);
   return (
     <div className={styles.detail}>
       <div className={styles.detailTop}>
@@ -60,9 +52,9 @@ export function NodeDetails({
           {island.base ? (
             <b>Không thể bị chiếm</b>
           ) : (
-            <b style={{ color: leader?.labelColor }}>
+            <b style={{ color: ownerScore?.labelColor }}>
               {number(island.claimThreshold)}
-              {leader && ` (${number(leader.score)})`}
+              {ownerScore && ` (${number(ownerScore.score)})`}
             </b>
           )}
         </div>

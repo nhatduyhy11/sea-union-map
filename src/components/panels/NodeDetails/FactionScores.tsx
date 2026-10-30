@@ -11,25 +11,14 @@ export function FactionScores({ scores, total }: FactionScoresProps) {
   return (
     <div className={styles.factionScores}>
       {scores.map((faction) => {
-        // Scores from factions cut off from their base never claim the node,
-        // so mark them instead of letting the raw number mislead.
-        const suspended = faction.connected === false && faction.score > 0;
         return (
-          <div key={faction.id} className={suspended ? styles.suspended : ""}>
+          <div key={faction.id}>
             <div>
               <span style={{ color: faction.labelColor }}>
                 <i style={{ background: faction.color }} />
                 {faction.name}
               </span>
-              <b>
-                {number(faction.score)}
-                {suspended && (
-                  <em title="Mất đường nối tới căn cứ — điểm tạm không xét để chiếm node">
-                    {" "}
-                    ngắt
-                  </em>
-                )}
-              </b>
+              <b>{number(faction.score)}</b>
             </div>
             <div className={styles.barTrack}>
               <div

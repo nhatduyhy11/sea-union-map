@@ -2,16 +2,6 @@
   margin-bottom: 15px;
 }
 
-.factionScores .suspended {
-  opacity: 0.45;
-}
-
-.factionScores em {
-  font-style: normal;
-  font-size: 9px;
-  color: #a04040;
-}
-
 .factionScores > div > div:first-child {
   display: flex;
   justify-content: space-between;

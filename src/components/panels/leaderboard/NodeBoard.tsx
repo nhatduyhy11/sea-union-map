@@ -13,8 +13,9 @@ import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
 // được — camera theo lần expand cuối. Đóng expand của đảo đang selected thì
 // gỡ selection (viền active) — đảo khác đang chọn thì giữ nguyên.
 // Không phụ thuộc Filter mode. Mặc định theo id đảo (1-1, 1-2 …); nút sort
-// xoay vòng tăng dần → giảm dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm; tiêu
-// đề đếm số cứ điểm đang hiển thị. State local, rời board là reset.
+// xoay vòng tăng dần → giảm dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm,
+// "Chưa chiếm" = đảo trung lập — đều theo owner server (đã áp rule ngắt
+// đường); tiêu đề đếm số cứ điểm đang hiển thị. State local, rời board là reset.
 export function NodeBoard({
   nodes,
   factions,
@@ -29,7 +30,7 @@ export function NodeBoard({
   const displayNodes = useMemo(() => {
     const owned =
       ownerFilter === UNCLAIMED
-        ? nodes.filter((entry) => !reachedClaim(entry))
+        ? nodes.filter((entry) => !entry.owner)
         : ownerFilter
           ? nodes.filter((entry) => entry.owner?.id === ownerFilter)
           : nodes;
@@ -87,7 +88,7 @@ export function NodeBoard({
         </button>
       </div>
       {displayNodes.map((entry, index) => {
-        const claimed = reachedClaim(entry);
+        const claimed = Boolean(entry.owner);
         return (
           <details
             key={entry.island.id}
@@ -101,7 +102,7 @@ export function NodeBoard({
           >
             <summary
               className={`${styles.summary} ${styles.tintedSummary}`}
-              style={tintStyle(claimed ? entry.owner?.color : undefined)}
+              style={tintStyle(entry.owner?.color)}
             >
               <span className={styles.rank}>{index + 1}</span>
               <div className={styles.factionName}>
@@ -150,19 +151,11 @@ const NEXT_SORT: Record<ScoreSort, ScoreSort> = {
   desc: "none",
 };
 
-// Giá trị filter riêng cho pill "Chưa chiếm" (đảo chưa phe nào đủ điểm claim).
+// Giá trị filter riêng cho pill "Chưa chiếm" (đảo trung lập, chưa phe nào chiếm).
 const UNCLAIMED = "__unclaimed";
 
-// Phe cao nhất đã chạm claimThreshold chưa — chưa thì row không tô màu phe.
-function reachedClaim(entry: NodeBoardEntry): boolean {
-  return (
-    entry.scores.length > 0 &&
-    topScore(entry).score >= entry.island.claimThreshold
-  );
-}
-
 // Điểm phe góp cao nhất (màu label phe đó) + % so với tổng điểm đảo, làm
-// tròn xuống số nguyên. Chưa đủ điểm claim thì nối thêm "/ điểm cần claim".
+// tròn xuống số nguyên. Đảo trung lập thì nối thêm "/ điểm cần claim".
 function TopShare({
   entry,
   claimed,

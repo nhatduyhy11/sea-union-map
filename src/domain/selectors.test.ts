@@ -45,15 +45,6 @@ test("Queries prepare detail and allocation data without mutating the source", (
     [0, 0]
   );
   assert.equal(nodeDetails("missing", islands, contributions, factions), null);
-  const flagged = nodeDetails(
-    "1-1",
-    islands,
-    contributions,
-    factions,
-    new Map([["1-1", new Set(["b"])]])
-  );
-  assert.equal(flagged?.scores.find((f) => f.id === "a")?.connected, false);
-  assert.equal(flagged?.scores.find((f) => f.id === "b")?.connected, true);
 });
 
 test("Node board lists islands by display id with faction breakdowns", () => {
