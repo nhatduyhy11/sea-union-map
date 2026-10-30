@@ -11,7 +11,7 @@ pieces now live in their own modules and also back the per-event walkthroughs
     gui/                vision-action: step DSL, golden matching, popclose
 
 Usage:
-    uv run python tools/socket_log/capture/capture.py --profile .tmp/m535 \
+    uv run python tools/socket_log/capture/capture.py --profile .tmp/p545 \
         --step sleep:8 --step shot:01_loaded --step click:463,218 ...
 """
 
@@ -36,7 +36,7 @@ async def main() -> None:
         description=f"{__doc__}\n{steps.__doc__}",
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--profile", default=".tmp/m535")
+    parser.add_argument("--profile", default=".tmp/p545")
     parser.add_argument("--url", default="https://hauntedroomvnh5.joynetgame.com/")
     parser.add_argument("--out", default=None, help="Output dir (default .tmp/socket-capture/run-<ts>)")
     parser.add_argument("--settle", type=float, default=6.0, help="Seconds to wait after navigation")

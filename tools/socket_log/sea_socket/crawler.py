@@ -39,10 +39,10 @@ just the raw run; report.py stays the standalone CLI to re-dump old runs or
 bake src/data/sea-live.json.
 
 Usage:
-    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
-    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --headless
-    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --no-dump
-    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain --gui-entry
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --headless
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --no-dump
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --gui-entry
 """
 
 import argparse
@@ -456,7 +456,7 @@ async def main() -> None:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--profile", default=".tmp/pmain")
+    parser.add_argument("--profile", default=".tmp/p545")
     parser.add_argument("--url", default="https://hauntedroomvnh5.joynetgame.com/")
     parser.add_argument("--out", default=None,
                         help="Output dir (default .tmp/sea-crawl/sea-crawl-<ts>)")

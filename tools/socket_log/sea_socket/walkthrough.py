@@ -39,7 +39,7 @@ from browser.session import close_session, launch_session
 from capture.frames import DEFAULT_OUT_DIR, FrameWriter
 from gui.steps import parse_step, run_step
 
-DEFAULT_PROFILE = ".tmp/pmain"
+DEFAULT_PROFILE = ".tmp/p545"
 LOCK_FILENAME = ".sea_capture.lock"
 
 # Boss-detail popup ("Chi tiết"): magnifier in the node-detail header is (383,251) —

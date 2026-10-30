@@ -78,7 +78,7 @@ Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 ```bash
 # [1] Crawl đủ 89 node + dump JSON cho FE trong 1 lệnh (--dump mặc định bật,
 #     headed, cần session đăng nhập)
-uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
+uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 #    → .tmp/sea-crawl/<run>/: map-snapshot.json, standings.json, node-states.jsonl,
 #      boards-decoded.json, players.jsonl, summary.json
 #    → public/sea-live-dev.json (transform từ baseline, refresh browser là thấy)
@@ -138,10 +138,10 @@ chi tiết 5 stream xem [`docs/mine_docs/MINE_STRUCTURE.md` §6](docs/mine_docs/
 
 ```bash
 # Snapshot nhanh: 1 pass state + tên, rồi thoát
-uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/pmain --snapshot
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/p545 --snapshot
 
 # Logger dài hạn, tự dừng sau 5 phút
-uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/pmain --duration 300
+uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/p545 --duration 300
 
 # Báo cáo từ JSONL đã ghi (mặc định --dir .tmp/mine-events)
 uv run python tools/socket_log/mine_socket/report.py

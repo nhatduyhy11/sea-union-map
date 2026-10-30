@@ -28,9 +28,9 @@
 | Thần Tử Lệ Lãnh    | rank 3, tag **"Phe ta"** — phe của acc chính [chốt 2026-10-24] |
 | Thành Đảo Linh Giá | rank 4                                                         |
 
-- Profile crawl là **`pmain`** (đã có session đăng nhập) — **không dùng** `p535`/`m535`
-  của event mỏ [chốt 2026-10-24]. Phe của acc không ảnh hưởng dữ liệu thu được:
-  BXH là public, phe nào check cũng như nhau.
+- Profile crawl là **`p545`** (đã có session đăng nhập) — **không dùng** profile cũ
+  `pmain`/`p535`/`m535` [đổi từ `pmain` sang `p545` 2026-10-30]. Phe của acc không ảnh hưởng
+  dữ liệu thu được: BXH là public, phe nào check cũng như nhau.
 - Đơn vị điểm của event là **"Điểm ST"** (điểm sát thương): player có Điểm ST tổng (BXH điểm),
   mỗi node có Điểm ST theo phe/player, node leaderboard xếp theo Điểm ST. Trước khai chiến tất cả = 0.
 - 4 phe khớp mô tả `docs/PROJECT_INTENT.md` §4.1 (4 phe, base 4 hướng đông/tây/nam/bắc).
@@ -178,7 +178,7 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
 - **Mục tiêu prove:** screenshot lobby (xác nhận navigate đúng) + **đủ detail của mọi node**:
   node detail (§3.6) + boss detail (§3.8) + node leaderboard (§3.7), kèm BXH phe/điểm,
   Tổng quan phe ×4, và quét đủ battle map.
-- **Chạy trên profile `pmain`** (`--profile .tmp/pmain`) — không dùng profile event mỏ.
+- **Chạy trên profile `p545`** (`--profile .tmp/p545`) — không dùng profile event mỏ.
 - **Boss không cần scrape popup:** `monsterId` đi kèm `GetCityInfoR` mà crawler đã
   pull mỗi node; tên/trait/hero tra config client.
 - Dữ liệu động (điểm, sở hữu, leaderboard) sẽ re-crawl theo chu kỳ khi tới giai đoạn
@@ -203,7 +203,7 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
 
 **Đã chốt (2026-10-24)**:
 
-1. Phe acc: **Thần Tử Lệ Lãnh**, profile crawl = **`pmain`** (không dùng p535); leaderboard public nên phe acc không ảnh hưởng dữ liệu.
+1. Phe acc: **Thần Tử Lệ Lãnh**, profile crawl = **`p545`** (không dùng profile cũ `pmain`/`p535`; đổi 2026-10-30); leaderboard public nên phe acc không ảnh hưởng dữ liệu.
 2. Cửa sổ chiến trường **lặp mỗi ngày**; ngoài giờ chiến trường đóng, leaderboard đứng yên — trong event check lúc nào cũng được.
 
 **Tạm skip theo chủ dự án (2026-10-24)** — không chặn crawl, tự đối chiếu khi gặp trong data:

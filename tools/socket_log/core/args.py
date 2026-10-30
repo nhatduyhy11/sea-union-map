@@ -14,7 +14,7 @@ import pathlib
 
 def build_parser(description: str) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument("--profile", default=".tmp/m535")
+    parser.add_argument("--profile", default=".tmp/p545")
     parser.add_argument("--url", default="https://hauntedroomvnh5.joynetgame.com/")
     parser.add_argument(
         "--dir",

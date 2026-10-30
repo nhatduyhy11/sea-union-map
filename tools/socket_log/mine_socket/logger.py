@@ -23,9 +23,9 @@ through the game socket for occupant ids of sectors 2-7, so the report gets a
 name for every seated player without any UI clicking.
 
 Usage:
-    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --snapshot   # one state+names pass, then exit
-    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --duration 300   # auto-stop after 5 min
-    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/m535 --webhook http://localhost:8000/mine-alerts
+    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/p545 --snapshot   # one state+names pass, then exit
+    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/p545 --duration 300   # auto-stop after 5 min
+    uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/p545 --webhook http://localhost:8000/mine-alerts
 """
 
 import asyncio

@@ -25,7 +25,7 @@ Regenerate sau mỗi lần crawl mới (mặc định dump vào `public/sea-live
 
 ```bash
 # 1 lệnh: crawl + transform + dump (config tự đọc từ baseline committed)
-uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pmain
+uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 # Re-dump run cũ khi cần:
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
 ```

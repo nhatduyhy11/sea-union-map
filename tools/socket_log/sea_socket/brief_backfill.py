@@ -7,7 +7,7 @@ forever. This tool re-opens the session, asks ONLY the missing ids, and
 merges the answers back into the run's players.jsonl. No map crawl.
 
     uv run python tools/socket_log/sea_socket/brief_backfill.py \
-        --run .tmp/sea-crawl/sea-crawl-<ts> --profile .tmp/pmain
+        --run .tmp/sea-crawl/sea-crawl-<ts> --profile .tmp/p545
 
 Files touched: <run>/players.jsonl (merged in place); WS evidence goes to
 <run>/backfill/ so the original capture stays intact.
@@ -103,7 +103,7 @@ async def run_backfill(page: Page, router: CrawlRouter, wanted: list[str]) -> in
 async def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run", required=True, help="crawl run dir to backfill")
-    parser.add_argument("--profile", default=".tmp/pmain")
+    parser.add_argument("--profile", default=".tmp/p545")
     parser.add_argument("--url", default="https://hauntedroomvnh5.joynetgame.com/")
     parser.add_argument("--browser", default="chrome")
     parser.add_argument("--settle", type=float, default=6.0,
