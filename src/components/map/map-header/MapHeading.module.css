@@ -70,11 +70,10 @@
   background: #fdf1f1;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
   /* Cụm debug không lọt chung hàng với title → rớt xuống dòng dưới thay vì
-     đẩy page tràn ngang. */
+     đẩy page tràn ngang / đè sidebar (tablet: cột map chỉ còn ~420px). */
   .mapHeading {
-    margin-bottom: 16px;
     flex-wrap: wrap;
     gap: 12px;
   }
@@ -83,6 +82,12 @@
   .debugGroup {
     flex-wrap: wrap;
     min-width: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .mapHeading {
+    margin-bottom: 16px;
   }
 
   .title {
