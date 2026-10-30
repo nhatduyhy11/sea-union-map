@@ -13,7 +13,7 @@ Usage:
     uv run python tools/socket_log/core/runtime_codec.py briefs body1.b64
 
     # cut a frame body out of a capture (true 8B header!) and pipe both steps:
-    uv run python tools/socket_log/core/runtime_codec.py --cut .tmp/socket-capture/bxh-run7 321
+    uv run python tools/socket_log/core/runtime_codec.py --cut .tmp/socket-capture/<run> 321
     # -> writes /tmp/f321-body.b64 and prints the header fields
 """
 

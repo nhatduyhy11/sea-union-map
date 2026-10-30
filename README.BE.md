@@ -147,7 +147,7 @@ uv run python tools/socket_log/mine_socket/logger.py --profile .tmp/p545 --durat
 uv run python tools/socket_log/mine_socket/report.py
 
 # Decode offline từ capture binary của capture/capture.py
-uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/run-mine1 mine-events
+uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/<run> mine-events
 ```
 
 ### Prerequisite

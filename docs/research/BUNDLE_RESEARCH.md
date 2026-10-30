@@ -80,8 +80,8 @@ Nút UI không sinh request ⇔ data render từ config client hoặc dict đã 
 
 ## 6. Evidence
 
-- Bundle đã tải: `.tmp/bundle/index.fc863.js` (2026-10-29).
-- Crawl đối chiếu proto: `.tmp/sea-crawl/sea-crawl-20261029-112844` — 89/89
+- Bundle `index.fc863.js` (2026-10-29).
+- Crawl đối chiếu proto 2026-10-29: 89/89
   `GetCityInfoR` có `cityInfo` f1..f4; `GetMapInfosR` f3.f2 = 112B packed guild id,
   f5 = 2 (phe account), f6 = packed `markCityIds`.
 - Boss verify: node 8 (1-23) `monsterId 1001` = "Tứ Hải-Oán Linh" ↔

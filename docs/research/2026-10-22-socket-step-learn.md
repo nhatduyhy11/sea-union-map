@@ -6,7 +6,7 @@
 
 > Bài học rút ra từ phiên POC lấy lịch sử khu mỏ (xem `docs/sea/SOCKET_PROTOCOL.md`).
 > Ghi lại từng bước CÁCH LÀM để tái sử dụng cho feature/dashboard tiếp theo.
-> Toàn bộ step chạy trên server VN, profile `.tmp/m535`, không cần mitmproxy hay sửa payload.
+> Toàn bộ step chạy trên server VN, profile đã đăng nhập sẵn, không cần mitmproxy hay sửa payload.
 
 ## Bước 0: Dựng lại bối cảnh từ code có sẵn (5 phút)
 
@@ -16,7 +16,7 @@ logic bot cũ) để biết:
 
 - Browser launch thế nào: `launch_persistent_context(user_data_dir=.tmp/<profile>)`,
   viewport 640x720, channel `chrome`, `service_workers: block`, URL VN/CN mặc định.
-- Profile `.tmp/m535` đã có session đăng nhập → không cần xử lý auth thủ công.
+- Profile đã có session đăng nhập → không cần xử lý auth thủ công.
 
 **Bài học:** tái dùng đúng cách runner launch browser thay vì viết riêng — giữ nguyên
 hành vi (popup guard, retry navigation) và session cũ vẫn còn hiệu lực.
@@ -41,7 +41,7 @@ hành vi (popup guard, retry navigation) và session cũ vẫn còn hiệu lực
 Chạy:
 
 ```bash
-uv run python tools/socket_log/socket_capture.py --profile .tmp/m535 --settle 12 --step shot:... --step sleep:...
+uv run python tools/socket_log/socket_capture.py --profile .tmp/<profile> --settle 12 --step shot:... --step sleep:...
 ```
 
 → Xem screenshot các mốc để biết trạng thái sau login (có popup AFK không, đã vào home chưa).

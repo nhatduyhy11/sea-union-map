@@ -4,9 +4,9 @@
 > `fN`/"art" ở đây là của thời điểm ghi — kết quả đã chốt và tên field thật xem
 > [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md) (gồm cả top-K).
 
-> Run chuẩn: `.tmp/socket-capture/sea-20261024-100433` — 8/8 stage, 634 frame, toàn bộ
-> shot theo `docs/sea/SEA_STRUCTURE.md` §2. Script: `tools/socket_log/sea_capture.py`
-> (branch `socket-capture`). Phân tích packet + kết luận data: `docs/sea/SEA_PACKET_ANALYSE.md`.
+> Capture chuẩn 2026-10-24: 8/8 stage, 634 frame, toàn bộ shot theo
+> `docs/sea/SEA_STRUCTURE.md` §2. Phân tích packet + kết luận data:
+> `docs/sea/SEA_PACKET_ANALYSE.md`.
 
 ## 1. Chạy gì, ra gì
 
@@ -149,7 +149,7 @@ error** — 6 lần throttle đều qua được ở retry đầu (backoff 1s). 
 BXH phe 4 hàng (additionInfo đủ `fightCap/president/cityNum/guilds/vicePresidents`,
 `cityNum` khớp tuyệt đối owner count: f3=8 đảo rank 1, f1=5 rank 2); BXH điểm
 top-200; 24 node board có data (332 hàng), 65 board rỗng (node không chủ, không ai
-đóng góp); 243 brief người chơi. Chuẩn hoá dataset so sánh: `.tmp/sea-crawl/sea-crawl-v4`.
+đóng góp); 243 brief người chơi.
 
 ### 6.8. Adapter crawl → UI đã lên sóng (2026-10-26)
 

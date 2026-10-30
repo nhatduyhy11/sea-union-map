@@ -4,8 +4,7 @@
 > [`../sea/EVENT_NAVIGATE_DECODE.md`](../sea/EVENT_NAVIGATE_DECODE.md). Doc này giữ cách
 > làm + số đo để tái dùng khi tìm key cho event khác.
 >
-> Nguồn: capture walkthrough `.tmp/socket-capture/sea-20261029-010721` + experiment E1
-> `.tmp/e1-inject-home{,-2}/` (có `result.json` mỗi run).
+> Nguồn: capture walkthrough 2026-10-29 + experiment E1/E2 (số đo ở §4).
 
 ## 1. Vấn đề gốc + số đo
 
@@ -46,14 +45,10 @@ cứng rồi popclose trên loading screen → click bị overlay nuốt → ch�
 
 ## 4. Evidence
 
-- Capture: `.tmp/socket-capture/sea-20261029-010721/` (index.jsonl + frames/ + screens/);
-  script đối chiếu offline `.tmp/e0_offline_confirm.py`.
-- E1: `.tmp/e1_inject_home.py` → `.tmp/e1-inject-home/` (pmain headed: login +11.1s,
-  snapshot 161ms) + `.tmp/e1-inject-home-2/` (pmain headless: +7.8s, 93ms) +
-  `.tmp/e1-inject-home-p545/` (+11.7s, 444ms) + `.tmp/e1-inject-home-pjen/` (cụm khác,
-  +12.2s, 119ms; xuất kèm `data.json`).
-- E2: `.tmp/sea-crawl/sea-crawl-pjen-payload/` — crawler payload entry đầu tiên,
-  login +10.6s, `summary.json` 89/89/482.
+- Capture walkthrough 2026-10-29: đối chiếu offline từng frame.
+- E1 (inject về home): headed login +11.1s, snapshot 161ms; headless +7.8s, 93ms;
+  profile p545 +11.7s, 444ms; cụm khác +12.2s, 119ms.
+- E2: crawler payload entry đầu tiên, login +10.6s, 89 node / 89 board / 482 brief.
 - Decode 1 frame: `uv run python tools/socket_log/core/decode.py <capture_dir> <n>`;
   build request rỗng: `sea_socket/protocol.py build_request`; double =
   `struct.unpack('<d')` trên bit pattern fixed64.

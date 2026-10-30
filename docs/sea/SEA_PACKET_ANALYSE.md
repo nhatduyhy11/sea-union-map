@@ -4,8 +4,7 @@
 > giả lập zoom/pan/click trên map (last-worse solution). Mọi mục đã chứng minh xong bị
 > drop khỏi danh sách việc; chỉ giữ NEED_CONFIRM.
 >
-> Nguồn dữ liệu: capture `.tmp/socket-capture/sea-20261024-100433` (634 frame, pre-war
-> 2026-10-24) + config table client bóc từ bundle game. Framing chung xem
+> Nguồn dữ liệu: capture walkthrough 634 frame (pre-war 2026-10-24) + config table client bóc từ bundle game. Framing chung xem
 > `docs/sea/SOCKET_PROTOCOL.md`; cấu trúc nghiệp vụ xem `docs/sea/SEA_STRUCTURE.md`.
 > Tên message/field lấy từ schema proto trong bundle [2026-10-29]. Cách đào bundle,
 > config, proto + manh mối chưa đào: [`../research/BUNDLE_RESEARCH.md`](../research/BUNDLE_RESEARCH.md)
@@ -136,8 +135,7 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 
 ## 4. Phụ lục — evidence paths
 
-- Capture run: `.tmp/socket-capture/sea-20261024-100433/` (index.jsonl + screens/).
-- Node-open request samples: `#443 {08 3f}` = id 63 (n03), `#455 {08 47}` = id 71 (n04).
-- Board request samples: `#379 {f1:116,f2:0}` (BXH phe), `#425 {f1:118,f2:8}` (node 8).
-- Map state: frame `#415` `0x72/0x000c` 23132B (f2×89, f3×4, f4×115).
+- Node-open request samples: `{08 3f}` = id 63 (n03), `{08 47}` = id 71 (n04).
+- Board request samples: `{f1:116,f2:0}` (BXH phe), `{f1:118,f2:8}` (node 8).
+- Map state: `0x72/0x000c` 23132B (f2×89, f3×4, f4×115).
 - Chi tiết điều hướng/coords màn hình: [`../research/2026-10-24-sea-capture.md`](../research/2026-10-24-sea-capture.md).

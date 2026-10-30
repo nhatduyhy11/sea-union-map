@@ -36,14 +36,14 @@ Nội dung dump (key → nguồn):
 Usage:
     # Dev: dump vào public/ (gitignored), refresh browser để xem
     uv run python tools/socket_log/sea_socket/report.py \
-        --crawl .tmp/sea-crawl/sea-crawl-v4
+        --crawl .tmp/sea-crawl/<run>
     # Ship: bake snapshot chính thức vào bundle
     uv run python tools/socket_log/sea_socket/report.py \
-        --crawl .tmp/sea-crawl/sea-crawl-v4 \
+        --crawl .tmp/sea-crawl/<run> \
         --out src/data/sea-live.json
     # Snapshot lịch sử theo ngày event → src/data/snapshots/<YYMMDD>/<server>.json
     uv run python tools/socket_log/sea_socket/report.py \
-        --crawl .tmp/sea-crawl/sea-crawl-v4 --snapshot [--server 590]
+        --crawl .tmp/sea-crawl/<run> --snapshot [--server 590]
 
 Snapshot (``--snapshot``) — ngày quy theo thời điểm CHẠY SCRIPT (giờ VN):
 trong khung chiến trường 10:00~22:00 là ngày hôm đó; từ 22:00 tới trước

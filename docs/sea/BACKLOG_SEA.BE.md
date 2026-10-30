@@ -42,7 +42,7 @@ brief player/guild hiện bị hỏi lại ở mỗi run dù id đã từng gặ
 
 ### 1b. Guild brief trả rỗng với guild inactive — crawler cần retry riêng
 
-Ghi 2026-10-28 (run `.tmp/sea-crawl/sea-crawl-20261028-192132`, profile p545).
+Ghi 2026-10-28.
 
 - **Hiện trạng**: guild brief `0x24/0x0035 → 0x0036` giờ là nguồn lực chiến
   guild (`f3.f16`, parse trong `core/protocol.py` → dump key `guildPower`).
