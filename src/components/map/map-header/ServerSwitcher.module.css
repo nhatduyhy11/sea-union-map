@@ -1,5 +1,6 @@
 .switcher {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 2px;
   padding: 2px;
   margin-left: 12px;

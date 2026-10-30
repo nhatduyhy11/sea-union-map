@@ -12,9 +12,12 @@
   font-weight: 600;
 }
 
+/* Dải server dài (10+ cụm) → wrap xuống dòng thay vì đẩy page tràn ngang. */
 .titleRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  row-gap: 6px;
   margin-top: 8px;
 }
 
@@ -23,6 +26,7 @@
   letter-spacing: -0.7px;
   font-weight: 600;
   margin: 0;
+  white-space: nowrap;
 }
 
 .headingMeta {
@@ -66,11 +70,10 @@
   background: #fdf1f1;
 }
 
-@media (max-width: 760px) {
+@media (max-width: 1100px) {
   /* Cụm debug không lọt chung hàng với title → rớt xuống dòng dưới thay vì
-     đẩy page tràn ngang. */
+     đẩy page tràn ngang / đè sidebar (tablet: cột map chỉ còn ~420px). */
   .mapHeading {
-    margin-bottom: 16px;
     flex-wrap: wrap;
     gap: 12px;
   }
@@ -79,6 +82,12 @@
   .debugGroup {
     flex-wrap: wrap;
     min-width: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .mapHeading {
+    margin-bottom: 16px;
   }
 
   .title {

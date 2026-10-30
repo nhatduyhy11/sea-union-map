@@ -43,12 +43,12 @@ export function MapHeading() {
         {showPalette && (
           <div className={styles.debugGroup}>
             <ColorSwatch
-              label="Nền canvas"
+              label="Nền"
               value={canvasBg}
               onChange={setCanvasBg}
             />
             <ColorSwatch
-              label="Trung lập"
+              label="Đảo"
               value={neutralHex8}
               onChange={applyNeutral}
             />
@@ -59,7 +59,7 @@ export function MapHeading() {
                 aria-pressed={debug}
                 title="Hiện tâm node + đường dash ngang qua node 4 và đường dọc qua các cứ điểm trục giữa"
               >
-                Debug tâm node
+                Lưới
               </button>
             )}
           </div>

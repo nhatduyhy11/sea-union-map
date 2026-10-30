@@ -1,7 +1,9 @@
+/* Cột map hẹp (tablet: sidebar chiếm chỗ) → wrap thay vì bị sidebar che. */
 .legend {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 4px 12px;
 }
 
 .entry {
@@ -27,7 +29,6 @@
   /* Tên phe dài, màn hẹp không đủ 1 hàng → wrap thay vì tràn ngang. */
   .legend {
     width: 100%;
-    flex-wrap: wrap;
     gap: 4px 10px;
     font-size: 9px;
   }

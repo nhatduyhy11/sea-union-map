@@ -50,11 +50,11 @@
     flex-wrap: wrap;
   }
 
+  /* Cao theo nội dung — height cố định cũ làm legend + thanh Lịch sử tràn
+     xuống đè tab sidebar; chiều cao map do .mapCanvas tự giữ. */
   .mainContent {
     width: 100%;
     flex-basis: 100%;
     padding: 20px 13px 0;
-    height: 72dvh;
-    min-height: 490px;
   }
 }
