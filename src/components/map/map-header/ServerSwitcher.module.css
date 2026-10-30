@@ -3,7 +3,6 @@
   flex-wrap: wrap;
   gap: 2px;
   padding: 2px;
-  margin-left: 12px;
   vertical-align: middle;
   border: 1px solid #d8dfe3;
   border-radius: 6px;
@@ -26,10 +25,6 @@
 }
 
 @media (max-width: 760px) {
-  .switcher {
-    margin-left: 8px;
-  }
-
   .switcher button {
     padding: 3px 6px;
   }

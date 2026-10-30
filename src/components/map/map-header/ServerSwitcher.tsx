@@ -2,7 +2,7 @@ import { servers } from "../../../data/snapshots";
 import { selectServer, useDataset } from "../../../stores/dataset";
 import styles from "./ServerSwitcher.module.css";
 
-// Chọn cụm server cạnh tiêu đề map. Danh sách tự lấy từ các snapshot đã có
+// Chọn cụm server, dòng riêng dưới tiêu đề map. Danh sách tự lấy từ các snapshot đã có
 // (src/data/snapshots) — không có nút tạo mới: data cụm chỉ sinh từ pipeline
 // crawl nội bộ.
 export function ServerSwitcher() {
