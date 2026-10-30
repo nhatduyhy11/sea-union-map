@@ -32,7 +32,9 @@ export function MapCanvas() {
         nodeOrigin={[0.5, 0.5]}
         fitView
         fitViewOptions={FIT_VIEW_OPTIONS}
-        minZoom={0.19}
+        // Sàn zoom đủ thấp để fit cả map (rộng ~5100) vào canvas điện thoại
+        // (~360px); 0.19 cũ kẹp fitView, màn hẹp chỉ thấy vùng giữa.
+        minZoom={0.05}
         maxZoom={2}
         translateExtent={mapBounds}
         nodesDraggable={false}

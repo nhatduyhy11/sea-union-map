@@ -33,3 +33,13 @@
   pointer-events: none;
   user-select: none;
 }
+
+@media (max-width: 760px) {
+  /* .mainContent mobile cao theo nội dung nên flex: 1 không còn chiều cao
+     để chia — canvas tự giữ khung. Vuông: map ngang ~3:2 fit theo bề rộng,
+     cao hơn nữa chỉ thừa nền trống. */
+  .mapCanvas {
+    flex: none;
+    aspect-ratio: 1;
+  }
+}

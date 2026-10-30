@@ -12,9 +12,12 @@
   font-weight: 600;
 }
 
+/* Dải server dài (10+ cụm) → wrap xuống dòng thay vì đẩy page tràn ngang. */
 .titleRow {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  row-gap: 6px;
   margin-top: 8px;
 }
 
@@ -23,6 +26,7 @@
   letter-spacing: -0.7px;
   font-weight: 600;
   margin: 0;
+  white-space: nowrap;
 }
 
 .headingMeta {

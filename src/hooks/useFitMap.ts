@@ -4,10 +4,11 @@ import type { AppNode } from "../types";
 
 // Single source of truth for how the map frames itself — shared by the
 // initial <ReactFlow fitViewOptions> and manual re-fit. duration: 0 = fit
-// tức thì, không animation zoom khi vừa mount. Padding theo trục: đứng/dưới
-// thoáng (0.75), hai bên hẹp (0.125).
+// tức thì, không animation zoom khi vừa mount. Padding theo trục: trên/dưới
+// thoáng hơn hai bên. Số = tỉ lệ khung (mỗi bên (1 - 1/(1+p))/2): y 0.75 cũ
+// ăn ~43% chiều cao, trước đây bị sàn minZoom 0.19 che nên không lộ.
 export const FIT_VIEW_OPTIONS = {
-  padding: { y: 0.75, x: 0.125 },
+  padding: { y: 0.15, x: 0.05 },
   duration: 0,
 } as const;
 
