@@ -44,8 +44,8 @@
   vị trí. Map hex `ghostWar/maps/map_ghost_01/02.bin` trong bundle KHÔNG phải map đảo
   (battlefield gameplay khác) — bỏ qua.
 - Verify chéo capture: 10 cặp (WS id ↔ shot header) khớp CampGVG, vd `WS id 63 →
-  "1-11Đảo Lều Trại"` == CampGVG id 63 (vụ 3 shot lệch tên = artifact popup lag:
-  [`../research/2026-10-24-sea-capture.md`](../research/2026-10-24-sea-capture.md) §3).
+  "1-11Đảo Lều Trại"` == CampGVG id 63 (3 shot lệch tên = artifact popup render lag
+  khi auto-click nhanh, request id vẫn đúng).
 - **Hiệu suất sản xuất** (popup node "12/h") = `_points` điểm mỗi `_interval` phút:
   type 2 `1/5` = **12/h** (4M-require: `2/5` = 24/h), type 3 `4/10`·`6/10` =
   **24/36/h**, type 4 `15/15` = **60/h**, type 5 `30/15` = **120/h**.
@@ -138,4 +138,3 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 - Node-open request samples: `{08 3f}` = id 63 (n03), `{08 47}` = id 71 (n04).
 - Board request samples: `{f1:116,f2:0}` (BXH phe), `{f1:118,f2:8}` (node 8).
 - Map state: `0x72/0x000c` 23132B (f2×89, f3×4, f4×115).
-- Chi tiết điều hướng/coords màn hình: [`../research/2026-10-24-sea-capture.md`](../research/2026-10-24-sea-capture.md).
