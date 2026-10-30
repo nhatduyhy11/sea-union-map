@@ -9,6 +9,7 @@ export {
   buildFactionBoard,
   NO_GUILD,
   rankFactions,
+  rankFactionsForHighlight,
   sortGuilds,
 } from "./board";
 export { nodeDetails } from "./nodeDetails";

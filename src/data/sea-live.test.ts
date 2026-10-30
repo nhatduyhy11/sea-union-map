@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import raw from "./sea-live.json";
 import { buildLiveData, displayNameOf, layoutIdOf, liveDump } from "./sea-live";
+import type { SeaLiveDump } from "./sea-live";
 
 // Ngoài Vite liveDump luôn là bản baked (sea-live.json).
 const { contributions, factionDir, factionGuilds, islands, playerBoard } =
@@ -156,4 +157,30 @@ test("factionGuilds keys map to directions; scores sum to a plausible total", ()
       );
     for (const row of rows) assert.match(row.name, /^(#|\S)/);
   }
+});
+
+test("fuel joins by direction; factions without base are dropped", () => {
+  const dump: SeaLiveDump = {
+    snapshotAt: "test",
+    camp: {
+      "1": { name: "Vịnh Thao Thiết", type: 1, pointRequire: 0 },
+      "2": { name: "1-1Đảo Thử", type: 2, pointRequire: 1 },
+    },
+    owner: { "1": 1, "2": 2 },
+    nodeRows: [],
+    playerBoard: [],
+    factionGuilds: {},
+    guildNames: {},
+    guildRoster: {},
+    briefs: {},
+    baseDir: { "Vịnh Thao Thiết": "north" },
+    // phe 2 (thiếu base → không có hướng) và 3 (phe lạ) bị bỏ khi join.
+    fuel: { "1": 673_961, "2": 178_912, "3": 999 },
+  };
+  assert.deepEqual(buildLiveData(dump).fuel, { north: 673_961 });
+
+  // Dump cũ thiếu key fuel → {} (UI ẩn nhiên liệu, highlight fallback lực chiến).
+  const legacy: SeaLiveDump = { ...dump };
+  delete legacy.fuel;
+  assert.deepEqual(buildLiveData(legacy).fuel, {});
 });

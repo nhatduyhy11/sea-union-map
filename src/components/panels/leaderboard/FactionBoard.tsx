@@ -1,7 +1,11 @@
 import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { compact } from "../../../utils/format";
-import { rankFactions, sortGuilds } from "../../../domain/selectors";
+import {
+  rankFactions,
+  rankFactionsForHighlight,
+  sortGuilds,
+} from "../../../domain/selectors";
 import { toggleFactionView } from "../../../stores/commands";
 import { usePanel } from "../../../stores/panel";
 import { GuildList } from "./GuildAccordion";
@@ -27,6 +31,16 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
 
   // List giữ thứ tự cố định; số hạng vẫn là thứ hạng theo điểm phe.
   const rankById = useMemo(() => rankFactions(factions), [factions]);
+  // Tổng điểm ST của 4 phe — hiển thị cạnh phải tiêu đề board.
+  const totalScore = useMemo(
+    () => factions.reduce((total, entry) => total + entry.score, 0),
+    [factions]
+  );
+  // Highlight riêng theo nhiên liệu (fallback Điểm phe khi dump thiếu fuel).
+  const highlightById = useMemo(
+    () => rankFactionsForHighlight(factions),
+    [factions]
+  );
 
   const faction = displayFactions.find((entry) => entry.id === focus);
   return (
@@ -54,6 +68,7 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
             key={entry.id}
             entry={entry}
             rank={rankById.get(entry.id) ?? 0}
+            leading={highlightById.get(entry.id) === 1}
             filterMode={filterMode}
             open={openFaction === entry.id}
           />
@@ -99,11 +114,13 @@ function FactionTabs({
 function FactionItem({
   entry,
   rank,
+  leading,
   filterMode,
   open,
 }: {
   entry: FactionBoardEntry;
   rank: number;
+  leading: boolean;
   filterMode: boolean;
   open: boolean;
 }) {
@@ -111,13 +128,9 @@ function FactionItem({
     <details className={shared.item} open={filterMode ? open : undefined}>
       <summary
         className={`${shared.summary} ${shared.tintedSummary}`}
-        // Highlight phe dẫn đầu tổng điểm: chỉ viền trái màu phe, không tô nền
-        // (bỏ qua khi chưa ai có điểm).
-        style={
-          entry.score > 0 && rank === 1
-            ? { borderLeftColor: entry.color }
-            : undefined
-        }
+        // Highlight phe dẫn đầu nhiên liệu (data cũ thiếu fuel → fallback Điểm
+        // phe, xem factionHighlight): chỉ viền trái màu phe, không tô nền.
+        style={leading ? { borderLeftColor: entry.color } : undefined}
         onClick={
           filterMode
             ? (event) => {
@@ -155,7 +168,8 @@ function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
   );
 }
 
-// 3 dòng: tên phe / số guild + tổng lực chiến [LC] / số đảo đang chiếm.
+// 3 dòng: tên phe / số guild + tổng lực chiến [LC] / số đảo đang chiếm +
+// Tổng Nhiên Liệu (ẩn khi dump thiếu fuel — data cũ).
 function FactionLines({ entry }: { entry: FactionBoardEntry }) {
   return (
     <div className={shared.factionName} style={{ color: entry.labelColor }}>
@@ -166,7 +180,10 @@ function FactionLines({ entry }: { entry: FactionBoardEntry }) {
           [{entry.power ? compact(entry.power) : "—"}]
         </span>
       </small>
-      <small>{entry.islands} đảo</small>
+      <small>
+        {entry.islands} đảo
+        {entry.fuel != null ? ` | ${compact(entry.fuel)} (nhiên liệu)` : ""}
+      </small>
     </div>
   );
 }
