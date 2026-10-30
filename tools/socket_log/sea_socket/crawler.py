@@ -1,7 +1,7 @@
 """Payload-driven SEA crawler: enumerate the battle map and pull every node by id.
 
 The GUI walkthrough (walkthrough.py) only proves the protocol; this crawler is
-the real collector. Entry has two modes (docs/sea/EVENT_NAVIGATE_DECODE.md):
+the real collector. Entry has two modes (request key: docs/sea/SOCKET_PROTOCOL.md §4.2):
 
     payload (mặc định) — wait_login_done (response 0x72/0x0002 đầu tiên) rồi
       inject 0x72/0x000b từ Home: snapshot ~9–13s sau nav, 0 click, không phụ

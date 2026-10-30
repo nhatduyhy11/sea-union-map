@@ -101,7 +101,11 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
 ### 4.2. Tranh Bá Tứ Hải / Sea Union (`module 0x72`)
 - Tài liệu nghiệp vụ:
   👉 **Tài liệu cấu trúc bản đồ & cứ điểm, config `CampGVGLO` + boss:** [`docs/sea/SEA_STRUCTURE.md`](SEA_STRUCTURE.md)
-  👉 **Payload điều hướng event (bỏ entry GUI):** [`docs/sea/EVENT_NAVIGATE_DECODE.md`](EVENT_NAVIGATE_DECODE.md)
+  👉 **Thí nghiệm payload entry (bỏ entry GUI) + quy trình tìm key cho event khác:** [`research/2026-10-29-event-navigate-experiment.md`](../research/2026-10-29-event-navigate-experiment.md)
+- **Boot sync (luôn có lúc login):** client gửi block request rỗng `0x0001` GetOutInfo, `0x0006` GetPlayerInfo, `0x0020` GetLogInfo, `0x0033` GetCampStrategy, `0x0036` GetNotice → response `0x0002`, `0x0007`, `0x0021`, `0x0034`, `0x0037`. `0x0007` GetPlayerInfoR = `{playerId, power (thể lực event), buyPowerNum}`.
+- **Request key của transition** (request rỗng, inject được từ Home ngay sau login — crawler payload entry dùng đúng 2 key này):
+  - Click banner vào sea lobby → **`0x001b`** GetCampsProduct → `0x001c`. `0x0036` cùng gửi nhưng thuộc boot block, không kéo `0x001c`.
+  - Click tâm map vào battlefield → **`0x000b`** GetMapInfos → `0x000c` (+ `0x0013` EnterScene → `0x0014 {err:0}` chỉ kích push `0x0019`, không cần). `0x0006` cùng gửi nhưng thuộc boot block.
 - Tóm tắt packet:
   - `0x72 / 0x0002` `GetOutInfoR` (response lúc boot): `{isOpen, serverList, startDt, endDt, state, isQualified}` — block đầu chốt boot sync, signal login-done của payload entry.
   - `0x72 / 0x000b` `GetMapInfos` → `0x000c` `GetMapInfosR`: Snapshot 89 cứ điểm (`cityInfos {cityId, occupyCamp}`), 4 phe (`campInfos {campId, guildIds, score, presidentId, vicePresidentId}`), 115 bang hội (`guildInfos {guildId, memberInfos}`), `campId` của account, `markCityIds`. `cityId` 1..89 trùng id config `CampGVGLO` ([`SEA_STRUCTURE.md`](SEA_STRUCTURE.md) §4.1): **1..4 = base 4 phe**, node thường = **5..89** → enumerate đủ node từ 1 frame, không cần zoom/pan map. Gửi lại `0x000b` bất kỳ lúc nào để re-sync.
