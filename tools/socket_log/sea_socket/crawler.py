@@ -62,22 +62,25 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from browser.process_guard import acquire_profile_lock, release_profile_lock
 from browser.session import open_game_session
-from browser.ws_inject import SEND_FRAME_JS
 from capture.frames import FrameWriter
-from core.decode import decode_proto
-from core.protocol import (
-    GUILD_BRIEF_CMD,
-    GUILD_MODULE,
-    parse_guild_brief,
-    parse_player_briefs,
+from sea_socket.crawl import LOCK_FILENAME
+from sea_socket.crawl.board_codec import decode_boards
+from sea_socket.crawl.briefs import (
+    fetch_guild_briefs,
+    fetch_player_briefs,
+    player_ids_from_boards,
+)
+from sea_socket.crawl.router import (
+    REQUEST_PACE,
+    CrawlRouter,
+    board_throttled,
+    inject_retrying,
+    state_throttled,
 )
 from sea_socket.protocol import (
     BATTLEFIELD_CMD,
     FACTION_DETAIL_CMD,
-    LOGIN_DONE_CMD,
-    MAP_SNAPSHOT_CMD,
     NODE_STATE_CMD,
-    PLAYER_MODULE,
     RANK_CMD,
     RANK_FACTION,
     RANK_MODULE,
@@ -85,9 +88,6 @@ from sea_socket.protocol import (
     RANK_PLAYER,
     SEA_MODULE,
     STANDINGS_CMD,
-    build_brief_frame,
-    build_request,
-    iter_frames,
     parse_faction_detail,
     parse_map_snapshot,
     parse_node_state,
@@ -96,156 +96,7 @@ from sea_socket.protocol import (
 from sea_socket.report import DEV_DUMP_OUT, dump_run
 from sea_socket.walkthrough import STAGES, run_stages
 
-BRIEF_CHUNK = 60  # client batches ~59 ids per request
-BRIEF_RETRY_CHUNK = 20  # re-ask size for the post-throttle tail
-BRIEF_RETRY_ROUNDS = 3
-BRIEF_RETRY_BACKOFF = 4.0  # per-round step: round N waits 4s*N -> 4s, 8s, 12s
-INJECT_TIMEOUT = 8.0
-REQUEST_PACE = 0.4  # seconds between injected requests
 SNAPSHOT_TIMEOUT = 20.0
-# Server throttles bursts of injected requests with err 10000035 (2026-10-26:
-# ~57 requests pass, then blocks of ~5 rejections arrive at a duty cycle; the
-# rejected set differs run to run while owners don't — quota, not node state).
-# Anomalous responses get retried with backoff; a state answer without an f2
-# node blob and a compressed board body under 24B are both throttle rejections.
-THROTTLE_RETRY_ATTEMPTS = 5
-LOCK_FILENAME = ".sea_crawler.lock"
-
-# Board decode with the game's own codec (see core/runtime_codec.py DECODE_JS):
-# QuickLZ when flagged, then BufferUtils.decode with the ranking schema def.
-DECODE_BOARDS_JS = r"""
-async (inputs) => {
-  const RP  = window.__require('RankingProto');
-  const RD  = window.__require('RankingDefine').RankingDefine;
-  const GDP = window.__require('GameDefProto');
-  const GDDm = window.__require('GameDefDefine');
-  const GDD = GDDm.GameDefDefine || GDDm;
-  const BU  = window.__require('BufferUtils').BufferUtils;
-  const PBRm = window.__require('PBReader');
-  const PBR = PBRm.PBReader || PBRm;
-  const QLZm = window.__require('QuickLZ');
-  const QLZ = QLZm.QuickLZ || QLZm;
-  // Attach schema descriptors by name suffix across every proto export —
-  // a direct property grab can miss and BU.decode then silently yields an
-  // empty object (seen 2026-10-26: all boards decoded to 0 rows).
-  for (const exports of [GDP, RP]) {
-    if (!exports) continue;
-    for (const clsName of Object.keys(exports)) {
-      const defName = clsName + '_Def';
-      if (typeof exports[clsName] === 'function') {
-        const def = GDD[defName] || RD[defName];
-        if (def) exports[clsName].getDefines = def;
-      }
-    }
-  }
-  const cls = RP.GetCommonRankR_Ranking_S2C;
-  if (!cls.getDefines) throw new Error('Ranking_S2C schema def not found');
-  return inputs.map(({b64, compress}) => {
-    try {
-      const raw = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-      const plain = compress ? QLZ.decompress(raw) : raw;
-      const vo = BU.decode(cls, PBR.create(plain));
-      const ranks = vo.ranks || [];
-      const n = ranks.length;
-      const rows = [];
-      for (let i = 0; i < n; i++) {
-        const r = ranks.getValueByIndex ? ranks.getValueByIndex(i) : ranks[i];
-        rows.push({rank: r.rank, score: r.key, player_id: String(r.rankId),
-                   addition_info: r.additionInfo, id_type: r.idType});
-      }
-      return {err: vo.err !== undefined ? String(vo.err) : null,
-              id_type: vo.idType,
-              self: vo.selfRank ? {rank: vo.selfRank.rank, score: vo.selfRank.key,
-                                   player_id: String(vo.selfRank.rankId),
-                                   addition_info: vo.selfRank.additionInfo} : null,
-              rows};
-    } catch (exc) {
-      return {error: String(exc)};
-    }
-  });
-}
-"""
-
-
-class CrawlRouter:
-    """Route WS frames: resolve pending injected requests + keep named datasets."""
-
-    def __init__(self, writer: FrameWriter) -> None:
-        self.writer = writer
-        self.pending: dict[int, asyncio.Future] = {}
-        self.seq = 0xF0  # INJECT_SEQ convention: game client ignores these replies
-        self.map_snapshot: dict | None = None
-        self.login_done_ms: int | None = None  # writer ms of first R 0x72/0x0002
-        self.briefs: dict[str, dict] = {}
-        self.node_states: dict[int, dict] = {}
-        self.board_bodies: dict[tuple[int, int], tuple[bytes, bool]] = {}
-
-    def next_seq(self) -> int:
-        self.seq = self.seq % 0xFF + 1  # 0xF1..0xFF, then 0x01.. — never 0x00
-        return self.seq
-
-    async def inject(self, page: Page, module: int, cmd: int,
-                     fields: list[tuple[int, int]]) -> tuple[dict, bytes]:
-        seq = self.next_seq()
-        fut: asyncio.Future = asyncio.get_running_loop().create_future()
-        self.pending[seq] = fut
-        frame = build_request(module, cmd, seq, fields)
-        await self.writer.mark(f"inject:{module:02x}/{cmd:04x}:{fields}")
-        sent = await page.evaluate(SEND_FRAME_JS, list(frame))
-        if not sent:
-            self.pending.pop(seq, None)
-            raise RuntimeError("game socket not ready for injection")
-        try:
-            return await asyncio.wait_for(fut, INJECT_TIMEOUT)
-        except asyncio.TimeoutError:
-            self.pending.pop(seq, None)
-            raise RuntimeError(
-                f"no response to {module:02x}/{cmd:04x} seq={seq:#x} within {INJECT_TIMEOUT}s"
-            ) from None
-
-    def route(self, direction: str, payload) -> None:
-        if direction != "R" or not isinstance(payload, bytes):
-            return
-        try:
-            for header, body in iter_frames("R", payload):
-                fut = self.pending.pop(header["seq"], None)
-                if fut is not None and not fut.done():
-                    fut.set_result((header, body))
-                module, cmd = header["module"], header["cmd"]
-                if module == SEA_MODULE and cmd == MAP_SNAPSHOT_CMD and self.map_snapshot is None:
-                    self.map_snapshot = parse_map_snapshot(body)
-                elif module == SEA_MODULE and cmd == LOGIN_DONE_CMD and self.login_done_ms is None:
-                    self.login_done_ms = self.writer.elapsed_ms()
-                    print(f"[login] R 0x72/0x0002 at +{self.login_done_ms}ms", flush=True)
-                elif module == PLAYER_MODULE and cmd == 0x0020:
-                    for brief in parse_player_briefs(body):
-                        if brief.get("id") is not None:
-                            self.briefs[str(brief["id"])] = brief
-        except Exception as exc:  # noqa: BLE001 — a router bug must never kill the session
-            print(f"[route] frame handling failed: {exc}", flush=True)
-
-    def attach(self, ws: WebSocket, ws_url: str) -> None:
-        ws.on("framereceived", lambda payload: (
-            self.route("R", payload),
-            asyncio.ensure_future(self.writer.write_frame("R", ws_url, payload)),
-        ))
-        ws.on("framesent", lambda payload: asyncio.ensure_future(
-            self.writer.write_frame("S", ws_url, payload)))
-
-
-async def inject_retrying(page: Page, router: CrawlRouter, module: int, cmd: int,
-                          fields: list[tuple[int, int]], is_anomalous) -> tuple[dict, bytes, int]:
-    """inject() with throttle backoff; returns (header, body, retries_used)."""
-    retries = 0
-    header, body = await router.inject(page, module, cmd, fields)
-    while is_anomalous(header, body) and retries < THROTTLE_RETRY_ATTEMPTS:
-        wait = min(2 ** retries, 10.0)
-        retries += 1
-        print(f"[throttle] {module:02x}/{cmd:04x} {fields} — retry {retries} in {wait:.0f}s",
-              flush=True)
-        await asyncio.sleep(wait)
-        header, body = await router.inject(page, module, cmd, fields)
-    return header, body, retries
 
 
 def rollup_factions(states: dict[int, dict]) -> dict[int, int]:
@@ -306,12 +157,6 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
     states_path = out_dir / "node-states.jsonl"
     boards_path = out_dir / "node-boards.jsonl"
 
-    def state_throttled(_header, body) -> bool:
-        return not any(field == 2 for field, _w, _v in decode_proto(body))
-
-    def board_throttled(_header, body) -> bool:
-        return len(body) < 24  # err body: 12B compressed; real boards ≥ 32B
-
     with states_path.open("w", encoding="utf-8") as states_fh, \
             boards_path.open("w", encoding="utf-8") as boards_fh:
         for node_id in node_ids:
@@ -359,33 +204,15 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
         json.dumps(faction_details, ensure_ascii=False, indent=1),
         encoding="utf-8")
 
-    # Guild names (0x24/0x0035, một request/guild): đặt tên cả guild mà mọi
-    # member đều bị refuse brief chéo server (OLYMPUS & co, 2026-10-27).
-    guild_briefs = {}
-    for gid in sorted({g["guild_id"]
-                       for detail in faction_details.values()
-                       for g in detail["guilds"]}):
-        try:
-            _h, body = await router.inject(
-                page, GUILD_MODULE, GUILD_BRIEF_CMD, [(1, gid)])
-            guild_briefs[str(gid)] = parse_guild_brief(body)
-        except RuntimeError as exc:
-            print(f"[guild] {gid}: {exc}", flush=True)
-        await asyncio.sleep(REQUEST_PACE)
+    guild_ids = sorted({g["guild_id"]
+                        for detail in faction_details.values()
+                        for g in detail["guilds"]})
+    guild_briefs = await fetch_guild_briefs(page, router, guild_ids)
     (out_dir / "guild-names.json").write_text(
         json.dumps(guild_briefs, ensure_ascii=False, indent=1),
         encoding="utf-8")
 
-    # Decode every collected board with the game runtime (single JS round-trip).
-    inputs = [
-        {"key": list(key), "b64": base64.b64encode(body).decode(), "compress": compress}
-        for key, (body, compress) in router.board_bodies.items()
-    ]
-    decoded = await page.evaluate(DECODE_BOARDS_JS, inputs)
-    decoded_boards = {tuple(item["key"]): row for item, row in zip(inputs, decoded)}
-    for key, row in decoded_boards.items():
-        if "error" in row:
-            print(f"[board] {key}: decode error {row['error']}", flush=True)
+    decoded_boards = await decode_boards(page, router.board_bodies)
     (out_dir / "boards-decoded.json").write_text(
         json.dumps({str(k): v for k, v in decoded_boards.items()},
                    ensure_ascii=False, indent=1),
@@ -393,45 +220,8 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
     )
 
     # Player briefs for every rankId seen in any board (ssid-tracked batches).
-    # id_type 1 = player; board 116 rows are factions (id_type 5, ids "1".."4")
-    # — the brief endpoint refuses those, asking for them is wasted quota.
-    ids = set()
-    for row in decoded_boards.values():
-        for entry in row.get("rows", []):
-            if entry.get("id_type") == 1:
-                ids.add(entry["player_id"])
-        if row.get("self"):
-            ids.add(row["self"]["player_id"])
-    ordered = sorted(ids, key=int)
-
-    async def ask_briefs(wanted: list[str], chunk: int) -> None:
-        for start in range(0, len(wanted), chunk):
-            missing = [pid for pid in wanted[start : start + chunk] if pid not in router.briefs]
-            if not missing:
-                continue
-            seq = router.next_seq()
-            fut: asyncio.Future = loop.create_future()
-            router.pending[seq] = fut
-            await page.evaluate(SEND_FRAME_JS, list(build_brief_frame(seq, missing)))
-            try:
-                await asyncio.wait_for(fut, INJECT_TIMEOUT)
-            except asyncio.TimeoutError:
-                router.pending.pop(seq, None)
-                print(f"[briefs] timeout for {len(missing)} ids", flush=True)
-            await asyncio.sleep(REQUEST_PACE)
-
-    await ask_briefs(ordered, BRIEF_CHUNK)
-    # A throttled batch can come back empty (2026-10-27: one 60-id batch
-    # answered 0 briefs) — re-ask the tail in smaller chunks with backoff.
-    # Ids still missing after this are server-refused (cross-server group);
-    # brief_backfill.py documents them rather than retrying forever.
-    for attempt in range(BRIEF_RETRY_ROUNDS):
-        still = [pid for pid in ordered if pid not in router.briefs]
-        if not still:
-            break
-        await asyncio.sleep(BRIEF_RETRY_BACKOFF * (attempt + 1))
-        print(f"[briefs] retry {attempt + 1}: {len(still)} ids missing", flush=True)
-        await ask_briefs(still, BRIEF_RETRY_CHUNK)
+    await fetch_player_briefs(
+        page, router, sorted(player_ids_from_boards(decoded_boards), key=int))
 
     players_path = out_dir / "players.jsonl"
     with players_path.open("w", encoding="utf-8") as fh:
