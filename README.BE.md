@@ -72,7 +72,7 @@ Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 | `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (proof protocol + fallback `--gui-entry` của crawler)                           |
 | `sea_socket/crawler.py`     | **Collector chính**: entry payload mặc định — wait-login `0x72/0x0002` + inject `0x000b`/`0x001b`, 0 click (xem [`docs/sea/EVENT_NAVIGATE_DECODE.md`](docs/sea/EVENT_NAVIGATE_DECODE.md); `--gui-entry` replay stage cũ); vào map xong inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game; `--dump` (mặc định bật) tự transform + dump ngay sau crawl |
 | `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
-| `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler; lệch số ở `docs/sea/STATS_MISMATCH.md` |
+| `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler |
 | `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"             |
 
 ```bash
@@ -207,7 +207,6 @@ chỗ lấy data ở `src/data/sea-live.ts`, join giữ nguyên.
 - [`docs/LEADERBOARD_SPECS.md`](docs/LEADERBOARD_SPECS.md) — đặc tả BXH, cơ chế lọc guild/player canvas và tương tác UI/UX
 - [`docs/SEA_EVENT_RULE.md`](docs/SEA_EVENT_RULE.md) — quy tắc game về chiếm cứ điểm: ngưỡng, đường nối, derive ownership
 - [`docs/sea/SEA_LIVE_DATA.md`](docs/sea/SEA_LIVE_DATA.md) — các file JSON crawl sea: dump vs baked, dev dùng file nào, build/deploy dùng file nào
-- [`docs/sea/STATS_MISMATCH.md`](docs/sea/STATS_MISMATCH.md) — các lệch số UI vs game đã biết (backlog handoff)
 - [`docs/sea/`](docs/sea/) — docs tầng crawler/decode: protocol WS, phân tích packet, research notes & run capture
 - `docs/assets/` — ảnh in-game dùng đối chiếu protocol
 - [`docs/sea/BACKLOG_SEA.BE.md`](docs/sea/BACKLOG_SEA.BE.md) — các việc đã nhận biết chưa làm của nhánh Tranh Bá Tứ Hải & Web UI

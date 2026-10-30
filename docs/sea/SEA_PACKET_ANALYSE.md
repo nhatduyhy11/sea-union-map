@@ -62,10 +62,17 @@ Client click đảo chỉ sinh các request sau — đều gửi được thủ 
 | -------------------------------- | -------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `0x72/0x0011` `GetCityInfo`      | `{1 cityId}`                     | `0x72/0x0012` `GetCityInfoR`      | `{1 err, 2 cityInfo: CityInfo {1 cityId, 2 campHurtScores: map<campId, Điểm ST>, 3 occupyCamp, 4 monsterId, 5 campScores: map<campId, double>}, 3 occupyRewardCampId}` |
 | `0x72/0x003e` `GetSweepInfo`     | `{1 cityId}`                     | `0x72/0x003f` `GetSweepInfoR`     | `{1 err, 2 cityId, 3 myTotalOutput (double), 4 hurtScore}` — **của chính account crawl** (càn quét), không phải state node → toàn 0 khi acc chưa đánh node đó                            |
-| `0x0c/0x0002` `GetCommonRank`    | `{1 rankType: 118, 2 rankSubType: cityId}` | `0x0c/0x0003` `GetCommonRankR` | node leaderboard; pre-war 32B (rỗng)                                                                                                                                      |
+| `0x0c/0x0002` `GetCommonRank`    | `{1 rankType: 118, 2 rankSubType: cityId}` | `0x0c/0x0003` `GetCommonRankR` | node leaderboard; pre-war 32B (rỗng). **Server chỉ trả top-20/node, gộp mọi phe**, request không có tham số phân trang (xem ghi chú dưới bảng) |
 | `0x0c/0x0002` `GetCommonRank`    | `{1 rankType: 116 / 117, 2 rankSubType: 0}` | `0x0c/0x0003` `GetCommonRankR` | BXH Phe / BXH điểm (331B, có data thật)                                                                                                                                 |
 | `0x0d/0x001f` `GetBasePlayerInfos` | `{1 playerIds (packed)}`       | `0x0d/0x0020` `GetBasePlayerInfosR` | `{1 err, 2 baseInfos: BaseInfo_GameDef}` id→tên player (POC xong ở event mỏ, tái dùng)                                                                                                |
 
+- **Top-20 của board 118 là do server cắt, không phải client** (verify 2026-10-30):
+  crawler lưu nguyên body response của server rồi decode hết mảng `ranks`, không
+  giới hạn số row. Cùng
+  decoder đó trả đủ 200 row cho board 117, còn mọi board 118 đều tối đa 20 row. Vì vậy
+  Σ row của node thấp hơn `campHurtScores` ở node có trên 20 người chơi. Có thể một phe
+  có điểm tại node nhưng không có row nào, vì 20 row đã bị phe khác chiếm hết (node 14:
+  phe 2 có 12.473 điểm, 0 row). Không lấy thêm được → chấp nhận lệch (intent §5).
 - `rankType 118/116/117` = **board id**: 118 = per-node, 116 = BXH phe, 117 = BXH điểm.
   `GetCommonRankR {1 err, 2 selfRank, 3 ranks, 4 idType, 5 rankLength}`, mỗi row
   `CommonRankItem {1 rank, 2 key (điểm, double), 3 rankId (player/phe id),

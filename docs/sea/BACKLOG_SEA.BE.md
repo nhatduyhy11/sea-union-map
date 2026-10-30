@@ -1,8 +1,7 @@
 # BACKLOG SEA — Kế hoạch & Các việc tồn đọng
 
 > Việc ghi vào đây khi phát hiện hoặc chốt yêu cầu mới; mỗi mục ghi đủ context +
-> hướng fix để người sau pick up không phải đào lại. Lệch số UI vs game riêng
-> một file: [`docs/sea/STATS_MISMATCH.md`](STATS_MISMATCH.md).
+> hướng fix để người sau pick up không phải đào lại.
 >
 
 ---
@@ -72,6 +71,22 @@ Ghi 2026-10-28 (run `.tmp/sea-crawl/sea-crawl-20261028-192132`, profile p545).
 `report.py --snapshot` đang mặc định `--server 517`; crawl cụm khác phải chỉnh
 tay cờ `--server`. Hướng làm: crawler ghi cụm vào metadata run → `report.py`
 tự đọc, `--server` chỉ còn để override.
+
+### 2. Lấy tổng điểm node từ `faction_scores` thay vì cộng board rows (key finding 2026-10-30)
+
+Node state (`0x72/0x0012`) có sẵn **tổng điểm từng phe tại node**, là 4 con số do
+server tính. Board 118 thì server cắt ở top-20/node
+([SEA_PACKET_ANALYSE.md](SEA_PACKET_ANALYSE.md)), nên cộng row không ra tổng đúng.
+
+- **Hiện trạng**: crawler đã lưu `faction_scores` (`node-states.jsonl`) nhưng
+  `report.py` không dump; FE tính tổng node bằng sum(board rows). Đo 2026-10-30:
+  30/89 node bị thiếu, nặng nhất node 54 thiếu 20.6%.
+- **Hướng làm**:
+  - `report.py`: dump thêm điểm phe per (node, phe).
+  - FE: tổng điểm node (tab Cứ điểm, NodeDetail) và derive ownership lấy từ số
+    này; board rows chỉ dùng cho chi tiết player.
+  - Có thể hiện phần "khác" = điểm phe − Σ board rows ở node bị cắt, để người xem
+    biết danh sách player không đủ.
 
 ---
 

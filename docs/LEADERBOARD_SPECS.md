@@ -39,9 +39,10 @@ $$\text{Phe} \longrightarrow \text{Cá nhân} \longrightarrow \text{Cứ điểm
   thành viên trong guild expand được derive từ node boards (match guild qua
   briefs của member).
 - **Tab Cứ điểm:** list + expand đều là **board 118 per-node của server**.
-- **Giới hạn đã biết:** server cắt top-20/node, top-200 global; player/guild
-  ngoài ngưỡng không có dữ liệu — xem [docs/sea/STATS_MISMATCH.md](sea/STATS_MISMATCH.md)
-  (bao gồm 16 player S513/S514 server không trả brief).
+- **Giới hạn đã biết:** server cắt top-20/node (verify:
+  [SEA_PACKET_ANALYSE.md](sea/SEA_PACKET_ANALYSE.md)), top-200 global; player/guild
+  ngoài ngưỡng không có dữ liệu, chấp nhận lệch (intent §5). 16 player S513/S514
+  server không trả brief.
 
 ### 1.4. Tên phe & màu (Owner chốt 2026-10-28)
 

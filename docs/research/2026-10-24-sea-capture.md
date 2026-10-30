@@ -2,8 +2,7 @@
 
 > **Nhật ký research (lịch sử, không cập nhật).** Tên tool/đường dẫn và cách gọi field
 > `fN`/"art" ở đây là của thời điểm ghi — kết quả đã chốt và tên field thật xem
-> [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md); throttle / pool dao
-> động / top-K xem [`../sea/STATS_MISMATCH.md`](../sea/STATS_MISMATCH.md).
+> [`../sea/SEA_PACKET_ANALYSE.md`](../sea/SEA_PACKET_ANALYSE.md) (gồm cả top-K).
 
 > Run chuẩn: `.tmp/socket-capture/sea-20261024-100433` — 8/8 stage, 634 frame, toàn bộ
 > shot theo `docs/sea/SEA_STRUCTURE.md` §2. Script: `tools/socket_log/sea_capture.py`
@@ -167,8 +166,7 @@ crawl + CampGVG → `src/data/sea-live.ts`; `mapData.ts` có công tắc `LIVE`.
   "tự đối chiếu" khép lại.
 - Verify UI: node 1-23 = game 8 hiện 2.307.224 tổng, top-1 VNChiến 850.529
   (khớp run GUI 14:29 từng chữ); game 63 → "1-11Đảo Lều Trại" khớp §1.2.
-- Lệch số đã biết (board top-20, BXH top-200, boss chưa map…) liệt kê +
-  phương án fix trong `docs/sea/STATS_MISMATCH.md` — handoff cho phase sau.
+- Lệch số đã biết (board top-20, BXH top-200, boss chưa map…) — handoff cho phase sau.
 
 ### 6.7. Finding dữ liệu: pool "Điểm ST" node dao động, board theo người chơi ổn định
 

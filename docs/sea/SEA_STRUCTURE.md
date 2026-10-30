@@ -106,7 +106,7 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 - Dòng cố định đáy màn: chính mình (HuAsura) + **"Điểm ST: 0"** — điểm tổng của player.
 - Đây là bảng "thống kê tổng điểm các player" của intent §4. Tổng Điểm ST của một
   player qua các node board **không** bắt buộc bằng Điểm ST trên BXH này (server cắt
-  top-K, chấp nhận lệch — intent §5, [STATS_MISMATCH.md](STATS_MISMATCH.md)).
+  top-K, chấp nhận lệch — intent §5).
 
 ### 3.4. Tổng quan phe — `docs/assets/sea-socket/5-4faction-detail.png` (detail faction)
 
