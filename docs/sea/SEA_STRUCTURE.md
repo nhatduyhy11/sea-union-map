@@ -244,6 +244,7 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
 | Điểm phe tại node                  | `Island.factionScores` ← dump `nodeFactionScores` → `scoresForNode`, `NodeStats` |
 | Node leaderboard top-N từng node   | `Contribution` (mang tên/phe/guild) — chỉ cho danh sách player                  |
 | Điểm ST tổng player (BXH top-200)  | `buildServerLeaderboard` ← dump `playerBoard` (board 117)                       |
+| Nhiên liệu phe (BXH Phe in-game)   | dump `fuel` (`0x72/0x001c`) → `FactionBoardEntry.fuel`, highlight `rankFactionsForHighlight` |
 | BXH Phe (điểm phe = tổng guild)    | `buildFactionBoard` `src/domain/selectors/` → tab "BXH Phe" `src/components/panels/leaderboard/Leaderboard.tsx` |
 | Guild theo player (brief f11)      | `Player.guild` — demo fill tay, crawl qua `0x0d/0x001f`                         |
 | Phe + thành viên + tổng điểm       | `src/data/factions.ts`                                                          |
