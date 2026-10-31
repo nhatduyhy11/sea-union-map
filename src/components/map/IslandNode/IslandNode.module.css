@@ -23,6 +23,13 @@
   opacity: 1;
 }
 
+/* Đảo chưa chủ có đóng góp khớp filter guild/player (.hot) không hưởng dim
+   neutral nền — đang có giao tranh phải nổi như đảo có chủ, popup điểm giữ
+   nguyên độ rõ khi showAll (không cần hover). */
+.neutral.hot {
+  opacity: 1;
+}
+
 .dim {
   opacity: 0.2;
 }
@@ -111,7 +118,7 @@
 }
 
 .pin.pinned {
-  color: #0d9a6f;
+  color: var(--highlight-green);
 }
 
 .base .islandIcon {

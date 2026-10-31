@@ -4,6 +4,9 @@
   background: #eef1f3;
   font-synthesis: none;
   font-size: 13px;
+
+  /* Xanh accent chung cho trạng thái nổi bật: ghim đảo, glow khi filter theo player. */
+  --highlight-green: #0d9a6f;
 }
 
 * {

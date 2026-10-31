@@ -26,6 +26,10 @@ export interface MapGraphState {
   // Node ids được filter guild/player highlight; null = all (không dim gì).
   matched: Set<string> | null;
   debug?: boolean;
+  playerHighlight?: {
+    faction: string;
+    scoresByNode: Map<string, number>;
+  };
 }
 
 export interface MapGraphActions {
@@ -72,6 +76,12 @@ export function buildMapNodes(
       dim: state.matched !== null && !state.matched.has(island.id),
       matched: state.matched?.has(island.id) ?? false,
       debug: state.debug,
+      playerHighlight: state.playerHighlight
+        ? {
+            faction: state.playerHighlight.faction,
+            score: state.playerHighlight.scoresByNode.get(island.id) ?? 0,
+          }
+        : undefined,
       open: actions.openIsland,
       pin: actions.togglePin,
     },
@@ -110,7 +120,7 @@ export function buildMapEdges(
       type: "route",
       selectable: false,
       style: {
-        stroke: (faction?.edgeColor ?? faction?.color) ?? neutralColor,
+        stroke: faction?.edgeColor ?? faction?.color ?? neutralColor,
         strokeWidth: faction ? 3 : 2,
         opacity: filterActive
           ? faction

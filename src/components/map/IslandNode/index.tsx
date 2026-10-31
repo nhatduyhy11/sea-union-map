@@ -20,7 +20,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   const Icon = FactionIcon ?? (data.central ? Castle : Anchor);
   const direction = data.id === "4" ? "TRUNG TÂM" : "";
   // Đảo chưa có chủ mà phe điểm cao nhất đã đạt ngưỡng claim → popup điểm
-  // (NodeStats) pha nền màu phe đó.
+  // (NodeStats) đánh dấu claimable bằng nền sọc chéo màu phe đó.
   const claimLeader = !data.owner
     ? [...(data.scores ?? [])]
         .sort((a, b) => b.score - a.score)
@@ -100,6 +100,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
           scores={data.scores}
           pinned={data.pinned}
           onTogglePin={() => data.pin(data.id)}
+          playerHighlight={data.playerHighlight}
         />
       )}
       <Handle

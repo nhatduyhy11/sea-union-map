@@ -15,6 +15,10 @@ export interface NodeStatsProps {
   scores?: FactionScore[];
   pinned?: boolean;
   onTogglePin?: () => void;
+  playerHighlight?: {
+    faction: string;
+    score: number;
+  };
 }
 
 export function NodeStats({
@@ -25,6 +29,7 @@ export function NodeStats({
   scores,
   pinned,
   onTogglePin,
+  playerHighlight,
 }: NodeStatsProps) {
   if (!scores) return null;
   const total = scores.reduce((sum, faction) => sum + faction.score, 0);
@@ -33,17 +38,25 @@ export function NodeStats({
     0
   );
   const displayScore = hasOwner ? total : topScore;
+  const scoreTitle = playerHighlight
+    ? `${hasOwner ? "Tổng điểm" : "Điểm phe dẫn đầu"}: ${displayScore > 0 ? compact(displayScore) : 0}${
+        playerHighlight.score > 0
+          ? ` (Đóng góp: ${compact(playerHighlight.score)})`
+          : ""
+      }`
+    : hasOwner
+      ? "Tổng điểm tại cứ điểm"
+      : "Điểm của phe cao nhất";
 
   return (
     <div
-      className={`${styles.nodeStats} ${tint ? styles.tinted : ""} ${pinned ? styles.pinned : ""}`}
+      className={`${styles.nodeStats} ${
+        tint ? (hasOwner ? styles.tinted : styles.claimable) : ""
+      } ${pinned ? styles.pinned : ""}`}
       style={tint ? ({ "--tint": tint } as React.CSSProperties) : undefined}
     >
       <div className={styles.statTitle}>
-        <span
-          className={styles.statScore}
-          title={hasOwner ? "Tổng điểm tại cứ điểm" : "Điểm của phe cao nhất"}
-        >
+        <span className={styles.statScore} title={scoreTitle}>
           {displayScore > 0 ? compact(displayScore) : 0}
         </span>
         {/* Ngưỡng chiếm đảo (điểm tối thiểu) — value thay chữ, như ô điểm in-game. */}
@@ -59,7 +72,11 @@ export function NodeStats({
           </button>
         )}
       </div>
-      <FactionScoreBars scores={scores} total={total} />
+      <FactionScoreBars
+        scores={scores}
+        total={total}
+        playerHighlight={playerHighlight}
+      />
     </div>
   );
 }

@@ -13,14 +13,24 @@
 }
 
 .nodeStats.pinned {
-  border-color: #0d9a6f;
+  border-color: var(--highlight-green);
 }
 
-/* Nền popup pha nhạt màu phe đại diện (--tint): phe đang giữ đảo, hoặc với
-   đảo chưa chủ là phe đủ ngưỡng claim đứng đầu. Bar điểm nền đục riêng nên
-   tint chỉ lộ quanh viền/padding — chữ vẫn đọc được. */
+/* Nền popup pha nhạt màu phe đại diện (--tint): phe đang giữ đảo. Bar điểm
+   nền đục riêng nên tint chỉ lộ quanh viền/padding — chữ vẫn đọc được. */
 .nodeStats.tinted {
   background: color-mix(in srgb, var(--tint) 45%, #ffffff);
+}
+
+/* Đảo chưa chủ có candidate đủ ngưỡng claim: sọc chéo 45deg màu candidate thay
+   nền đặc — tín hiệu "đang tranh chấp, chưa chốt" đọc khác hẳn tint đặc của
+   đảo có chủ. Sọc 35% pha trắng, chu kỳ 30px (7px trắng, phai dần sang sọc,
+   10px sọc đặc) để số điểm và bar không bị wash; băng đủ dày hạn chế moiré
+   khi popup thu nhỏ lúc zoom. */
+.nodeStats.claimable {
+  background: repeating-linear-gradient(45deg,
+      #ffffff 0 7px,
+      color-mix(in srgb, var(--tint) 35%, #ffffff) 20px 30px);
 }
 
 .statTitle {
@@ -70,5 +80,5 @@
 }
 
 .pinToggle.pinActive {
-  color: #0d9a6f;
+  color: var(--highlight-green);
 }

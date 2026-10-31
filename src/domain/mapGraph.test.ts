@@ -44,6 +44,40 @@ test("Map projection keeps pinning independent from global stats and filtering",
   );
 });
 
+test("Map projection attaches playerHighlight when filtering by player", () => {
+  const scoresByNode = new Map(
+    islands.map((island) => [
+      island.id,
+      scoresForNode(island, contributions, factions),
+    ])
+  );
+  const nodes = buildMapNodes(
+    islands,
+    scoresByNode,
+    factions,
+    {
+      selected: null,
+      pinned: new Set(),
+      showAll: true,
+      matched: new Set(["1-1"]),
+      playerHighlight: {
+        faction: "east",
+        scoresByNode: new Map([["1-1", 5000]]),
+      },
+    },
+    { openIsland: () => {}, togglePin: () => {} }
+  );
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  assert.deepEqual(byId.get("1-1")?.data.playerHighlight, {
+    faction: "east",
+    score: 5000,
+  });
+  assert.deepEqual(byId.get("2-1")?.data.playerHighlight, {
+    faction: "east",
+    score: 0,
+  });
+});
+
 test("Guild/player filter matches nodes by contribution", () => {
   const nodeIdsByGuild = new Map<string, Set<string>>([
     ["G", new Set(["2-1"])],

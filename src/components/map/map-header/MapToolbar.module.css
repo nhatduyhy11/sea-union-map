@@ -67,8 +67,25 @@
   padding: 14px;
 }
 
-.showAll {
+/* Cụm phải của toolbar: margin-left:auto đặt ở wrapper (không phải .showAll)
+   để icon bỏ filter dính sát trái toggle thay vì bị auto margin đẩy xa. */
+.toolbarRight {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Icon bỏ filter — cùng khung viền với nút Toàn cảnh, chỉ icon không chữ. */
+.resetFilter {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d5dcdf;
+  padding: 9px;
+  border-radius: 6px;
+}
+
+.showAll {
   display: flex;
   gap: 8px;
   align-items: center;

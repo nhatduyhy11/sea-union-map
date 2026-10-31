@@ -4,15 +4,70 @@
   margin-top: 4px;
   background: #e4e9ec;
   border-radius: 4px;
+  transition: opacity 0.15s ease;
+}
+
+/* Khi đang filter theo player, 3 phe còn lại mờ xuống 0.35 (cùng chuẩn dim
+   canvas: island/edge) để nhường toàn bộ tiêu điểm cho phe của người chơi. */
+.scoreBar.dimmed {
+  opacity: 0.35;
 }
 
 .scoreFill {
+  position: relative;
   height: 100%;
   border-radius: 4px;
+  overflow: hidden;
+  transition: box-shadow 0.15s ease;
+}
+
+/* Glow viền xanh lá trên phần màu của faction (thanh điểm phe), không viền phần rãnh trống:
+   - 0 0 0 1.5px var(--highlight-green): viền nét định hình thanh phe để không lẫn vào nền popup (kể cả khi popup pha màu phe).
+   - Alpha 0.45: halo sáng vừa phải nhận diện phe player ở đảo phe đang giữ
+     nhưng player chưa có đóng góp. */
+.playerFactionFill {
+  z-index: 2;
+  box-shadow:
+    0 0 0 1.5px var(--highlight-green),
+    0 0 6px color-mix(in srgb, var(--highlight-green) 50%, transparent);
+}
+
+/* Đảo player có điểm đóng góp (>0): tăng alpha lên 0.6 và bán kính toả 9px để
+   thanh điểm rực sáng rõ rệt, giúp lướt nhanh toàn map nhận ra ngay đảo có giao tranh. */
+.playerFactionFill.hasScore {
+  box-shadow:
+    0 0 0 1.5px var(--highlight-green),
+    0 0 9px color-mix(in srgb, var(--highlight-green) 75%, transparent);
+}
+
+/* Dải điểm đóng góp của player: alpha 0.15 tạo bóng đổ nhẹ tách biệt mảng màu
+   đóng góp đậm với phần màu nền phe nhạt bên dưới. */
+.playerFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Mũ tối 2px ở mép phải dải — dạng kim gauge chỉ mốc đóng góp; bóng mềm đơn
+   thuần không tách được dải đặc khỏi nền pha trên hue sáng (vàng), mũ pha
+   60% màu phe + 40% ink đậm cho ranh giới ăn trên mọi màu. Màu đến từ
+   var(--cap) set inline theo màu phe. */
+.playerFill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--cap);
 }
 
 /* Số điểm font nhỏ hơn text quanh bar; màu ink như text thường (không tô theo
-   màu phe); halo trắng để đọc được khi fill tràn qua giữa thanh. */
+   màu phe); halo trắng 4 hướng với alpha 0.9 để chữ luôn sắc nét khi fill màu
+   tràn qua giữa thanh. */
 .scoreValue {
   position: absolute;
   inset: 0;
@@ -27,4 +82,9 @@
     0 -1px 2px rgba(255, 255, 255, 0.9),
     1px 0 2px rgba(255, 255, 255, 0.9),
     -1px 0 2px rgba(255, 255, 255, 0.9);
+  z-index: 3;
+}
+
+.playerScoreValue {
+  font-weight: 600;
 }
