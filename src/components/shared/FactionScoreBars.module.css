@@ -23,7 +23,8 @@
 
 /* Glow viền xanh lá trên phần màu của faction (thanh điểm phe), không viền phần rãnh trống:
    - 0 0 0 1.5px var(--highlight-green): viền nét định hình thanh phe để không lẫn vào nền popup (kể cả khi popup pha màu phe).
-   - Alpha 0.45: halo sáng vừa phải nhận diện phe player ở đảo chưa có điểm đóng góp. */
+   - Alpha 0.45: halo sáng vừa phải nhận diện phe player ở đảo phe đang giữ
+     nhưng player chưa có đóng góp. */
 .playerFactionFill {
   z-index: 2;
   box-shadow:
