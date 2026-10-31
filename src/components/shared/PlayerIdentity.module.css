@@ -12,6 +12,19 @@
   flex: 1;
 }
 
+/* LC sau "Tên |" (BXH cá nhân): icon nắm đấm + số, nhỏ hơn tên 2px, màu
+   secondary. align baseline (không center) để baseline LC cùng baseline tên —
+   inline-flex + icon đầu dòng mặc định lấy đáy icon làm baseline, cả cụm
+   bị đẩy nổi lên. */
+.playerName .power {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  color: #5d707b;
+}
+
 .playerName small {
   display: block;
   font-size: 8px;

@@ -104,6 +104,8 @@ export interface ServerGuildRow {
 
 export interface LeaderboardPlayer extends Player {
   factionInfo?: Faction;
+  // Hạng trên board server (board 117) — badge đầu row, không đổi theo sort.
+  rank: number;
   score: number;
   nodes: number;
   allocations: Contribution[];
@@ -155,6 +157,9 @@ export interface FactionBoardEntry extends Faction {
   // Tổng lực chiến các guild trong phe (0 = chưa có power data).
   power: number;
   islands: number;
+  // Tổng Nhiên Liệu phe (0x72/0x001c). undefined = dump thiếu fuel (data cũ)
+  // — UI ẩn "(nhiên liệu)", highlight fallback Điểm phe (factionHighlight).
+  fuel?: number;
   guilds: GuildScore[];
 }
 

@@ -208,3 +208,26 @@ test("Same-named guilds stay separate rows keyed by guild id", () => {
     ]
   );
 });
+
+test("Faction board carries server fuel; absent fuel stays undefined", () => {
+  const live = [
+    row({ playerId: "p1", guild: "Alpha", guildId: "g1", score: 100 }),
+  ];
+  const serverGuilds = {
+    a: [{ guildId: "g1", name: "Alpha", score: 100 }],
+  };
+  const board = buildFactionBoard(
+    live,
+    factions,
+    islands,
+    serverGuilds,
+    "power",
+    { a: 673_961, b: 178_912 }
+  );
+  assert.equal(board.find((f) => f.id === "a")!.fuel, 673_961);
+  assert.equal(board.find((f) => f.id === "b")!.fuel, 178_912);
+
+  // Path computed (không serverGuilds) không có fuel — UI ẩn "(nhiên liệu)".
+  const computed = buildFactionBoard(contributions, factions, islands);
+  for (const entry of computed) assert.equal(entry.fuel, undefined);
+});

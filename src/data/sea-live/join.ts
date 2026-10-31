@@ -25,6 +25,9 @@ export interface LiveData {
   playerBoard: LivePlayerRow[];
   factionGuilds: Record<string, ServerGuildRow[]>;
   guildNames: Record<string, string>;
+  // Tổng Nhiên Liệu từng phe, key theo direction FE. Dump cũ thiếu key fuel
+  // → {} (UI ẩn nhiên liệu, highlight fallback lực chiến).
+  fuel: Record<string, number>;
   // game faction id (1..4) → hướng của base phe đó đang giữ.
   factionDir: Record<number, string>;
   routes: Route[];
@@ -197,6 +200,20 @@ function buildFactionGuilds(
   return result;
 }
 
+// Nhiên liệu phe (dump fuel — 0x72/0x001c), key theo direction FE. Phe không
+// xác định (mất base) bị bỏ; dump cũ thiếu key → {}.
+function buildFuel(
+  dump: SeaLiveDump,
+  factionDir: Record<number, string>
+): Record<string, number> {
+  const fuel: Record<string, number> = {};
+  for (const [campId, value] of Object.entries(dump.fuel ?? {})) {
+    const dir = factionDir[Number(campId)];
+    if (dir) fuel[dir] = value;
+  }
+  return fuel;
+}
+
 export function buildLiveData(dump: SeaLiveDump): LiveData {
   const index = indexCamps(dump);
   return {
@@ -206,6 +223,7 @@ export function buildLiveData(dump: SeaLiveDump): LiveData {
     factionGuilds: buildFactionGuilds(dump, index.factionDir),
     // guildId → tên (từ brief member) — cùng nguồn guildNames trong dump.
     guildNames: dump.guildNames,
+    fuel: buildFuel(dump, index.factionDir),
     factionDir: index.factionDir,
     routes: layoutRoutes,
   };

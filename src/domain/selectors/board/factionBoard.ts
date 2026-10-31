@@ -27,7 +27,8 @@ export function buildFactionBoard(
   factions: Faction[],
   islands: Island[],
   serverGuilds?: Record<string, ServerGuildRow[]>,
-  sortBy: SortBy = "power"
+  sortBy: SortBy = "power",
+  fuel?: Record<string, number>
 ): FactionBoardEntry[] {
   if (!serverGuilds || Object.keys(serverGuilds).length === 0)
     return buildFactionBoardComputed(contributions, factions, islands, sortBy);
@@ -65,7 +66,8 @@ export function buildFactionBoard(
       islands,
       guilds,
       rows.reduce((total, row) => total + row.score, 0),
-      sortBy
+      sortBy,
+      fuel?.[faction.id]
     );
   });
 }
@@ -111,7 +113,8 @@ function factionEntry(
   islands: Island[],
   guilds: GuildScore[],
   score: number,
-  sortBy: SortBy
+  sortBy: SortBy,
+  fuel?: number
 ): FactionBoardEntry {
   const sorted = sortGuilds(guilds, sortBy);
   return {
@@ -120,6 +123,7 @@ function factionEntry(
     guilds: sorted,
     score,
     power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),
+    fuel,
   };
 }
 

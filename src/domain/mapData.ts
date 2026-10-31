@@ -76,7 +76,9 @@ export function buildMapData(dump: SeaLiveDump) {
       contributions,
       factions,
       islands,
-      live.factionGuilds
+      live.factionGuilds,
+      undefined,
+      live.fuel
     ),
     nodeBoard: buildNodeBoard(islands, contributions, factions),
     baseCount: islands.filter((node) => node.base).length,

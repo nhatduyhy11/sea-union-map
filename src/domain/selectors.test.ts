@@ -113,7 +113,7 @@ test("Search handles whitespace, casing, indexes, empty queries and result limit
 
 test("Server leaderboard keeps server rank/score and joins allocations", () => {
   const rows = [
-    { rank: 1, playerId: "p2", name: "Two", faction: "b", score: 900 },
+    { rank: 1, playerId: "p2", name: "Two", faction: "b", score: 900, power: 12_000_000 },
     { rank: 2, playerId: "p1", name: "One", faction: "a", score: 300 },
     // Trên server board nhưng không lọt top-N node nào → allocations rỗng.
     { rank: 3, playerId: "p9", name: "#p9", faction: "a", score: 1 },
@@ -129,6 +129,18 @@ test("Server leaderboard keeps server rank/score and joins allocations", () => {
     ]
   );
   assert.equal(board[0].factionInfo?.id, "b");
+  // Lực chiến từ brief đi theo row — thiếu brief thì undefined (UI ẩn "| lc").
+  assert.equal(board[0].power, 12_000_000);
+  assert.equal(board[1].power, undefined);
+  // Hạng server giữ trên row — badge đầu row không đổi khi list sort theo LC.
+  assert.deepEqual(
+    board.map((p) => [p.id, p.rank]),
+    [
+      ["p2", 1],
+      ["p1", 2],
+      ["p9", 3],
+    ]
+  );
   // playerAllocations sort theo score giảm dần.
   assert.deepEqual(
     board[1].allocations.map((a) => [a.nodeId, a.score]),
