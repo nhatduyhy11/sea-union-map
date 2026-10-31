@@ -200,6 +200,11 @@ export type IslandNodeData = Island & {
   // Node khớp filter guild/player đang chạy — viền icon dày lên để nổi.
   matched?: boolean;
   debug?: boolean;
+  // Đóng góp của player đang lọc trên đảo (dùng để highlight thanh điểm phe).
+  playerHighlight?: {
+    faction: string;
+    score: number;
+  };
   open: (id: string) => void;
   pin: (id: string) => void;
   [key: string]: unknown;

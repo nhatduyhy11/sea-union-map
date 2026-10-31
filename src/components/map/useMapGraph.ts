@@ -31,6 +31,9 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     ownedIslands,
     routes,
     scoresByNode,
+    contributions,
+    players,
+    leaderboard,
   } = useMapData();
 
   // Node ids được filter guild/player highlight — dim phần còn lại.
@@ -38,13 +41,32 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     () => matchNodeIds(filter, nodeIdsByGuild, nodeIdsByPlayer),
     [filter, nodeIdsByGuild, nodeIdsByPlayer]
   );
+  // Highlight đóng góp của player trên từng đảo khi đang filter theo player.
+  const playerHighlight = useMemo(() => {
+    if (filter?.kind !== "player") return undefined;
+    const player =
+      players.find((p) => p.id === filter.id) ??
+      leaderboard.find((r) => r.id === filter.id);
+    if (!player) return undefined;
+
+    const scoresMap = new Map<string, number>();
+    for (const c of contributions) {
+      if (c.playerId === filter.id) {
+        scoresMap.set(c.nodeId, (scoresMap.get(c.nodeId) ?? 0) + c.score);
+      }
+    }
+    return {
+      faction: player.faction,
+      scoresByNode: scoresMap,
+    };
+  }, [filter, players, leaderboard, contributions]);
   const nodes = useMemo(
     () =>
       buildMapNodes(
         ownedIslands,
         scoresByNode,
         factions,
-        { selected, pinned, showAll, matched, debug },
+        { selected, pinned, showAll, matched, debug, playerHighlight },
         { openIsland, togglePin }
       ),
     [
@@ -55,6 +77,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
       showAll,
       matched,
       debug,
+      playerHighlight,
       togglePin,
     ]
   );

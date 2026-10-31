@@ -7,6 +7,11 @@ export interface FactionScoreBarsProps {
   total: number;
   // Ẩn bar của phe chưa có đóng góp (0 điểm) thay vì bar rỗng.
   hideEmpty?: boolean;
+  // Thông tin đóng góp của player khi đang filter theo player
+  playerHighlight?: {
+    faction: string;
+    score: number;
+  };
 }
 
 // Thanh điểm phe: màu phe định danh phe (thứ tự cố định theo mảng factions),
@@ -16,24 +21,62 @@ export function FactionScoreBars({
   scores,
   total,
   hideEmpty,
+  playerHighlight,
 }: FactionScoreBarsProps) {
   const bars = hideEmpty
     ? scores.filter((faction) => faction.score > 0)
     : scores;
   return (
     <>
-      {bars.map((faction) => (
-        <div key={faction.id} className={styles.scoreBar}>
+      {bars.map((faction) => {
+        const isPlayerFaction =
+          playerHighlight !== undefined &&
+          faction.id === playerHighlight.faction;
+        const isOtherFaction =
+          playerHighlight !== undefined && !isPlayerFaction;
+
+        const widthPct = total ? (faction.score / total) * 100 : 0;
+        const playerPct =
+          isPlayerFaction && faction.score > 0
+            ? Math.min(100, (playerHighlight.score / faction.score) * 100)
+            : 0;
+
+        const scoreLabel = isPlayerFaction
+          ? faction.score > 0
+            ? `${compact(playerHighlight.score)} / ${compact(faction.score)}`
+            : "0"
+          : compact(faction.score);
+
+        return (
           <div
-            className={styles.scoreFill}
-            style={{
-              width: `${total ? (faction.score / total) * 100 : 0}%`,
-              background: faction.color,
-            }}
-          />
-          <b className={styles.scoreValue}>{compact(faction.score)}</b>
-        </div>
-      ))}
+            key={faction.id}
+            className={`${styles.scoreBar} ${isOtherFaction ? styles.dimmed : ""}`}
+          >
+            <div
+              className={`${styles.scoreFill} ${
+                isPlayerFaction ? styles.playerFactionFill : ""
+              }`}
+              style={{
+                width: `${widthPct}%`,
+                background: isPlayerFaction
+                  ? `color-mix(in srgb, ${faction.color} 30%, #e4e9ec)`
+                  : faction.color,
+              }}
+            >
+              {isPlayerFaction && playerPct > 0 && (
+                <div
+                  className={styles.playerFill}
+                  style={{
+                    width: `${playerPct}%`,
+                    background: faction.color,
+                  }}
+                />
+              )}
+            </div>
+            <b className={styles.scoreValue}>{scoreLabel}</b>
+          </div>
+        );
+      })}
     </>
   );
 }

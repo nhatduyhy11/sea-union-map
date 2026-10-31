@@ -100,6 +100,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
           scores={data.scores}
           pinned={data.pinned}
           onTogglePin={() => data.pin(data.id)}
+          playerHighlight={data.playerHighlight}
         />
       )}
       <Handle
