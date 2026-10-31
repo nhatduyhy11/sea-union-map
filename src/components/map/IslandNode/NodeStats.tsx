@@ -1,5 +1,5 @@
 import { Pin } from "lucide-react";
-import { compact } from "../../../utils/format";
+import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import styles from "./NodeStats.module.css";
 import type { FactionScore } from "../../../types";
 
@@ -19,9 +19,6 @@ export function NodeStats({
   onTogglePin,
 }: NodeStatsProps) {
   if (!scores) return null;
-  // Thanh màu phe định danh phe (thứ tự cố định theo mảng factions), không
-  // kèm tên; số điểm nằm giữa thanh. Chiều dài thanh theo tỉ lệ điểm/tổng
-  // node — cùng công thức với FactionScores (NodeDetails).
   const total = scores.reduce((sum, faction) => sum + faction.score, 0);
   return (
     <div className={`${styles.nodeStats} ${pinned ? styles.pinned : ""}`}>
@@ -39,18 +36,7 @@ export function NodeStats({
           </button>
         )}
       </div>
-      {scores.map((faction) => (
-        <div key={faction.id} className={styles.scoreBar}>
-          <div
-            className={styles.scoreFill}
-            style={{
-              width: `${total ? (faction.score / total) * 100 : 0}%`,
-              background: faction.color,
-            }}
-          />
-          <b className={styles.scoreValue}>{compact(faction.score)}</b>
-        </div>
-      ))}
+      <FactionScoreBars scores={scores} total={total} />
     </div>
   );
 }

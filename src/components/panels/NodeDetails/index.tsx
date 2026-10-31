@@ -1,6 +1,6 @@
 import { Anchor, Castle, Pin, Shield, X } from "lucide-react";
 import { number } from "../../../utils/format";
-import { FactionScores } from "./FactionScores";
+import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
 import type { NodeDetailData } from "../../../types";
@@ -22,6 +22,14 @@ export function NodeDetails({
   // Owner là truth server (đã áp rule ngắt đường) — hiện điểm của owner cạnh
   // ngưỡng chiếm; node trung lập chỉ hiện ngưỡng.
   const ownerScore = scores.find((faction) => faction.id === owner?.id);
+  // Server cắt bảng người/node ở top-20 — đủ 20 row mà tổng điểm các row chưa
+  // sát tổng điểm node (chênh >1%) là còn người ngoài bảng: đếm kèm "(+)".
+  // Khi dump thiếu điểm node server, total tự tính từ các row nên luôn khớp.
+  const attackerSum = attackers.reduce((sum, entry) => sum + entry.score, 0);
+  const attackersTruncated =
+    attackers.length === ATTACKER_CAP &&
+    total > 0 &&
+    Math.abs(attackerSum - total) / total > 0.01;
   return (
     <div className={styles.detail}>
       <div className={styles.detailTop}>
@@ -64,9 +72,13 @@ export function NodeDetails({
           <div className={styles.sectionTitle}>
             Điểm các phe<span>{number(total)} tổng</span>
           </div>
-          <FactionScores scores={scores} total={total} />
+          <FactionScoreBars scores={scores} total={total} />
           <div className={styles.sectionTitle}>
-            Người chơi tấn công<span>{attackers.length} người</span>
+            Người chơi tấn công
+            <span>
+              {attackers.length}
+              {attackersTruncated && "(+)"} người
+            </span>
           </div>
           <PlayerTable attackers={attackers} />
         </>
@@ -81,3 +93,6 @@ export function NodeDetails({
     </div>
   );
 }
+
+// Server trả tối đa 20 người/node (bảng người bị cắt ở 20 row).
+const ATTACKER_CAP = 20;
