@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildNodeBoard,
   buildServerLeaderboard,
+  defendNodes,
   frontlineNodes,
   nodeDetails,
   playersFromContributions,
@@ -10,6 +11,7 @@ import {
   searchIslands,
 } from "./selectors";
 import { contributions, factions, islands, row } from "./testFixtures";
+import type { Island } from "../types";
 
 test("Node-board rows are the single source of player identity", () => {
   const players = playersFromContributions(contributions);
@@ -143,6 +145,73 @@ test("Neutral islands, weak pressure and cut-off rivals stay out", () => {
     ).size,
     0
   );
+});
+
+test("Defend flags low-score owned nodes bordering another faction", () => {
+  const nodes = [
+    // 1-1 owner a 20M, rival b 10M kề bên → frontline ưu tiên, không cần thủ.
+    { ...islands[0], factionScores: { a: 20_000_000, b: 10_000_000 } },
+    // 2-1 owner b 5M, kề 1-1 phe a → cần thủ.
+    { ...islands[1], factionScores: { b: 5_000_000, a: 1_000_000 } },
+  ];
+  const routes = [{ source: "1-1", target: "2-1" }];
+  const frontline = frontlineNodes(nodes, routes, contributions, factions);
+  assert.deepEqual([...frontline.keys()], ["1-1"]);
+  const defend = defendNodes(nodes, routes, contributions, factions, frontline);
+  assert.deepEqual([...defend], ["2-1"]);
+});
+
+test("Defend skips rich nodes, neutral neighbors and bases", () => {
+  // Điểm phe claim dày hơn ngưỡng 20M → không cảnh báo dù kề phe lạ.
+  const rich = defendNodes(
+    [
+      { ...islands[0], factionScores: { a: 21_000_000 } },
+      { ...islands[1], factionScores: { b: 1_000_000 } },
+    ],
+    [{ source: "1-1", target: "2-1" }],
+    contributions,
+    factions,
+    new Map()
+  );
+  assert.deepEqual([...rich], ["2-1"]);
+  // Láng giềng trung lập không tính — chưa phe nào thật sự đứng cạnh.
+  const neutral: Island = {
+    id: "3-1",
+    name: "Đảo Trống",
+    position: { x: 90, y: 90 },
+    owner: null,
+    claimThreshold: 1,
+    factionScores: { a: 1_000_000 },
+  };
+  const neutralNeighbor = defendNodes(
+    [islands[0], neutral],
+    [{ source: "1-1", target: "3-1" }],
+    contributions,
+    factions,
+    new Map()
+  );
+  assert.equal(neutralNeighbor.size, 0);
+  // Base không được flag dù điểm mỏng + kề phe lạ — giữ icon phe làm mốc.
+  const withBase: Island[] = [
+    {
+      id: "base-a",
+      name: "Căn cứ A",
+      position: { x: 0, y: 0 },
+      base: true,
+      owner: "a",
+      claimThreshold: 1,
+      factionScores: { a: 1_000_000 },
+    },
+    { ...islands[1], factionScores: { b: 1_000_000, a: 0 } },
+  ];
+  const baseDefend = defendNodes(
+    withBase,
+    [{ source: "base-a", target: "2-1" }],
+    contributions,
+    factions,
+    new Map()
+  );
+  assert.deepEqual([...baseDefend], ["2-1"]);
 });
 
 test("Server faction scores override the capped node-board sum", () => {

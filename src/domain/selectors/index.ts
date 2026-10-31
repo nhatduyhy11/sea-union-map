@@ -14,5 +14,6 @@ export {
 } from "./board";
 export { frontlineNodes } from "./frontline";
 export type { Frontline } from "./frontline";
+export { defendNodes } from "./defend";
 export { nodeDetails } from "./nodeDetails";
 export { searchIslands } from "./search";
