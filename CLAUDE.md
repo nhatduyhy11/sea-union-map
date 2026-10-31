@@ -8,6 +8,13 @@
 - `src/data/map-layout.ts` holds the logic (`layoutNodes`, `layoutRoutes`, `mapBounds`)
   built on top of that data — start there for anything else map-related.
 
+## FE/BE boundary
+
+- FE code and comments describe the FE data contract only (`src/types.ts`,
+  `SeaLiveDump` fields and their UI meaning). Don't cite BE internals info. That
+  knowledge belongs in `docs/sea/SEA_STRUCTURE.md`; FE comments reference the
+  dump field name and the in-game UI column it mirrors instead.
+
 ## Writing docs, commit messages and code comments
 
 - Never cite gitignored data as evidence or reference: crawl run dirs (`.tmp/...`,

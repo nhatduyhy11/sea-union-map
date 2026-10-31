@@ -200,7 +200,7 @@ function buildFactionGuilds(
   return result;
 }
 
-// Nhiên liệu phe (dump fuel — 0x72/0x001c), key theo direction FE. Phe không
+// Nhiên liệu phe, key theo direction FE. Phe không
 // xác định (mất base) bị bỏ; dump cũ thiếu key → {}.
 function buildFuel(
   dump: SeaLiveDump,

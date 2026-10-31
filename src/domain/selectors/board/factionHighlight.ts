@@ -4,7 +4,7 @@ import type { FactionBoardEntry } from "../../../types";
 // dùng cho highlight, số hạng trên row vẫn là thứ hạng theo điểm (rankFactions).
 //
 // Nhiên liệu là truth server: cột "Tổng Nhiên Liệu" của bảng BXH Phe in-game,
-// rank phe cũng xếp theo nhiên liệu (0x72/0x001c). Dump thiếu key `fuel`
+// rank phe cũng xếp theo nhiên liệu. Dump thiếu key `fuel`
 // (data cũ) thì backward resolve về Điểm phe; không có số nào → trả Map rỗng,
 // không highlight phe nào.
 export function rankFactionsForHighlight(

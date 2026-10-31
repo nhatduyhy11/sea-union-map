@@ -18,8 +18,7 @@ export interface SeaLiveDump {
   // Tổng điểm từng phe tại node do server tính:
   // gameNodeId → campId → điểm. Optional: dump cũ không có key này.
   nodeFactionScores?: Record<string, Record<string, number>>;
-  // Tổng Nhiên Liệu từng phe (0x72/0x001c, cột "Tổng Nhiên Liệu" bảng BXH
-  // Phe): campId → nhiên liệu. Optional: dump cũ không có key này.
+  // Tổng Nhiên Liệu từng phe: campId → nhiên liệu. Optional: dump cũ không có key này.
   fuel?: Record<string, number>;
   playerBoard: [number, number, number, number | null][];
   factionGuilds: Record<string, [number, number][]>;

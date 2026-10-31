@@ -157,7 +157,7 @@ export interface FactionBoardEntry extends Faction {
   // Tổng lực chiến các guild trong phe (0 = chưa có power data).
   power: number;
   islands: number;
-  // Tổng Nhiên Liệu phe (0x72/0x001c). undefined = dump thiếu fuel (data cũ)
+  // Tổng Nhiên Liệu phe, undefined = dump thiếu fuel (data cũ)
   // — UI ẩn "(nhiên liệu)", highlight fallback Điểm phe (factionHighlight).
   fuel?: number;
   guilds: GuildScore[];
