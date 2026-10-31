@@ -1,0 +1,53 @@
+{
+  "HwGameSdk_1766998981760410_tempAccount": {
+    "value": "501863895907@visit"
+  },
+  "HwGameSdk_1766998981760410_userLoginData": {
+    "value": ""
+  },
+  "HwGameSdk_1766998981760410_emailLoginUsernameList": {
+    "value": {
+      "EMAIL_ACCOUNT_HERE": "TOKEN"
+    }
+  },
+  "HwGameSdk_1766998981760410_rnsOpenCountDaily": {
+    "value": {
+      "date": "2026-08-25",
+      "count": 1
+    }
+  },
+  "HwGameSdk_1766998981760410_agreementStatus": {
+    "value": 1
+  },
+  "OVERSEA_H5_SDK_isNew": "2026-10-30",
+  "OVERSEA_H5_SDK_trackId": "ID_TOKEN",
+  "HwGameSdk_1766998981760410_allLoginList": {
+    "value": {
+      "EMAIL_ACCOUNT_HERE": {
+        "username": "EMAIL_ACCOUNT_HERE",
+        "suid": 111111111,
+        "timestamp": 1111111111,
+        "signStr": "TOKEN",
+        "suidSignStr": "TOKEN",
+        "access_token": "TOKEN",
+        "autoStr": "TOKEN",
+        "expires_in": 1111111,
+        "is_tmp_account": "no",
+        "source": "www",
+        "user_type": "REGISTER",
+        "isNewUser": 0,
+        "is_new_game_user": 0,
+        "first_login_after_bind_account": 0,
+        "sydid": "",
+        "targetServerId": 0,
+        "warn_tmp_user_bind_min_time": 0,
+        "mail_status": 1,
+        "rns_status": 0,
+        "p": ""
+      }
+    }
+  },
+  "HwGameSdk_1766998981760410_logEventNameAndPp": {
+    "value": ["registerDeviceDup-joynetgame", "visitorDeviceDup-joynetgame"]
+  }
+}
