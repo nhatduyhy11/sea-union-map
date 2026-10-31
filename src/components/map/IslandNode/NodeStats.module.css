@@ -16,6 +16,13 @@
   border-color: #0d9a6f;
 }
 
+/* Nền popup pha nhạt màu phe đại diện (--tint): phe đang giữ đảo, hoặc với
+   đảo chưa chủ là phe đủ ngưỡng claim đứng đầu. Bar điểm nền đục riêng nên
+   tint chỉ lộ quanh viền/padding — chữ vẫn đọc được. */
+.nodeStats.tinted {
+  background: color-mix(in srgb, var(--tint) 45%, #ffffff);
+}
+
 .statTitle {
   display: flex;
   align-items: center;

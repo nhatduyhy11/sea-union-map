@@ -15,6 +15,13 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
   const Icon = data.base || data.central ? Castle : Anchor;
   const direction = data.id === "4" ? "TRUNG TÂM" : "";
+  // Đảo chưa có chủ mà phe điểm cao nhất đã đạt ngưỡng claim → popup điểm
+  // (NodeStats) pha nền màu phe đó.
+  const claimLeader = !data.owner
+    ? [...(data.scores ?? [])]
+        .sort((a, b) => b.score - a.score)
+        .find((entry) => entry.score >= data.claimThreshold)
+    : undefined;
   const className = [
     styles.island,
     data.base && styles.base,
@@ -27,6 +34,9 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
     .filter(Boolean)
     .join(" ");
   const showStats = !data.base && (data.showAll || data.pinned || hovered);
+  // Phe đại diện cho màu nền popup: phe đang giữ đảo, hoặc với đảo chưa chủ
+  // là phe đủ ngưỡng claim đứng đầu (undefined → nền trắng như cũ).
+  const statTint = data.factionInfo?.color ?? claimLeader?.color;
 
   return (
     <div
@@ -80,6 +90,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
           nodeId={data.id}
           name={data.name}
           claimThreshold={data.claimThreshold}
+          tint={statTint}
           scores={data.scores}
           pinned={data.pinned}
           onTogglePin={() => data.pin(data.id)}
