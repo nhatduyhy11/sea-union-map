@@ -1,5 +1,11 @@
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  ChevronRight,
+  Swords,
+} from "lucide-react";
 import { compact } from "../../../utils/format";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { useFocusIslandOnBoard } from "../../../hooks/useFocusIsland";
@@ -7,6 +13,7 @@ import { useSelection } from "../../../stores/selection";
 import { PlayerTable } from "../NodeDetails/PlayerTable";
 import { tintStyle } from "./tint";
 import styles from "./shared.module.css";
+import type { Frontline } from "../../../domain/selectors";
 import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
 
 // Tab Cứ điểm: mở expand của một đảo = focus đảo trên map (camera pan +
@@ -15,14 +22,18 @@ import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
 // gỡ selection (viền active) — đảo khác đang chọn thì giữ nguyên.
 // Không phụ thuộc Filter mode. Mặc định theo id đảo (1-1, 1-2 …); nút sort
 // xoay vòng giảm dần → tăng dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm,
-// "Chưa chiếm" = đảo trung lập — đều theo owner server (đã áp rule ngắt
-// đường); tiêu đề đếm số cứ điểm đang hiển thị. State local, rời board là reset.
+// "Tranh chấp" = đảo giao tranh (frontlineNodes), "Chưa chiếm" = đảo trung
+// lập — đều theo owner server (đã áp rule ngắt đường); row tranh chấp hiện
+// icon kiếm trước tổng điểm, cùng màu chocolate với canvas; tiêu đề đếm số
+// cứ điểm đang hiển thị. State local, rời board là reset.
 export function NodeBoard({
   nodes,
   factions,
+  frontlineByNode,
 }: {
   nodes: NodeBoardEntry[];
   factions: Faction[];
+  frontlineByNode: Map<string, Frontline>;
 }) {
   const focusIslandOnBoard = useFocusIslandOnBoard();
   const selected = useSelection((state) => state.selected);
@@ -32,13 +43,15 @@ export function NodeBoard({
     const owned =
       ownerFilter === UNCLAIMED
         ? nodes.filter((entry) => !entry.owner)
-        : ownerFilter
-          ? nodes.filter((entry) => entry.owner?.id === ownerFilter)
-          : nodes;
+        : ownerFilter === CONTESTED
+          ? nodes.filter((entry) => frontlineByNode.has(entry.island.id))
+          : ownerFilter
+            ? nodes.filter((entry) => entry.owner?.id === ownerFilter)
+            : nodes;
     if (scoreSort === "none") return owned;
     const sign = scoreSort === "asc" ? 1 : -1;
     return [...owned].sort((a, b) => sign * (a.total - b.total));
-  }, [nodes, scoreSort, ownerFilter]);
+  }, [nodes, scoreSort, ownerFilter, frontlineByNode]);
   return (
     <>
       <h2>Xếp hạng cứ điểm ({displayNodes.length})</h2>
@@ -61,6 +74,14 @@ export function NodeBoard({
             {faction.name}
           </button>
         ))}
+        <button
+          className={ownerFilter === CONTESTED ? styles.selected : ""}
+          onClick={() =>
+            setOwnerFilter(ownerFilter === CONTESTED ? null : CONTESTED)
+          }
+        >
+          Tranh chấp
+        </button>
         <button
           className={ownerFilter === UNCLAIMED ? styles.selected : ""}
           onClick={() =>
@@ -117,6 +138,9 @@ export function NodeBoard({
                   )}
                 </small>
               </div>
+              {frontlineByNode.has(entry.island.id) && (
+                <Swords size={11} className={styles.frontlineIcon} />
+              )}
               <b>{compact(entry.total)}</b>
               <ChevronRight size={13} />
             </summary>
@@ -152,7 +176,9 @@ const NEXT_SORT: Record<ScoreSort, ScoreSort> = {
   asc: "none",
 };
 
-// Giá trị filter riêng cho pill "Chưa chiếm" (đảo trung lập, chưa phe nào chiếm).
+// Giá trị filter riêng cho pill "Tranh chấp" (đảo giao tranh) và
+// "Chưa chiếm" (đảo trung lập, chưa phe nào chiếm).
+const CONTESTED = "__contested";
 const UNCLAIMED = "__unclaimed";
 
 // Điểm phe góp cao nhất (màu label phe đó) + % so với tổng điểm đảo, làm

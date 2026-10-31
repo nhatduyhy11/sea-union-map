@@ -75,6 +75,17 @@
   transform: rotate(90deg);
 }
 
+/* Icon kiếm trước tổng điểm — node đang tranh chấp, màu chocolate như canvas.
+   Rule mở row xoay mọi svg con (chevron) — kiếm đứng yên. */
+.frontlineIcon {
+  color: #d2691e;
+  flex-shrink: 0;
+}
+
+.item[open] .summary > svg.frontlineIcon {
+  transform: none;
+}
+
 .factionName {
   flex: 1;
   font-size: 11px;
