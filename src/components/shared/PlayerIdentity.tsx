@@ -1,3 +1,5 @@
+import { HandFist } from "lucide-react";
+import { compact } from "../../utils/format";
 import styles from "./PlayerIdentity.module.css";
 import type { Faction, Player } from "../../types";
 
@@ -5,16 +7,59 @@ export interface PlayerIdentityProps {
   player?: Player;
   faction?: Faction;
   nodeCount?: number;
+  // Lực chiến player (brief). Inline mode: đuôi "| [HandFist] lc" sau tên; stacked mode: bỏ qua.
+  power?: number;
+  // BXH cá nhân: một dòng "Tên | LC" chữ đen — phe chỉ còn qua màu avatar.
+  inline?: boolean;
 }
 
 export function PlayerIdentity({
   player,
   faction,
   nodeCount,
+  power,
+  inline,
 }: PlayerIdentityProps) {
   const color = faction?.labelColor || "#97acbb";
   const name = player?.name || "Người chơi";
-  const factionName = faction?.name || "Không rõ";
+
+  if (inline) {
+    // BXH cá nhân: "Tên | LC" + dòng dưới "Bang · N đảo" — chữ đen hết, phe
+    // chỉ còn qua màu avatar.
+    const meta = [
+      ...(player?.guild ? [player.guild] : []),
+      ...(nodeCount !== undefined ? [`${nodeCount} đảo`] : []),
+    ];
+    return (
+      <>
+        <span
+          className={styles.avatar}
+          style={{ color, background: `${color}18` }}
+        >
+          {name[0]}
+        </span>
+        <div className={styles.playerName}>
+          {name}
+          {power ? (
+            <>
+              {" | "}
+              <span className={styles.power}>
+                <HandFist size={10} />
+                {compact(power)}
+              </span>
+            </>
+          ) : null}
+          <small style={{ color }}>{meta.join(" · ")}</small>
+        </div>
+      </>
+    );
+  }
+
+  const meta = [
+    faction?.name || "Không rõ",
+    ...(player?.guild ? [player.guild] : []),
+    ...(nodeCount !== undefined ? [`${nodeCount} đảo`] : []),
+  ];
 
   return (
     <>
@@ -26,11 +71,7 @@ export function PlayerIdentity({
       </span>
       <div className={styles.playerName}>
         {name}
-        <small style={{ color }}>
-          {factionName}
-          {player?.guild && ` · ${player.guild}`}
-          {nodeCount !== undefined && ` · ${nodeCount} đảo`}
-        </small>
+        <small style={{ color }}>{meta.join(" · ")}</small>
       </div>
     </>
   );

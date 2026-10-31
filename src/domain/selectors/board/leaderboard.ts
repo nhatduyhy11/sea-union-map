@@ -20,6 +20,8 @@ export function buildServerLeaderboard(
       id: row.playerId,
       name: row.name,
       faction: row.faction ?? "",
+      // Hạng server giữ nguyên dù list được sort lại theo LC.
+      rank: row.rank,
       guild: row.guild,
       factionInfo: row.faction
         ? factions.find((faction) => faction.id === row.faction)
@@ -27,6 +29,8 @@ export function buildServerLeaderboard(
       score: row.score,
       nodes: allocations.length,
       allocations,
+      // Lực chiến player từ brief (join playerBoard) — UI hiện cạnh số đảo.
+      power: row.power,
     };
   });
 }

@@ -104,6 +104,8 @@ export interface ServerGuildRow {
 
 export interface LeaderboardPlayer extends Player {
   factionInfo?: Faction;
+  // Hạng trên board server (board 117) — badge đầu row, không đổi theo sort.
+  rank: number;
   score: number;
   nodes: number;
   allocations: Contribution[];
