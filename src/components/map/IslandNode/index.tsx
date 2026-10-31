@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { Anchor, Castle, Pin, Swords } from "lucide-react";
+import { Anchor, Castle, Pin, ShieldAlert, Swords } from "lucide-react";
 import { iconBoxSize } from "../../../domain/mapGraph";
 import { useDebug } from "../../../stores/debug";
 import { getFactionIcon } from "../../shared/factionIcons";
@@ -17,9 +17,17 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   const FactionIcon = data.base
     ? getFactionIcon(data.factionInfo?.id ?? data.owner ?? data.id)
     : null;
-  // Đảo giao tranh đổi icon sang kiếm — base giữ icon phe (lãnh thổ gốc).
+  // Đảo giao tranh đổi icon kiếm, đảo cần thủ đổi shield-alert — base giữ
+  // icon phe (lãnh thổ gốc).
   const Icon =
-    FactionIcon ?? (data.frontline ? Swords : data.central ? Castle : Anchor);
+    FactionIcon ??
+    (data.frontline
+      ? Swords
+      : data.defend
+        ? ShieldAlert
+        : data.central
+          ? Castle
+          : Anchor);
   const direction = data.id === "4" ? "TRUNG TÂM" : "";
   // Đảo chưa có chủ mà phe điểm cao nhất đã đạt ngưỡng claim → popup điểm
   // (NodeStats) đánh dấu claimable bằng nền sọc chéo màu phe đó.
@@ -36,6 +44,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
     data.active && styles.active,
     data.matched && styles.hot,
     data.frontline && styles.frontline,
+    data.defend && styles.defend,
     data.dim && styles.dim,
   ]
     .filter(Boolean)

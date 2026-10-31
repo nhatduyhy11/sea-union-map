@@ -89,6 +89,12 @@
   color: #ffffff;
 }
 
+/* Node cần thủ (defendNodes — điểm phe claim mỏng mà giáp ranh phe khác):
+   fill màu chính phe nhạt — biết đảo yếu chỗ nào mà vẫn ra màu chủ phe. */
+.defend .islandIcon {
+  background: color-mix(in srgb, var(--faction) 50%, #ffffff);
+}
+
 .islandLabel {
   margin-top: 20px;
   display: flex;

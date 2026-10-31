@@ -16,6 +16,7 @@ test("Map projection keeps pinning independent from global stats and filtering",
     islands,
     scoresByNode,
     new Map(),
+    new Set(),
     factions,
     {
       selected: "1-1",
@@ -36,6 +37,7 @@ test("Map projection keeps pinning independent from global stats and filtering",
     islands,
     scoresByNode,
     new Map(),
+    new Set(),
     factions,
     { selected: null, pinned: new Set(), showAll: false, matched: null },
     { openIsland: () => {}, togglePin: () => {} }
@@ -46,7 +48,7 @@ test("Map projection keeps pinning independent from global stats and filtering",
   );
 });
 
-test("Map projection carries frontline info onto node data", () => {
+test("Map projection carries frontline info and defend flag onto node data", () => {
   const scoresByNode = new Map(
     islands.map((island) => [
       island.id,
@@ -57,6 +59,7 @@ test("Map projection carries frontline info onto node data", () => {
     islands,
     scoresByNode,
     new Map([["1-1", { rival: factions[1], ratio: 0.5 }]]),
+    new Set(["2-1"]),
     factions,
     { selected: null, pinned: new Set(), showAll: false, matched: null },
     { openIsland: () => {}, togglePin: () => {} }
@@ -67,6 +70,8 @@ test("Map projection carries frontline info onto node data", () => {
     ratio: 0.5,
   });
   assert.equal(byId.get("2-1")?.data.frontline, undefined);
+  assert.equal(byId.get("2-1")?.data.defend, true);
+  assert.equal(byId.get("1-1")?.data.defend, false);
 });
 
 test("Map projection attaches playerHighlight when filtering by player", () => {
@@ -80,6 +85,7 @@ test("Map projection attaches playerHighlight when filtering by player", () => {
     islands,
     scoresByNode,
     new Map(),
+    new Set(),
     factions,
     {
       selected: null,

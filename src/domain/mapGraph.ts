@@ -55,6 +55,9 @@ export function buildMapNodes(
   // Node giao tranh (domain/selectors/frontline.ts) — data node mang theo
   // { rival, ratio } để viền hồng, sẵn cho popup/tooltip sau này.
   frontlineByNode: Map<string, { rival: Faction; ratio: number }>,
+  // Node cần thủ (domain/selectors/defend.ts) — flag cho icon shield-alert
+  // + fill màu phe nhạt.
+  defendNodeIds: Set<string>,
   factions: Faction[],
   state: MapGraphState,
   actions: MapGraphActions
@@ -81,6 +84,7 @@ export function buildMapNodes(
         dim: state.matched !== null && !state.matched.has(island.id),
         matched: state.matched?.has(island.id) ?? false,
         frontline: front && { rival: front.rival, ratio: front.ratio },
+        defend: defendNodeIds.has(island.id),
         debug: state.debug,
         playerHighlight: state.playerHighlight
           ? {

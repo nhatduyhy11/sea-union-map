@@ -206,6 +206,9 @@ export type IslandNodeData = Island & {
     rival: Faction;
     ratio: number;
   };
+  // Node cần thủ (defendNodes — điểm phe claim mỏng mà giáp ranh phe khác,
+  // chưa tính tranh chấp): icon shield-alert + fill màu phe nhạt.
+  defend?: boolean;
   debug?: boolean;
   // Đóng góp của player đang lọc trên đảo (dùng để highlight thanh điểm phe).
   playerHighlight?: {
