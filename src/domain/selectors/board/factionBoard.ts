@@ -33,6 +33,7 @@ export function buildFactionBoard(
   if (!serverGuilds || Object.keys(serverGuilds).length === 0)
     return buildFactionBoardComputed(contributions, factions, islands, sortBy);
   const players = playersFromContributions(contributions);
+  const touched = touchedByNode(contributions);
   return factions.map((faction) => {
     const rows = serverGuilds[faction.id] ?? [];
     const members = players.filter((player) => player.faction === faction.id);
@@ -67,7 +68,8 @@ export function buildFactionBoard(
       guilds,
       rows.reduce((total, row) => total + row.score, 0),
       sortBy,
-      fuel?.[faction.id]
+      fuel?.[faction.id],
+      touched
     );
   });
 }
@@ -81,6 +83,7 @@ function buildFactionBoardComputed(
 ): FactionBoardEntry[] {
   const players = playersFromContributions(contributions);
   const scores = scoreByPlayer(contributions);
+  const touched = touchedByNode(contributions);
   return factions.map((faction) => {
     const members = players.filter((player) => player.faction === faction.id);
     const groups = new Map<string, { name: string; players: Player[] }>();
@@ -103,9 +106,25 @@ function buildFactionBoardComputed(
         (total, player) => total + (scores.get(player.id) ?? 0),
         0
       ),
-      sortBy
+      sortBy,
+      undefined,
+      touched
     );
   });
+}
+
+// nodeId → các phe có đóng góp điểm tại đảo. Cơ sở cho số "đang đánh" của
+// BXH Phe — tính một lần, tra theo phe trong factionEntry.
+function touchedByNode(
+  contributions: Contribution[]
+): Map<string, Set<string>> {
+  const map = new Map<string, Set<string>>();
+  for (const entry of contributions) {
+    const set = map.get(entry.nodeId);
+    if (set) set.add(entry.faction);
+    else map.set(entry.nodeId, new Set([entry.faction]));
+  }
+  return map;
 }
 
 function factionEntry(
@@ -114,12 +133,18 @@ function factionEntry(
   guilds: GuildScore[],
   score: number,
   sortBy: SortBy,
-  fuel?: number
+  fuel: number | undefined,
+  touched: Map<string, Set<string>>
 ): FactionBoardEntry {
   const sorted = sortGuilds(guilds, sortBy);
   return {
     ...faction,
     islands: islands.filter((node) => node.owner === faction.id).length,
+    // Đang đánh: đã dồn điểm vào đảo nhưng chưa claim — owner là phe khác
+    // hoặc đảo chưa chủ.
+    attacked: islands.filter(
+      (node) => node.owner !== faction.id && touched.get(node.id)?.has(faction.id)
+    ).length,
     guilds: sorted,
     score,
     power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),

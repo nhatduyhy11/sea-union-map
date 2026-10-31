@@ -14,6 +14,31 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Cột phải summary/card: tổng điểm phe + Tổng Nhiên Liệu ngay dưới. `b` mất
+   style `.summary > b` (không còn con trực tiếp) nên khai báo lại ở đây. */
+.scoreCol {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.scoreCol b {
+  font-size: 10px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreCol small {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 9px;
+  font-style: italic;
+  color: #8496a1;
+  font-variant-numeric: tabular-nums;
+}
+
 .flag {
   display: flex;
   align-items: center;

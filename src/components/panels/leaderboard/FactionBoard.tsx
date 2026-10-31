@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChevronRight, HandFist } from "lucide-react";
+import { ChevronRight, Fuel, HandFist } from "lucide-react";
 import { compact } from "../../../utils/format";
 import {
   rankFactions,
@@ -152,7 +152,7 @@ function FactionItem({
         <span className={shared.rank}>{rank}</span>
         <FactionFlag entry={entry} />
         <FactionLines entry={entry} />
-        <b>{compact(entry.score)}</b>
+        <ScoreCol entry={entry} />
         <ChevronRight size={13} />
       </summary>
       <GuildList faction={entry} filterMode={filterMode} />
@@ -175,8 +175,8 @@ function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
   );
 }
 
-// 3 dòng: tên phe / số guild + tổng lực chiến (icon nắm đấm) / số đảo đang chiếm +
-// Tổng Nhiên Liệu (ẩn khi dump thiếu fuel — data cũ).
+// 3 dòng: tên phe / số guild + tổng lực chiến (icon nắm đấm) / số đảo đang
+// chiếm + số đảo đang đánh (đã dồn điểm nhưng chưa claim).
 function FactionLines({ entry }: { entry: FactionBoardEntry }) {
   return (
     <div className={shared.factionName} style={{ color: entry.labelColor }}>
@@ -189,10 +189,25 @@ function FactionLines({ entry }: { entry: FactionBoardEntry }) {
         </span>
       </small>
       <small>
-        {entry.islands} đảo
-        {entry.fuel != null ? ` | ${compact(entry.fuel)} (nhiên liệu)` : ""}
+        {entry.islands} đảo (chiếm) | {entry.attacked} đảo (đánh)
       </small>
     </div>
+  );
+}
+
+// Cột phải: tổng điểm phe, Tổng Nhiên Liệu xếp ngay dưới (ẩn khi dump thiếu
+// fuel — data cũ). Dùng cả summary lẫn card SingleFaction.
+function ScoreCol({ entry }: { entry: FactionBoardEntry }) {
+  return (
+    <span className={styles.scoreCol}>
+      <b>{compact(entry.score)}</b>
+      {entry.fuel != null && (
+        <small title="Tổng Nhiên Liệu">
+          <Fuel size={9} />
+          {compact(entry.fuel)}
+        </small>
+      )}
+    </span>
   );
 }
 
@@ -211,7 +226,7 @@ function SingleFaction({
       >
         <FactionFlag entry={faction} />
         <FactionLines entry={faction} />
-        <b>{compact(faction.score)}</b>
+        <ScoreCol entry={faction} />
       </div>
       <GuildList faction={faction} filterMode={filterMode} />
     </>

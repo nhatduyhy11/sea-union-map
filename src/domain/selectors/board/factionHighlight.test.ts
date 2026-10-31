@@ -16,6 +16,7 @@ const entry = (
   score,
   power: 0,
   islands: 0,
+  attacked: 0,
   guilds: [],
   fuel,
 });
