@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, HandFist } from "lucide-react";
 import { compact } from "../../../utils/format";
 import {
   rankFactions,
@@ -45,7 +45,12 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   const faction = displayFactions.find((entry) => entry.id === focus);
   return (
     <>
-      <h2>Xếp hạng phe</h2>
+      <div className={styles.headRow}>
+        <h2>Xếp hạng phe</h2>
+        <span className={styles.headTotal} title="Tổng điểm ST của 4 phe">
+          {compact(totalScore)}
+        </span>
+      </div>
       <FactionTabs factions={factions} focus={focus} onFocus={setFocus} />
       <div className={shared.sortBar}>
         <label
@@ -168,16 +173,17 @@ function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
   );
 }
 
-// 3 dòng: tên phe / số guild + tổng lực chiến [LC] / số đảo đang chiếm +
+// 3 dòng: tên phe / số guild + tổng lực chiến (icon nắm đấm) / số đảo đang chiếm +
 // Tổng Nhiên Liệu (ẩn khi dump thiếu fuel — data cũ).
 function FactionLines({ entry }: { entry: FactionBoardEntry }) {
   return (
     <div className={shared.factionName} style={{ color: entry.labelColor }}>
       {entry.name}
       <small>
-        {entry.guilds.length} guild{" "}
+        {entry.guilds.length} guild |{" "}
         <span className={styles.power}>
-          [{entry.power ? compact(entry.power) : "—"}]
+          <HandFist size={9} />
+          {entry.power ? compact(entry.power) : "—"}
         </span>
       </small>
       <small>
