@@ -13,7 +13,7 @@ import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
 // được — camera theo lần expand cuối. Đóng expand của đảo đang selected thì
 // gỡ selection (viền active) — đảo khác đang chọn thì giữ nguyên.
 // Không phụ thuộc Filter mode. Mặc định theo id đảo (1-1, 1-2 …); nút sort
-// xoay vòng tăng dần → giảm dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm,
+// xoay vòng giảm dần → tăng dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm,
 // "Chưa chiếm" = đảo trung lập — đều theo owner server (đã áp rule ngắt
 // đường); tiêu đề đếm số cứ điểm đang hiển thị. State local, rời board là reset.
 export function NodeBoard({
@@ -72,7 +72,7 @@ export function NodeBoard({
       <div className={styles.sortBar}>
         <button
           className={`${styles.sortOption} ${scoreSort !== "none" ? styles.sortActive : ""}`}
-          title="Bấm để đổi: tăng dần → giảm dần → không sort (theo số đảo 1-1, 1-2 …)."
+          title="Bấm để đổi: giảm dần → tăng dần → không sort (theo số đảo 1-1, 1-2 …)."
           onClick={() => setScoreSort(NEXT_SORT[scoreSort])}
         >
           {scoreSort === "asc" ? (
@@ -146,9 +146,9 @@ function topScore(entry: NodeBoardEntry): FactionScore {
 
 type ScoreSort = "none" | "asc" | "desc";
 const NEXT_SORT: Record<ScoreSort, ScoreSort> = {
-  none: "asc",
-  asc: "desc",
-  desc: "none",
+  none: "desc",
+  desc: "asc",
+  asc: "none",
 };
 
 // Giá trị filter riêng cho pill "Chưa chiếm" (đảo trung lập, chưa phe nào chiếm).

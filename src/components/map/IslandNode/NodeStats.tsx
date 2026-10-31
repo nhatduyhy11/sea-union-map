@@ -19,10 +19,15 @@ export function NodeStats({
   onTogglePin,
 }: NodeStatsProps) {
   if (!scores) return null;
+  // Thanh màu phe định danh phe (thứ tự cố định theo mảng factions), không
+  // kèm tên; số điểm nằm giữa thanh. Chiều dài thanh theo tỉ lệ điểm/tổng
+  // node — cùng công thức với FactionScores (NodeDetails).
+  const total = scores.reduce((sum, faction) => sum + faction.score, 0);
   return (
     <div className={`${styles.nodeStats} ${pinned ? styles.pinned : ""}`}>
       <div className={styles.statTitle}>
-        <span>{name}</span>
+        <span className={styles.statName}>{name}</span>
+        <span className={styles.statNote}>(điểm tối thiểu)</span>
         {onTogglePin && (
           <button
             className={`${styles.pinToggle} ${pinned ? styles.pinActive : ""}`}
@@ -35,12 +40,15 @@ export function NodeStats({
         )}
       </div>
       {scores.map((faction) => (
-        <div key={faction.id}>
-          <span style={{ color: faction.labelColor }}>
-            <i style={{ background: faction.color }} />
-            {faction.name}
-          </span>
-          <b>{compact(faction.score)}</b>
+        <div key={faction.id} className={styles.scoreBar}>
+          <div
+            className={styles.scoreFill}
+            style={{
+              width: `${total ? (faction.score / total) * 100 : 0}%`,
+              background: faction.color,
+            }}
+          />
+          <b className={styles.scoreValue}>{compact(faction.score)}</b>
         </div>
       ))}
     </div>
