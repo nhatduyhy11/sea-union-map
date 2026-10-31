@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { Handle, Position, type NodeProps } from "@xyflow/react";
-import { Anchor, Castle, Pin, ShieldAlert, Swords } from "lucide-react";
+import {
+  Anchor,
+  BicepsFlexed,
+  Castle,
+  Gift,
+  Pin,
+  Scissors,
+  ShieldAlert,
+  Sword,
+  Swords,
+} from "lucide-react";
 import { iconBoxSize } from "../../../domain/mapGraph";
 import { useDebug } from "../../../stores/debug";
 import { getFactionIcon } from "../../shared/factionIcons";
@@ -17,14 +27,24 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   const FactionIcon = data.base
     ? getFactionIcon(data.factionInfo?.id ?? data.owner ?? data.id)
     : null;
-  // Đảo giao tranh đổi icon kiếm, đảo cần thủ đổi shield-alert — base giữ
-  // icon phe (lãnh thổ gốc).
+  const statusIcons = {
+    base: null,
+    anchor: Anchor,
+    castle: Castle,
+    belowClaim: Sword,
+    frozen: Scissors,
+    frontline: Swords,
+    defend: ShieldAlert,
+    gifted: Gift,
+    overbuilt: BicepsFlexed,
+    plain: null,
+  };
   const Icon =
     FactionIcon ??
-    (data.frontline
-      ? Swords
-      : data.defend
-        ? ShieldAlert
+    (data.canvasIcon
+      ? statusIcons[data.canvasIcon]
+      : data.owner
+        ? null
         : data.central
           ? Castle
           : Anchor);
@@ -80,7 +100,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
       >
-        <Icon size={data.base ? 31 : 24} />
+        {Icon && <Icon size={data.base ? 31 : 24} />}
       </button>
       <div className={styles.islandLabel}>
         <div className={styles.labelWrapper}>

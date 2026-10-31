@@ -33,6 +33,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     scoresByNode,
     frontlineByNode,
     defendNodeIds,
+    canvasIconByNode,
     contributions,
     players,
     leaderboard,
@@ -71,13 +72,15 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
         defendNodeIds,
         factions,
         { selected, pinned, showAll, matched, debug, playerHighlight },
-        { openIsland, togglePin }
+        { openIsland, togglePin },
+        canvasIconByNode
       ),
     [
       ownedIslands,
       scoresByNode,
       frontlineByNode,
       defendNodeIds,
+      canvasIconByNode,
       selected,
       pinned,
       showAll,
