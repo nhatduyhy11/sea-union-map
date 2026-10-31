@@ -13,6 +13,10 @@
   white-space: nowrap;
 }
 
+.icon {
+  flex-shrink: 0;
+}
+
 .entry i {
   width: 10px;
   height: 10px;

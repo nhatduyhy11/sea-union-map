@@ -8,6 +8,7 @@ import {
 } from "../../../domain/selectors";
 import { toggleFactionView } from "../../../stores/commands";
 import { usePanel } from "../../../stores/panel";
+import { getFactionIcon } from "../../shared/factionIcons";
 import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
 import shared from "./shared.module.css";
@@ -160,6 +161,7 @@ function FactionItem({
 }
 
 function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
+  const Icon = getFactionIcon(entry.id);
   return (
     <span
       className={styles.flag}
@@ -168,7 +170,7 @@ function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
         background: `${entry.labelColor}18`,
       }}
     >
-      {entry.name[0]}
+      {Icon ? <Icon size={16} /> : entry.name[0]}
     </span>
   );
 }

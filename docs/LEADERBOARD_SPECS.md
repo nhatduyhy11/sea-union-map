@@ -46,12 +46,20 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
   - `color` — edge, swatch, viền đảo, icon căn cứ, bar điểm, tint row.
   - `labelColor` — **mọi text label tên phe**: pill, row BXH, legend chân canvas (swatch dùng `color`, text dùng `labelColor`), tooltip node, tag chủ đảo, dòng phe của player.
 
-| Phe (base)         | `id`    | `color` = `labelColor` |
-| ------------------ | ------- | ---------------------- |
-| Vịnh Thao Thiết    | `east`  | xanh lam `#1e9cf0`     |
-| Long Khư U Ám      | `south` | cam `#e8590c`          |
-| Thần Tự Lấp Lánh   | `north` | vàng `#e6ad00`         |
-| Thánh Đảo Lạnh Giá | `west`  | tím `#8e44d8`          |
+| Phe (base)         | `id`    | `color` = `labelColor` | Icon (`lucide-react`) |
+| ------------------ | ------- | ---------------------- | --------------------- |
+| Vịnh Thao Thiết    | `east`  | xanh lam `#1e9cf0`     | `ZodiacAries`         |
+| Long Khư U Ám      | `south` | cam `#e8590c`          | `Flame`               |
+| Thần Tự Lấp Lánh   | `north` | vàng `#e6ad00`         | `Sparkles`                 |
+| Thánh Đảo Lạnh Giá | `west`  | tím `#8e44d8`          | `Snowflake`           |
+
+`color` dùng chung cho swatch/viền đảo/bar điểm, trừ edge connection trên canvas đọc `edgeColor` trước (`faction.edgeColor ?? faction.color`): phe vàng đậm hơn một bậc (`#cc9a00`) vì màu chuẩn bị chìm ở opacity 0.7 trên nền giấy canvas; các phe còn lại dùng `color`.
+
+- **Icon đại diện phe ([`src/components/shared/factionIcons.ts`](../src/components/shared/factionIcons.ts)):**
+  - **Base nodes trên canvas:** 4 căn cứ phe hiển thị icon tương ứng của phe (`ZodiacAries`, `Flame`, `Sparkles`, `Snowflake`), các đảo thường giữ icon mỏ neo (`Anchor`), đảo trung tâm giữ icon thành trì (`Castle`). Badge header tại panel chi tiết ([`NodeDetails`](../src/components/panels/NodeDetails/index.tsx)) cũng hiển thị icon phe này khi chọn căn cứ.
+  - **Avatar người chơi ([`PlayerIdentity`](../src/components/shared/PlayerIdentity.tsx)):** BXH cá nhân (và bảng người chơi) dùng icon phe với màu `labelColor` trên nền nhạt làm avatar thay vì chữ cái đầu tên player.
+  - **BXH Phe ([`FactionBoard`](../src/components/panels/leaderboard/FactionBoard.tsx)):** Cờ/avatar đại diện phe dùng icon phe với màu `labelColor` trên nền nhạt thay vì chữ cái đầu tên phe.
+  - **Legend chân canvas ([`FactionLegend`](../src/components/map/map-footer/FactionLegend.tsx)):** Hiển thị icon tương ứng của phe thay vì ô vuông màu.
 
 ### 1.5. Tên đảo hiển thị
 
