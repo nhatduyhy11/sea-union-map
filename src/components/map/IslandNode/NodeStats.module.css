@@ -13,7 +13,7 @@
 }
 
 .nodeStats.pinned {
-  border-color: #0d9a6f;
+  border-color: var(--highlight-green);
 }
 
 /* Nền popup pha nhạt màu phe đại diện (--tint): phe đang giữ đảo, hoặc với
@@ -70,5 +70,5 @@
 }
 
 .pinToggle.pinActive {
-  color: #0d9a6f;
+  color: var(--highlight-green);
 }

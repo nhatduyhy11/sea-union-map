@@ -111,7 +111,7 @@
 }
 
 .pin.pinned {
-  color: #0d9a6f;
+  color: var(--highlight-green);
 }
 
 .base .islandIcon {

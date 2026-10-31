@@ -47,6 +47,10 @@ export function FactionScoreBars({
             : "0"
           : compact(faction.score);
 
+        const hasFactionScore = isPlayerFaction && faction.score > 0;
+        const hasPlayerScore =
+          hasFactionScore && playerHighlight && playerHighlight.score > 0;
+
         return (
           <div
             key={faction.id}
@@ -54,26 +58,39 @@ export function FactionScoreBars({
           >
             <div
               className={`${styles.scoreFill} ${
-                isPlayerFaction ? styles.playerFactionFill : ""
-              }`}
+                hasFactionScore ? styles.playerFactionFill : ""
+              } ${hasPlayerScore ? styles.hasScore : ""}`}
               style={{
                 width: `${widthPct}%`,
+                // Khi filter player: nền thanh phe pha nhạt 20% để dải đóng góp
+                // của player (100% màu phe đặc) nổi bật rõ bên trong.
                 background: isPlayerFaction
-                  ? `color-mix(in srgb, ${faction.color} 30%, #e4e9ec)`
+                  ? `color-mix(in srgb, ${faction.color} 20%, #e4e9ec)`
                   : faction.color,
               }}
             >
               {isPlayerFaction && playerPct > 0 && (
                 <div
                   className={styles.playerFill}
-                  style={{
-                    width: `${playerPct}%`,
-                    background: faction.color,
-                  }}
+                  style={
+                    {
+                      width: `${playerPct}%`,
+                      background: faction.color,
+                      // Màu mũ mép dải cho ::after trong CSS — derive từ màu
+                      // phe nên phải truyền var, CSS không đọc được background.
+                      "--cap": `color-mix(in srgb, ${faction.color} 60%, #1c2730)`,
+                    } as React.CSSProperties
+                  }
                 />
               )}
             </div>
-            <b className={styles.scoreValue}>{scoreLabel}</b>
+            <b
+              className={`${styles.scoreValue} ${
+                isPlayerFaction ? styles.playerScoreValue : ""
+              }`}
+            >
+              {scoreLabel}
+            </b>
           </div>
         );
       })}
