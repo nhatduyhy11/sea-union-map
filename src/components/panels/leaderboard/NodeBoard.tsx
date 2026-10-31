@@ -183,7 +183,7 @@ export function NodeBoard({
               <b>{compact(entry.total)}</b>
               <ChevronRight size={13} />
             </summary>
-            <div className={styles.allocation}>
+            <div className={`${styles.allocation} ${styles.nodeAllocation}`}>
               <FactionScoreBars
                 scores={entry.scores}
                 total={entry.total}
