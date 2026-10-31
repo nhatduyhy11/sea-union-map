@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import {
   buildNodeBoard,
   buildServerLeaderboard,
+  frontlineNodes,
   nodeDetails,
   playersFromContributions,
   scoresForNode,
@@ -60,6 +61,90 @@ test("Node board lists islands by display id with faction breakdowns", () => {
   assert.equal(board[1].scores.find((f) => f.id === "b")?.score, 0);
 });
 
+test("Frontline flags owned nodes a connected rival pressures", () => {
+  const nodes = [
+    { ...islands[0], factionScores: { a: 200, b: 100 } }, // owner a
+    { ...islands[1], factionScores: { b: 100, a: 80 } }, // owner b
+  ];
+  const fl = frontlineNodes(
+    nodes,
+    [{ source: "1-1", target: "2-1" }],
+    contributions,
+    factions
+  );
+  // Mỗi node đều có láng giềng thuộc phe nhì → cùng giao tranh; list sort
+  // theo ratio giảm dần.
+  assert.deepEqual(
+    [...fl.entries()].map(([id, f]) => [id, f.owner.id, f.rival.id, f.ratio]),
+    [
+      ["2-1", "b", "a", 0.8],
+      ["1-1", "a", "b", 0.5],
+    ]
+  );
+});
+
+test("Frontline rival is the strongest non-owner faction", () => {
+  const fl = frontlineNodes(
+    [
+      { ...islands[0], factionScores: { a: 100, b: 20, c: 40 } },
+      { ...islands[1], owner: "c", factionScores: { a: 10, b: 10, c: 10 } },
+    ],
+    [{ source: "1-1", target: "2-1" }],
+    contributions,
+    [
+      ...factions,
+      { id: "c", name: "C", color: "#cccccc", labelColor: "#333333" },
+    ]
+  );
+  assert.equal(fl.get("1-1")?.rival.id, "c");
+  assert.equal(fl.get("1-1")?.ratio, 0.4);
+});
+
+test("Neutral islands, weak pressure and cut-off rivals stay out", () => {
+  const routes = [{ source: "1-1", target: "2-1" }];
+  // Phe nhì 100/300 = 0.333 — dưới ngưỡng 36%.
+  assert.equal(
+    frontlineNodes(
+      [{ ...islands[0], factionScores: { a: 300, b: 100 } }],
+      routes,
+      contributions,
+      factions
+    ).size,
+    0
+  );
+  // Phe nhì có điểm cao hơn phe claim nhưng không owns láng giềng nào —
+  // chồng điểm thô của phe đã bị cắt đường (SEA_EVENT_RULE.md §4).
+  assert.equal(
+    frontlineNodes(
+      [{ ...islands[0], factionScores: { a: 200, b: 100 } }],
+      [],
+      contributions,
+      factions
+    ).size,
+    0
+  );
+  // Đảo chưa chủ: chưa phe nào thật sự commit.
+  const neutral = [
+    {
+      id: "3-1",
+      name: "Đảo Trống",
+      position: { x: 0, y: 0 },
+      owner: null,
+      claimThreshold: 1,
+      factionScores: { a: 100, b: 90 },
+    },
+  ];
+  assert.equal(
+    frontlineNodes(
+      neutral,
+      [{ source: "3-1", target: "1-1" }],
+      contributions,
+      factions
+    ).size,
+    0
+  );
+});
+
 test("Server faction scores override the capped node-board sum", () => {
   // Server total cho "1-1" cao hơn Σ rows (a: 100, b: 200) — row bị cắt top-N.
   const withServer = islands.map((island) =>
@@ -113,7 +198,14 @@ test("Search handles whitespace, casing, indexes, empty queries and result limit
 
 test("Server leaderboard keeps server rank/score and joins allocations", () => {
   const rows = [
-    { rank: 1, playerId: "p2", name: "Two", faction: "b", score: 900, power: 12_000_000 },
+    {
+      rank: 1,
+      playerId: "p2",
+      name: "Two",
+      faction: "b",
+      score: 900,
+      power: 12_000_000,
+    },
     { rank: 2, playerId: "p1", name: "One", faction: "a", score: 300 },
     // Trên server board nhưng không lọt top-N node nào → allocations rỗng.
     { rank: 3, playerId: "p9", name: "#p9", faction: "a", score: 1 },

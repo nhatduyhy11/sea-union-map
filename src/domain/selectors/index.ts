@@ -12,5 +12,7 @@ export {
   rankFactionsForHighlight,
   sortGuilds,
 } from "./board";
+export { frontlineNodes } from "./frontline";
+export type { Frontline } from "./frontline";
 export { nodeDetails } from "./nodeDetails";
 export { searchIslands } from "./search";
