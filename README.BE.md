@@ -86,6 +86,13 @@ uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 #    → public/sea-live-dev.json (transform từ baseline, refresh browser là thấy)
 #    --no-dump: chỉ lấy raw run
 
+#    Tự đặt tên <server>.json theo acc đang đăng nhập khi truyền thư mục:
+uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pjen \
+    --dump-out src/data/snapshots/261030/
+#    → src/data/snapshots/261030/<server>.json; server cũng lưu trong meta.json.
+#    Thư mục chưa tồn tại, không có đuôi file cũng được tự tạo.
+#    Truyền tên file .json cụ thể vẫn giữ nguyên tên đã chọn.
+
 # [2] Re-dump run cũ / bake chính thức (report.py là CLI riêng)
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
 #    Bake snapshot chính thức vào build:
