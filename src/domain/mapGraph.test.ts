@@ -15,6 +15,8 @@ test("Map projection keeps pinning independent from global stats and filtering",
   const nodes = buildMapNodes(
     islands,
     scoresByNode,
+    new Map(),
+    new Set(),
     factions,
     {
       selected: "1-1",
@@ -34,6 +36,8 @@ test("Map projection keeps pinning independent from global stats and filtering",
   const all = buildMapNodes(
     islands,
     scoresByNode,
+    new Map(),
+    new Set(),
     factions,
     { selected: null, pinned: new Set(), showAll: false, matched: null },
     { openIsland: () => {}, togglePin: () => {} }
@@ -42,6 +46,38 @@ test("Map projection keeps pinning independent from global stats and filtering",
     all.every((node) => !node.data.dim),
     true
   );
+});
+
+test("Map projection carries icon, frontline info and defend flag onto node data", () => {
+  const scoresByNode = new Map(
+    islands.map((island) => [
+      island.id,
+      scoresForNode(island, contributions, factions),
+    ])
+  );
+  const nodes = buildMapNodes(
+    islands,
+    scoresByNode,
+    new Map([["1-1", { rival: factions[1], ratio: 0.5 }]]),
+    new Set(["2-1"]),
+    factions,
+    { selected: null, pinned: new Set(), showAll: false, matched: null },
+    { openIsland: () => {}, togglePin: () => {} },
+    new Map([
+      ["1-1", "frontline"],
+      ["2-1", "defend"],
+    ])
+  );
+  const byId = new Map(nodes.map((n) => [n.id, n]));
+  assert.equal(byId.get("1-1")?.data.canvasIcon, "frontline");
+  assert.equal(byId.get("2-1")?.data.canvasIcon, "defend");
+  assert.deepEqual(byId.get("1-1")?.data.frontline, {
+    rival: factions[1],
+    ratio: 0.5,
+  });
+  assert.equal(byId.get("2-1")?.data.frontline, undefined);
+  assert.equal(byId.get("2-1")?.data.defend, true);
+  assert.equal(byId.get("1-1")?.data.defend, false);
 });
 
 test("Map projection attaches playerHighlight when filtering by player", () => {
@@ -54,6 +90,8 @@ test("Map projection attaches playerHighlight when filtering by player", () => {
   const nodes = buildMapNodes(
     islands,
     scoresByNode,
+    new Map(),
+    new Set(),
     factions,
     {
       selected: null,

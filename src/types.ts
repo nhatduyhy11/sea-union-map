@@ -154,12 +154,17 @@ export interface MapFilter {
 export type CanvasFilter = MapFilter;
 
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'
-// totals (see SEA_STRUCTURE.md §3.2), islands = owned nodes ("Chiếm đảo").
+// totals (see SEA_STRUCTURE.md §3.2), islands = owned nodes ("Chiếm đảo"),
+// `touched` = all nodes with positive faction points, including owned nodes.
 export interface FactionBoardEntry extends Faction {
   score: number;
   // Tổng lực chiến các guild trong phe (0 = chưa có power data).
   power: number;
   islands: number;
+  // Số đảo phe có điểm > 0 (touched), gồm cả đảo đang chiếm.
+  touched: number;
+  // Số đảo có điểm > 0 và đủ ngưỡng claim, không xét connection.
+  claimable: number;
   // Tổng Nhiên Liệu phe, undefined = dump thiếu fuel (data cũ)
   // — UI ẩn "(nhiên liệu)", highlight fallback Điểm phe (factionHighlight).
   fuel?: number;
@@ -190,7 +195,20 @@ export interface NodeDetailData {
   attackers: Attacker[];
 }
 
+export type CanvasIcon =
+  | "base"
+  | "anchor"
+  | "castle"
+  | "belowClaim"
+  | "frozen"
+  | "frontline"
+  | "defend"
+  | "gifted"
+  | "overbuilt"
+  | "plain";
+
 export type IslandNodeData = Island & {
+  canvasIcon?: CanvasIcon;
   factionInfo?: Faction;
   scores?: FactionScore[];
   pinned: boolean;
@@ -199,6 +217,16 @@ export type IslandNodeData = Island & {
   dim: boolean;
   // Node khớp filter guild/player đang chạy — viền icon dày lên để nổi.
   matched?: boolean;
+  // Node giao tranh (frontlineNodes — phe nhì dồn ≥36% điểm phe claim và owns
+  // một láng giềng): fill chocolate đậm + icon kiếm trên canvas; rival = phe
+  // nhì đang dồn điểm.
+  frontline?: {
+    rival: Faction;
+    ratio: number;
+  };
+  // Node cần thủ (defendNodes — điểm phe claim mỏng mà giáp ranh phe khác,
+  // chưa tính tranh chấp): icon shield-alert + fill màu phe nhạt.
+  defend?: boolean;
   debug?: boolean;
   // Đóng góp của player đang lọc trên đảo (dùng để highlight thanh điểm phe).
   playerHighlight?: {

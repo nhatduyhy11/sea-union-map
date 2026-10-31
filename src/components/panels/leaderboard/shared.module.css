@@ -48,6 +48,10 @@
   overflow: auto;
 }
 
+.nodeAllocation {
+  max-height: 337.5px;
+}
+
 /* Biến thể cho khối guild tab Phe: khi expand guild cần thấy ~15 member cùng
    lúc, giữ max-height 225px của .allocation là bị cuộn chỉ thấy 6-8 dòng. */
 .allocationTall {
@@ -73,6 +77,16 @@
 
 .item[open] .summary > svg {
   transform: rotate(90deg);
+}
+
+/* Icon trạng thái trước tổng điểm. Rule mở row xoay chevron, các icon
+   kiếm/gift/biceps đứng yên. Màu kiếm chocolate; gift/biceps theo owner. */
+.nodeStatusIcon {
+  flex-shrink: 0;
+}
+
+.item[open] .summary > svg.nodeStatusIcon {
+  transform: none;
 }
 
 .factionName {
@@ -164,6 +178,25 @@
 .subTabs button.selected {
   background: #0d8a65;
   color: #fff;
+}
+
+.nodeFilters {
+  flex-wrap: nowrap;
+  gap: 4px;
+  overflow-x: auto;
+}
+
+.nodeFilters button {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 6px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.nodeFilters svg {
+  flex-shrink: 0;
 }
 
 /* Pill phe: text + tint theo labelColor (inline var), selected = viền đậm. */

@@ -39,7 +39,9 @@ Ghi lại các quy tắc game về chiếm cứ điểm (claim) do chủ dự á
 - Server đã áp toàn bộ rule trên: owner mỗi node lấy từ snapshot `0x72/0x000c`
   ([SOCKET_PROTOCOL.md](sea/SOCKET_PROTOCOL.md)), dump key `owner`. Mỗi node là
   **một giá trị** (0 = trung lập, 1..4 = phe), trạng thái hiện tại, không có
-  lịch sử. FE chỉ hiển thị owner, không tự tính đường nối hay contest.
+  lịch sử. FE hiển thị owner server, không tự quyết định lại ownership. Có thể tính
+  đường nối và áp lực điểm để phân loại icon canvas
+  ([CANVAS_ICONS.md](CANVAS_ICONS.md)); các trạng thái này không thay đổi owner.
 - Đối chiếu 2026-10-29/30 (9 crawl, cụm 517 và 590): 801 node đều có đúng 1 field
   owner; danh sách node từng phe trong `0x72/0x001c` khớp 100%. Với điểm phe
   server (`0x72/0x0012`) và đường nối tính từ owner: không node nào trái §2–§4.

@@ -2,6 +2,7 @@
 import type { Edge } from "@xyflow/react";
 import type {
   AppNode,
+  CanvasIcon,
   Faction,
   FactionScore,
   Island,
@@ -52,40 +53,53 @@ export function matchNodeIds(
 export function buildMapNodes(
   islands: Island[],
   scoresByNode: Map<string, FactionScore[]>,
+  // Node giao tranh (domain/selectors/frontline.ts) — data node mang theo
+  // { rival, ratio } để viền hồng, sẵn cho popup/tooltip sau này.
+  frontlineByNode: Map<string, { rival: Faction; ratio: number }>,
+  // Node cần thủ (domain/selectors/defend.ts) — flag cho icon shield-alert
+  // + fill màu phe nhạt.
+  defendNodeIds: Set<string>,
   factions: Faction[],
   state: MapGraphState,
-  actions: MapGraphActions
+  actions: MapGraphActions,
+  canvasIconByNode: ReadonlyMap<string, CanvasIcon> = new Map()
 ): AppNode[] {
-  return islands.map((island) => ({
-    id: island.id,
-    type: "island" as const,
-    position: island.position,
-    zIndex:
-      state.showAll || state.pinned.has(island.id)
-        ? 10
-        : island.id === state.selected
-          ? 5
-          : 1,
-    data: {
-      ...island,
-      factionInfo: factions.find((faction) => faction.id === island.owner),
-      scores: scoresByNode.get(island.id),
-      pinned: state.pinned.has(island.id),
-      showAll: state.showAll,
-      active: island.id === state.selected,
-      dim: state.matched !== null && !state.matched.has(island.id),
-      matched: state.matched?.has(island.id) ?? false,
-      debug: state.debug,
-      playerHighlight: state.playerHighlight
-        ? {
-            faction: state.playerHighlight.faction,
-            score: state.playerHighlight.scoresByNode.get(island.id) ?? 0,
-          }
-        : undefined,
-      open: actions.openIsland,
-      pin: actions.togglePin,
-    },
-  }));
+  return islands.map((island) => {
+    const front = frontlineByNode.get(island.id);
+    return {
+      id: island.id,
+      type: "island" as const,
+      position: island.position,
+      zIndex:
+        state.showAll || state.pinned.has(island.id)
+          ? 10
+          : island.id === state.selected
+            ? 5
+            : 1,
+      data: {
+        ...island,
+        canvasIcon: canvasIconByNode.get(island.id),
+        factionInfo: factions.find((faction) => faction.id === island.owner),
+        scores: scoresByNode.get(island.id),
+        pinned: state.pinned.has(island.id),
+        showAll: state.showAll,
+        active: island.id === state.selected,
+        dim: state.matched !== null && !state.matched.has(island.id),
+        matched: state.matched?.has(island.id) ?? false,
+        frontline: front && { rival: front.rival, ratio: front.ratio },
+        defend: defendNodeIds.has(island.id),
+        debug: state.debug,
+        playerHighlight: state.playerHighlight
+          ? {
+              faction: state.playerHighlight.faction,
+              score: state.playerHighlight.scoresByNode.get(island.id) ?? 0,
+            }
+          : undefined,
+        open: actions.openIsland,
+        pin: actions.togglePin,
+      },
+    };
+  });
 }
 
 export function buildMapEdges(

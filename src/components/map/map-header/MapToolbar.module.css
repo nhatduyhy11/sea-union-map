@@ -68,7 +68,7 @@
 }
 
 /* Cụm phải của toolbar: margin-left:auto đặt ở wrapper (không phải .showAll)
-   để icon bỏ filter dính sát trái toggle thay vì bị auto margin đẩy xa. */
+   để nút reset dính sát trái toggle thay vì bị auto margin đẩy xa. */
 .toolbarRight {
   margin-left: auto;
   display: flex;
@@ -76,8 +76,9 @@
   gap: 14px;
 }
 
-/* Icon bỏ filter — cùng khung viền với nút Toàn cảnh, chỉ icon không chữ. */
-.resetFilter {
+/* Nút reset tổng (icon reload) — cùng khung viền với nút Toàn cảnh, chỉ icon
+   không chữ. */
+.reset {
   display: flex;
   align-items: center;
   border: 1px solid #d5dcdf;

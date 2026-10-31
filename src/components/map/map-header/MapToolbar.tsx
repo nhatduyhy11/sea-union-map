@@ -1,10 +1,11 @@
-import { Search, Layers, Crosshair, FilterX } from "lucide-react";
+import { Search, Layers, Crosshair, RotateCcw } from "lucide-react";
 import { useFitMap } from "../../../hooks/useFitMap";
 import { useFocusIsland } from "../../../hooks/useFocusIsland";
 import { useIslandMatches } from "./useIslandMatches";
-import { resetCanvasFilter } from "../../../stores/commands";
+import { resetAll } from "../../../stores/commands";
 import { useMapView } from "../../../stores/mapView";
 import { usePanel } from "../../../stores/panel";
+import { useSelection } from "../../../stores/selection";
 import styles from "./MapToolbar.module.css";
 
 export function MapToolbar() {
@@ -12,10 +13,19 @@ export function MapToolbar() {
   const focusIsland = useFocusIsland();
   const query = usePanel((state) => state.query);
   const setQuery = usePanel((state) => state.setQuery);
+  const openGuild = usePanel((state) => state.openGuild);
+  const openPlayer = usePanel((state) => state.openPlayer);
+  const openFaction = usePanel((state) => state.openFaction);
   const showAll = useMapView((state) => state.showAll);
   const setShowAll = useMapView((state) => state.setShowAll);
   const filter = useMapView((state) => state.filter);
+  const selected = useSelection((state) => state.selected);
   const matches = useIslandMatches();
+  // Nút reset tổng chỉ render khi có trạng thái tạm để dọn (chi tiết đảo,
+  // ô tìm kiếm, filter canvas, expansion BXH).
+  const hasResettable = Boolean(
+    selected || query || filter || openGuild || openPlayer || openFaction
+  );
   return (
     <div className={styles.toolbar}>
       <div className={styles.search}>
@@ -42,17 +52,18 @@ export function MapToolbar() {
           </div>
         )}
       </div>
-      {/* Cụm phải: icon bỏ filter sát trái toggle Điểm toàn map — wrapper giữ
-          margin-left:auto để nhóm luôn dính nhau bất kể icon có render hay không. */}
+      {/* Cụm phải: nút reset tổng (icon reload) sát trái toggle Điểm toàn map —
+          wrapper giữ margin-left:auto để nhóm luôn dính nhau bất kể nút có
+          render hay không. */}
       <div className={styles.toolbarRight}>
-        {filter && (
+        {hasResettable && (
           <button
-            className={styles.resetFilter}
-            aria-label="Bỏ lọc"
-            title="Bỏ lọc"
-            onClick={resetCanvasFilter}
+            className={styles.reset}
+            aria-label="Reset"
+            title="Reset — đóng chi tiết, bỏ lọc, xoá tìm kiếm"
+            onClick={resetAll}
           >
-            <FilterX size={16} />
+            <RotateCcw size={16} />
           </button>
         )}
         <label className={styles.showAll}>

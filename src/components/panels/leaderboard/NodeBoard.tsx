@@ -1,12 +1,35 @@
 import { useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from "lucide-react";
-import { compact, number } from "../../../utils/format";
+import {
+  ArrowDown,
+  ArrowUp,
+  ArrowUpDown,
+  BicepsFlexed,
+  ChevronRight,
+  Gift,
+  Swords,
+  type LucideIcon,
+} from "lucide-react";
+import { compact } from "../../../utils/format";
+import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { useFocusIslandOnBoard } from "../../../hooks/useFocusIsland";
 import { useSelection } from "../../../stores/selection";
 import { PlayerTable } from "../NodeDetails/PlayerTable";
 import { tintStyle } from "./tint";
 import styles from "./shared.module.css";
-import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
+import type {
+  CanvasIcon,
+  Faction,
+  FactionScore,
+  NodeBoardEntry,
+} from "../../../types";
+
+const BOARD_STATUS_ICONS: Partial<
+  Record<CanvasIcon, { Icon: LucideIcon; label: string }>
+> = {
+  frontline: { Icon: Swords, label: "Tranh" },
+  gifted: { Icon: Gift, label: "Cướp" },
+  overbuilt: { Icon: BicepsFlexed, label: "Dồn" },
+};
 
 // Tab Cứ điểm: mở expand của một đảo = focus đảo trên map (camera pan +
 // selected), panel giữ nguyên ở bảng. Focus chỉ xảy ra khi toggle mở; đa mở
@@ -14,30 +37,37 @@ import type { Faction, FactionScore, NodeBoardEntry } from "../../../types";
 // gỡ selection (viền active) — đảo khác đang chọn thì giữ nguyên.
 // Không phụ thuộc Filter mode. Mặc định theo id đảo (1-1, 1-2 …); nút sort
 // xoay vòng giảm dần → tăng dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm,
-// "Chưa chiếm" = đảo trung lập — đều theo owner server (đã áp rule ngắt
-// đường); tiêu đề đếm số cứ điểm đang hiển thị. State local, rời board là reset.
+// "Tranh chấp" = đảo giao tranh (frontlineNodes), "Chưa chiếm" = đảo trung
+// lập — đều theo owner server (đã áp rule ngắt đường); row tranh chấp hiện
+// icon kiếm/gift/biceps trước tổng điểm, theo trạng thái icon canvas; tiêu đề đếm số
+// cứ điểm đang hiển thị. State local, rời board là reset.
 export function NodeBoard({
   nodes,
   factions,
+  canvasIconByNode,
 }: {
   nodes: NodeBoardEntry[];
   factions: Faction[];
+  canvasIconByNode: ReadonlyMap<string, CanvasIcon>;
 }) {
   const focusIslandOnBoard = useFocusIslandOnBoard();
   const selected = useSelection((state) => state.selected);
   const [scoreSort, setScoreSort] = useState<ScoreSort>("none");
   const [ownerFilter, setOwnerFilter] = useState<string | null>(null);
   const displayNodes = useMemo(() => {
-    const owned =
-      ownerFilter === UNCLAIMED
-        ? nodes.filter((entry) => !entry.owner)
-        : ownerFilter
-          ? nodes.filter((entry) => entry.owner?.id === ownerFilter)
-          : nodes;
+    const statusFilter = STATUS_FILTERS.find(
+      (filter) => filter.id === ownerFilter
+    );
+    const owned = nodes.filter((entry) => {
+      if (ownerFilter === UNCLAIMED) return !entry.owner;
+      if (statusFilter)
+        return canvasIconByNode.get(entry.island.id) === statusFilter.status;
+      return !ownerFilter || entry.owner?.id === ownerFilter;
+    });
     if (scoreSort === "none") return owned;
     const sign = scoreSort === "asc" ? 1 : -1;
     return [...owned].sort((a, b) => sign * (a.total - b.total));
-  }, [nodes, scoreSort, ownerFilter]);
+  }, [nodes, scoreSort, ownerFilter, canvasIconByNode]);
   return (
     <>
       <h2>Xếp hạng cứ điểm ({displayNodes.length})</h2>
@@ -60,8 +90,25 @@ export function NodeBoard({
             {faction.name}
           </button>
         ))}
+      </div>
+      <div className={`${styles.subTabs} ${styles.nodeFilters}`}>
+        {STATUS_FILTERS.map(({ id, status }) => {
+          const { Icon, label } = BOARD_STATUS_ICONS[status]!;
+          return (
+            <button
+              key={id}
+              className={ownerFilter === id ? styles.selected : ""}
+              aria-pressed={ownerFilter === id}
+              onClick={() => setOwnerFilter(ownerFilter === id ? null : id)}
+            >
+              <Icon size={13} aria-hidden="true" />
+              {label}
+            </button>
+          );
+        })}
         <button
           className={ownerFilter === UNCLAIMED ? styles.selected : ""}
+          aria-pressed={ownerFilter === UNCLAIMED}
           onClick={() =>
             setOwnerFilter(ownerFilter === UNCLAIMED ? null : UNCLAIMED)
           }
@@ -89,6 +136,9 @@ export function NodeBoard({
       </div>
       {displayNodes.map((entry, index) => {
         const claimed = Boolean(entry.owner);
+        const canvasIcon = canvasIconByNode.get(entry.island.id);
+        const status = BOARD_STATUS_ICONS[canvasIcon ?? "plain"];
+        const StatusIcon = status?.Icon;
         return (
           <details
             key={entry.island.id}
@@ -116,15 +166,29 @@ export function NodeBoard({
                   )}
                 </small>
               </div>
+              {StatusIcon && (
+                <StatusIcon
+                  size={16}
+                  className={styles.nodeStatusIcon}
+                  style={{
+                    color:
+                      canvasIcon === "frontline"
+                        ? "#d2691e"
+                        : entry.owner?.color,
+                  }}
+                  role="img"
+                  aria-label={status.label}
+                />
+              )}
               <b>{compact(entry.total)}</b>
               <ChevronRight size={13} />
             </summary>
-            <div className={styles.allocation}>
-              {entry.scores
-                .filter((score) => score.score > 0)
-                .map((score) => (
-                  <FactionScoreRow key={score.id} score={score} />
-                ))}
+            <div className={`${styles.allocation} ${styles.nodeAllocation}`}>
+              <FactionScoreBars
+                scores={entry.scores}
+                total={entry.total}
+                hideEmpty
+              />
               {entry.attackers.length > 0 && (
                 <div className={styles.playerBlock}>
                   <PlayerTable attackers={entry.attackers} />
@@ -151,7 +215,12 @@ const NEXT_SORT: Record<ScoreSort, ScoreSort> = {
   asc: "none",
 };
 
-// Giá trị filter riêng cho pill "Chưa chiếm" (đảo trung lập, chưa phe nào chiếm).
+// Filter trạng thái dùng cùng kết quả phân loại icon với canvas.
+const STATUS_FILTERS = [
+  { id: "__contested", status: "frontline" },
+  { id: "__overbuilt", status: "overbuilt" },
+  { id: "__gifted", status: "gifted" },
+] as const;
 const UNCLAIMED = "__unclaimed";
 
 // Điểm phe góp cao nhất (màu label phe đó) + % so với tổng điểm đảo, làm
@@ -182,14 +251,5 @@ function ClaimNeed({ entry }: { entry: NodeBoardEntry }) {
       {" / "}
       {compact(entry.island.claimThreshold)}
     </span>
-  );
-}
-
-function FactionScoreRow({ score }: { score: FactionScore }) {
-  return (
-    <div className={styles.guildRow}>
-      <span style={{ color: score.labelColor }}>{score.name}</span>
-      <b>{number(score.score)}</b>
-    </div>
   );
 }

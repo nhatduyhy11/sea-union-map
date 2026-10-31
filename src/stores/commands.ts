@@ -52,6 +52,15 @@ export function resetCanvasFilter() {
   useMapView.getState().resetFilter();
 }
 
+// Reset tổng (nút reload trên toolbar): đóng chi tiết đảo đang mở, xoá ô tìm
+// kiếm, reset view BXH (filter canvas về all + đóng hết expansion). Không đụng
+// pin và toggle "Điểm toàn map" — lựa chọn hiển thị chủ đích của người dùng.
+export function resetAll() {
+  useSelection.getState().close();
+  usePanel.getState().setQuery("");
+  resetRankingView();
+}
+
 // Bật/tắt Filter mode: tắt = BXH thuần đọc, canvas reset về all.
 export function setFilterMode(on: boolean) {
   usePanel.getState().setFilterMode(on);

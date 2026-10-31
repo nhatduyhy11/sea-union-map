@@ -33,6 +33,7 @@ export function buildFactionBoard(
   if (!serverGuilds || Object.keys(serverGuilds).length === 0)
     return buildFactionBoardComputed(contributions, factions, islands, sortBy);
   const players = playersFromContributions(contributions);
+  const touched = touchedByNode(contributions);
   return factions.map((faction) => {
     const rows = serverGuilds[faction.id] ?? [];
     const members = players.filter((player) => player.faction === faction.id);
@@ -67,7 +68,8 @@ export function buildFactionBoard(
       guilds,
       rows.reduce((total, row) => total + row.score, 0),
       sortBy,
-      fuel?.[faction.id]
+      fuel?.[faction.id],
+      touched
     );
   });
 }
@@ -81,6 +83,7 @@ function buildFactionBoardComputed(
 ): FactionBoardEntry[] {
   const players = playersFromContributions(contributions);
   const scores = scoreByPlayer(contributions);
+  const touched = touchedByNode(contributions);
   return factions.map((faction) => {
     const members = players.filter((player) => player.faction === faction.id);
     const groups = new Map<string, { name: string; players: Player[] }>();
@@ -103,9 +106,26 @@ function buildFactionBoardComputed(
         (total, player) => total + (scores.get(player.id) ?? 0),
         0
       ),
-      sortBy
+      sortBy,
+      undefined,
+      touched
     );
   });
+}
+
+// nodeId → các phe có đóng góp điểm tại đảo. Cơ sở cho số "đã đánh" của
+// BXH Phe — tính một lần, tra theo phe trong factionEntry.
+function touchedByNode(
+  contributions: Contribution[]
+): Map<string, Map<string, number>> {
+  const map = new Map<string, Map<string, number>>();
+  for (const entry of contributions) {
+    if (entry.score <= 0) continue;
+    const scores = map.get(entry.nodeId) ?? new Map<string, number>();
+    scores.set(entry.faction, (scores.get(entry.faction) ?? 0) + entry.score);
+    map.set(entry.nodeId, scores);
+  }
+  return map;
 }
 
 function factionEntry(
@@ -114,12 +134,26 @@ function factionEntry(
   guilds: GuildScore[],
   score: number,
   sortBy: SortBy,
-  fuel?: number
+  fuel: number | undefined,
+  touched: Map<string, Map<string, number>>
 ): FactionBoardEntry {
   const sorted = sortGuilds(guilds, sortBy);
+  const pointsAt = (node: Island) =>
+    node.factionScores
+      ? (node.factionScores[faction.id] ?? 0)
+      : (touched.get(node.id)?.get(faction.id) ?? 0);
   return {
     ...faction,
     islands: islands.filter((node) => node.owner === faction.id).length,
+    // Đã đánh (touched): mọi đảo có điểm phe > 0, gồm cả đảo đang chiếm.
+    // Nguồn điểm phe/đảo như scoresForNode: server state (đủ — node board bị
+    // cắt top-20/đảo), dump cũ thiếu thì cộng contributions.
+    touched: islands.filter((node) => pointsAt(node) > 0).length,
+    // Thuần ngưỡng điểm, không xét owner hay đường nối. Base 0 điểm không tính.
+    claimable: islands.filter((node) => {
+      const points = pointsAt(node);
+      return points > 0 && points >= node.claimThreshold;
+    }).length,
     guilds: sorted,
     score,
     power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),

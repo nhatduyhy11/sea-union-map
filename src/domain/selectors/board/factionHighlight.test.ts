@@ -4,11 +4,7 @@ import { rankFactionsForHighlight } from "./factionHighlight";
 import type { FactionBoardEntry } from "../../../types";
 
 // Entry tối giản cho test highlight — các trường khác không tham gia xếp hạng.
-const entry = (
-  id: string,
-  fuel?: number,
-  score = 0
-): FactionBoardEntry => ({
+const entry = (id: string, fuel?: number, score = 0): FactionBoardEntry => ({
   id,
   name: id.toUpperCase(),
   color: "#000000",
@@ -16,6 +12,8 @@ const entry = (
   score,
   power: 0,
   islands: 0,
+  touched: 0,
+  claimable: 0,
   guilds: [],
   fuel,
 });
