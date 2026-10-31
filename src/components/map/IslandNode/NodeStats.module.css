@@ -1,6 +1,6 @@
 .nodeStats {
   position: absolute;
-  top: 93px;
+  top: 101px;
   left: 0;
   width: 170px;
   background: rgba(255, 255, 255, 0.97);
@@ -34,6 +34,12 @@
   color: #2c3941;
 }
 
+.statScore {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #2c3941;
+}
+
 .statName {
   overflow: hidden;
   color: #2c3941;
@@ -52,6 +58,7 @@
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  margin-left: auto;
   padding: 2px;
   border-radius: 4px;
   color: #8a9aa5;

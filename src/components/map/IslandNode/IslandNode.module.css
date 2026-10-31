@@ -74,15 +74,22 @@
 }
 
 .islandLabel {
-  margin-top: 12px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
   font-size: 12px;
   color: #33424c;
   white-space: nowrap;
   font-weight: 600;
+}
+
+.labelWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 .islandLabel span {
@@ -92,6 +99,11 @@
 }
 
 .pin {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 2px;
   display: grid;
   place-items: center;
   padding: 3px;

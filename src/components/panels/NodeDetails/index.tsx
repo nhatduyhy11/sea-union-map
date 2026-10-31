@@ -63,14 +63,14 @@ export function NodeDetails({
         <Shield size={19} />
         <div>
           <small>
-            {island.base ? "CĂN CỨ PHE" : "ĐIỂM CHIẾM ĐÓNG TỐI THIỂU"}
+            {island.base ? "CĂN CỨ PHE" : "ĐIỂM CẦN / ĐIỂM PHE CHIẾM"}
           </small>
           {island.base ? (
             <b>Không thể bị chiếm</b>
           ) : (
             <b style={{ color: ownerScore?.labelColor }}>
               {number(island.claimThreshold)}
-              {ownerScore && ` (${number(ownerScore.score)})`}
+              {ownerScore && ` / ${number(ownerScore.score)}`}
             </b>
           )}
         </div>

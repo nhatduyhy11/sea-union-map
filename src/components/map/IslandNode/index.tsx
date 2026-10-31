@@ -71,29 +71,31 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         <Icon size={data.base ? 31 : 24} />
       </button>
       <div className={styles.islandLabel}>
-        {data.base ? (
-          // Base chỉ hiện tên in-game ("Vịnh Thao Thiết"...), không id/hướng.
-          data.name
-        ) : (
-          <>
-            <span>{data.id}</span> {direction}
-          </>
-        )}
-        <button
-          className={`${styles.pin} nodrag ${data.pinned ? styles.pinned : ""}`}
-          aria-label={`${data.pinned ? "Bỏ ghim" : "Ghim"} ${data.id}`}
-          aria-pressed={data.pinned}
-          onClick={() => data.pin(data.id)}
-        >
-          <Pin size={13} />
-        </button>
+        <div className={styles.labelWrapper}>
+          {data.base ? (
+            // Base chỉ hiện tên in-game ("Vịnh Thao Thiết"...), không id/hướng.
+            data.name
+          ) : (
+            <>
+              <span>{data.id}</span> {direction}
+            </>
+          )}
+          <button
+            className={`${styles.pin} nodrag ${data.pinned ? styles.pinned : ""}`}
+            aria-label={`${data.pinned ? "Bỏ ghim" : "Ghim"} ${data.id}`}
+            aria-pressed={data.pinned}
+            onClick={() => data.pin(data.id)}
+          >
+            <Pin size={13} />
+          </button>
+        </div>
       </div>
       {data.debug && <span className={styles.centerDot} aria-hidden />}
       {showStats && (
         <NodeStats
           nodeId={data.id}
-          name={data.name}
           claimThreshold={data.claimThreshold}
+          hasOwner={Boolean(data.owner)}
           tint={statTint}
           scores={data.scores}
           pinned={data.pinned}

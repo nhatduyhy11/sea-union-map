@@ -6,8 +6,9 @@ import type { FactionScore } from "../../../types";
 
 export interface NodeStatsProps {
   nodeId: string;
-  name: string;
+  name?: string;
   claimThreshold: number;
+  hasOwner?: boolean;
   // Màu phe đại diện (owner, hoặc phe đủ ngưỡng claim nếu đảo chưa chủ) —
   // pha nhạt làm nền popup qua CSS.
   tint?: string;
@@ -18,8 +19,8 @@ export interface NodeStatsProps {
 
 export function NodeStats({
   nodeId,
-  name,
   claimThreshold,
+  hasOwner,
   tint,
   scores,
   pinned,
@@ -27,13 +28,24 @@ export function NodeStats({
 }: NodeStatsProps) {
   if (!scores) return null;
   const total = scores.reduce((sum, faction) => sum + faction.score, 0);
+  const topScore = scores.reduce(
+    (max, faction) => Math.max(max, faction.score),
+    0
+  );
+  const displayScore = hasOwner ? total : topScore;
+
   return (
     <div
       className={`${styles.nodeStats} ${tint ? styles.tinted : ""} ${pinned ? styles.pinned : ""}`}
       style={tint ? ({ "--tint": tint } as React.CSSProperties) : undefined}
     >
       <div className={styles.statTitle}>
-        <span className={styles.statName}>{name}</span>
+        <span
+          className={styles.statScore}
+          title={hasOwner ? "Tổng điểm tại cứ điểm" : "Điểm của phe cao nhất"}
+        >
+          {displayScore > 0 ? compact(displayScore) : 0}
+        </span>
         {/* Ngưỡng chiếm đảo (điểm tối thiểu) — value thay chữ, như ô điểm in-game. */}
         <span className={styles.statNote}>({compact(claimThreshold)})</span>
         {onTogglePin && (
