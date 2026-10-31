@@ -12,7 +12,7 @@ import styles from "./Leaderboard.module.css";
 export function Leaderboard() {
   const board = usePanel((state) => state.board);
   const filterMode = usePanel((state) => state.filterMode);
-  const { factionBoard, leaderboard, nodeBoard, frontlineByNode } =
+  const { factionBoard, leaderboard, nodeBoard, canvasIconByNode } =
     useMapData();
   return (
     <div className={`${styles.detail} ${styles.ranking}`}>
@@ -58,7 +58,7 @@ export function Leaderboard() {
         <NodeBoard
           nodes={nodeBoard}
           factions={factionBoard}
-          frontlineByNode={frontlineByNode}
+          canvasIconByNode={canvasIconByNode}
         />
       )}
     </div>
