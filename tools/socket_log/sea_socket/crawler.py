@@ -20,7 +20,7 @@ Engine lives in sea_socket/crawl/ (router, board_codec, briefs, phases); this
 file is only the CLI: args, profile lock, session, entry, crawl, dump.
 
 Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>):
-    meta.json            url/profile/started_at + entry mode
+    meta.json            url/profile/started_at + entry mode + logged-in server
     map-snapshot.json    89 nodes {id, owner} + factions + guild roster
     standings.json       0x001c: nhiên liệu/rank/owned 4 phe (payload entry)
     node-states.jsonl    per-node art + faction ST scores
@@ -44,6 +44,7 @@ Usage:
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --no-dump
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --gui-entry
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --dump-out out/other.json
+    uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pjen --dump-out src/data/snapshots/261030/
 """
 
 import argparse
@@ -56,13 +57,15 @@ from pathlib import Path
 sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-from playwright.async_api import WebSocket, async_playwright
+from playwright.async_api import Error as PlaywrightError
+from playwright.async_api import Page, WebSocket, async_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from browser.process_guard import acquire_profile_lock, release_profile_lock
 from browser.session import open_game_session
 from capture.frames import FrameWriter
+
 from sea_socket.crawl import LOCK_FILENAME
 from sea_socket.crawl.phases import payload_entry, run_crawl
 from sea_socket.crawl.router import CrawlRouter
@@ -72,6 +75,38 @@ from sea_socket.walkthrough import STAGES, run_stages
 # --gui-entry: login -> open-sea -> battle-map; the map-open click is what
 # triggers the server's 0x72/0x000c full snapshot the crawl enumerates from.
 GUI_ENTRY_STAGES = ("login", "open-sea", "battle-map")
+
+# Read only the active character, never another player's cross-server brief.
+READ_SERVER_JS = r"""
+() => {
+  const info = window.__require('PlayerModule').PlayerModule.Ins.playerInfo?.info;
+  const server = Number(info?.serverId);
+  return Number.isSafeInteger(server) && server > 0 ? String(server) : null;
+}
+"""
+
+
+async def read_server(page: Page) -> str | None:
+    try:
+        server = await page.evaluate(READ_SERVER_JS)
+    except PlaywrightError as exc:  # metadata failure must not block an explicit output file
+        print(f"[meta] cannot read logged-in server: {exc}", flush=True)
+        return None
+    print(f"[meta] logged-in server: {server or 'unknown'}", flush=True)
+    return server
+
+
+def resolve_dump_out(out: Path | None, server: str | None) -> Path:
+    """A directory (including a new suffixless path) uses the active server name."""
+    if out is None:
+        return DEV_DUMP_OUT
+    if out.is_dir() or not out.suffix:
+        if server is None:
+            raise SystemExit(
+                "[dump] cannot auto-name JSON: logged-in server is unavailable; "
+                "pass an explicit file with --dump-out path/name.json")
+        return out / f"{server}.json"
+    return out
 
 
 def parse_args() -> argparse.Namespace:
@@ -97,17 +132,21 @@ def parse_args() -> argparse.Namespace:
                         help="Transform run vừa crawl thành JSON cho FE ngay sau "
                              "khi crawl (mặc định bật; tắt bằng --no-dump)")
     parser.add_argument("--dump-out", default=None, type=Path,
-                        help="Đích JSON khi --dump (mặc định public/sea-live-dev.json)")
+                        help="File JSON hoặc thư mục đích; thư mục (kể cả đường dẫn "
+                             "mới không có đuôi file) tự đặt tên <server>.json theo "
+                             "acc đăng nhập. Mặc định public/sea-live-dev.json")
     return parser.parse_args()
 
 
 def write_meta(out_dir: Path, args: argparse.Namespace, started_at: datetime,
-               entry_stages: list[tuple[str, list[str]]]) -> None:
+               entry_stages: list[tuple[str, list[str]]],
+               server: str | None = None) -> None:
     (out_dir / "meta.json").write_text(json.dumps({
         "url": args.url, "profile": args.profile,
         "started_at": started_at.isoformat(),
         "entry": "gui" if args.gui_entry else "payload",
         "stages": [name for name, _ in entry_stages],
+        "server": server,
     }, indent=2), encoding="utf-8")
 
 
@@ -143,11 +182,14 @@ async def main() -> None:
                 await run_stages(page, writer, out_dir, entry_stages)
             else:
                 await payload_entry(page, router, out_dir, args.login_timeout)
+            server = await read_server(page)
+            write_meta(out_dir, args, started_at, entry_stages, server)
+            dump_out = resolve_dump_out(args.dump_out, server) if args.dump else None
             summary = await run_crawl(page, router, out_dir)
             print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
             if args.dump:
                 try:
-                    dump_run(out_dir, out=args.dump_out or DEV_DUMP_OUT)
+                    dump_run(out_dir, out=dump_out)
                 except SystemExit as exc:
                     # Raw run đã an toàn trên đĩa — chỉ nhắc chỗ re-dump.
                     print(f"[dump] transform failed, raw run kept at "
