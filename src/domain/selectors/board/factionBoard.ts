@@ -113,16 +113,17 @@ function buildFactionBoardComputed(
   });
 }
 
-// nodeId → các phe có đóng góp điểm tại đảo. Cơ sở cho số "đang đánh" của
+// nodeId → các phe có đóng góp điểm tại đảo. Cơ sở cho số "đã đánh" của
 // BXH Phe — tính một lần, tra theo phe trong factionEntry.
 function touchedByNode(
   contributions: Contribution[]
-): Map<string, Set<string>> {
-  const map = new Map<string, Set<string>>();
+): Map<string, Map<string, number>> {
+  const map = new Map<string, Map<string, number>>();
   for (const entry of contributions) {
-    const set = map.get(entry.nodeId);
-    if (set) set.add(entry.faction);
-    else map.set(entry.nodeId, new Set([entry.faction]));
+    if (entry.score <= 0) continue;
+    const scores = map.get(entry.nodeId) ?? new Map<string, number>();
+    scores.set(entry.faction, (scores.get(entry.faction) ?? 0) + entry.score);
+    map.set(entry.nodeId, scores);
   }
   return map;
 }
@@ -134,17 +135,25 @@ function factionEntry(
   score: number,
   sortBy: SortBy,
   fuel: number | undefined,
-  touched: Map<string, Set<string>>
+  touched: Map<string, Map<string, number>>
 ): FactionBoardEntry {
   const sorted = sortGuilds(guilds, sortBy);
+  const pointsAt = (node: Island) =>
+    node.factionScores
+      ? (node.factionScores[faction.id] ?? 0)
+      : (touched.get(node.id)?.get(faction.id) ?? 0);
   return {
     ...faction,
     islands: islands.filter((node) => node.owner === faction.id).length,
-    // Đang đánh: đã dồn điểm vào đảo nhưng chưa claim — owner là phe khác
-    // hoặc đảo chưa chủ.
-    attacked: islands.filter(
-      (node) => node.owner !== faction.id && touched.get(node.id)?.has(faction.id)
-    ).length,
+    // Đã đánh (touched): mọi đảo có điểm phe > 0, gồm cả đảo đang chiếm.
+    // Nguồn điểm phe/đảo như scoresForNode: server state (đủ — node board bị
+    // cắt top-20/đảo), dump cũ thiếu thì cộng contributions.
+    touched: islands.filter((node) => pointsAt(node) > 0).length,
+    // Thuần ngưỡng điểm, không xét owner hay đường nối. Base 0 điểm không tính.
+    claimable: islands.filter((node) => {
+      const points = pointsAt(node);
+      return points > 0 && points >= node.claimThreshold;
+    }).length,
     guilds: sorted,
     score,
     power: sorted.reduce((total, guild) => total + (guild.power ?? 0), 0),

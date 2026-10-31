@@ -73,3 +73,37 @@
   font-variant-numeric: tabular-nums;
   color: #33424c;
 }
+
+.islandStats {
+  display: inline-grid;
+  grid-template-columns: repeat(3, auto);
+  margin-top: 5px;
+  text-align: center;
+}
+
+.islandStats > span {
+  padding: 0 8px;
+}
+
+.islandStats > span:first-child {
+  padding-left: 0;
+}
+
+.islandStats > span + span {
+  border-left: 1px solid #dce3e7;
+}
+
+.statLabel {
+  display: block;
+  color: #8496a1;
+  font-size: 9px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.statValue {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}

@@ -175,8 +175,7 @@ function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
   );
 }
 
-// 3 dòng: tên phe / số guild + tổng lực chiến (icon nắm đấm) / số đảo đang
-// chiếm + số đảo đang đánh (đã dồn điểm nhưng chưa claim).
+// Tên phe, guild/LC và ba tập đảo: owned / claimable / touched.
 function FactionLines({ entry }: { entry: FactionBoardEntry }) {
   return (
     <div className={shared.factionName} style={{ color: entry.labelColor }}>
@@ -188,9 +187,20 @@ function FactionLines({ entry }: { entry: FactionBoardEntry }) {
           {entry.power ? compact(entry.power) : "—"}
         </span>
       </small>
-      <small>
-        {entry.islands} đảo (chiếm) | {entry.attacked} đảo (đánh)
-      </small>
+      <span className={styles.islandStats}>
+        <span title="Số đảo phe đang sở hữu">
+          <span className={styles.statLabel}>Đảo chiếm</span>
+          <span className={styles.statValue}>{entry.islands}</span>
+        </span>
+        <span title="Có điểm và đủ ngưỡng claim, không xét đường nối">
+          <span className={styles.statLabel}>Đủ điểm</span>
+          <span className={styles.statValue}>{entry.claimable}</span>
+        </span>
+        <span title="Mọi đảo phe có điểm, gồm cả đảo đang chiếm có điểm">
+          <span className={styles.statLabel}>Đánh</span>
+          <span className={styles.statValue}>{entry.touched}</span>
+        </span>
+      </span>
     </div>
   );
 }

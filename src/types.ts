@@ -155,14 +155,16 @@ export type CanvasFilter = MapFilter;
 
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'
 // totals (see SEA_STRUCTURE.md §3.2), islands = owned nodes ("Chiếm đảo"),
-// attacked = nodes the faction poured points into but doesn't own.
+// `touched` = all nodes with positive faction points, including owned nodes.
 export interface FactionBoardEntry extends Faction {
   score: number;
   // Tổng lực chiến các guild trong phe (0 = chưa có power data).
   power: number;
   islands: number;
-  // Số đảo phe có đóng góp điểm nhưng chưa claim (owner phe khác / trung lập).
-  attacked: number;
+  // Số đảo phe có điểm > 0 (touched), gồm cả đảo đang chiếm.
+  touched: number;
+  // Số đảo có điểm > 0 và đủ ngưỡng claim, không xét connection.
+  claimable: number;
   // Tổng Nhiên Liệu phe, undefined = dump thiếu fuel (data cũ)
   // — UI ẩn "(nhiên liệu)", highlight fallback Điểm phe (factionHighlight).
   fuel?: number;
