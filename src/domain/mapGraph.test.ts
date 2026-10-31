@@ -48,7 +48,7 @@ test("Map projection keeps pinning independent from global stats and filtering",
   );
 });
 
-test("Map projection carries frontline info and defend flag onto node data", () => {
+test("Map projection carries icon, frontline info and defend flag onto node data", () => {
   const scoresByNode = new Map(
     islands.map((island) => [
       island.id,
@@ -62,9 +62,15 @@ test("Map projection carries frontline info and defend flag onto node data", () 
     new Set(["2-1"]),
     factions,
     { selected: null, pinned: new Set(), showAll: false, matched: null },
-    { openIsland: () => {}, togglePin: () => {} }
+    { openIsland: () => {}, togglePin: () => {} },
+    new Map([
+      ["1-1", "frontline"],
+      ["2-1", "defend"],
+    ])
   );
   const byId = new Map(nodes.map((n) => [n.id, n]));
+  assert.equal(byId.get("1-1")?.data.canvasIcon, "frontline");
+  assert.equal(byId.get("2-1")?.data.canvasIcon, "defend");
   assert.deepEqual(byId.get("1-1")?.data.frontline, {
     rival: factions[1],
     ratio: 0.5,

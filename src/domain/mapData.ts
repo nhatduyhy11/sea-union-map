@@ -1,4 +1,5 @@
 import { buildLiveData, type SeaLiveDump } from "../data/sea-live";
+import { canvasIcons, factionEfforts } from "./selectors/canvasIcons";
 import { factions } from "../data/factions";
 import {
   buildFactionBoard,
@@ -43,6 +44,15 @@ export function buildMapData(dump: SeaLiveDump) {
       scoresForNode(node, contributions, factions),
     ])
   );
+  const factionBoard = buildFactionBoard(
+    contributions,
+    factions,
+    islands,
+    live.factionGuilds,
+    undefined,
+    live.fuel
+  );
+  const effortByFaction = factionEfforts(factionBoard);
   // Node giao tranh — phe nhì dồn điểm ngay cửa node (fill chocolate + icon
   // kiếm).
   const frontlineByNode = frontlineNodes(
@@ -58,7 +68,16 @@ export function buildMapData(dump: SeaLiveDump) {
     routes,
     contributions,
     factions,
-    frontlineByNode
+    frontlineByNode,
+    effortByFaction
+  );
+  const canvasIconByNode = canvasIcons(
+    islands,
+    routes,
+    scoresByNode,
+    effortByFaction,
+    frontlineByNode,
+    defendNodeIds
   );
 
   const knownGuildIds = new Set(
@@ -85,6 +104,8 @@ export function buildMapData(dump: SeaLiveDump) {
     scoresByNode,
     frontlineByNode,
     defendNodeIds,
+    canvasIconByNode,
+    effortByFaction,
     ownedIslands: islands,
     // Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth.
     // Tab Phe: gắn guild scores server (dump factionGuilds).
@@ -93,14 +114,7 @@ export function buildMapData(dump: SeaLiveDump) {
       contributions,
       factions
     ),
-    factionBoard: buildFactionBoard(
-      contributions,
-      factions,
-      islands,
-      live.factionGuilds,
-      undefined,
-      live.fuel
-    ),
+    factionBoard,
     nodeBoard: buildNodeBoard(islands, contributions, factions),
     baseCount: islands.filter((node) => node.base).length,
     // Player universe một lần để tra tên (chip filter) — guild của player lấy

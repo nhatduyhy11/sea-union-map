@@ -2,6 +2,7 @@
 import type { Edge } from "@xyflow/react";
 import type {
   AppNode,
+  CanvasIcon,
   Faction,
   FactionScore,
   Island,
@@ -60,7 +61,8 @@ export function buildMapNodes(
   defendNodeIds: Set<string>,
   factions: Faction[],
   state: MapGraphState,
-  actions: MapGraphActions
+  actions: MapGraphActions,
+  canvasIconByNode: ReadonlyMap<string, CanvasIcon> = new Map()
 ): AppNode[] {
   return islands.map((island) => {
     const front = frontlineByNode.get(island.id);
@@ -76,6 +78,7 @@ export function buildMapNodes(
             : 1,
       data: {
         ...island,
+        canvasIcon: canvasIconByNode.get(island.id),
         factionInfo: factions.find((faction) => faction.id === island.owner),
         scores: scoresByNode.get(island.id),
         pinned: state.pinned.has(island.id),

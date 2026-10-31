@@ -195,7 +195,20 @@ export interface NodeDetailData {
   attackers: Attacker[];
 }
 
+export type CanvasIcon =
+  | "base"
+  | "anchor"
+  | "castle"
+  | "belowClaim"
+  | "frozen"
+  | "frontline"
+  | "defend"
+  | "gifted"
+  | "overbuilt"
+  | "plain";
+
 export type IslandNodeData = Island & {
+  canvasIcon?: CanvasIcon;
   factionInfo?: Faction;
   scores?: FactionScore[];
   pinned: boolean;

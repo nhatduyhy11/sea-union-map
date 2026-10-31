@@ -61,6 +61,7 @@ export function frontlineNodes(
 
   const result = new Map<string, Frontline>();
   for (const island of islands) {
+    if (island.base) continue;
     const owner = factions.find((faction) => faction.id === island.owner);
     if (!owner) continue;
     const scores = scoresForNode(island, contributions, factions);

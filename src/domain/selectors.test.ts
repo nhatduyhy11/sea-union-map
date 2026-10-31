@@ -157,12 +157,22 @@ test("Defend flags low-score owned nodes bordering another faction", () => {
   const routes = [{ source: "1-1", target: "2-1" }];
   const frontline = frontlineNodes(nodes, routes, contributions, factions);
   assert.deepEqual([...frontline.keys()], ["1-1"]);
-  const defend = defendNodes(nodes, routes, contributions, factions, frontline);
+  const defend = defendNodes(
+    nodes,
+    routes,
+    contributions,
+    factions,
+    frontline,
+    new Map([
+      ["a", 10_000_000],
+      ["b", 10_000_000],
+    ])
+  );
   assert.deepEqual([...defend], ["2-1"]);
 });
 
 test("Defend skips rich nodes, neutral neighbors and bases", () => {
-  // Điểm phe claim dày hơn ngưỡng 20M → không cảnh báo dù kề phe lạ.
+  // Điểm owner trên effort 10M → không cảnh báo dù kề phe lạ.
   const rich = defendNodes(
     [
       { ...islands[0], factionScores: { a: 21_000_000 } },
@@ -171,7 +181,11 @@ test("Defend skips rich nodes, neutral neighbors and bases", () => {
     [{ source: "1-1", target: "2-1" }],
     contributions,
     factions,
-    new Map()
+    new Map(),
+    new Map([
+      ["a", 10_000_000],
+      ["b", 10_000_000],
+    ])
   );
   assert.deepEqual([...rich], ["2-1"]);
   // Láng giềng trung lập không tính — chưa phe nào thật sự đứng cạnh.
@@ -188,7 +202,11 @@ test("Defend skips rich nodes, neutral neighbors and bases", () => {
     [{ source: "1-1", target: "3-1" }],
     contributions,
     factions,
-    new Map()
+    new Map(),
+    new Map([
+      ["a", 10_000_000],
+      ["b", 10_000_000],
+    ])
   );
   assert.equal(neutralNeighbor.size, 0);
   // Base không được flag dù điểm mỏng + kề phe lạ — giữ icon phe làm mốc.
@@ -209,7 +227,11 @@ test("Defend skips rich nodes, neutral neighbors and bases", () => {
     [{ source: "base-a", target: "2-1" }],
     contributions,
     factions,
-    new Map()
+    new Map(),
+    new Map([
+      ["a", 10_000_000],
+      ["b", 10_000_000],
+    ])
   );
   assert.deepEqual([...baseDefend], ["2-1"]);
 });

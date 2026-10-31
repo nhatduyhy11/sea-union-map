@@ -4,10 +4,6 @@ import type { Contribution, Faction, Island, Route } from "../../types";
 import type { Frontline } from "./frontline";
 import { scoresForNode } from "./nodeScores";
 
-// Điểm phe claim tối đa để coi là "mỏng" — trên mốc này đảo tự đủ mạnh, kề
-// phe khác cũng không cần cảnh báo thủ.
-const DEFEND_SCORE_MAX = 20_000_000;
-
 // Set nodeId cần thủ. Node giao tranh được loại trước (frontlineByNode) —
 // đang đánh nhau thì là tranh chấp, không phải cảnh báo thủ. Base không xét
 // (giữ icon phe làm mốc lãnh thổ). Láng giềng trung lập không tính — chưa
@@ -17,7 +13,8 @@ export function defendNodes(
   routes: Route[],
   contributions: Contribution[],
   factions: Faction[],
-  frontlineByNode: Map<string, Frontline>
+  frontlineByNode: Map<string, Frontline>,
+  effortByFaction: Map<string, number>
 ): Set<string> {
   const ownerById = new Map(
     islands.map((node) => [node.id, node.owner ?? null])
@@ -40,10 +37,11 @@ export function defendNodes(
     if (!owner) continue;
     const scores = scoresForNode(island, contributions, factions);
     const ownerScore = scores.find((f) => f.id === owner.id)?.score ?? 0;
-    if (ownerScore > DEFEND_SCORE_MAX) continue;
+    const effort = effortByFaction.get(owner.id);
+    if (effort === undefined || ownerScore >= effort) continue;
     const enemyNear = [...(neighbors.get(island.id) ?? [])].some((id) => {
       const neighborOwner = ownerById.get(id);
-      return neighborOwner !== null && neighborOwner !== island.owner;
+      return neighborOwner != null && neighborOwner !== island.owner;
     });
     if (enemyNear) result.add(island.id);
   }
