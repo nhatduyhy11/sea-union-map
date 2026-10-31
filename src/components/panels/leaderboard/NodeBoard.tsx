@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown, ChevronRight } from "lucide-react";
-import { compact, number } from "../../../utils/format";
+import { compact } from "../../../utils/format";
+import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { useFocusIslandOnBoard } from "../../../hooks/useFocusIsland";
 import { useSelection } from "../../../stores/selection";
 import { PlayerTable } from "../NodeDetails/PlayerTable";
@@ -120,11 +121,11 @@ export function NodeBoard({
               <ChevronRight size={13} />
             </summary>
             <div className={styles.allocation}>
-              {entry.scores
-                .filter((score) => score.score > 0)
-                .map((score) => (
-                  <FactionScoreRow key={score.id} score={score} />
-                ))}
+              <FactionScoreBars
+                scores={entry.scores}
+                total={entry.total}
+                hideEmpty
+              />
               {entry.attackers.length > 0 && (
                 <div className={styles.playerBlock}>
                   <PlayerTable attackers={entry.attackers} />
@@ -185,11 +186,3 @@ function ClaimNeed({ entry }: { entry: NodeBoardEntry }) {
   );
 }
 
-function FactionScoreRow({ score }: { score: FactionScore }) {
-  return (
-    <div className={styles.guildRow}>
-      <span style={{ color: score.labelColor }}>{score.name}</span>
-      <b>{number(score.score)}</b>
-    </div>
-  );
-}
