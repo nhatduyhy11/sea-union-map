@@ -199,6 +199,13 @@ export type IslandNodeData = Island & {
   dim: boolean;
   // Node khớp filter guild/player đang chạy — viền icon dày lên để nổi.
   matched?: boolean;
+  // Node giao tranh (frontlineNodes — phe nhì dồn ≥36% điểm phe claim và owns
+  // một láng giềng): fill chocolate đậm + icon kiếm trên canvas; rival = phe
+  // nhì đang dồn điểm.
+  frontline?: {
+    rival: Faction;
+    ratio: number;
+  };
   debug?: boolean;
   // Đóng góp của player đang lọc trên đảo (dùng để highlight thanh điểm phe).
   playerHighlight?: {

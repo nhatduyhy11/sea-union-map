@@ -31,6 +31,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     ownedIslands,
     routes,
     scoresByNode,
+    frontlineByNode,
     contributions,
     players,
     leaderboard,
@@ -65,6 +66,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
       buildMapNodes(
         ownedIslands,
         scoresByNode,
+        frontlineByNode,
         factions,
         { selected, pinned, showAll, matched, debug, playerHighlight },
         { openIsland, togglePin }
@@ -72,6 +74,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     [
       ownedIslands,
       scoresByNode,
+      frontlineByNode,
       selected,
       pinned,
       showAll,

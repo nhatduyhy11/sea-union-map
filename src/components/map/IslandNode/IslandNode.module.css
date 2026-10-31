@@ -80,6 +80,15 @@
     0 6px 18px color-mix(in srgb, var(--faction) 32%, transparent);
 }
 
+/* Node giao tranh (frontlineNodes — phe nhì dồn điểm ngay cửa node): fill
+   chocolate đậm, icon đổi trắng để nổi trên nền nâu. Đặt sau rule
+   hover/active để nền giữ nguyên khi hover/chọn — hiệu ứng glow shadow vẫn
+   chạy đè lên bình thường. */
+.frontline .islandIcon {
+  background: #d2691e;
+  color: #ffffff;
+}
+
 .islandLabel {
   margin-top: 20px;
   display: flex;

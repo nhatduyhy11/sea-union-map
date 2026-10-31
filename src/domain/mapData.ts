@@ -4,6 +4,7 @@ import {
   buildFactionBoard,
   buildNodeBoard,
   buildServerLeaderboard,
+  frontlineNodes,
   NO_GUILD,
   playersFromContributions,
   scoresForNode,
@@ -41,6 +42,14 @@ export function buildMapData(dump: SeaLiveDump) {
       scoresForNode(node, contributions, factions),
     ])
   );
+  // Node giao tranh — phe nhì dồn điểm ngay cửa node (fill chocolate + icon
+  // kiếm).
+  const frontlineByNode = frontlineNodes(
+    islands,
+    routes,
+    contributions,
+    factions
+  );
 
   const knownGuildIds = new Set(
     Object.values(live.factionGuilds).flatMap((rows) =>
@@ -64,6 +73,7 @@ export function buildMapData(dump: SeaLiveDump) {
     contributions,
     routes,
     scoresByNode,
+    frontlineByNode,
     ownedIslands: islands,
     // Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth.
     // Tab Phe: gắn guild scores server (dump factionGuilds).
