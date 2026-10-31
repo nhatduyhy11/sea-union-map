@@ -79,6 +79,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         <NodeStats
           nodeId={data.id}
           name={data.name}
+          claimThreshold={data.claimThreshold}
           scores={data.scores}
           pinned={data.pinned}
           onTogglePin={() => data.pin(data.id)}

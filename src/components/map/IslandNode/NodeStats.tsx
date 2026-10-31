@@ -1,11 +1,13 @@
 import { Pin } from "lucide-react";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
+import { compact } from "../../../utils/format";
 import styles from "./NodeStats.module.css";
 import type { FactionScore } from "../../../types";
 
 export interface NodeStatsProps {
   nodeId: string;
   name: string;
+  claimThreshold: number;
   scores?: FactionScore[];
   pinned?: boolean;
   onTogglePin?: () => void;
@@ -14,6 +16,7 @@ export interface NodeStatsProps {
 export function NodeStats({
   nodeId,
   name,
+  claimThreshold,
   scores,
   pinned,
   onTogglePin,
@@ -24,7 +27,8 @@ export function NodeStats({
     <div className={`${styles.nodeStats} ${pinned ? styles.pinned : ""}`}>
       <div className={styles.statTitle}>
         <span className={styles.statName}>{name}</span>
-        <span className={styles.statNote}>(điểm tối thiểu)</span>
+        {/* Ngưỡng chiếm đảo (điểm tối thiểu) — value thay chữ, như ô điểm in-game. */}
+        <span className={styles.statNote}>({compact(claimThreshold)})</span>
         {onTogglePin && (
           <button
             className={`${styles.pinToggle} ${pinned ? styles.pinActive : ""}`}
