@@ -3,6 +3,7 @@ import { Handle, Position, type NodeProps } from "@xyflow/react";
 import { Anchor, Castle, Pin } from "lucide-react";
 import { iconBoxSize } from "../../../domain/mapGraph";
 import { useDebug } from "../../../stores/debug";
+import { getFactionIcon } from "../../shared/factionIcons";
 import { NodeStats } from "./NodeStats";
 import styles from "./IslandNode.module.css";
 import type { AppNode } from "../../../types";
@@ -13,7 +14,10 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   // debug store); fallback của --faction vì inline style luôn ghi đè CSS default.
   const neutralColor = useDebug((state) => state.neutralColor);
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
-  const Icon = data.base || data.central ? Castle : Anchor;
+  const FactionIcon = data.base
+    ? getFactionIcon(data.factionInfo?.id ?? data.owner ?? data.id)
+    : null;
+  const Icon = FactionIcon ?? (data.central ? Castle : Anchor);
   const direction = data.id === "4" ? "TRUNG TÂM" : "";
   // Đảo chưa có chủ mà phe điểm cao nhất đã đạt ngưỡng claim → popup điểm
   // (NodeStats) pha nền màu phe đó.

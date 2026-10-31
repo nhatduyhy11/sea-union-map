@@ -1,6 +1,7 @@
 import { Anchor, Castle, Pin, Shield, X } from "lucide-react";
 import { number } from "../../../utils/format";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
+import { getFactionIcon } from "../../shared/factionIcons";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
 import type { NodeDetailData } from "../../../types";
@@ -42,7 +43,14 @@ export function NodeDetails({
         className={styles.detailIcon}
         style={{ color: owner?.color || "#b8c6cf" }}
       >
-        {island.base ? <Castle size={33} /> : <Anchor size={33} />}
+        {island.base ? (
+          (() => {
+            const FactionIcon = getFactionIcon(island.owner || island.id);
+            return FactionIcon ? <FactionIcon size={33} /> : <Castle size={33} />;
+          })()
+        ) : (
+          <Anchor size={33} />
+        )}
       </div>
       <h2 className={styles.title}>{island.name}</h2>
       <div className={styles.detailTags}>
