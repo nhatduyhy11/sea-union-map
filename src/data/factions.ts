@@ -6,6 +6,8 @@ import type { Faction } from "../types";
 // (2026-10-29) dùng chung một màu cho label và edge mỗi phe:
 // - color: swatch/edge/viền đảo/icon căn cứ/bar điểm.
 // - labelColor: mọi text label tên phe (pill, BXH, legend, tooltip, tag).
+// Ngoại lệ: edgeColor (optional) đè màu edge canvas khi cần — chỉ north đặt,
+// các phe còn lại edge dùng color.
 export const factions: Faction[] = [
   {
     id: "east",
@@ -22,6 +24,9 @@ export const factions: Faction[] = [
   {
     id: "north",
     name: "Thần Tự Lấp Lánh",
+    // Vàng node/label giữ màu chuẩn; riêng edge canvas đậm hơn một bậc vì ở
+    // opacity 0.7 trên nền giấy màu gốc bị chìm, khó phân biệt với link trung lập.
+    edgeColor: "#cc9a00",
     color: "#e6ad00",
     labelColor: "#e6ad00",
   },

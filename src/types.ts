@@ -12,6 +12,9 @@ export interface Faction {
   color: string;
   // Text label tên phe — tách khỏi color theo rule màu label.
   labelColor: string;
+  // Đè màu edge canvas khi bỏ trống thì edge dùng color. Chỉ cần khi màu phe
+  // quá sáng cho connection ở opacity thấp (hiện chỉ phe vàng đặt).
+  edgeColor?: string;
 }
 
 export interface FactionScore extends Faction {

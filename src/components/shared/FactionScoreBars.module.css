@@ -1,0 +1,30 @@
+.scoreBar {
+  position: relative;
+  height: 13px;
+  margin-top: 4px;
+  background: #e4e9ec;
+  border-radius: 4px;
+}
+
+.scoreFill {
+  height: 100%;
+  border-radius: 4px;
+}
+
+/* Số điểm font nhỏ hơn text quanh bar; màu ink như text thường (không tô theo
+   màu phe); halo trắng để đọc được khi fill tràn qua giữa thanh. */
+.scoreValue {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 9px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  color: #2c3941;
+  text-shadow:
+    0 1px 2px rgba(255, 255, 255, 0.9),
+    0 -1px 2px rgba(255, 255, 255, 0.9),
+    1px 0 2px rgba(255, 255, 255, 0.9),
+    -1px 0 2px rgba(255, 255, 255, 0.9);
+}

@@ -110,7 +110,7 @@ export function buildMapEdges(
       type: "route",
       selectable: false,
       style: {
-        stroke: faction?.color ?? neutralColor,
+        stroke: (faction?.edgeColor ?? faction?.color) ?? neutralColor,
         strokeWidth: faction ? 3 : 2,
         opacity: filterActive
           ? faction

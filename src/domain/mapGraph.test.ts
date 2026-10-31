@@ -82,6 +82,24 @@ test("Guild/player filter matches nodes by contribution", () => {
   assert.equal(matchNodeIds(null, nodeIdsByGuild, nodeIdsByPlayer), null);
 });
 
+test("Edge stroke prefers faction edgeColor over color", () => {
+  const withEdge = [
+    {
+      id: "a",
+      name: "A",
+      color: "#123456",
+      labelColor: "#0000ff",
+      edgeColor: "#cc9a00",
+    },
+  ];
+  const [edge] = buildMapEdges(
+    [{ source: "1-1", target: "1-1" }],
+    islands,
+    withEdge
+  );
+  assert.equal(edge?.style?.stroke, "#cc9a00");
+});
+
 test("Edges style by ownership and dim under filter", () => {
   const neutral: Island = {
     id: "3-9",

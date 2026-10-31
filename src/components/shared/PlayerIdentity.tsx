@@ -1,5 +1,6 @@
 import { HandFist } from "lucide-react";
 import { compact } from "../../utils/format";
+import { getFactionIcon } from "./factionIcons";
 import styles from "./PlayerIdentity.module.css";
 import type { Faction, Player } from "../../types";
 
@@ -22,10 +23,11 @@ export function PlayerIdentity({
 }: PlayerIdentityProps) {
   const color = faction?.labelColor || "#97acbb";
   const name = player?.name || "Người chơi";
+  const FactionIcon = getFactionIcon(faction?.id ?? player?.faction);
 
   if (inline) {
     // BXH cá nhân: "Tên | LC" + dòng dưới "Bang · N đảo" — chữ đen hết, phe
-    // chỉ còn qua màu avatar.
+    // chỉ còn qua màu avatar (dùng icon phe thay chữ đầu tên).
     const meta = [
       ...(player?.guild ? [player.guild] : []),
       ...(nodeCount !== undefined ? [`${nodeCount} đảo`] : []),
@@ -36,7 +38,7 @@ export function PlayerIdentity({
           className={styles.avatar}
           style={{ color, background: `${color}18` }}
         >
-          {name[0]}
+          {FactionIcon ? <FactionIcon size={15} /> : name[0]}
         </span>
         <div className={styles.playerName}>
           {name}
@@ -67,7 +69,7 @@ export function PlayerIdentity({
         className={styles.avatar}
         style={{ color, background: `${color}18` }}
       >
-        {name[0]}
+        {FactionIcon ? <FactionIcon size={15} /> : name[0]}
       </span>
       <div className={styles.playerName}>
         {name}
