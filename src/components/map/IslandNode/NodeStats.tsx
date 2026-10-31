@@ -50,7 +50,9 @@ export function NodeStats({
 
   return (
     <div
-      className={`${styles.nodeStats} ${tint ? styles.tinted : ""} ${pinned ? styles.pinned : ""}`}
+      className={`${styles.nodeStats} ${
+        tint ? (hasOwner ? styles.tinted : styles.claimable) : ""
+      } ${pinned ? styles.pinned : ""}`}
       style={tint ? ({ "--tint": tint } as React.CSSProperties) : undefined}
     >
       <div className={styles.statTitle}>
