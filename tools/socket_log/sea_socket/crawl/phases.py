@@ -58,6 +58,18 @@ async def fail_with_screenshot(page: Page, out_dir: Path, name: str, message: st
     raise RuntimeError(f"{message}; evidence: {fail}")
 
 
+async def wait_login(page: Page, router: CrawlRouter, out_dir: Path,
+                     login_timeout: float) -> None:
+    """Await the boot login signal before account checks or game requests."""
+    loop = asyncio.get_running_loop()
+    deadline = loop.time() + login_timeout
+    while router.login_done_ms is None and loop.time() < deadline:
+        await asyncio.sleep(0.2)
+    if router.login_done_ms is None:
+        await fail_with_screenshot(page, out_dir, "no-login",
+                                   f"no 0x72/0x0002 within {login_timeout}s")
+
+
 async def payload_entry(page: Page, router: CrawlRouter, out_dir: Path,
                         login_timeout: float) -> None:
     """E2 — wait-login + inject thay 3 stage GUI (docs/sea/SOCKET_PROTOCOL.md §4.2).
@@ -66,13 +78,7 @@ async def payload_entry(page: Page, router: CrawlRouter, out_dir: Path,
     nên không dùng), +0.5s cho nốt boot block, rồi inject 0x000b (snapshot 89
     node) + 0x001b (bảng 4 phe) từ Home — 0 click, không phụ thuộc screen.
     """
-    loop = asyncio.get_running_loop()
-    deadline = loop.time() + login_timeout
-    while router.login_done_ms is None and loop.time() < deadline:
-        await asyncio.sleep(0.2)
-    if router.login_done_ms is None:
-        await fail_with_screenshot(page, out_dir, "no-login",
-                                   f"no 0x72/0x0002 within {login_timeout}s")
+    await wait_login(page, router, out_dir, login_timeout)
     await asyncio.sleep(0.5)  # let the rest of the boot block land
     _h, body = await router.inject(page, SEA_MODULE, BATTLEFIELD_CMD, [])
     if router.map_snapshot is None:  # route() parse sẵn rồi; fallback cho chắc

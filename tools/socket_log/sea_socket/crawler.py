@@ -19,7 +19,7 @@ zero map interaction:
 Engine lives in sea_socket/crawl/ (router, board_codec, briefs, phases); this
 file is only the CLI: args, profile lock, session, entry, crawl, dump.
 
-Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>):
+Outputs under --out (default .tmp/sea-crawl/sea-crawl-<ts>-<unique>):
     meta.json            url/profile/started_at + entry mode + logged-in server
     map-snapshot.json    89 nodes {id, owner} + factions + guild roster
     standings.json       0x001c: nhiên liệu/rank/owned 4 phe (payload entry)
@@ -39,6 +39,7 @@ just the raw run; report.py stays the standalone CLI to re-dump old runs or
 bake src/data/sea-live.json.
 
 Usage:
+    uv run python tools/socket_log/sea_socket/crawler.py --auth-json /path/to/auth.json --acc account@example.com
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --headless
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --no-dump
@@ -51,6 +52,7 @@ import argparse
 import asyncio
 import json
 import sys
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -62,12 +64,13 @@ from playwright.async_api import Page, WebSocket, async_playwright
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from browser.auth import load_auth, verify_game_account
 from browser.process_guard import acquire_profile_lock, release_profile_lock
 from browser.session import open_game_session
 from capture.frames import FrameWriter
 
 from sea_socket.crawl import LOCK_FILENAME
-from sea_socket.crawl.phases import payload_entry, run_crawl
+from sea_socket.crawl.phases import payload_entry, run_crawl, wait_login
 from sea_socket.crawl.router import CrawlRouter
 from sea_socket.report import DEV_DUMP_OUT, dump_run
 from sea_socket.walkthrough import STAGES, run_stages
@@ -75,6 +78,7 @@ from sea_socket.walkthrough import STAGES, run_stages
 # --gui-entry: login -> open-sea -> battle-map; the map-open click is what
 # triggers the server's 0x72/0x000c full snapshot the crawl enumerates from.
 GUI_ENTRY_STAGES = ("login", "open-sea", "battle-map")
+LOGIN_TIMEOUT_SECONDS = 180
 
 # Read only the active character, never another player's cross-server brief.
 READ_SERVER_JS = r"""
@@ -113,17 +117,18 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("--profile", default=".tmp/p545")
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument("--profile", help="Persistent profile (default .tmp/p545)")
+    source.add_argument("--auth-json", type=Path, help="Read-only SDK localStorage JSON; fresh session")
+    parser.add_argument("--acc", help="Exact email key in auth JSON allLoginList.value")
     parser.add_argument("--url", default="https://hauntedroomvnh5.joynetgame.com/")
     parser.add_argument("--out", default=None,
-                        help="Output dir (default .tmp/sea-crawl/sea-crawl-<ts>)")
+                        help="New output dir (default .tmp/sea-crawl/sea-crawl-<ts>-<unique>)")
     parser.add_argument("--settle", type=float, default=8.0,
                         help="--gui-entry: giây chờ game ổn định trước khi replay stage")
     parser.add_argument("--gui-entry", action="store_true",
                         help="Replay 3 stage GUI cũ (login/open-sea/battle-map) thay "
                              "payload entry mặc định (wait-login + inject, 0 click)")
-    parser.add_argument("--login-timeout", type=float, default=90.0,
-                        help="Payload entry: giây chờ signal login R 0x72/0x0002")
     parser.add_argument("--width", type=int, default=640)
     parser.add_argument("--height", type=int, default=720)
     parser.add_argument("--browser", default="chrome")
@@ -135,7 +140,14 @@ def parse_args() -> argparse.Namespace:
                         help="File JSON hoặc thư mục đích; thư mục (kể cả đường dẫn "
                              "mới không có đuôi file) tự đặt tên <server>.json theo "
                              "acc đăng nhập. Mặc định public/sea-live-dev.json")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.auth_json is not None and not args.acc:
+        parser.error("--auth-json requires --acc")
+    if args.acc and args.auth_json is None:
+        parser.error("--acc requires --auth-json")
+    if args.auth_json is None and args.profile is None:
+        args.profile = ".tmp/p545"
+    return args
 
 
 def write_meta(out_dir: Path, args: argparse.Namespace, started_at: datetime,
@@ -143,6 +155,7 @@ def write_meta(out_dir: Path, args: argparse.Namespace, started_at: datetime,
                server: str | None = None) -> None:
     (out_dir / "meta.json").write_text(json.dumps({
         "url": args.url, "profile": args.profile,
+        "session": "fresh-auth" if args.auth_json is not None else "persistent",
         "started_at": started_at.isoformat(),
         "entry": "gui" if args.gui_entry else "payload",
         "stages": [name for name, _ in entry_stages],
@@ -152,15 +165,25 @@ def write_meta(out_dir: Path, args: argparse.Namespace, started_at: datetime,
 
 async def main() -> None:
     args = parse_args()
+    try:
+        auth = load_auth(args.auth_json, args.acc) if args.auth_json is not None else None
+    except (ValueError, TypeError) as exc:
+        raise SystemExit(f"[auth] {exc}") from None
     started_at = datetime.now().astimezone()
-    out_dir = (Path(args.out) if args.out
-               else Path(".tmp/sea-crawl") / f"sea-crawl-{started_at:%Y%m%d-%H%M%S}")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    profile = Path(args.profile)
-    if not acquire_profile_lock(profile, LOCK_FILENAME):
+    profile = Path(args.profile) if args.profile is not None else None
+    if profile is not None and not acquire_profile_lock(profile, LOCK_FILENAME):
         print(f"[lock] {profile} is busy ({LOCK_FILENAME} held) — refusing to run")
         return
     try:
+        if args.out:
+            out_dir = Path(args.out)
+            out_dir.mkdir(parents=True, exist_ok=False)
+        else:
+            root = Path(".tmp/sea-crawl")
+            root.mkdir(parents=True, exist_ok=True)
+            out_dir = Path(tempfile.mkdtemp(
+                prefix=f"sea-crawl-{started_at:%Y%m%d-%H%M%S}-", dir=root,
+            ))
         entry_stages = ([stage for stage in STAGES if stage[0] in GUI_ENTRY_STAGES]
                         if args.gui_entry else [])
         write_meta(out_dir, args, started_at, entry_stages)
@@ -176,12 +199,16 @@ async def main() -> None:
             on_page=lambda p: p.on("websocket", on_websocket),
             browser=args.browser, headless=args.headless,
             width=args.width, height=args.height,
+            auth=auth,
         ) as page:
+            if auth is not None:
+                await wait_login(page, router, out_dir, LOGIN_TIMEOUT_SECONDS)
+                await verify_game_account(page, auth)
             if args.gui_entry:
                 await asyncio.sleep(args.settle)
                 await run_stages(page, writer, out_dir, entry_stages)
             else:
-                await payload_entry(page, router, out_dir, args.login_timeout)
+                await payload_entry(page, router, out_dir, LOGIN_TIMEOUT_SECONDS)
             server = await read_server(page)
             write_meta(out_dir, args, started_at, entry_stages, server)
             dump_out = resolve_dump_out(args.dump_out, server) if args.dump else None
@@ -196,7 +223,8 @@ async def main() -> None:
                           f"{out_dir}: {exc}", flush=True)
                     raise
     finally:
-        release_profile_lock(profile, LOCK_FILENAME)
+        if profile is not None:
+            release_profile_lock(profile, LOCK_FILENAME)
 
 
 if __name__ == "__main__":
