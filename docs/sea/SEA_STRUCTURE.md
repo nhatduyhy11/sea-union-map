@@ -156,7 +156,7 @@ Các thao tác còn lại đều là click/cuộn — step DSL của `tools/sock
 - Vào bằng kính lúp từ node detail; popup "Chi tiết" dạng clipboard.
 - Nội dung: ảnh + **tên boss node** ("Tứ Hải-Oán Linh") + **mô tả trait** (chịu thêm ST,
   miễn các trạng thái, hồi HP…, keyword tô màu) + mục **"Anh Hùng Đề xuất"** (card hero kèm tag).
-- Mỗi node một boss khác nhau nhưng **cùng layout này**.
+- Mỗi node được server gán một boss; nhiều node có thể cùng boss. Popup dùng cùng layout này.
 
 ## 4. Mô hình dữ liệu node
 
@@ -208,18 +208,106 @@ trong `docs/SEA_EVENT_RULE.md` §2 — lấy từ `_pointRequire` từng node tr
   → `.showBoss` → `CreepLO` (avatar, mô tả, hero đề xuất). Kính lúp boss detail (§3.8)
   không sinh request — render từ config theo `monsterId`. Verify: node 8 (1-23)
   `monsterId 1001` = "Tứ Hải-Oán Linh" khớp hình 9.
-- 13 row, tên đều có tiền tố "Tứ Hải-". `_type` 1 = pool random 1001..1007; `_type`
-  2..7 = boss cố định 1008..1013. `_limitTime` 180s, `_battleGroundCode` 131001..131013.
+- Toàn bộ runtime store `CampGVGMonsterLO` của config đã kiểm tra có **13 row**,
+  ID 1001..1013, tên đều có tiền tố "Tứ Hải-". Đây là danh mục config Sea, không
+  phải chỉ tập boss đã xuất hiện trên một server; **không phải giới hạn cứng** cho
+  mọi phiên bản game. `_type` 1 có 7 row 1001..1007; mỗi `_type` 2..7 có một row
+  1008..1013. `_limitTime` 180s, `_battleGroundCode` 131001..131013.
+- Kiểm tra 2026-11-01 trên server **545, 735 và 2**: toàn bộ 13 row khớp từng field;
+  13 row `CreepLO` qua `_showBoss` cũng khớp. Hai server 735 và 2 tải cùng
+  `config.64346.bin`; kết quả không chứng minh mọi server/phiên bản luôn đồng nhất.
+- `CampGVGMonsterLO` đến từ config client `config.<ver>.bin`, runtime giải nén/parse
+  rồi tra `CampGVGMonsterLO.get(monsterId)`. `CityInfo.monsterId` đến từ server qua
+  WebSocket và quyết định boss của node; không suy ra ID cụ thể chỉ từ config node.
+- Theo quy luật chủ dự án xác nhận cho event Sea: boss của một node có thể khác
+  giữa các server nhưng giữ nguyên trong cùng server suốt một đợt event 7 ngày.
+  Đây là thông tin nghiệp vụ, chưa phải kết quả theo dõi đủ 7 ngày của lần kiểm tra này.
 
-| id   | Tên                  | id   | Tên              |
-| ---- | -------------------- | ---- | ---------------- |
-| 1001 | Oán Linh             | 1008 | Vô Diện Tử Thần  |
-| 1002 | Nữ Hoàng Alien       | 1009 | Hắc Trảo         |
-| 1003 | Vô Diện Giả          | 1010 | Hắc Nữ Tăng Ca   |
-| 1004 | Pharaoh Cổ Đại       | 1011 | Cổ Thần          |
-| 1005 | Thỏ Cưa Máy          | 1012 | Kỵ Sĩ Không Đầu  |
-| 1006 | Bọ Cạp Hoàng Tuyền   | 1013 | U Ảnh Phu Nhân   |
-| 1007 | Khỉ Điên Đánh Trống  |      |                  |
+| `monsterId` | Tên (bỏ tiền tố Tứ Hải-) | `_type` | `_showBoss` / `CreepLO.code` |
+| --- | --- | --- | --- |
+| 1001 | Oán Linh | 1 | 120071301 |
+| 1002 | Nữ Hoàng Alien | 1 | 120071201 |
+| 1003 | Vô Diện Giả | 1 | 120071401 |
+| 1004 | Pharaoh Cổ Đại | 1 | 120071001 |
+| 1005 | Thỏ Cưa Máy | 1 | 120071601 |
+| 1006 | Bọ Cạp Hoàng Tuyền | 1 | 120072801 |
+| 1007 | Khỉ Điên Đánh Trống | 1 | 120072201 |
+| 1008 | Vô Diện Tử Thần | 2 | 120072401 |
+| 1009 | Hắc Trảo | 3 | 120072101 |
+| 1010 | Hắc Nữ Tăng Ca | 4 | 120072001 |
+| 1011 | Cổ Thần | 5 | 120071801 |
+| 1012 | Kỵ Sĩ Không Đầu | 6 | 120071501 |
+| 1013 | U Ảnh Phu Nhân | 7 | 120071101 |
+
+#### 4.2.1. Các ID và dữ liệu boss
+
+```text
+CityInfo.cityId                 → CampGVGLO.id (node)
+CityInfo.monsterId              → CampGVGMonsterLO.id (config riêng Sea)
+CampGVGMonsterLO.showBoss       → CreepLO.code (unit boss chính)
+CreepLO.normalSkill / posSkill* / pSkills → SkillBaseLO.id
+CreepLO.showHeroItem            → HeroLO.code (hero gợi ý)
+```
+
+- `monsterId` và `CreepLO.code` là hai miền ID khác nhau; không dùng thay nhau.
+- Boss chính lấy từ `_showBoss`. `_showCreep` của row Alien gồm một boss và ba
+  unit đi kèm; không cần mở rộng ba unit này khi chỉ hiển thị thông tin boss.
+  Chưa chốt ý nghĩa các khoảng của `CampGVGLO._monsterType`; không diễn giải
+  bốn khoảng đó thành bốn unit hiển thị.
+- `CampGVGMonsterLO` có **38 field**: định danh, round/khởi tạo trận, thời gian,
+  tài nguyên hiển thị, bộ chỉ số thường/elite/boss, thuộc tính chiến đấu và
+  `isCheckBattle`. `CreepLO` boss có **48 field**, gồm tên, ba dạng mô tả
+  (`_simpleDesc`, `_desc`, `_superSimpleDesc`), avatar/model/hình, skill ID,
+  thuộc tính nền, tag và hero gợi ý.
+- Chuỗi mô tả giữ nguyên markup game (`<color=...>`, `</c>`, `<br/>`). Các field
+  như `_pSkills`, `_specialAttr`, `_showHeroItem`, `_round` là **string chứa JSON**.
+- Mô tả UI, mô tả kỹ năng và giá trị buff là các nguồn riêng. Không trình bày
+  phần tổng hợp từ nhiều bảng như thể nguyên văn một `_desc` duy nhất. Chỉ số
+  `_atkBosslevel`/`_lifeBosslevel`/`_defenceBosslevel` chưa được giải mã thành
+  công/HP/thủ thực tế trong trận.
+
+#### 4.2.2. Alien và phạm vi danh mục toàn game
+
+Kiểm tra trực tiếp server 545 ngày 2026-11-01:
+
+| Node hiển thị | `cityId` | `monsterId` | `showBoss` / `CreepLO.code` |
+| --- | --- | --- | --- |
+| 1-17 Đảo Mát Mẻ | 50 | 1002 | 120071201 |
+| 2-51 Đảo Luân Xa | 68 | 1002 | 120071201 |
+| 1-7 Đảo Trường Kỷ | 7 | 1002 | 120071201 |
+
+Cả ba dùng cùng toàn bộ row `CampGVGMonsterLO` của **Tứ Hải-Nữ Hoàng Alien**.
+Hero gợi ý là Hanuman (`HeroLO.code = 50000001`). Các mô tả/skill/buff liên quan,
+nguyên văn và cách kiểm tra nằm ở
+[research boss catalog](../research/2026-11-01-boss-catalog.md).
+
+Toàn bộ `CreepLO` của ba server đã kiểm tra cũng khớp từng field: **4.563 row**.
+Trong đó 3.981 row có token `Boss` trong `_unit_type_tag`, với 149 tên và 77 model
+khác nhau. Đây là số row/tag/chuỗi trong config; không phải số thiết kế boss độc
+lập. Có nhiều biến thể chung tên/model nhưng khác `code`, thuộc tính hoặc skill.
+Không gộp unit bằng tên hoặc model; danh mục toàn game phải giữ `CreepLO.code`.
+
+#### 4.2.3. Data hiện tại và đề xuất hỗ trợ snapshot cũ
+
+**Hiện trạng:** parser `parse_node_state` lưu `CityInfo` field 4 (`monsterId`)
+trong key **`art`** của node state. Đối chiếu ngày 2026-11-01 trên 16 run: 1.362/1.362
+node state có key này, phủ đủ 13 ID 1001..1013. `report.py` chưa đưa nó vào JSON
+cho FE; `SeaLiveDump` hiện không có `monsterId`, `bossId` hoặc mapping boss node.
+Dữ liệu được crawl rồi nhưng bị bỏ ở bước export; không nhất thiết phải crawl lại.
+
+**Đề xuất, chưa triển khai/chốt contract FE:**
+
+- Lưu mapping `cityId → monsterId` theo server và đợt event; có thể dùng
+  `GetOutInfoR.startDt` làm một phần định danh đợt. Dùng lại mapping trong cùng
+  đợt theo quy luật 7 ngày đã nêu; không suy sang server hoặc đợt khác.
+- Giữ danh mục chung theo phiên bản config: `seaMonstersById[monsterId]` cho
+  config Sea, `creepsByCode[code]` cho unit toàn game; skill lookup tách riêng nếu cần.
+- Backfill snapshot từ `art` của raw crawl tương ứng; nếu thiếu raw thì chỉ dùng
+  mapping cùng server/cùng đợt đã xác định. Vẫn cho phép thiếu boss trên data cũ.
+- ID mới không có trong danh mục phải được giữ lại; hiển thị thiếu thông tin và
+  extract lại config, không giới hạn cứng vào 13 ID đã thấy.
+- Cache boss không tự giảm request `GetCityInfo` nếu crawler vẫn cần endpoint đó
+  để cập nhật điểm phe tại node.
 
 ## 5. Quy tắc crawl (scope bước đầu)
 
