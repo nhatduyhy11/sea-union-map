@@ -100,7 +100,8 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
         factions,
         matched !== null,
         neutralColor,
-        neutralOpacity
+        // Edge neutral đậm hơn node: opacity mặc định 0.4 → 0.5.
+        Math.min(1, neutralOpacity * 1.25)
       ),
     [routes, ownedIslands, matched, neutralColor, neutralOpacity]
   );

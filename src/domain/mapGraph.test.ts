@@ -190,19 +190,21 @@ test("Edges style by ownership and dim under filter", () => {
   const edges = buildMapEdges(routes, withNeutral, factions);
   assert.equal(edges[0]?.style?.strokeDasharray, "7 7");
   assert.equal(edges[1]?.style?.strokeDasharray, "7 7");
-  assert.equal(edges[2]?.style?.strokeDasharray, undefined);
+  assert.equal(edges[2]?.style?.strokeDasharray, "7 7");
+  assert.equal(edges[3]?.style?.strokeDasharray, undefined);
   assert.equal(edges[2]?.style?.stroke, "#9caeb9");
   assert.equal(edges[3]?.style?.stroke, "#123456");
-  // Edge sở hữu phe đậm + đậm màu; neutral link nhạt (opacity mặc định 0.4
+  // Edge sở hữu phe đậm + đậm màu; neutral link nhạt (opacity mặc định 0.5
   // từ neutralOpacity) để đỡ rối toàn cảnh.
-  assert.equal(edges[3]?.style?.strokeWidth, 3);
+  assert.equal(edges[3]?.style?.strokeWidth, 5);
   assert.equal(edges[3]?.style?.opacity, 0.7);
-  assert.equal(edges[0]?.style?.strokeWidth, 2);
-  assert.equal(edges[0]?.style?.opacity, 0.4);
-  assert.equal(edges[2]?.style?.opacity, 0.4);
+  assert.equal(edges[0]?.style?.strokeWidth, 3.5);
+  assert.equal(edges[0]?.style?.opacity, 0.5);
+  assert.equal(edges[2]?.style?.opacity, 0.5);
   // Có filter: mọi connection dim xuống để node highlight nổi lên.
   const dimmed = buildMapEdges(routes, withNeutral, factions, true);
   assert.equal(dimmed[3]?.style?.opacity, 0.2);
   assert.equal(dimmed[0]?.style?.opacity, 0.12);
-  assert.equal(dimmed[3]?.style?.strokeWidth, 3);
+  assert.equal(dimmed[3]?.style?.strokeWidth, 5);
+  assert.equal(dimmed[2]?.style?.strokeDasharray, "7 7");
 });
