@@ -1,4 +1,6 @@
+import type { CSSProperties } from "react";
 import { Anchor, Castle, Pin, Shield, X } from "lucide-react";
+import { bossImageUrl, bossName } from "../../../data/nodeBosses";
 import { number } from "../../../utils/format";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { getFactionIcon } from "../../shared/factionIcons";
@@ -31,8 +33,19 @@ export function NodeDetails({
     attackers.length === ATTACKER_CAP &&
     total > 0 &&
     Math.abs(attackerSum - total) / total > 0.01;
+  // Base không bị đánh nên không phủ ảnh boss dù bảng boss có giá trị.
+  const bossId = island.base ? undefined : island.monsterId;
   return (
-    <div className={styles.detail}>
+    <div
+      className={`${styles.detail} ${bossId ? styles.hasBoss : ""}`}
+      style={
+        bossId
+          ? ({
+              "--boss-bg": `url(${bossImageUrl(bossId)})`,
+            } as CSSProperties)
+          : undefined
+      }
+    >
       <div className={styles.detailTop}>
         <span className={styles.eyebrow}>THÔNG TIN CỨ ĐIỂM</span>
         <button aria-label="Đóng chi tiết" onClick={onClose}>
@@ -46,7 +59,11 @@ export function NodeDetails({
         {island.base ? (
           (() => {
             const FactionIcon = getFactionIcon(island.owner || island.id);
-            return FactionIcon ? <FactionIcon size={33} /> : <Castle size={33} />;
+            return FactionIcon ? (
+              <FactionIcon size={33} />
+            ) : (
+              <Castle size={33} />
+            );
           })()
         ) : (
           <Anchor size={33} />
@@ -54,10 +71,20 @@ export function NodeDetails({
       </div>
       <h2 className={styles.title}>{island.name}</h2>
       <div className={styles.detailTags}>
-        <span>#{island.id}</span>
-        <span style={{ color: owner?.labelColor }}>
-          {owner?.name || "Trung lập"}
+        <span
+          style={
+            owner
+              ? {
+                  background: owner.color,
+                  borderColor: owner.color,
+                  color: "#1b2329",
+                }
+              : undefined
+          }
+        >
+          #{island.id}
         </span>
+        {bossId && <span>{bossName(bossId)}</span>}
       </div>
       <div className={styles.claim}>
         <Shield size={19} />
