@@ -184,3 +184,13 @@ test("fuel joins by direction; factions without base are dropped", () => {
   delete legacy.fuel;
   assert.deepEqual(buildLiveData(legacy).fuel, {});
 });
+
+test("buildLiveData attaches the node boss by game id", () => {
+  const [gameId] = Object.entries(liveDump.camp).find(
+    ([, row]) => layoutIdOf(row) === "1-23"
+  )!;
+  const withBoss = buildLiveData(liveDump, { [gameId]: 1001 }).islands;
+  assert.equal(withBoss.find((node) => node.id === "1-23")?.monsterId, 1001);
+  // Cụm không có bảng boss → node không có boss.
+  assert.ok(islands.every((node) => node.monsterId === undefined));
+});

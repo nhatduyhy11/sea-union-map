@@ -32,8 +32,11 @@ function indexNodeIds(
   else map.set(key, new Set([nodeId]));
 }
 
-export function buildMapData(dump: SeaLiveDump) {
-  const live = buildLiveData(dump);
+export function buildMapData(
+  dump: SeaLiveDump,
+  bosses: Record<string, number> = {}
+) {
+  const live = buildLiveData(dump, bosses);
   const islands: Island[] = live.islands;
   const contributions: Contribution[] = live.contributions;
   const routes: Route[] = live.routes;

@@ -80,17 +80,19 @@ thay vì rơi về 517).
   chuỗi ID: [SEA_STRUCTURE.md §4.2](SEA_STRUCTURE.md#42-boss-node-campgvgmonsterlo)).
   `parse_node_state` đã lưu field này dưới key `art` của node state; đối chiếu
   2026-11-01 trên 16 run: 1.362/1.362 node state có key, phủ đủ 13 ID 1001..1013.
-  `report.py` chưa export → `SeaLiveDump` không có `monsterId`/mapping boss node.
-  Dữ liệu đã crawl, không cần crawl lại.
-- **Hướng làm (chưa chốt contract FE)**:
-  - Đổi tên key `art` → `monsterId` trong parser; dump mapping `cityId → monsterId`.
-  - Lưu mapping theo server + đợt event (có thể dùng `GetOutInfoR.startDt` định
-    danh đợt). Reuse trong cùng đợt theo quy luật boss cố định 7 ngày; không suy
-    sang server hoặc đợt khác.
+  `report.py` ghi mapping ra `src/data/node-bosses/<EVENT_START>/<server>.json`
+  (tách khỏi snapshot, snapshot cũ không đổi). Đã backfill cụm 517 (run `p545`)
+  và 590 (run `phun`, xác nhận cụm qua bộ guild): mọi run cùng cụm cho cùng
+  mapping từ 10/29 tới 11/02. Node detail FE phủ ảnh boss làm nền.
+- **Còn lại**:
+  - `EVENT_START` trong `report.py` đang hard-code ngày đầu đợt (cùng
+    `EVENT_DAYS[0]` FE); sang đợt mới cần đổi tay, hoặc định danh đợt bằng
+    `GetOutInfoR.startDt`.
+  - Cụm khác (vd. 528 cùng chiến trường với 517) chưa có file — FE hiện node
+    không boss.
   - Danh mục chung theo phiên bản config: `seaMonstersById[monsterId]` cho config
-    Sea, `creepsByCode[code]` cho unit; skill lookup tách riêng nếu cần.
-  - Backfill snapshot cũ từ `art` của raw crawl tương ứng; thiếu raw thì chỉ dùng
-    mapping cùng server/cùng đợt. FE vẫn chấp nhận node thiếu boss.
+    Sea (tên, mô tả, hero gợi ý), `creepsByCode[code]` cho unit; skill lookup
+    tách riêng nếu cần.
   - Cache boss không giảm request `GetCityInfo` — crawler vẫn cần endpoint này cho
     điểm phe tại node.
 

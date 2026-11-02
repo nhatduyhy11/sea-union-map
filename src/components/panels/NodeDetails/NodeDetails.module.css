@@ -4,6 +4,20 @@
   flex: 1;
 }
 
+/* Ảnh boss phủ cả vùng chi tiết: rõ ở phần đầu, voan màu nền panel dày dần
+   xuống bảng điểm/người chơi để chữ vẫn đọc được. */
+.detail.hasBoss {
+  min-height: 100%;
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(248 250 250 / 0.35) 0,
+      rgb(248 250 250 / 0.75) 260px,
+      rgb(248 250 250 / 0.92) 420px
+    ),
+    var(--boss-bg) right -40px top 20px / 115% auto no-repeat;
+}
+
 .detailTop {
   display: flex;
   align-items: center;

@@ -5,6 +5,7 @@ import {
   dayLabel,
   eventDayOf,
 } from "../data/eventCalendar";
+import { nodeBossesOf } from "../data/nodeBosses";
 import { liveDump } from "../data/sea-live";
 import {
   LIVE_SERVER,
@@ -37,7 +38,7 @@ interface DatasetState {
   loading: boolean;
 }
 
-const liveData = buildMapData(liveDump);
+const liveData = buildMapData(liveDump, nodeBossesOf(LIVE_SERVER));
 
 export const today = () => eventDayOf(new Date());
 const inEvent = (day: string) =>
@@ -73,7 +74,10 @@ function resolve(server: string, day: string): DataSource | null {
   if (day === today() && server === LIVE_SERVER) {
     // Ngoài khung chiến trường (kể cả sau khi event kết thúc) snapshot của
     // ngày hiện tại là bản chốt sau war → ưu tiên hơn live dump.
-    if (battleCountdown(new Date()).phase !== "open" && hasSnapshot(day, server))
+    if (
+      battleCountdown(new Date()).phase !== "open" &&
+      hasSnapshot(day, server)
+    )
       return "snapshot";
     return "live";
   }
@@ -97,7 +101,10 @@ async function apply(server: string, day: string, source: DataSource) {
   }
   useDataset.setState({ loading: true });
   try {
-    const data = buildMapData(await loadSnapshot(day, server));
+    const data = buildMapData(
+      await loadSnapshot(day, server),
+      nodeBossesOf(server)
+    );
     if (id !== requestId) return;
     useDataset.setState({ server, day, source, data, loading: false });
   } catch (error) {
