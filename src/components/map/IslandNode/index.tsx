@@ -11,6 +11,7 @@ import {
   Sword,
   Swords,
 } from "lucide-react";
+import { bossImageUrl } from "../../../data/nodeBosses";
 import { iconBoxSize } from "../../../domain/mapGraph";
 import { useDebug } from "../../../stores/debug";
 import { getFactionIcon } from "../../shared/factionIcons";
@@ -129,6 +130,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
           claimThreshold={data.claimThreshold}
           hasOwner={Boolean(data.owner)}
           tint={statTint}
+          bossImage={data.monsterId ? bossImageUrl(data.monsterId) : undefined}
           scores={data.scores}
           pinned={data.pinned}
           onTogglePin={() => data.pin(data.id)}

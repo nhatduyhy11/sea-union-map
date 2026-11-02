@@ -33,6 +33,23 @@
       color-mix(in srgb, var(--tint) 35%, #ffffff) 20px 30px);
 }
 
+/* Ảnh boss mờ dạt phải, nằm trên nền tint/sọc nhưng dưới chữ và bar điểm
+   (z-index âm trong stacking context riêng của popup). */
+.nodeStats.hasBoss {
+  isolation: isolate;
+}
+
+.nodeStats.hasBoss::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--boss-bg) right -12px center / auto 135% no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: -1;
+}
+
 .statTitle {
   display: flex;
   align-items: center;

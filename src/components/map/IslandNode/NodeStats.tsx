@@ -12,6 +12,8 @@ export interface NodeStatsProps {
   // Màu phe đại diện (owner, hoặc phe đủ ngưỡng claim nếu đảo chưa chủ) —
   // pha nhạt làm nền popup qua CSS.
   tint?: string;
+  // Ảnh boss của node — mờ phía sau nền tint/sọc.
+  bossImage?: string;
   scores?: FactionScore[];
   pinned?: boolean;
   onTogglePin?: () => void;
@@ -26,6 +28,7 @@ export function NodeStats({
   claimThreshold,
   hasOwner,
   tint,
+  bossImage,
   scores,
   pinned,
   onTogglePin,
@@ -52,8 +55,13 @@ export function NodeStats({
     <div
       className={`${styles.nodeStats} ${
         tint ? (hasOwner ? styles.tinted : styles.claimable) : ""
-      } ${pinned ? styles.pinned : ""}`}
-      style={tint ? ({ "--tint": tint } as React.CSSProperties) : undefined}
+      } ${pinned ? styles.pinned : ""} ${bossImage ? styles.hasBoss : ""}`}
+      style={
+        {
+          "--tint": tint,
+          "--boss-bg": bossImage && `url(${bossImage})`,
+        } as React.CSSProperties
+      }
     >
       <div className={styles.statTitle}>
         <span className={styles.statScore} title={scoreTitle}>
