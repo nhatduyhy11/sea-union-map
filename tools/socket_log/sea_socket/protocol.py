@@ -119,7 +119,10 @@ def parse_node_state(body: bytes, requested_id: int | None = None) -> dict:
     unlocked: f1: 0, f2 {f4 art, f1 id, f2×4 {f1 faction, f2 score}}
     locked:   f1: nonzero (10,000,035 on locked "1-x"/"2-x" islands — semantics
     TBD), no f2 at all. Response does not echo the id when locked, so the
-    requested id is attached by the caller."""
+    requested id is attached by the caller.
+
+    Key ``art`` = f4 ``monsterId`` (boss of the node, ``CampGVGMonsterLO`` id);
+    the old name is kept so new runs stay compatible with crawled ones."""
     err = None
     for field, _wire, value in decode_proto(body):
         if field == 1:

@@ -39,6 +39,12 @@ Nội dung dump (key → nguồn):
 - ``baseDir``    ← tên 4 đảo base → hướng trên layout (specs/map-*.PNG)
 - ``snapshotAt`` ← ``map-snapshot.json``: logged_at (nếu có)
 
+Boss node KHÔNG nằm trong dump: boss của node cố định theo (đợt event × cụm)
+nên ghi một file riêng ``src/data/node-bosses/<EVENT_START>/<server>.json``
+(gameNodeId → monsterId, từ key ``art`` của ``node-states.jsonl``). ``--snapshot``
+ghi kèm file này nếu chưa có; có rồi thì chỉ đối chiếu, lệch là dừng —
+boss đổi giữa đợt nghĩa là quy luật cố định 7 ngày sai, cần xem lại tay.
+
 Usage:
     # Dev: dump vào public/ (gitignored), refresh browser để xem
     uv run python tools/socket_log/sea_socket/report.py \
@@ -50,6 +56,9 @@ Usage:
     # Snapshot lịch sử theo ngày event → src/data/snapshots/<YYMMDD>/<server>.json
     uv run python tools/socket_log/sea_socket/report.py \
         --crawl .tmp/sea-crawl/<run> --snapshot [--server 590]
+    # Chỉ ghi/đối chiếu bảng boss node (backfill từ run cũ, không đụng snapshot)
+    uv run python tools/socket_log/sea_socket/report.py \
+        --crawl .tmp/sea-crawl/<run> --node-bosses --server 590
 
 Snapshot (``--snapshot``) — ngày quy theo thời điểm CHẠY SCRIPT (giờ VN):
 trong khung chiến trường 10:00~22:00 là ngày hôm đó; từ 22:00 tới trước
@@ -74,6 +83,10 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_BASELINE = Path(__file__).resolve().parent / "campgvg.json"
 DEV_DUMP_OUT = REPO_ROOT / "public/sea-live-dev.json"
 SNAPSHOT_ROOT = REPO_ROOT / "src/data/snapshots"
+NODE_BOSS_ROOT = REPO_ROOT / "src/data/node-bosses"
+# Ngày đầu đợt event đang chạy — cùng EVENT_DAYS[0] của FE
+# src/data/eventCalendar.ts; đổi khi sang đợt mới.
+EVENT_START = "261026"
 # Tạm thời mặc định cụm 517 — cụm khác chỉnh tay (--server / đổi tên file).
 DEFAULT_SERVER = "517"
 VN_TZ = timezone(timedelta(hours=7))
@@ -171,6 +184,52 @@ def node_faction_scores(crawl: Path) -> dict | None:
             if state.get("faction_scores"):
                 scores[str(state["id"])] = state["faction_scores"]
     return scores
+
+
+def node_bosses(crawl: Path) -> dict | None:
+    """node-states.jsonl key ``art`` = ``monsterId`` (0x72/0x0012 cityInfo f4):
+    gameNodeId → boss của node. Node bị khoá không có boss thì bỏ; run không
+    có file → None."""
+    path = crawl / "node-states.jsonl"
+    if not path.exists():
+        return None
+    bosses = {}
+    with path.open(encoding="utf-8") as fh:
+        for line in fh:
+            state = json.loads(line)
+            if state.get("art"):
+                bosses[str(state["id"])] = state["art"]
+    return bosses
+
+
+def write_node_bosses(crawl: Path, server: str) -> Path | None:
+    """Ghi ``node-bosses/<EVENT_START>/<server>.json`` nếu chưa có; có rồi thì
+    đối chiếu với run — node nào lệch boss là ``SystemExit`` (không ghi đè)."""
+    bosses = node_bosses(crawl)
+    if not bosses:
+        print(f"[node-bosses] {crawl}: không có node-states.jsonl — bỏ qua")
+        return None
+    out = NODE_BOSS_ROOT / EVENT_START / f"{server}.json"
+    if out.exists():
+        known = json.loads(out.read_text(encoding="utf-8"))
+        diff = sorted((int(k) for k in bosses.keys() & known.keys()
+                       if bosses[k] != known[k]))
+        if diff:
+            raise SystemExit(
+                f"[node-bosses] {out}: boss lệch ở node {diff} — run "
+                f"{crawl} không cùng cụm/đợt, hoặc boss đổi giữa đợt")
+        missing = bosses.keys() - known.keys()
+        if not missing:
+            print(f"[node-bosses] {out}: khớp {len(bosses)} node")
+            return out
+        bosses = {**known, **bosses}
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(
+        json.dumps(dict(sorted(bosses.items(), key=lambda kv: int(kv[0]))),
+                   indent=1) + "\n",
+        encoding="utf-8")
+    print(f"[node-bosses] {out}: {len(bosses)} node")
+    return out
 
 
 def camp_fuel(crawl: Path) -> dict | None:
@@ -319,13 +378,23 @@ def main() -> None:
                         help="Đích JSON cho FE (mặc định public/sea-live-dev.json)")
     target.add_argument("--snapshot", action="store_true",
                         help="Ghi snapshot lịch sử vào src/data/snapshots/<YYMMDD>/"
-                             "<server>.json (ngày theo rule 10:00~22:00)")
+                             "<server>.json (ngày theo rule 10:00~22:00), "
+                             "kèm bảng boss node")
+    target.add_argument("--node-bosses", action="store_true",
+                        help="Chỉ ghi/đối chiếu src/data/node-bosses/"
+                             "<EVENT_START>/<server>.json, không dump")
     parser.add_argument("--server", default=DEFAULT_SERVER,
-                        help="Cụm server của run khi --snapshot (mặc định 517 — "
+                        help="Cụm server của run khi --snapshot/--node-bosses "
+                             "(mặc định 517 — "
                              "tạm thời, cụm khác chỉnh tay)")
     args = parser.parse_args()
+    if args.node_bosses:
+        write_node_bosses(args.crawl, args.server)
+        return
     out = snapshot_out(args.server) if args.snapshot else args.out
     dump_run(args.crawl, args.config, out)
+    if args.snapshot:
+        write_node_bosses(args.crawl, args.server)
 
 
 if __name__ == "__main__":
