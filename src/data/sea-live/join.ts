@@ -97,7 +97,11 @@ function playerInfo(dump: SeaLiveDump, playerId: number) {
   };
 }
 
-function buildIslands(dump: SeaLiveDump, index: CampIndex): Island[] {
+function buildIslands(
+  dump: SeaLiveDump,
+  index: CampIndex,
+  bosses: Record<string, number>
+): Island[] {
   return layoutNodes.map((node) => {
     const gameId = index.gameIdByLayout.get(node.id);
     const camp = gameId !== undefined ? dump.camp[gameId] : undefined;
@@ -112,6 +116,7 @@ function buildIslands(dump: SeaLiveDump, index: CampIndex): Island[] {
       claimThreshold: camp?.pointRequire ?? 1,
       factionScores:
         gameId !== undefined ? factionScoresOf(dump, index, gameId) : undefined,
+      monsterId: gameId !== undefined ? bosses[gameId] : undefined,
     };
   });
 }
@@ -213,10 +218,15 @@ function buildFuel(
   return fuel;
 }
 
-export function buildLiveData(dump: SeaLiveDump): LiveData {
+// bosses: gameNodeId → monsterId của cụm (src/data/nodeBosses.ts) — nằm ngoài
+// dump vì boss cố định cả đợt event.
+export function buildLiveData(
+  dump: SeaLiveDump,
+  bosses: Record<string, number> = {}
+): LiveData {
   const index = indexCamps(dump);
   return {
-    islands: buildIslands(dump, index),
+    islands: buildIslands(dump, index, bosses),
     contributions: buildContributions(dump, index),
     playerBoard: buildPlayerBoard(dump, index.factionDir),
     factionGuilds: buildFactionGuilds(dump, index.factionDir),

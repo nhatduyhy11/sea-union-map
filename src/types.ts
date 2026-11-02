@@ -39,6 +39,9 @@ export interface Island extends LayoutNode {
   // Server total per faction at this node (faction id → score). Undefined when
   // the dump lacks it; selectors then sum the capped node-board rows.
   factionScores?: Record<string, number>;
+  // Boss of the node (monsterId) for the viewed server's event; undefined when
+  // that server has no node-boss table.
+  monsterId?: number;
 }
 
 export interface Route {
