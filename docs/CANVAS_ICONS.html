@@ -1,0 +1,1312 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Canvas Icons · Interactive field guide</title>
+    <style>
+      :root {
+        --paper: #f5f4ef;
+        --ink: #183b3a;
+        --muted: #647471;
+        --line: #dce2d9;
+        --green: #267467;
+        --soft: #e5ede5;
+        --gold: #b98135;
+        --orange: #bd684a;
+        --purple: #74608b;
+        font-family:
+          Inter,
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background: var(--paper);
+        font-synthesis: none;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button,
+      a,
+      input,
+      select {
+        -webkit-tap-highlight-color: transparent;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      a:focus-visible,
+      input:focus-visible,
+      select:focus-visible {
+        outline: 3px solid #dc9b48;
+        outline-offset: 5px;
+      }
+      a {
+        color: inherit;
+      }
+      main {
+        max-width: 1200px;
+        margin: auto;
+        padding: 30px 36px 64px;
+      }
+      .masthead {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 23px;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .brand svg {
+        width: 23px;
+        height: 23px;
+      }
+      .masthead a {
+        letter-spacing: 0;
+        font-weight: 500;
+        color: var(--muted);
+        text-decoration: none;
+      }
+      .intro {
+        padding: 46px 0 32px;
+        display: flex;
+        justify-content: space-between;
+        gap: 30px;
+        align-items: end;
+      }
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 750;
+        letter-spacing: 0.17em;
+        text-transform: uppercase;
+        color: var(--green);
+      }
+      h1 {
+        font-size: clamp(34px, 4.7vw, 57px);
+        line-height: 1.08;
+        font-weight: 550;
+        letter-spacing: -0.055em;
+        margin: 13px 0 16px;
+      }
+      p {
+        line-height: 1.7;
+      }
+      .intro p {
+        max-width: 590px;
+        color: var(--muted);
+        font-size: 15px;
+        margin: 0;
+      }
+      .edition {
+        font-family: ui-monospace, monospace;
+        font-size: 11px;
+        color: var(--muted);
+        white-space: nowrap;
+        padding-bottom: 5px;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        padding: 6px;
+        background: #e9ece4;
+        border-radius: 14px;
+        margin-bottom: 24px;
+      }
+      .tab {
+        border: 0;
+        background: transparent;
+        color: var(--muted);
+        text-align: left;
+        padding: 16px;
+        border-radius: 10px;
+        display: flex;
+        gap: 13px;
+        align-items: center;
+        transition: background 0.2s;
+      }
+      .tab[aria-selected="true"] {
+        background: #fff;
+        box-shadow: 0 2px 6px #183b3a0b;
+        color: var(--ink);
+      }
+      .tab small {
+        font-size: 11px;
+        opacity: 0.7;
+        font-family: ui-monospace, monospace;
+      }
+      .tab span {
+        font-size: 13px;
+        font-weight: 650;
+      }
+      .workspace {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px #183b3a04;
+      }
+      .work-head {
+        padding: 27px 30px 0;
+        display: flex;
+        justify-content: space-between;
+        gap: 24px;
+      }
+      .work-head h2 {
+        font-size: 21px;
+        font-weight: 600;
+        letter-spacing: -0.025em;
+        margin: 0 0 6px;
+      }
+      .work-head p {
+        font-size: 13px;
+        color: var(--muted);
+        margin: 0;
+        max-width: 640px;
+      }
+      .badge {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        background: var(--soft);
+        color: var(--green);
+        border-radius: 20px;
+        padding: 8px 11px;
+        height: fit-content;
+        white-space: nowrap;
+      }
+      .axis-area {
+        padding: 30px 42px 24px;
+      }
+      .axis-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .axis-heading strong {
+        color: var(--ink);
+        font-weight: 600;
+      }
+      .ratio {
+        font-size: 30px;
+        font-weight: 550;
+        color: var(--ink);
+        letter-spacing: -0.06em;
+        font-variant-numeric: tabular-nums;
+      }
+      .ratio small {
+        font-size: 14px;
+        letter-spacing: 0;
+        color: var(--muted);
+        margin-left: 4px;
+      }
+      .axis {
+        position: relative;
+        margin: 65px 10px 60px;
+        height: 22px;
+        --pos: 55%;
+        --tone: var(--orange);
+      }
+      .track {
+        height: 22px;
+        display: flex;
+        border-radius: 5px;
+        overflow: hidden;
+        background: #eef1ec;
+        box-shadow: inset 0 0 0 1px #183b3a08;
+      }
+      .segment {
+        height: 100%;
+        position: relative;
+        border-right: 2px solid #fff;
+      }
+      .segment:last-child {
+        border: 0;
+      }
+      .marker {
+        position: absolute;
+        left: var(--pos);
+        top: -51px;
+        transform: translateX(-50%);
+        padding: 6px 10px;
+        background: var(--ink);
+        color: white;
+        font-size: 11px;
+        font-weight: 600;
+        white-space: nowrap;
+        border-radius: 6px;
+        pointer-events: none;
+        font-variant-numeric: tabular-nums;
+      }
+      .marker:after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 100%;
+        height: 23px;
+        border-left: 1px dashed var(--ink);
+      }
+      input[type="range"] {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        margin: 0;
+        height: 22px;
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent;
+        cursor: ew-resize;
+        z-index: 2;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 17px;
+        height: 34px;
+        border-radius: 5px;
+        background: white;
+        border: 3px solid var(--ink);
+        box-shadow: 0 2px 5px #183b3a25;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 11px;
+        height: 28px;
+        border-radius: 5px;
+        background: white;
+        border: 3px solid var(--ink);
+      }
+      .tick {
+        position: absolute;
+        top: 29px;
+        transform: translateX(-50%);
+        font-size: 11px;
+        font-family: ui-monospace, monospace;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .tick:before {
+        content: "";
+        position: absolute;
+        bottom: calc(100% + 4px);
+        left: 50%;
+        height: 6px;
+        border-left: 1px solid #aab9ae;
+      }
+      .tick.important {
+        color: var(--ink);
+        font-weight: 700;
+      }
+      .tick.important:before {
+        height: 29px;
+        border-left: 2px solid var(--green);
+      }
+      .tick.active {
+        color: var(--green);
+        text-decoration: underline;
+        text-underline-offset: 4px;
+      }
+      .tick.active:before {
+        border-left-width: 3px;
+        filter: drop-shadow(0 0 3px #26746755);
+      }
+      .tick.start:before {
+        left: 0;
+      }
+      .tick.end:before {
+        left: 100%;
+      }
+      #ticks {
+        pointer-events: none;
+      }
+      .tick.end {
+        transform: translateX(-100%);
+      }
+      .tick.start {
+        transform: none;
+      }
+      .axis-caption {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .axis-caption kbd {
+        font: inherit;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        padding: 2px 5px;
+        background: #fafbf8;
+      }
+      .legend {
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      .legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .body-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        border-top: 1px solid var(--line);
+      }
+      .controls {
+        padding: 26px 30px;
+        background: #fbfcf9;
+        border-right: 1px solid var(--line);
+      }
+      .section-label {
+        font-size: 10px;
+        letter-spacing: 0.14em;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin: 0 0 18px;
+      }
+      .control {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 11px 0;
+        border-bottom: 1px solid #e7ebe4;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .control:last-child {
+        border: 0;
+      }
+      .control small {
+        display: block;
+        color: var(--muted);
+        font-size: 11px;
+        margin-top: 2px;
+      }
+      .toggle {
+        appearance: none;
+        -webkit-appearance: none;
+        flex-shrink: 0;
+        width: 34px;
+        height: 20px;
+        background: #d4ddd2;
+        border-radius: 12px;
+        position: relative;
+        cursor: pointer;
+        margin: 0;
+        transition: background 0.2s;
+      }
+      .control-child {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 0 12px 16px;
+        font-size: 12px;
+      }
+      .control-child input {
+        margin: 0;
+        accent-color: var(--green);
+      }
+      .control-child:has(input:disabled) {
+        opacity: 0.5;
+      }
+      .control-child input:disabled {
+        cursor: not-allowed;
+      }
+      .toggle:after {
+        content: "";
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        left: 3px;
+        top: 3px;
+        border-radius: 50%;
+        background: white;
+        transition: transform 0.2s;
+      }
+      .toggle:checked {
+        background: var(--green);
+      }
+      .toggle:checked:after {
+        transform: translateX(14px);
+      }
+      select {
+        max-width: 190px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        padding: 7px 9px;
+        background: white;
+        color: var(--ink);
+        font-size: 11px;
+      }
+      .result {
+        padding: 26px 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 255px;
+      }
+      .result-main {
+        display: flex;
+        gap: 19px;
+        align-items: center;
+      }
+      .node-icon {
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        display: grid;
+        place-items: center;
+        background: var(--soft);
+        color: var(--green);
+        flex-shrink: 0;
+        border: 1px solid #183b3a12;
+        transition:
+          background 0.2s,
+          color 0.2s;
+      }
+      .node-icon svg {
+        width: 34px;
+        height: 34px;
+        stroke-width: 1.5;
+      }
+      .result h3 {
+        font-size: 25px;
+        font-weight: 550;
+        letter-spacing: -0.035em;
+        margin: 0 0 3px;
+      }
+      .code-name {
+        font:
+          11px ui-monospace,
+          monospace;
+        color: var(--muted);
+      }
+      .reason {
+        font-size: 13px;
+        line-height: 1.75;
+        color: var(--muted);
+        margin: 20px 0 16px;
+      }
+      .rule {
+        padding-top: 13px;
+        border-top: 1px solid var(--line);
+        font:
+          11px/1.7 ui-monospace,
+          monospace;
+        color: var(--green);
+      }
+      .examples {
+        padding: 19px 30px;
+        border-top: 1px solid var(--line);
+        display: flex;
+        gap: 9px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .examples .section-label {
+        margin: 0 10px 0 0;
+      }
+      .example {
+        border: 1px solid var(--line);
+        color: var(--muted);
+        background: white;
+        border-radius: 7px;
+        padding: 7px 10px;
+        font-size: 11px;
+      }
+      .example:hover {
+        border-color: var(--green);
+        color: var(--green);
+        background: #f7faf5;
+      }
+      .notes {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+        margin: 32px 0;
+      }
+      .note-num {
+        font:
+          11px ui-monospace,
+          monospace;
+        color: var(--green);
+      }
+      .notes h3 {
+        font-size: 13px;
+        font-weight: 650;
+        margin: 10px 0 7px;
+      }
+      .notes p {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0;
+      }
+      .details {
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        padding: 18px 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      summary {
+        cursor: pointer;
+        color: var(--ink);
+        font-weight: 600;
+      }
+      details p {
+        max-width: 850px;
+      }
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        margin-top: 22px;
+        color: var(--muted);
+        font-size: 10px;
+        line-height: 1.6;
+      }
+      [hidden] {
+        display: none !important;
+      }
+      @media (max-width: 740px) {
+        main {
+          padding: 20px 18px 35px;
+        }
+        .intro {
+          padding: 30px 0 25px;
+        }
+        .edition {
+          display: none;
+        }
+        .tabs {
+          gap: 3px;
+        }
+        .tab {
+          padding: 12px 9px;
+          display: block;
+        }
+        .tab small {
+          display: block;
+          margin-bottom: 5px;
+        }
+        .tab span {
+          font-size: 11px;
+        }
+        .work-head {
+          padding: 22px 20px 0;
+        }
+        .work-head h2 {
+          font-size: 18px;
+        }
+        .badge {
+          display: none;
+        }
+        .axis-area {
+          padding: 25px 20px 22px;
+        }
+        .axis {
+          margin-left: 4px;
+          margin-right: 4px;
+        }
+        .axis-heading {
+          gap: 10px;
+        }
+        .ratio {
+          font-size: 26px;
+        }
+        .axis-heading > span {
+          max-width: 65%;
+          line-height: 1.6;
+        }
+        .axis-caption {
+          align-items: start;
+        }
+        .axis-caption > span {
+          display: none;
+        }
+        .legend {
+          gap: 10px;
+          font-size: 10px;
+        }
+        .body-grid {
+          grid-template-columns: 1fr;
+        }
+        .controls {
+          border-right: 0;
+          border-bottom: 1px solid var(--line);
+          padding: 22px 20px;
+        }
+        .result {
+          padding: 23px 20px;
+          min-height: 230px;
+        }
+        .examples {
+          padding: 16px 20px;
+        }
+        .examples .section-label {
+          width: 100%;
+          margin-bottom: 3px;
+        }
+        .notes {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+        .notes article {
+          display: grid;
+          grid-template-columns: 25px 1fr;
+          gap: 0 10px;
+        }
+        .notes h3 {
+          margin: 0 0 5px;
+        }
+        .notes p {
+          grid-column: 2;
+        }
+        .note-num {
+          padding-top: 2px;
+        }
+        .marker {
+          font-size: 10px;
+        }
+        .masthead {
+          font-size: 10px;
+        }
+        .tick {
+          font-size: 10px;
+        }
+        .masthead a {
+          font-size: 11px;
+        }
+        footer {
+          flex-direction: column;
+          gap: 5px;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header class="masthead">
+        <div class="brand">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            aria-hidden="true"
+          >
+            <path d="M12 3v15M8 7h8M3 13c0 10 18 10 18 0M3 13l-2 3M21 13l2 3" />
+            <circle cx="12" cy="3" r="2" /></svg
+          >SEA UNION
+          <span style="font-weight: 400; opacity: 0.45">/</span> FIELD GUIDE
+        </div>
+        <a href="CANVAS_ICONS.md">Tài liệu quy tắc ↗</a>
+      </header>
+      <section class="intro">
+        <div>
+          <div class="eyebrow">Canvas icons · Tài liệu tương tác</div>
+          <h1>Một trục điểm.<br />Mọi trạng thái cứ điểm.</h1>
+          <p>
+            Kéo điểm trên trục, đổi bối cảnh và xem vì sao một icon xuất hiện.
+            Bắt đầu với phe cao điểm nhất ở mốc 100%.
+          </p>
+        </div>
+        <div class="edition">01 — OWNERSHIP & SCORE</div>
+      </section>
+      <div class="tabs" role="tablist" aria-label="Trường hợp ownership">
+        <button
+          class="tab"
+          role="tab"
+          id="tab-top"
+          aria-selected="true"
+          aria-controls="panel"
+          data-mode="top"
+        >
+          <small>01</small><span>Owner = highest score</span>
+        </button>
+        <button
+          class="tab"
+          role="tab"
+          id="tab-lower"
+          aria-selected="false"
+          aria-controls="panel"
+          tabindex="-1"
+          data-mode="lower"
+        >
+          <small>02</small><span>Owner ≠ highest score</span>
+        </button>
+        <button
+          class="tab"
+          role="tab"
+          id="tab-neutral"
+          aria-selected="false"
+          aria-controls="panel"
+          tabindex="-1"
+          data-mode="neutral"
+        >
+          <small>03</small><span>Chưa có owner</span>
+        </button>
+      </div>
+      <section
+        class="workspace"
+        id="panel"
+        role="tabpanel"
+        aria-labelledby="tab-top"
+      >
+        <div class="work-head">
+          <div>
+            <h2 id="case-title"></h2>
+            <p id="case-description"></p>
+          </div>
+          <span class="badge" id="case-badge"></span>
+        </div>
+        <div class="axis-area">
+          <div class="axis-heading">
+            <span id="axis-label"></span
+            ><output class="ratio" for="score" id="ratio"></output>
+          </div>
+          <div class="axis" id="axis">
+            <div class="marker" id="marker" aria-hidden="true"></div>
+            <div class="track" id="track" aria-hidden="true"></div>
+            <input
+              type="range"
+              id="score"
+              min="0"
+              max="100"
+              step="1"
+              value="55"
+              aria-label="Điểm runner-up so với phe top"
+            />
+            <div id="ticks" aria-hidden="true"></div>
+          </div>
+          <div class="axis-caption">
+            <div class="legend" id="legend"></div>
+            <span>Kéo thanh hoặc dùng <kbd>←</kbd> <kbd>→</kbd></span>
+          </div>
+        </div>
+        <div class="body-grid">
+          <div class="controls">
+            <p class="section-label">Bối cảnh tại node</p>
+            <label class="control" id="enemy-row"
+              ><span
+                >Giáp lãnh thổ phe khác<small
+                  >Dùng khi xét điều kiện khiên</small
+                ></span
+              ><input class="toggle" id="enemy-near" type="checkbox" checked
+            /></label>
+            <label class="control-child" id="rival-row">
+              <input id="rival-near" type="checkbox" checked />
+              <span>Phe giáp là runner-up</span>
+            </label>
+            <label class="control" id="effort-row"
+              ><span
+                >Mặt bằng điểm phe owner<small id="effort-hint"></small></span
+              ><select id="effort">
+                <option value="normal">Mean 120M · Median 50M</option>
+                <option value="heavy">Mean 80M · Median 50M</option>
+                <option value="thin">Mean 160M · Median 110M</option>
+                <option value="unknown">Chưa có dữ liệu</option>
+              </select></label
+            >
+            <label class="control" id="connected-row" hidden
+              ><span
+                >Có phe đủ điểm còn nối đường<small
+                  >Kiểm tra fallback khi node vẫn trung lập</small
+                ></span
+              ><input class="toggle" id="connected" type="checkbox"
+            /></label>
+            <label class="control" id="central-row" hidden
+              ><span
+                >Node trung tâm<small
+                  >Castle thay cho Anchor khi chưa có điểm / fallback</small
+                ></span
+              ><input class="toggle" id="central" type="checkbox"
+            /></label>
+          </div>
+          <div class="result" aria-live="polite" aria-atomic="true">
+            <div>
+              <p class="section-label">Icon trên canvas</p>
+              <div class="result-main">
+                <div class="node-icon" id="node-icon" aria-hidden="true"></div>
+                <div>
+                  <h3 id="result-title"></h3>
+                  <span class="code-name" id="code-name"></span>
+                </div>
+              </div>
+              <p class="reason" id="reason"></p>
+            </div>
+            <div class="rule" id="rule"></div>
+          </div>
+        </div>
+        <div class="examples" id="examples"></div>
+      </section>
+      <section class="notes" aria-label="Nguyên tắc đọc">
+        <article>
+          <span class="note-num">01</span>
+          <div>
+            <h3 id="note-title">100% là phe top</h3>
+            <p id="note-text"></p>
+          </div>
+        </article>
+        <article>
+          <span class="note-num">02</span>
+          <div>
+            <h3>Điểm không tự quyết định owner</h3>
+            <p>
+              Owner lấy nguyên từ server. Phe nhiều điểm hơn có thể đang bị cắt
+              đường nên chưa lấy được node.
+            </p>
+          </div>
+        </article>
+        <article>
+          <span class="note-num">03</span>
+          <div>
+            <h3>Icon có thứ tự ưu tiên</h3>
+            <p id="priority"></p>
+          </div>
+        </article>
+      </section>
+      <details class="details">
+        <summary>Mean, median & các ngoại lệ</summary>
+        <p>
+          <strong>Mean / median</strong> lấy điểm riêng của từng phe trên các
+          node đủ ngưỡng claim, kể cả node bị cắt đường hoặc bị phe khác vượt
+          điểm. Node chưa đủ ngưỡng không tham gia tính. Không có dữ liệu thì bỏ
+          qua biceps và khiên; không thay bằng 0.
+        </p>
+        <p>
+          <strong>Base</strong> luôn dùng icon đại diện phe, không đi qua bộ
+          phân loại này. <strong>Hòa điểm cao nhất</strong> với owner vẫn thuộc
+          nhóm 1. Láng giềng trung lập không được tính là lãnh thổ đối thủ.
+          Trong nhóm 2, phe top bị cắt đường; nếu owner đạt 100% thì đã chuyển
+          sang nhóm 1.
+        </p>
+        <p>
+          Đây là mô phỏng điểm tại một node thường, không phải snapshot trận
+          đấu. Nhóm 1 và 2 cố định điểm top là 100M. Nhóm 3 dùng ngưỡng claim
+          10M. Các icon SVG minh họa trạng thái; quy tắc và tên icon theo
+          <a href="CANVAS_ICONS.md">CANVAS_ICONS.md</a> và
+          <a href="../src/domain/selectors/canvasIcons.ts">canvasIcons.ts</a>.
+        </p>
+      </details>
+      <footer>
+        <span>SEA UNION / CANVAS ICONS</span
+        ><span>Chạy độc lập · Không cần mạng · Kéo trục để khám phá</span>
+      </footer>
+    </main>
+    <script>
+      "use strict";
+      const $ = (id) => document.getElementById(id);
+      const icons = {
+        frontline:
+          '<path d="m14.5 3 6.5 0 0 6.5-12 12-6.5-6.5ZM3 3l6.5 0 12 12-6.5 6.5L3 9.5Zm0 18 5-5m8-8 5-5M3 3l18 18"/>',
+        aftermath: '<path d="M4 22V3m0 0c5-5 10 5 16 0v12c-6 5-11-5-16 0"/>',
+        gifted:
+          '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v9h14v-9M12 8v13M12 8H8a3 3 0 1 1 3-3Zm0 0h4a3 3 0 1 0-3-3Z"/>',
+        defend:
+          '<path d="m12 2 9 4v6c0 5-6 9-9 10-3-1-9-5-9-10V6ZM12 7v6m0 3v1"/>',
+        overbuilt:
+          '<path d="M7 12 5 8l2-5 5 1v4H9l2 5c3-5 8-4 9 0 3 8-6 10-12 7l-5-2 1-6Zm4 1 2 3"/>',
+        frozen:
+          '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="m8 8 13 13M8 16 21 3"/>',
+        belowClaim: '<path d="M15 3h6v6L9 21l-6-6ZM3 21l5-5m-3-3 6 6"/>',
+        anchor:
+          '<circle cx="12" cy="5" r="3"/><path d="M12 8v14M8 12h8M3 15c0 9 18 9 18 0M1 17l2-3 3 2m12 0 3-2 2 3"/>',
+        castle:
+          '<path d="M3 21V4h4v4h3V4h4v4h3V4h4v17ZM10 21v-5a2 2 0 0 1 4 0v5"/>',
+        plain: '<circle cx="12" cy="12" r="8" stroke-dasharray="2 4"/>',
+      };
+      const names = {
+        frontline: ["Kiếm chéo", "Swords / frontline"],
+        aftermath: ["Cờ", "Flag / aftermath"],
+        gifted: ["Quà", "Gift / gifted"],
+        defend: ["Khiên", "ShieldAlert / defend"],
+        overbuilt: ["Biceps", "BicepsFlexed / overbuilt"],
+        frozen: ["Bị cắt đường", "Scissors / frozen"],
+        belowClaim: ["Đang đánh", "Sword / belowClaim"],
+        anchor: ["Chưa chạm", "Anchor / anchor"],
+        castle: ["Trung tâm", "Castle / castle"],
+        plain: ["Trơn", "plain / không icon trạng thái"],
+      };
+      const tones = {
+        frontline: ["#f1e5dc", "#885235"],
+        aftermath: ["#f4ebde", "#a16c26"],
+        gifted: ["#eae5f1", "#74608b"],
+        defend: ["#e5ede5", "#267467"],
+        overbuilt: ["#e5ede5", "#267467"],
+        frozen: ["#e9e8f0", "#74608b"],
+        belowClaim: ["#f3e8de", "#a16c26"],
+        anchor: ["#edf0eb", "#647471"],
+        castle: ["#edf0eb", "#647471"],
+        plain: ["#edf0eb", "#647471"],
+      };
+      const modes = {
+        top: {
+          title: "Owner đang dẫn đầu về điểm",
+          desc: "Giữ owner ở 100%. Kéo runner-up trên trục để thấy mức áp lực của phe nhì.",
+          badge: "Owner = top",
+          label: "Điểm <strong>runner-up</strong> / điểm owner",
+          who: "Runner-up",
+          max: 100,
+          value: 55,
+          segments: [
+            [40, "#dde9df"],
+            [60, "#edcdb7"],
+          ],
+          ticks: [
+            [0, "0%"],
+            [40, "40%"],
+            [100, "100% · Owner"],
+          ],
+          legend: [
+            ["#9cbba4", "Biceps / khiên / trơn"],
+            ["#d6a882", "Kiếm chéo / cờ"],
+          ],
+          note: "Điểm top cố định 100M. Mốc 40% tương ứng runner-up 40M. Nếu không có runner-up, đặt về 0%.",
+          priority:
+            "Kiếm chéo / cờ → biceps → khiên → trơn. Biceps và khiên so với mặt bằng phe owner, không phải mốc ratio.",
+          examples: [
+            ["39% · dưới mốc", 39, "normal", true, true],
+            ["40% · kiếm chéo", 40, "normal", true, true],
+            ["40% · cờ", 40, "normal", false, true],
+            ["20% · biceps", 20, "heavy", true, true],
+            ["20% · khiên", 20, "thin", true, true],
+          ],
+        },
+        lower: {
+          title: "Owner đang bị vượt điểm",
+          desc: "Giữ phe top ở 100%. Kéo điểm owner hiện tại; phe top đang bị cắt đường.",
+          badge: "Owner ≠ top",
+          label: "Điểm <strong>owner hiện tại</strong> / điểm top",
+          who: "Owner",
+          max: 99,
+          value: 35,
+          segments: [
+            [30, "#d8cde8"],
+            [10, "#e6ebe2"],
+            [60, "#ebd5b4"],
+          ],
+          ticks: [
+            [0, "0%"],
+            [30, "30%"],
+            [40, "40%"],
+            [100, "100% · Top"],
+          ],
+          legend: [
+            ["#af99c6", "Quà"],
+            ["#a6baa4", "Khiên / trơn"],
+            ["#d4af7a", "Cờ"],
+          ],
+          note: "Điểm top cố định 100M. Owner có thể đứng thứ 2, 3 hoặc thấp hơn. Đạt 100% thì chuyển sang trường hợp 1.",
+          priority:
+            "Quà / cờ → khiên → trơn. 30% vẫn là quà; 40% đã là cờ. Chỉ khoảng giữa hai mốc mới xét khiên.",
+          examples: [
+            ["30% · quà", 30, "normal", true, true],
+            ["35% · khiên", 35, "normal", true, true],
+            ["35% · trơn", 35, "normal", true, false],
+            ["40% · cờ", 40, "normal", true, true],
+          ],
+        },
+        neutral: {
+          title: "Node chưa có owner",
+          desc: "Đổi mốc tham chiếu sang ngưỡng claim. Kéo điểm cao nhất để phân biệt chưa đủ điểm và bị cắt đường.",
+          badge: "Owner = null",
+          label: "Điểm <strong>cao nhất</strong> / ngưỡng claim",
+          who: "Phe top",
+          max: 200,
+          value: 120,
+          segments: [
+            [50, "#eddbbe"],
+            [50, "#d6d1e6"],
+          ],
+          ticks: [
+            [0, "0%"],
+            [50, "100% · Claim"],
+            [100, "200%"],
+          ],
+          legend: [
+            ["#d4af7a", "Chưa đủ điểm"],
+            ["#a798c0", "Đủ điểm · xét đường nối"],
+          ],
+          note: "Ngưỡng claim cố định 10M. 100% trên trục này là ngưỡng claim, không còn là điểm phe top. 0%: chưa ai có điểm.",
+          priority:
+            "Chưa có điểm → Anchor / Castle. Có điểm dưới ngưỡng → kiếm đơn. Đủ điểm → kiểm tra đường nối.",
+          examples: [
+            ["0% · chưa chạm", 0],
+            ["90% · đang đánh", 90],
+            ["100% · bị cắt", 100, false],
+            ["120% · fallback", 120, true],
+          ],
+        },
+      };
+      let mode = "top";
+      function switchMode(next) {
+        mode = next;
+        const m = modes[mode];
+        document.querySelectorAll(".tab").forEach((b) => {
+          const active = b.dataset.mode === mode;
+          b.setAttribute("aria-selected", String(active));
+          b.tabIndex = active ? 0 : -1;
+        });
+        $("panel").setAttribute("aria-labelledby", "tab-" + mode);
+        $("case-title").textContent = m.title;
+        $("case-description").textContent = m.desc;
+        $("case-badge").textContent = m.badge;
+        $("axis-label").innerHTML = m.label;
+        $("score").max = m.max;
+        $("score").value = m.value;
+        $("score").setAttribute(
+          "aria-label",
+          m.who + " so với " + (mode === "neutral" ? "ngưỡng claim" : "phe top")
+        );
+        $("track").innerHTML = m.segments
+          .map(
+            ([w, c]) =>
+              `<div class="segment" style="width:${w}%;background:${c}"></div>`
+          )
+          .join("");
+        $("ticks").innerHTML = m.ticks
+          .map(
+            ([p, t]) =>
+              `<span class="tick ${mode !== "neutral" || p !== 100 ? "important" : ""} ${p === 0 ? "start" : p === 100 ? "end" : ""}" data-position="${p}" style="left:${p}%">${t}</span>`
+          )
+          .join("");
+        $("legend").innerHTML = m.legend
+          .map(
+            ([c, t]) =>
+              `<span><i class="dot" style="background:${c}"></i>${t}</span>`
+          )
+          .join("");
+        ["enemy-row", "effort-row"].forEach(
+          (id) => ($(id).hidden = mode === "neutral")
+        );
+        $("rival-row").hidden = mode !== "top";
+        ["connected-row", "central-row"].forEach(
+          (id) => ($(id).hidden = mode !== "neutral")
+        );
+        $("note-title").textContent =
+          mode === "neutral" ? "100% là ngưỡng claim" : "100% là phe top";
+        $("note-text").textContent = m.note;
+        $("priority").textContent = m.priority;
+        $("examples").innerHTML =
+          '<p class="section-label">Thử nhanh</p>' +
+          m.examples
+            .map(
+              ([label], i) =>
+                `<button class="example" data-example="${i}">${label}</button>`
+            )
+            .join("");
+        render();
+      }
+      function classify(v) {
+        const near = $("enemy-near").checked,
+          rival = near && $("rival-near").checked,
+          eff = $("effort").value;
+        const [mean, median] = {
+          normal: [120, 50],
+          heavy: [80, 50],
+          thin: [160, 110],
+          unknown: [null, null],
+        }[eff];
+        const owner = mode === "top" ? 100 : v;
+        if (mode === "neutral") {
+          const idle = $("central").checked ? "castle" : "anchor";
+          if (v === 0)
+            return [
+              idle,
+              "Chưa phe nào có điểm tại node. Giữ icon địa lý mặc định.",
+              "top.score = 0",
+            ];
+          if (v < 100)
+            return [
+              "belowClaim",
+              `Phe cao nhất mới có ${v / 10}M / 10M. Chưa phe nào đủ ngưỡng claim, đang dồn điểm để chiếm.`,
+              "0 < top.score < claimThreshold",
+            ];
+          if ($("connected").checked)
+            return [
+              idle,
+              "Node vẫn trung lập dù có phe đủ điểm còn nối đường. Giữ icon neutral làm fallback cho snapshot lệch hoặc hòa điểm; không tự suy ra owner.",
+              "claimable + connected + no owner → fallback",
+            ];
+          return [
+            "frozen",
+            "Đã có phe đủ điểm nhưng mọi phe đủ ngưỡng đều bị cắt đường. Nối lại đường thì điểm được xét để chiếm.",
+            "claimable.every(faction → !connected)",
+          ];
+        }
+        if (mode === "top") {
+          if (v >= 40)
+            return rival
+              ? [
+                  "frontline",
+                  `Runner-up có ${v}M so với owner 100M và own ít nhất một láng giềng. Áp lực ngay cửa node nên kiếm chéo ưu tiên hơn biceps.`,
+                  `runnerUp / owner = ${v}% ≥ 40% · rivalNear`,
+                ]
+              : [
+                  "aftermath",
+                  `Runner-up có ${v}M nhưng không own láng giềng. Cờ biểu thị dấu vết tranh chấp lớn còn lưu lại.`,
+                  `runnerUp / owner = ${v}% ≥ 40% · !rivalNear`,
+                ];
+          if (mean !== null && owner >= mean)
+            return [
+              "overbuilt",
+              `Áp lực dưới 40%; owner 100M ≥ mean ${mean}M của phe mình. Đây là node được đầu tư đậm.`,
+              `owner.score ≥ mean(owner) · ${owner}M ≥ ${mean}M`,
+            ];
+        } else {
+          if (v <= 30)
+            return [
+              "gifted",
+              `Owner chỉ có ${v}M so với top 100M. Node được giữ nhờ phe top bị cắt đường; nối lại đường là owner mất node.`,
+              `owner / top = ${v}% ≤ 30%`,
+            ];
+          if (v >= 40)
+            return [
+              "aftermath",
+              `Owner có ${v}M so với top 100M. Hai bên đã dồn điểm tương đối sát nhau, đủ mốc gắn cờ.`,
+              `owner / top = ${v}% ≥ 40%`,
+            ];
+        }
+        if (near && median !== null && owner < median)
+          return [
+            "defend",
+            `Chưa có icon ưu tiên cao hơn. Owner ${owner}M < median ${median}M của phe mình và đang giáp lãnh thổ đối thủ.`,
+            `enemyNear · owner.score < median(owner)`,
+          ];
+        return [
+          "plain",
+          eff === "unknown"
+            ? "Chưa có dữ liệu mean / median nên bỏ qua biceps và khiên. Không đạt điều kiện icon khác, node chỉ giữ màu lãnh thổ."
+            : `Không đạt icon ưu tiên cao hơn${!near ? "; không giáp lãnh thổ đối thủ" : `; điểm owner ${owner}M không dưới median ${median}M`}. Node chỉ giữ màu lãnh thổ.`,
+          mode === "top"
+            ? "pressure < 40% · no higher-priority match"
+            : "30% < owner / top < 40% · no shield",
+        ];
+      }
+      function render() {
+        const enemyNear = $("enemy-near").checked;
+        $("rival-near").disabled = !enemyNear;
+        const v = Number($("score").value),
+          m = modes[mode],
+          pos = mode === "neutral" ? v / 2 : v;
+        document.querySelectorAll(".tick.important").forEach((tick) => {
+          tick.classList.toggle(
+            "active",
+            Number(tick.dataset.position) === pos
+          );
+        });
+        // Group 2 stops at 99% while retaining the same physical 0–100 axis.
+        const inputWidth = mode === "lower" ? "99%" : "100%";
+        $("score").style.width = inputWidth;
+        $("axis").style.setProperty("--pos", pos + "%");
+        $("ratio").innerHTML = v + "<small>%</small>";
+        $("marker").textContent =
+          m.who + " · " + (mode === "neutral" ? v / 10 : v) + "M";
+        $("score").setAttribute(
+          "aria-valuetext",
+          v +
+            " phần trăm, " +
+            m.who +
+            " " +
+            (mode === "neutral" ? v / 10 : v) +
+            " triệu điểm"
+        );
+        $("effort-hint").textContent =
+          mode === "top"
+            ? "Owner hiện tại: 100M"
+            : "Owner hiện tại: " + v + "M";
+        const [key, reason, rule] = classify(v),
+          [title, code] = names[key],
+          [bg, color] = tones[key];
+        $("node-icon").style.background = bg;
+        $("node-icon").style.color = color;
+        $("node-icon").innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">' +
+          icons[key] +
+          "</svg>";
+        $("result-title").textContent = title;
+        $("code-name").textContent = code;
+        $("reason").textContent = reason;
+        $("rule").textContent = rule;
+      }
+      document.querySelectorAll(".tab").forEach((b, i, all) => {
+        b.addEventListener("click", () => switchMode(b.dataset.mode));
+        b.addEventListener("keydown", (e) => {
+          let n;
+          if (e.key === "ArrowRight") n = (i + 1) % all.length;
+          if (e.key === "ArrowLeft") n = (i + all.length - 1) % all.length;
+          if (e.key === "Home") n = 0;
+          if (e.key === "End") n = all.length - 1;
+          if (n !== undefined) {
+            e.preventDefault();
+            all[n].focus();
+            switchMode(all[n].dataset.mode);
+          }
+        });
+      });
+      [
+        "score",
+        "rival-near",
+        "enemy-near",
+        "effort",
+        "connected",
+        "central",
+      ].forEach((id) => $(id).addEventListener("input", render));
+      $("examples").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-example]");
+        if (!b) return;
+        const ex = modes[mode].examples[Number(b.dataset.example)];
+        $("score").value = ex[1];
+        if (mode === "neutral") {
+          $("connected").checked = ex[2] ?? false;
+        } else {
+          $("effort").value = ex[2];
+          $("rival-near").checked = ex[3];
+          $("enemy-near").checked = ex[4];
+        }
+        render();
+      });
+      switchMode("top");
+    </script>
+  </body>
+</html>

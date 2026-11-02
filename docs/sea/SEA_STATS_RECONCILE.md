@@ -1,7 +1,7 @@
-# SEA_STATS_RECONCILE — Đối chiếu các nguồn "tổng điểm"
+# SEA_STATS_RECONCILE — Nguồn điểm và cách sử dụng
 
-> Nguồn sự thật cho câu hỏi "tổng điểm X lấy từ đâu" trên Web UI. Ghi hiện trạng
-> BE/FE, số đo đối chiếu và các điểm còn mở.
+> Nguồn sự thật cho câu hỏi "tổng điểm X lấy từ đâu" trên Web UI.
+> Mô tả nguồn điểm, giới hạn dữ liệu, cách BE/FE sử dụng và các điểm còn mở.
 
 ## 1. Nguyên tắc (chủ dự án chốt 2026-10-30)
 
@@ -54,35 +54,11 @@ Phần best-effort: ở node bị cắt, Σ điểm player trong danh sách < đ
 không lọt top-20 của node nào thì không có dòng expand; điểm member guild là Σ
 row của member đó.
 
-Snapshot đã commit không có `nodeFactionScores` (không còn run gốc để dump lại)
-nên FE cộng `nodeRows` như trước; crawl mới dump đủ key.
+## 4. Điểm còn mở
 
-## 4. Số đo đối chiếu (crawl cụm 517, 2026-10-29 19:41)
-
-So `faction_scores` với Σ board 118 cùng run, theo cặp (node, phe) có điểm:
-
-- 71 cặp khớp, **44 cặp thiếu trên 26 node**, **0 cặp Σ rows > server**. Mọi cặp
-  thiếu đều ở node đủ 20 row → khớp giả thuyết cắt top-20.
-- Lệch nặng nhất: node 54 phe 4 thiếu 33.8% (34.18M vs 22.64M); node 64 phe 1
-  thiếu 22.1%; node 48 phe 4 thiếu 21.5%.
-- Phe có điểm nhưng 0 row: node 57 phe 3 (1.22M), node 54 phe 3 (65K), node 65
-  phe 2 (11K).
-- Σ `faction_scores` trên 89 node so với Σ guild `0x0025` từng phe: phe 1, 3, 4
-  khớp từng điểm; phe 2 lệch 72K (0.008%, nghi do 2 request khác thời điểm).
-  → Điểm node-state là phân bổ theo node của đúng điểm phe ở tab Phe.
-
-Đo crawl cụm 590 2026-10-30 15:29: 68 cặp khớp, **61 cặp thiếu trên 35/89
-node**, 0 cặp Σ rows > server, mọi node thiếu đều đủ 20 row. 7 cặp phe có điểm
-mà 0 row, nặng nhất node 59 phe 2 (30.57M). Σ `faction_scores` khớp Σ guild
-`0x0025` từng điểm ở cả 4 phe.
-
-## 5. Điểm còn mở
-
-1. **Pool hay tổng tích lũy?** [Research 2026-10-24 §6.7](../research/2026-10-24-sea-capture.md)
-   ghi f2 `0x0012` "fluctuate" (node 64 phe 3 từ 21.8M về 0, owner không đổi).
-   Số đo §4 (không có Σ rows > server, khớp tổng guild) cho thấy là tổng tích lũy.
-   Cần chốt: crawl 2 lần cách nhau, so từng (node, phe); nếu có cặp giảm thì xem
-   có trùng lúc node đổi chủ / reset không.
+1. **Pool hay tổng tích lũy?** Chưa chốt ý nghĩa tích lũy của f2
+   `campHurtScores`. Cần kiểm tra biến động theo thời gian và quan hệ với đổi chủ /
+   reset node. UI vẫn dùng trực tiếp điểm server trả về.
 2. **f5 `campScores`**: decode thêm vào `parse_node_state`, đối chiếu với f2.
 3. **Hiển thị phần thiếu**: có hiện dòng "khác" = điểm phe − Σ rows ở node bị cắt
    không (đề xuất, chưa chốt).

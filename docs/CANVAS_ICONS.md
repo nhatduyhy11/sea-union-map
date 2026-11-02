@@ -2,16 +2,19 @@
 
 ## 1. Phạm vi tài liệu
 
-Mô hình tập điểm của một phe và quy ước icon canvas. Các quy ước bên dưới đã triển khai. Tài liệu chỉ giữ quy ước hiện tại; khi thay
+Mô hình tập điểm của một phe và quy ước icon canvas. Tài liệu chỉ giữ quy ước hiện tại; khi thay
 đổi, cập nhật trực tiếp nội dung, không lưu log thảo luận hay quyết định cũ.
+
+Đây là tài liệu quy tắc chuẩn. [Bản HTML tương tác](CANVAS_ICONS.html) minh họa
+phân loại tại một node bằng điểm giả lập; hình và màu minh họa không thay thế
+quy ước hiển thị ở §4. Khi đổi quy tắc, cập nhật cả bản mô phỏng HTML.
 
 ## 2. Mô hình tập điểm của một phe
 
-Server trả về điểm của đủ 4 phe tại mỗi node (node state `0x72/0x0012`, dump
-`nodeFactionScores` — xem [SEA_STATS_RECONCILE.md](sea/SEA_STATS_RECONCILE.md)),
-và tổng điểm một phe trên mọi node phải bằng Điểm phe trên BXH (số server, bộ
-guild rows `0x72/0x0025`). Độ lệch đo đạc giữa các nguồn tổng điểm theo dõi ở
-SEA_STATS_RECONCILE, không lặp lại ở đây.
+Mô hình và icon dùng điểm từng phe tại từng node do server trả về qua
+`nodeFactionScores`, cùng owner server và ngưỡng claim của node. Mặt bằng
+`mean`/`median` tính từ điểm trên tập node claimable của từng phe (§3),
+không dùng tổng điểm BXH hay tổng điểm player trong node-board.
 
 Với một phe X, các tập node phân cấp:
 
@@ -33,43 +36,48 @@ P  touched      mọi node X có điểm (đã từng tấn công / dồn điể
   đủ/chưa đủ ngưỡng.
 - `blocked · cutOff` và `blocked · outbid` phân biệt bằng **nguyên nhân mất
   owner**: cắt đường là mất tạm do kết nối (không phải thua tranh chấp);
-  outbid là thua điểm thuần túy. `outbid` không cần icon riêng: node vẫn xét các điều kiện trạng thái ở §4.
+  outbid là thua điểm thuần túy. Cả hai không có icon riêng; node vẫn phân
+  loại theo cây quyết định ở §4.
 - Trên BXH Phe, ba cột **Đảo chiếm | Đủ điểm | Đánh** lần lượt là
   |O| / |A| / |P|; label ở hàng trên, giá trị ở hàng dưới.
   `claimable` chỉ xét điểm > 0 và đủ ngưỡng, không xét connection.
   `touched` là tập cha gồm mọi node phe có điểm > 0, kể cả node đang chiếm
   có điểm. Base được own mặc định nhưng 0 điểm không thuộc hai tập này.
-- Phân loại icon theo **trạng thái node**: node chưa ai owned chỉ có thể rơi
-  vào kéo hoặc kiếm đơn (§4) — nếu có phe claimable còn nối đường thì server
-  đã cho phe đó own (SEA_EVENT_RULE §2), trừ hoà điểm (chưa gặp, đối chiếu SEA_EVENT_RULE §8). Node owned
-  dùng kiếm/khiên/gift/biceps/trơn.
+- Node trung lập có phe claimable thì mọi phe claimable đều đang bị cắt
+  đường: phe claimable còn nối đường thì server đã cho phe đó own
+  (SEA_EVENT_RULE §2), trừ hoà điểm (chưa gặp, đối chiếu SEA_EVENT_RULE §8).
 
-## 3. Mức effort trung bình
+## 3. Mặt bằng điểm của phe: trung bình và trung vị
+
+Với mỗi phe X, xét tập giá trị `{ điểm X tại node n | n ∈ claimable(X) }`
+(tính cả node bị cắt và node bị outbid):
 
 ```
-effort(X) = Điểm phe X trên BXH  /  |claimable(X)|   (tính cả node bị cắt)
+mean(X)   = tổng điểm X trên các node claimable(X)  /  |claimable(X)|
+median(X) = trung vị của cùng tập giá trị đó
 ```
 
-- Dùng **toàn bộ điểm phe** ở tử số cho dễ nhẩm — đúng ra phải
-  là tổng điểm chỉ trên các node claimable; sai số chấp nhận được và về phía
-  cao (thiên về "đang bỏ nhiều").
-- Nếu `|claimable(X)| = 0` hoặc tổng điểm BXH không dương, `effort(X)`
-  **chưa xác định**. Bỏ qua điều kiện khiên/biceps của owner X và điều kiện
-  gift dựa trên effort X; vẫn xét các icon khác. Không thay bằng 0 hay Infinity.
-- Ý nghĩa: mặt bằng điểm phe X bỏ ra cho một node. Đây là mốc động cho việc xét node cần thủ, phản ánh mặt bằng của từng phe.
-- Thang đọc trạng thái node owned theo điểm phe owner X tại node:
+- Chỉ cộng điểm trên node claimable. Điểm trên node `belowClaim` (đánh dở,
+  đánh hụt) không vào tử số vì các node đó không nằm trong mẫu số — cộng vào
+  sẽ đẩy mặt bằng lên cao giả.
+- Nếu `|claimable(X)| = 0`, `mean(X)` và `median(X)` **chưa xác định**: bỏ
+  qua điều kiện biceps/khiên của owner X, vẫn xét các icon khác. Không thay
+  bằng 0 hay Infinity. Node có chủ (không phải base) thì owner luôn
+  claimable, nên trường hợp này chỉ còn là phòng hờ snapshot lệch.
 
-| Điểm X tại node            | Ý nghĩa                                                                         |
-| -------------------------- | ------------------------------------------------------------------------------- |
-| `< effort`                 | mỏng — dưới mặt bằng phe mình (ứng viên cần thủ, icon khiên)                    |
-| `effort ≤ điểm < 3×effort` | chưa đạt ngưỡng biceps; xét các điều kiện khác ở §4, nếu không có thì node trơn |
-| `≥ 3×effort`               | owner đầu tư đậm — ứng viên biceps (§4)                                         |
+### Vì sao cần cả hai số
 
-Gift xét riêng điểm của **đối thủ bị cắt** ở ngưỡng `≥ 2×effort` của đối
-thủ đó; không suy ra gift từ band điểm của owner.
+Phân phối điểm của một phe trên các node claimable **lệch phải**: đa số node
+chỉ dồn quanh ngưỡng claim, vài node "nóng" (đánh qua lại nhiều lần, trung
+tâm, giáp ranh) hút điểm gấp nhiều lần. Đuôi dài phía điểm cao kéo trung
+bình lên, còn trung vị đứng yên ở mức của một node điển hình.
 
-Node trung lập không dùng effort — kéo và kiếm đơn phân loại theo tính
-claimable của các phe có mặt (§4).
+Ví dụ 10 node claimable: 8 node ~5M, 2 node 60M → `mean` = 16M, `median` = 5M.
+Tỉ số `mean / median` (ở đây 3.2) cho biết phân phối lệch mạnh cỡ nào.
+
+- **Trung vị** là mức của một node bình thường → mốc cho node **mỏng** (khiên).
+- **Trung bình** đã bị đuôi kéo lên trên trung vị → vượt trung bình là thật
+  sự đầu tư **đậm** (biceps).
 
 ## 4. Danh mục icon canvas
 
@@ -79,91 +87,111 @@ Base luôn dùng một trong 4 icon đại diện phe: `ZodiacAries` (đông),
 `Flame` (nam), `Sparkles` (bắc), `Snowflake` (tây). Quy tắc này được xét
 đầu tiên và kết thúc phân loại tại đây.
 
-Các mục dưới áp dụng cho các node còn lại, bắt đầu từ Swords.
+### Cây quyết định cho các node còn lại
 
-### Node owned
+Ký hiệu tại node đang xét: `owner` là phe đang own; `top` là phe có điểm cao
+nhất; `rival` là phe không own có điểm cao nhất (phe nhì). Điểm của phe X
+tại node viết là `X.score`.
 
-| Icon                                    | Điều kiện                                                                                                                                      | Ý nghĩa                                                                                  | Trạng thái                                                       |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Kiếm chéo (Swords) + fill chocolate đậm | node giao tranh: phe nhì dồn ≥ 36% điểm phe claim tại node **và** phe nhì owns ít nhất một láng giềng (`frontlineNodes`)                       | phe claim đang bị dồn điểm ngay cửa node                                                 | đã làm — canvas, icon kiếm + pill "Tranh chấp" trong BXH cứ điểm |
-| Khiên (ShieldAlert) + fill màu phe nhạt | node owned, điểm owner **mỏng** (< effort phe owner), giáp ranh phe khác, loại node đang giao tranh                                    | đảo đang giữ mà điểm mỏng chỗ giáp miệng địch                                            | đã làm                                                           |
-| Gift (Gift)                             | node owned bởi phe Y nhưng **Y giữ nhờ cắt đường**: tồn tại phe X claimable-bị-cắt tại node với X.score ≥ 2×effort(X) **và** X.score > Y.score | effort gấp đôi mặt bằng của X đang bị Y "ăn nhờ" — nếu không bị ngắt, X đủ điểm vượt mặt | đã làm                                                           |
-| Biceps (BicepsFlexed)                   | node owned, owner.score ≥ 3×effort(owner) **và không có** đối thủ bị cắt nào đứng trên owner                                                   | owner bỏ nhiều effort hơn mức cần thiết — tự mình đầu tư đậm, không phải nhờ ai          | đã làm                                                           |
-| Trơn                                    | node owned không được chọn icon đặc biệt theo thứ tự ưu tiên                                                                                   | không icon trạng thái, không fill trạng thái — chỉ còn tô màu phe chuẩn của lãnh thổ     | đã làm                                                           |
+```
+không owner
+├─ không phe nào có điểm               → Anchor / Castle
+├─ không phe nào đủ ngưỡng claim       → kiếm đơn
+└─ có phe đủ ngưỡng claim
+    ├─ mọi phe đủ ngưỡng bị cắt đường  → kéo
+    └─ có phe đủ ngưỡng còn nối đường  → Anchor / Castle (fallback)
+có owner, owner = top
+├─ rival.score / owner.score ≥ 0.4
+│   ├─ rival own ≥ 1 láng giềng        → kiếm chéo
+│   └─ ngược lại                       → flag
+└─ owner.score ≥ mean(owner)           → biceps
+có owner, owner ≠ top   (top chắc chắn đang bị cắt đường)
+├─ owner.score / top.score ≤ 0.3       → gift
+└─ owner.score / top.score ≥ 0.4       → flag
+còn lại (mọi nhánh có owner chưa ra icon)
+├─ giáp láng giềng do phe khác own
+│   và owner.score < median(owner)     → khiên
+└─ ngược lại                           → trơn
+```
+
+### Node có chủ
+
+| Icon                                    | Điều kiện                                                                                                                    | Ý nghĩa                                                                                             |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Kiếm chéo (Swords) + fill chocolate đậm | owner là top, rival ≥ 40% điểm owner, **và** rival own ít nhất một láng giềng                                                | đang giao tranh: phe nhì dồn điểm ngay cửa node                                                     |
+| Flag (Flag)                    | (a) owner là top, rival ≥ 40% điểm owner nhưng **không** own láng giềng; hoặc (b) owner không phải top, owner ≥ 40% điểm top | vết tích một trận tranh chấp lớn: chiến trường đã đẩy sang node khác, điểm hai bên vẫn còn sát nhau |
+| Biceps (BicepsFlexed)                   | owner là top, không thuộc hai icon trên, owner.score ≥ mean(owner)                                                           | owner đầu tư đậm hơn mặt bằng của chính phe mình                                                    |
+| Gift (Gift)                             | owner không phải top, owner.score ≤ 30% top.score                                                                            | owner "ăn không": giữ node chỉ nhờ phe top bị cắt đường; nối lại đường là mất                       |
+| Khiên (ShieldAlert) + fill màu phe nhạt | chưa ra icon nào ở trên, giáp láng giềng do phe khác own, owner.score < median(owner)                                        | đảo đang giữ mà điểm mỏng hơn một node bình thường của phe, ngay chỗ giáp miệng địch                |
+| Trơn                                    | không thỏa điều kiện nào ở trên                                                                                              | không icon trạng thái, không fill trạng thái — chỉ còn tô màu phe chuẩn của lãnh thổ                |
+
+- Thứ tự ưu tiên khi owner là top: **kiếm chéo / flag > biceps > khiên > trơn**.
+  Kiếm chéo và flag (a) tự loại nhau theo việc rival có own láng giềng
+  hay không.
+- Thứ tự ưu tiên khi owner không phải top: **gift / flag > khiên > trơn**.
+  Gift và flag (b) tự loại nhau theo ratio.
+- **Khoảng trống `0.3 < owner/top < 0.4` là cố ý**: owner bị vượt điểm nhưng
+  không đủ nghiêng hẳn về phía nào để gắn nhãn. Node rơi xuống xét khiên, nếu
+  không đạt thì để trơn.
+- "Láng giềng do phe khác own" chỉ tính node có owner khác owner hiện tại,
+  không tính trung lập hay đầu route không tồn tại.
 
 ### Node trung lập (không ai owned) đã có điểm
 
-| Icon             | Điều kiện                                                                                | Ý nghĩa                                                                                                                         | Trạng thái |
-| ---------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ---------- |
-| Kéo (Scissors)   | mọi phe đủ ngưỡng claim tại node đều **bị cắt đường** (`cutOff`)                         | node "đóng băng": có người vượt ngưỡng nhưng điểm bị ngắt nên không ai được xét để claim — nối lại đường là node lập tức có chủ | đã làm     |
-| Kiếm đơn (Sword) | node có điểm nhưng **không phe nào đủ ngưỡng claim** (mọi phe có mặt thuộc `belowClaim`) | đang tranh nhau dồn điểm, chưa ai chạm mốc                                                                                      | đã làm     |
+| Icon             | Điều kiện                                      | Ý nghĩa                                                                                                                       |
+| ---------------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Kéo (Scissors)   | có ít nhất một phe đủ ngưỡng claim tại node    | node "đóng băng": có phe vượt ngưỡng nhưng điểm bị ngắt nên không ai được xét để claim — nối lại đường là node lập tức có chủ |
+| Kiếm đơn (Sword) | node có điểm nhưng **không phe nào đủ ngưỡng** | đang tranh nhau dồn điểm, chưa ai chạm mốc                                                                                    |
 
-Với snapshot nhất quán và không có hòa điểm, hai case phủ kín và loại nhau: kéo đòi có ít nhất một phe claimable, kiếm đơn
-đòi không có phe nào claimable. Kéo **không đòi ngưỡng effort** — đánh dấu
-mọi node đóng băng (khác với gift bên dưới vẫn giữ ≥ 2×effort).
-
-Nếu node trung lập có phe claimable **còn nối đường** nhưng server vẫn chưa
-cho own (hòa điểm hoặc snapshot lệch), giữ Anchor/Castle màu neutral làm
-fallback. Không gắn kéo/kiếm đơn sai điều kiện và không tự suy ra owner.
+- Hai case phủ kín và loại nhau theo có/không có phe claimable. Không xét
+  effort.
+- Nếu snapshot lệch làm node trung lập có phe claimable **còn nối đường**,
+  giữ Anchor/Castle màu neutral làm fallback, không tự suy ra owner.
 
 ### Node chưa phe nào có điểm (chưa từng touch)
 
-| Icon   | Điều kiện           | Ý nghĩa                     | Trạng thái |
-| ------ | ------------------- | --------------------------- | ---------- |
-| Anchor | đảo thường          | đảo hoang, chưa ai động tới | đã làm     |
-| Castle | đảo trung tâm ("4") | trung tâm bản đồ            | đã làm     |
+| Icon   | Điều kiện           | Ý nghĩa                     |
+| ------ | ------------------- | --------------------------- |
+| Anchor | đảo thường          | đảo hoang, chưa ai động tới |
+| Castle | đảo trung tâm ("4") | trung tâm bản đồ            |
 
-### Màu và thứ tự ưu tiên
+### Màu
 
-- Node owned: màu icon theo **phe owner**, kể cả gift và biceps. Fill theo
-  màu owner, riêng kiếm chéo/khiên giữ kiểu fill trạng thái trong bảng trên.
-  Kiếm chéo có quầng trắng mảnh để màu phe vẫn rõ trên nền chocolate.
+- Node có chủ: màu icon theo **phe owner** với mọi icon. Fill theo màu
+  owner, riêng kiếm chéo (chocolate đậm, quầng trắng mảnh để màu phe vẫn rõ)
+  và khiên (màu phe nhạt) giữ fill trạng thái.
 - Node trung lập: kéo và kiếm đơn dùng **màu neutral**, giữ nền trung lập.
-  Không chọn màu theo phe có điểm tại node, kể cả khi nhiều phe bị cắt.
-- Kéo/kiếm đơn chỉ trên node trung lập, tự loại nhau theo có/không có phe
-  claimable. Kéo không có ngưỡng effort; gift giữ ngưỡng `≥ 2×effort`.
-- Gift và biceps tự loại nhau: gift cần đối thủ bị cắt có điểm cao hơn owner;
-  biceps yêu cầu không có đối thủ bị cắt đứng trên owner.
-- Khiên và gift có thể cùng đủ điều kiện vì xét điểm của hai phe khác nhau.
-  Khi đó khiên thắng theo thứ tự ưu tiên. Khiên và biceps tự loại nhau theo
-  điểm owner (`< effort` và `≥ 3×effort`).
-
-Thứ tự ưu tiên trên node owned: **kiếm chéo > khiên > gift / biceps > trơn**.
-
-`blocked · outbid` không có icon riêng: nếu thỏa điều kiện giao tranh thì
-hiện kiếm chéo; nếu owner đầu tư `≥ 3×effort` và thỏa điều kiện biceps thì
-hiện biceps, vẫn theo thứ tự ưu tiên trên. Đủ ngưỡng nhưng thua điểm tự nó
-không tạo thêm trạng thái icon.
-
-Đối thủ bị cắt có điểm cao hơn owner nhưng chưa đạt `2×effort` không tạo
-gift. Nếu node không thỏa điều kiện icon đặc biệt nào khác thì để trơn.
+  Popup điểm của node trung lập có phe đủ ngưỡng (node kéo) dùng nền sọc chéo
+  màu phe điểm cao nhất.
 
 ## 5. Bộ tên trong code
 
-| Khái niệm     | Tên          | Ghi chú                                                                               |
-| ------------- | ------------ | ------------------------------------------------------------------------------------- |
-| P             | `touched`    | chữ `attacked` cũ mô tả đúng tập này hơn là tập "đang đánh"                           |
-| A             | `claimable`  |                                                                                       |
-| B             | `belowClaim` | có điểm nhưng chưa đủ ngưỡng claim                                                    |
-| O             | `owned`      | khớp field `islands` ("chiếm") trên BXH Phe                                           |
-| C             | `blocked`    | hai nguyên nhân: `cutOff` / `outbid`                                                  |
-| effort        | `effort`     | per-faction, tính từ điểm BXH chia \|claimable\|                                      |
-| node kéo      | `frozen`     | trung lập đóng băng vì mọi phe claimable bị cắt; nối lại đường thì điểm được xét tiếp |
-| node kiếm đơn | `belowClaim` | node có điểm nhưng chưa phe nào đủ ngưỡng; icon Sword 1 cây                           |
-| node gift     | `gifted`     | "được tặng node nhờ cắt đường"; icon Gift                                             |
-| node biceps   | `overbuilt`  | owner đầu tư ≥ 3×effort; icon BicepsFlexed                                            |
+| Khái niệm      | Tên          | Ghi chú                                                                               |
+| -------------- | ------------ | ------------------------------------------------------------------------------------- |
+| P              | `touched`    | chữ `attacked` cũ mô tả đúng tập này hơn là tập "đang đánh"                           |
+| A              | `claimable`  |                                                                                       |
+| B              | `belowClaim` | có điểm nhưng chưa đủ ngưỡng claim                                                    |
+| O              | `owned`      | khớp field `islands` ("chiếm") trên BXH Phe                                           |
+| C              | `blocked`    | hai nguyên nhân: `cutOff` / `outbid`                                                  |
+| mặt bằng điểm  | `effort`     | per-faction `{ mean, median }` trên điểm các node claimable                           |
+| node kéo       | `frozen`     | trung lập đóng băng vì mọi phe claimable bị cắt; nối lại đường thì điểm được xét tiếp |
+| node kiếm đơn  | `belowClaim` | node có điểm nhưng chưa phe nào đủ ngưỡng; icon Sword 1 cây                           |
+| node kiếm chéo | `frontline`  | rival ≥ 40% owner và own láng giềng                                                   |
+| node flag | `aftermath`  | vết tích tranh chấp lớn; icon Flag                                                |
+| node gift      | `gifted`     | owner ≤ 30% top, giữ node nhờ top bị cắt đường; icon Gift                             |
+| node biceps    | `overbuilt`  | owner là top và ≥ mean(owner); icon BicepsFlexed                                      |
+| node khiên     | `defend`     | giáp phe khác và < median(owner); icon ShieldAlert                                    |
 
 ## 6. Nguồn dữ liệu và triển khai
 
-- `factionEfforts` lấy tổng điểm và số claimable từ cùng dữ liệu BXH Phe.
-  Điểm từng node lấy từ `scoresForNode`: ưu tiên tổng phe server, fallback
-  contributions cho dump cũ thiếu tổng phe.
-- `canvasIcons` phân loại trạng thái theo thứ tự ở §4. Với kéo/gift/biceps,
-  kiểm tra đường nối từ base qua các node owner cùng phe đến một láng giềng
-  của node đích; không đi xuyên qua node trung lập hay phe khác. Kiểm tra
-  này chỉ phục vụ icon, không tính lại hay thay đổi owner server.
-- Kiếm chéo giữ quy tắc `frontlineNodes`: phe nhì là phe không own có điểm
-  cao nhất; chính phe đó phải own một láng giềng. Khiên xét láng giềng có
-  owner phe khác, không tính trung lập hay đầu route không tồn tại.
-- Renderer với node owned trơn bỏ cả Anchor/Castle,
+- Điểm từng node lấy từ `scoresForNode`: ưu tiên tổng phe server, fallback
+  contributions khi dump thiếu tổng phe. `factionEfforts` tính
+  `mean`/`median` của mỗi phe từ chính điểm từng node này, lọc theo ngưỡng
+  claim của node — không dùng tổng điểm BXH.
+- `frontlineNodes` dùng chung cho kiếm chéo và pill "Tranh chấp" trong BXH cứ
+  điểm: ngưỡng áp lực 0.4, rival phải own một láng giềng.
+- `canvasIcons` phân loại theo cây ở §4. Owner luôn lấy nguyên từ server;
+  kiểm tra đường nối cho fallback kéo đi từ base qua các node cùng phe đến
+  một láng giềng của node đích, không đi xuyên node trung lập hay phe khác.
+- Renderer với node có chủ trơn bỏ cả Anchor/Castle,
   vẫn giữ khung node, màu phe, tương tác chọn/ghim và popup điểm.

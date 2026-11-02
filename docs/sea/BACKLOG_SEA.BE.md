@@ -74,27 +74,18 @@ re-dump run cụm khác phải chỉnh tay cờ `--server`. Hướng làm: `repo
 `server` từ `meta.json`, `--server` chỉ còn để override (run thiếu key thì báo lỗi
 thay vì rơi về 517).
 
-### 2. Export boss node (`monsterId`) cho FE + backfill snapshot cũ
+### 2. Boss node — tự nhận diện đợt và catalog
 
-- **Hiện trạng**: `GetCityInfoR` trả `monsterId` (field 4 `cityInfo`, ý nghĩa và
-  chuỗi ID: [SEA_STRUCTURE.md §4.2](SEA_STRUCTURE.md#42-boss-node-campgvgmonsterlo)).
-  `parse_node_state` đã lưu field này dưới key `art` của node state; đối chiếu
-  2026-11-01 trên 16 run: 1.362/1.362 node state có key, phủ đủ 13 ID 1001..1013.
-  `report.py` ghi mapping ra `src/data/node-bosses/<EVENT_START>/<server>.json`
-  (tách khỏi snapshot, snapshot cũ không đổi). Đã backfill cụm 517 (run `p545`)
-  và 590 (run `phun`, xác nhận cụm qua bộ guild): mọi run cùng cụm cho cùng
-  mapping từ 10/29 tới 11/02. Node detail FE phủ ảnh boss làm nền.
-- **Còn lại**:
-  - `EVENT_START` trong `report.py` đang hard-code ngày đầu đợt (cùng
-    `EVENT_DAYS[0]` FE); sang đợt mới cần đổi tay, hoặc định danh đợt bằng
-    `GetOutInfoR.startDt`.
-  - Cụm khác (vd. 528 cùng chiến trường với 517) chưa có file — FE hiện node
-    không boss.
-  - Danh mục chung theo phiên bản config: `seaMonstersById[monsterId]` cho config
-    Sea (tên, mô tả, hero gợi ý), `creepsByCode[code]` cho unit; skill lookup
-    tách riêng nếu cần.
-  - Cache boss không giảm request `GetCityInfo` — crawler vẫn cần endpoint này cho
-    điểm phe tại node.
+- **Tự nhận diện đợt event**: `EVENT_START` trong `report.py` đang hard-code
+  `261026` (cùng `EVENT_DAYS[0]` FE). Dùng `GetOutInfoR.startDt` để định danh
+  đợt, tránh phải đổi tay khi sang đợt mới.
+- **Danh mục chung theo phiên bản config**: tích hợp `seaMonstersById[monsterId]`
+  cho config Sea (tên, mô tả, hero gợi ý), `creepsByCode[code]` cho unit; skill
+  lookup tách riêng nếu cần. Đã có tool extract config/assets và render ảnh tại
+  `tools/socket_log/sea_socket/per_event/boss_extract.py`, `boss_render.py`;
+  FE hiện chỉ có bảng tên và ảnh trong `src/data/nodeBosses.ts`.
+
+Nguồn và chuỗi ID: [SEA_STRUCTURE.md §4.2](SEA_STRUCTURE.md#42-boss-node-campgvgmonsterlo).
 
 ---
 
