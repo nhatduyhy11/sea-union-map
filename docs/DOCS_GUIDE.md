@@ -30,8 +30,7 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 
 ## Thứ tự đọc
 
-Research đang mở: [POC_authCrawl](research/2026-11-01-POC_authCrawl.md) — nguồn auth
-chung, crawl nhiều terminal và tối ưu dung lượng cache giữa các phiên browser.
+Crawl nhiều acc/terminal bằng fresh auth: [fresh-auth-crawl](research/2026-11-01-fresh-auth-crawl.md).
 
 1. Đọc guide này để biết tài liệu nào chứa thông tin cần thiết.
 2. Đọc `PROJECT_INTENT.md` để hiểu mục tiêu và phạm vi.
