@@ -24,3 +24,6 @@
 - Avoid commit hashes, quoting commit messages, or "previously / earlier version"
   history narration. Docs and comments describe the current state; history lives
   in git.
+- Docs point down to code, never the reverse: code comments state the fact itself
+  and never cite docs files or sections (`*.md`, `§x.y`). Source assets the code
+  is derived from (`specs/map-*.PNG`, golden screenshots) may still be named.

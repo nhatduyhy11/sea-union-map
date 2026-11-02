@@ -115,7 +115,7 @@ test("Neutral islands, weak pressure and cut-off rivals stay out", () => {
     0
   );
   // Phe nhì có điểm cao hơn phe claim nhưng không owns láng giềng nào —
-  // chồng điểm thô của phe đã bị cắt đường (SEA_EVENT_RULE.md §4).
+  // chồng điểm thô của phe đã bị cắt đường (ngưng xét ownership).
   assert.equal(
     frontlineNodes(
       [{ ...islands[0], factionScores: { a: 200, b: 100 } }],

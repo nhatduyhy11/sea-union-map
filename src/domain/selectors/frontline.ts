@@ -33,11 +33,10 @@ export interface Frontline {
 //   (không phải phe đang đứng đầu) nên case đối thủ vượt điểm phe claim cho
 //   ratio > 1 — vẫn rơi vào nhóm giao tranh, không cần rule riêng.
 // - Chân đứng: phe nhì owns ít nhất một láng giềng. Điểm chỉ được xét khi còn
-//   nối base qua lãnh thổ chính phe và lãnh thổ luôn liền khối quanh base
-//   (SEA_EVENT_RULE.md §3, §6), nên "owns một láng giềng" ⟺ còn nối tới cửa
-//   node. Phe bị cắt đường có chồng điểm thô vẫn hiện trên node detail
-//   (leaderboard không bao giờ ngắt — §5) nhưng bị loại ở đây: điểm đó đã
-//   ngưng xét ownership (§4), áp lực thật nằm ở node cắt chứ không phải node
+//   nối base qua lãnh thổ chính phe và lãnh thổ luôn liền khối quanh base,
+//   nên "owns một láng giềng" ⟺ còn nối tới cửa node. Phe bị cắt đường có
+//   chồng điểm thô vẫn hiện trên node detail (leaderboard không bao giờ ngắt)
+//   nhưng bị loại ở đây: điểm đó đã ngưng xét ownership, áp lực thật nằm ở node cắt chứ không phải node
 //   này. Đảo chưa chủ không xét — chưa phe nào thật sự commit.
 export function frontlineNodes(
   islands: Island[],

@@ -1,8 +1,7 @@
 // Join dump → model UI: game-id → layout-id, faction → hướng, ghép brief
 // player/guild. Hàm thuần, unit test ở ../sea-live.test.ts.
 // Node totals come from the server node state (dump nodeFactionScores); the
-// per-node boards are capped at top-20 rows (docs/sea/SOCKET_PROTOCOL.md §3.5)
-// and only list players.
+// per-node boards are capped at top-20 rows and only list players.
 
 import { layoutNodes, layoutRoutes } from "../map-layout";
 import type {
@@ -177,7 +176,7 @@ function guildPowerOf(dump: SeaLiveDump): Map<string, number> {
 }
 
 // Guild scores server (dump factionGuilds — bảng "Tổng quan phe"), key theo direction FE.
-// Guild thiếu tên (không member nào được brief) hiện #id — BACKLOG_SEA.BE §1b.
+// Guild thiếu tên (không member nào được brief) hiện #id.
 function buildFactionGuilds(
   dump: SeaLiveDump,
   factionDir: Record<number, string>

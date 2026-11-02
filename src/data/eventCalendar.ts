@@ -1,4 +1,4 @@
-// Lịch event Tranh bá Tứ Hải (SEA_STRUCTURE.md: 10/26 00:00 → 11/2 00:00,
+// Lịch event Tranh bá Tứ Hải (10/26 00:00 → 11/2 00:00,
 // chiến trường mở 10:00~22:00 mỗi ngày, giờ VN). Day key dạng YYMMDD
 // ("261028") — trùng tên thư mục src/data/snapshots/<day>/.
 //

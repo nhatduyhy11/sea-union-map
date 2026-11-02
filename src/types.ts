@@ -63,7 +63,7 @@ export interface Player {
   server?: number;
 }
 
-// One row of a node's player leaderboard (SEA_STRUCTURE.md §3.7, top-N per
+// One row of a node's player leaderboard (dump nodeRows, top-N per
 // node — N đủ lớn để giữ mọi player có impact). Identity đi cùng dòng, nên mọi
 // thống kê (BXH cá nhân top-K, BXH phe, guild) đều derive từ các dòng này.
 export interface Contribution {
@@ -80,7 +80,7 @@ export interface Contribution {
 
 // One row of the server's global player board ("BXH điểm", dump playerBoard):
 // rank + score are server truth; allocations per island are joined separately
-// from node boards (LEADERBOARD_SPECS.md §1.3).
+// from node boards.
 export interface ServerPlayerRow {
   rank: number;
   playerId: string;
@@ -154,7 +154,7 @@ export interface MapFilter {
 export type CanvasFilter = MapFilter;
 
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'
-// totals (see SEA_STRUCTURE.md §3.2), islands = owned nodes ("Chiếm đảo"),
+// totals (dump factionGuilds, "Tổng quan phe"), islands = owned nodes ("Chiếm đảo"),
 // `touched` = all nodes with positive faction points, including owned nodes.
 export interface FactionBoardEntry extends Faction {
   score: number;

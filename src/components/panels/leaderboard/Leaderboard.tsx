@@ -6,7 +6,7 @@ import { NodeBoard } from "./NodeBoard";
 import { PlayerBoard } from "./PlayerBoard";
 import styles from "./Leaderboard.module.css";
 
-// Web BXH (LEADERBOARD_SPECS.md §1.2; game chỉ có 2 tab): 3 tab với thứ tự UI
+// Web BXH (game chỉ có 2 tab): 3 tab với thứ tự UI
 // Phe → Cá nhân → Cứ điểm (game để Cứ điểm trước — owner muốn Phe lên đầu vì
 // là aggregate chính); tab Phe chia "chung" + một sub-tab mỗi phe.
 export function Leaderboard() {

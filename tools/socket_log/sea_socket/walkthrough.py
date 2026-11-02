@@ -2,15 +2,14 @@
 
 Thin entry over the capture CLI's pieces — FrameWriter (capture/frames.py), step
 DSL (gui/steps.py), launch block (browser/session.py) —
-plus named STAGES for the navigation flow in docs/sea/SEA_STRUCTURE.md §2 and wheel
+plus named STAGES for the home → sea lobby → battle map navigation flow and wheel
 scroll for the event-lobby list. Expect guards cover only the home→sea-lobby
 entry (login + open-sea): that stretch has no fallback if a click misses, so a
 wrong screen must stop the run. Deeper screens stay inside the same lobby
 context — a missed click there is harmless, shots are evidence enough.
 
 Coordinates are initial reads off docs/assets/sea-socket/*.png (viewport 640x720
-→ 1:1); methodology per docs/research/2026-10-22-socket-step-learn.md:
-run stage → Read the shot → fix coords → rerun (--from <stage>).
+→ 1:1); loop: run stage → Read the shot → fix coords → rerun (--from <stage>).
 
 Usage:
     uv run python tools/socket_log/sea_socket/walkthrough.py --list
@@ -62,8 +61,8 @@ def node_steps(idx: int, x: int, y: int) -> list[str]:
     """Detail + boss + leaderboard for one node, plus a post-close proof shot —
     a stuck popup once masqueraded as every later node's detail (runs 093346/
     094110: DETAIL_CLOSE was dead, so 7-n02..04 shots were all n01's popup).
-    Shot prefix = figure number in docs/sea/SEA_STRUCTURE.md; chronology lives in
-    index.jsonl marks, not filenames."""
+    Shot prefix groups shots by screen; chronology lives in index.jsonl marks,
+    not filenames."""
     n = f"n{idx:02d}"
     return [
         f"mark:{n}-open", f"click:{x},{y}", f"shot:7-{n}-detail",
@@ -121,7 +120,7 @@ STAGES: list[tuple[str, list[str]]] = [
     ]),
     ("factions", [
         # Enter via the first lobby flag, then switch factions with the in-page
-        # flag tabs (docs/sea/SEA_STRUCTURE.md §3.4) instead of 4 lobby round-trips.
+        # flag tabs instead of 4 lobby round-trips.
         "mark:05-flag-1", "click:145,612", "shot:5-faction-1",
         "mark:05-tab-2", "click:232,686", "shot:5-faction-2",
         "mark:05-tab-3", "click:300,684", "shot:5-faction-3",
@@ -138,7 +137,7 @@ STAGES: list[tuple[str, list[str]]] = [
         # (later clicks surfaced the strategic "Chi tiết /
         # Hiệu suất của phe ta" popup instead) — and the bottom island
         # (318,570): clicking it sends no WS frame at all, likely the south
-        # faction base (PROJECT_INTENT §4.1). The old "every node shows
+        # faction base. The old "every node shows
         # 1-23Đảo Câu Cá" observation was a stuck-popup artifact (see
         # DETAIL_CLOSE) — with close fixed, whether details differ per node
         # gets read from this run's shots + frames.

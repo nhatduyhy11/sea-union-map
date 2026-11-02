@@ -72,7 +72,7 @@ async def wait_login(page: Page, router: CrawlRouter, out_dir: Path,
 
 async def payload_entry(page: Page, router: CrawlRouter, out_dir: Path,
                         login_timeout: float) -> None:
-    """E2 — wait-login + inject thay 3 stage GUI (docs/sea/SOCKET_PROTOCOL.md §4.2).
+    """E2 — wait-login + inject thay 3 stage GUI.
 
     Chờ response 0x72/0x0002 đầu tiên (boot sync xong; heartbeat muộn hơn ~2.6s
     nên không dùng), +0.5s cho nốt boot block, rồi inject 0x000b (snapshot 89
@@ -157,7 +157,7 @@ async def fetch_faction_details(page: Page, router: CrawlRouter, out_dir: Path) 
     """Guild scores (Tổng quan phe, 0x72/0x0024 -> 0x0025) -> guild-scores.json.
 
     The only server source of per-guild ST totals — the web faction board uses
-    it directly instead of summing node rows (LEADERBOARD_SPECS.md §1.3).
+    it directly instead of summing node rows.
     """
     details = {}
     for faction_id in FACTION_IDS:

@@ -38,7 +38,7 @@ def extract_mine_state(capture_dir: pathlib.Path) -> dict:
       0x48/0x0013 -> 0x0014  season window + packed season tile-id list
       0x48/0x001a -> 0x001b  mine history feed: {f2: JSON string, f1: type code} —
                              type 1 = "[pos, slot_no, ts]", type 4 = "[player_id, pos, action, ts]"
-    Tile entry: f1=pos (static server-table id, NOT map*1000+tile — MINE_STRUCTURE.md §1),
+    Tile entry: f1=pos (static server-table id, NOT map*1000+tile),
     f2/f3=sector (1-7) / point level (1-9), f4=0 or guild claim id,
     f7=repeated {f1: slot no, f2: win streak},
     f5=repeated slot {f1: player id, f2: slot no, f5: packed ts chain}
