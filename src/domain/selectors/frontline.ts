@@ -9,9 +9,9 @@ import type {
 } from "../../types";
 import { scoresForNode } from "./nodeScores";
 
-// Áp lực tối thiểu coi là giao tranh: điểm phe nhì ≥ 36% điểm phe claim tại
-// node — đối thủ trong tầm với dù phe claim đang 65% hay 72%.
-const PRESSURE_RATIO = 0.36;
+// Áp lực tối thiểu coi là giao tranh: điểm phe nhì ≥ 40% điểm phe claim tại
+// node — đối thủ trong tầm với dù phe claim đang 60% hay 70%.
+export const PRESSURE_RATIO = 0.4;
 
 // Một node giao tranh, kèm số liệu cho UI (badge, tooltip, list).
 export interface Frontline {
@@ -29,9 +29,9 @@ export interface Frontline {
 
 // Map nodeId → Frontline, chỉ chứa node giao tranh, sort theo ratio giảm dần.
 //
-// - Áp lực: rival.score / owner.score ≥ PRESSURE_RATIO. s1 tính theo phe claim
-//   (không phải phe đang đứng đầu) nên case đối thủ vượt điểm phe claim cho
-//   ratio > 1 — vẫn rơi vào nhóm giao tranh, không cần rule riêng.
+// - Áp lực: PRESSURE_RATIO ≤ rival.score / owner.score ≤ 1. Phe claim phải
+//   đứng đầu điểm: bị vượt điểm mà vẫn giữ node nghĩa là phe top đang bị cắt
+//   đường — icon gift/cloud-sun, không phải giao tranh.
 // - Chân đứng: phe nhì owns ít nhất một láng giềng. Điểm chỉ được xét khi còn
 //   nối base qua lãnh thổ chính phe và lãnh thổ luôn liền khối quanh base,
 //   nên "owns một láng giềng" ⟺ còn nối tới cửa node. Phe bị cắt đường có
@@ -70,7 +70,12 @@ export function frontlineNodes(
     for (const entry of scores)
       if (entry.id !== owner.id && (!rival || entry.score > rival.score))
         rival = entry;
-    if (!rival || rival.score / ownerScore < PRESSURE_RATIO) continue;
+    if (
+      !rival ||
+      rival.score > ownerScore ||
+      rival.score / ownerScore < PRESSURE_RATIO
+    )
+      continue;
     const rivalId = rival.id;
     const rivalScore = rival.score;
     const touching = [...(neighbors.get(island.id) ?? [])].some(

@@ -207,6 +207,7 @@ export type CanvasIcon =
   | "frontline"
   | "defend"
   | "gifted"
+  | "aftermath"
   | "overbuilt"
   | "plain";
 
@@ -220,15 +221,15 @@ export type IslandNodeData = Island & {
   dim: boolean;
   // Node khớp filter guild/player đang chạy — viền icon dày lên để nổi.
   matched?: boolean;
-  // Node giao tranh (frontlineNodes — phe nhì dồn ≥36% điểm phe claim và owns
+  // Node giao tranh (frontlineNodes — phe nhì dồn ≥40% điểm phe claim và owns
   // một láng giềng): fill chocolate đậm + icon kiếm trên canvas; rival = phe
   // nhì đang dồn điểm.
   frontline?: {
     rival: Faction;
     ratio: number;
   };
-  // Node cần thủ (defendNodes — điểm phe claim mỏng mà giáp ranh phe khác,
-  // chưa tính tranh chấp): icon shield-alert + fill màu phe nhạt.
+  // Node cần thủ (canvasIcon "defend" — điểm owner dưới trung vị của phe mà
+  // giáp ranh phe khác): icon shield-alert + fill màu phe nhạt.
   defend?: boolean;
   debug?: boolean;
   // Đóng góp của player đang lọc trên đảo (dùng để highlight thanh điểm phe).
