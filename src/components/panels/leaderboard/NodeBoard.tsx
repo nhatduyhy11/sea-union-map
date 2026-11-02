@@ -5,6 +5,7 @@ import {
   ArrowUpDown,
   BicepsFlexed,
   ChevronRight,
+  Flag,
   Gift,
   Swords,
   type LucideIcon,
@@ -28,6 +29,7 @@ const BOARD_STATUS_ICONS: Partial<
 > = {
   frontline: { Icon: Swords, label: "Tranh" },
   gifted: { Icon: Gift, label: "Cướp" },
+  aftermath: { Icon: Flag, label: "Vết" },
   overbuilt: { Icon: BicepsFlexed, label: "Dồn" },
 };
 
@@ -39,7 +41,7 @@ const BOARD_STATUS_ICONS: Partial<
 // xoay vòng giảm dần → tăng dần → không sort theo tổng Điểm ST. Pill phe lọc đảo theo phe đang chiếm,
 // "Tranh chấp" = đảo giao tranh (frontlineNodes), "Chưa chiếm" = đảo trung
 // lập — đều theo owner server (đã áp rule ngắt đường); row tranh chấp hiện
-// icon kiếm/gift/biceps trước tổng điểm, theo trạng thái icon canvas; tiêu đề đếm số
+// icon kiếm/gift/flag/biceps trước tổng điểm, theo trạng thái icon canvas; tiêu đề đếm số
 // cứ điểm đang hiển thị. State local, rời board là reset.
 export function NodeBoard({
   nodes,
@@ -220,6 +222,7 @@ const STATUS_FILTERS = [
   { id: "__contested", status: "frontline" },
   { id: "__overbuilt", status: "overbuilt" },
   { id: "__gifted", status: "gifted" },
+  { id: "__aftermath", status: "aftermath" },
 ] as const;
 const UNCLAIMED = "__unclaimed";
 

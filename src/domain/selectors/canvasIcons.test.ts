@@ -95,7 +95,7 @@ test("A claimable neutral faction connected from base keeps fallback icon withou
   );
 });
 
-test("Top owner under 40% pressure: swords when rival borders, cloud-sun otherwise", () => {
+test("Top owner under 40% pressure: swords when rival borders, flag otherwise", () => {
   const x = node("x", "a", { a: 100, b: 40 });
   assert.equal(classify([x, enemy], toEnemy).get("x"), "frontline");
   assert.equal(classify([x]).get("x"), "aftermath");
@@ -111,7 +111,7 @@ test("Biceps needs the top owner at or above its own mean", () => {
   assert.equal(classify([node("x", "a", { a: 29 })]).get("x"), "plain");
 });
 
-test("Outscored owner: gift up to 30%, cloud-sun from 40%, nothing in between", () => {
+test("Outscored owner: gift up to 30%, flag from 40%, nothing in between", () => {
   assert.equal(
     classify([node("x", "a", { a: 30, b: 100 })]).get("x"),
     "gifted"

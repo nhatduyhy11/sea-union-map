@@ -31,7 +31,7 @@ export interface Frontline {
 //
 // - Áp lực: PRESSURE_RATIO ≤ rival.score / owner.score ≤ 1. Phe claim phải
 //   đứng đầu điểm: bị vượt điểm mà vẫn giữ node nghĩa là phe top đang bị cắt
-//   đường — icon gift/cloud-sun, không phải giao tranh.
+//   đường — icon gift/flag, không phải giao tranh.
 // - Chân đứng: phe nhì owns ít nhất một láng giềng. Điểm chỉ được xét khi còn
 //   nối base qua lãnh thổ chính phe và lãnh thổ luôn liền khối quanh base,
 //   nên "owns một láng giềng" ⟺ còn nối tới cửa node. Phe bị cắt đường có

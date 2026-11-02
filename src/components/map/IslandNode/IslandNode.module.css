@@ -109,7 +109,7 @@
   filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
 }
 
-/* Node cần thủ (defendNodes — điểm phe claim mỏng mà giáp ranh phe khác):
+/* Node cần thủ (canvasIcon "defend" — điểm owner mỏng mà giáp ranh phe khác):
    fill màu chính phe nhạt — biết đảo yếu chỗ nào mà vẫn ra màu chủ phe. */
 .defend .islandIcon {
   background: color-mix(in srgb, var(--faction) 50%, #ffffff);
