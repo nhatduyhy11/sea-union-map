@@ -60,7 +60,10 @@ wrapper của từng event; chưa chốt quy tắc gộp các biến thể thàn
 Server 545: `monsterId = 1002` → `_showBoss = 120071201`. Các JSON dưới đây là
 field/value đã serialize từ object runtime sau khi game giải mã config và localize
 text; không phải bytes thô của file `.bin`, không phải schema/contract tự đặt cho FE.
-Giữ nguyên tên field, markup, string chứa JSON và cấu trúc List nội bộ của game.
+Giữ nguyên tên field, markup, string chứa JSON và cấu trúc List nội bộ của game:
+chuỗi mô tả mang markup (`<color=...>`, `</c>`, `<br/>`); `_pSkills`, `_specialAttr`,
+`_showHeroItem`, `_round` là string chứa JSON. Hero gợi ý của Alien là Hanuman
+(`HeroLO.code = 50000001`).
 
 ### `CampGVGMonsterLO.get(1002)` — toàn bộ 38 field
 
@@ -254,6 +257,7 @@ thái sâu nằm ở các row kỹ năng bên dưới; không phải toàn bộ 
   dữ liệu mô tả boss nếu FE không sử dụng.
 - Danh mục chung không thay thế mapping node do server trả. Snapshot FE cũ
   thiếu mapping dù parser đã giữ `monsterId` dưới tên `art`; đề xuất backfill
-  và giới hạn reuse theo server/đợt nằm tại SEA_STRUCTURE §4.2.3.
+  và giới hạn reuse theo server/đợt nằm tại
+  [BACKLOG_SEA.BE.md](../sea/BACKLOG_SEA.BE.md) mục 2.
 - Quy luật boss cố định suốt 7 ngày cùng server/event do chủ dự án xác nhận;
   lần kiểm tra này chưa thực hiện quan sát liên tục đủ 7 ngày.
