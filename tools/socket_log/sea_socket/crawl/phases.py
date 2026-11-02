@@ -1,5 +1,7 @@
 """Crawl phases, in run order: entry -> snapshot -> nodes -> boards -> guilds -> briefs.
 
+run_boss_crawl() stops after the node states (entry -> snapshot -> states).
+
 Each phase injects through CrawlRouter and writes its own output file under
 out_dir; run_crawl() chains them after an entry (payload_entry, or the GUI
 stages in walkthrough.py) has made the server push the 0x72/0x000c snapshot.
@@ -8,6 +10,7 @@ stages in walkthrough.py) has made the server push the 0x72/0x000c snapshot.
 import asyncio
 import base64
 import json
+from contextlib import nullcontext
 from datetime import datetime
 from pathlib import Path
 
@@ -107,15 +110,18 @@ async def wait_snapshot(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
 
 
 async def crawl_nodes(page: Page, router: CrawlRouter, out_dir: Path,
-                      node_ids: list[int]) -> dict[str, int]:
+                      node_ids: list[int], boards: bool = True) -> dict[str, int]:
     """Per node: state (0x72/0x0011) + board 118 -> node-states.jsonl, node-boards.jsonl.
 
-    Lines are flushed per node so a crash mid-crawl keeps what was pulled.
+    boards=False pulls the state only (no node-boards.jsonl). Lines are flushed
+    per node so a crash mid-crawl keeps what was pulled.
     """
     logged_at = datetime.now().astimezone().isoformat()
     counts = {"states": 0, "boards": 0, "throttle_retries": 0}
+    boards_file = ((out_dir / "node-boards.jsonl").open("w", encoding="utf-8")
+                   if boards else nullcontext())
     with (out_dir / "node-states.jsonl").open("w", encoding="utf-8") as states_fh, \
-            (out_dir / "node-boards.jsonl").open("w", encoding="utf-8") as boards_fh:
+            boards_file as boards_fh:
         for node_id in node_ids:
             header, body, retries = await inject_retrying(
                 page, router, SEA_MODULE, NODE_STATE_CMD, [(1, node_id)], state_throttled)
@@ -127,6 +133,9 @@ async def crawl_nodes(page: Page, router: CrawlRouter, out_dir: Path,
             states_fh.flush()
             counts["states"] += 1
             router.node_states[node_id] = state
+            if not boards:
+                await asyncio.sleep(REQUEST_PACE)
+                continue
 
             header, body, retries = await inject_retrying(
                 page, router, RANK_MODULE, RANK_CMD,
@@ -201,6 +210,24 @@ def rollup_factions(states: dict[int, dict]) -> dict[int, int]:
         for faction, score in state["faction_scores"].items():
             totals[faction] = totals.get(faction, 0) + score
     return totals
+
+
+async def run_boss_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
+    """Snapshot -> per-node state only (boss = state key ``art``) -> summary.json.
+
+    Boards, guilds and briefs are skipped: the node-boss table is all this run
+    feeds.
+    """
+    snapshot = await wait_snapshot(page, router, out_dir)
+    node_ids = sorted(n["id"] for n in snapshot["nodes"])
+    counts = await crawl_nodes(page, router, out_dir, node_ids, boards=False)
+    summary = {
+        "nodes": len(node_ids),
+        **counts,
+        "bosses": sum(1 for state in router.node_states.values() if state.get("art")),
+    }
+    write_json(out_dir / "summary.json", summary)
+    return summary
 
 
 async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:

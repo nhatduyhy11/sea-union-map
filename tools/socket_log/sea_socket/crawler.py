@@ -38,6 +38,12 @@ JSON at public/sea-live-dev.json (refresh browser to see it). --no-dump keeps
 just the raw run; report.py stays the standalone CLI to re-dump old runs or
 bake src/data/sea-live.json.
 
+--bosses-only stops after the per-node states (no boards/guilds/briefs, no
+dump) and writes src/data/node-bosses/<event start>/<server>.json for the
+logged-in server via sea_socket.report.write_node_bosses — or only
+cross-checks it when the file exists. Bosses are fixed per event and server,
+so one run per server per event is enough.
+
 Usage:
     uv run python tools/socket_log/sea_socket/crawler.py --auth-json /path/to/auth.json --acc account@example.com
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
@@ -46,6 +52,7 @@ Usage:
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --gui-entry
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --dump-out out/other.json
     uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pjen --dump-out src/data/snapshots/261030/
+    uv run python tools/socket_log/sea_socket/crawler.py --auth-json /path/to/auth.json --acc account@example.com --bosses-only
 """
 
 import argparse
@@ -70,9 +77,9 @@ from browser.session import open_game_session
 from capture.frames import FrameWriter
 
 from sea_socket.crawl import LOCK_FILENAME
-from sea_socket.crawl.phases import payload_entry, run_crawl, wait_login
+from sea_socket.crawl.phases import payload_entry, run_boss_crawl, run_crawl, wait_login
 from sea_socket.crawl.router import CrawlRouter
-from sea_socket.report import DEV_DUMP_OUT, dump_run
+from sea_socket.report import DEV_DUMP_OUT, dump_run, write_node_bosses
 from sea_socket.walkthrough import STAGES, run_stages
 
 # --gui-entry: login -> open-sea -> battle-map; the map-open click is what
@@ -140,7 +147,13 @@ def parse_args() -> argparse.Namespace:
                         help="File JSON hoặc thư mục đích; thư mục (kể cả đường dẫn "
                              "mới không có đuôi file) tự đặt tên <server>.json theo "
                              "acc đăng nhập. Mặc định public/sea-live-dev.json")
+    parser.add_argument("--bosses-only", action="store_true",
+                        help="Chỉ lấy state từng node (boss), bỏ board/guild/brief và "
+                             "dump; ghi/đối chiếu src/data/node-bosses/<EVENT_START>/"
+                             "<server>.json theo server của acc đăng nhập")
     args = parser.parse_args()
+    if args.bosses_only and args.dump_out is not None:
+        parser.error("--bosses-only does not dump; drop --dump-out")
     if args.auth_json is not None and not args.acc:
         parser.error("--auth-json requires --acc")
     if args.acc and args.auth_json is None:
@@ -211,6 +224,14 @@ async def main() -> None:
                 await payload_entry(page, router, out_dir, LOGIN_TIMEOUT_SECONDS)
             server = await read_server(page)
             write_meta(out_dir, args, started_at, entry_stages, server)
+            if args.bosses_only:
+                if server is None:
+                    raise SystemExit("[node-bosses] logged-in server is unavailable; "
+                                     f"run kept at {out_dir}")
+                summary = await run_boss_crawl(page, router, out_dir)
+                print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
+                write_node_bosses(out_dir, server)
+                return
             dump_out = resolve_dump_out(args.dump_out, server) if args.dump else None
             summary = await run_crawl(page, router, out_dir)
             print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
