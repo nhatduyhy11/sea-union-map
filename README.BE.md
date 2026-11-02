@@ -76,6 +76,8 @@ Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 | `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
 | `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler |
 | `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"             |
+| `sea_socket/per_event/boss_extract.py` | Chạy 1 lần mỗi đợt event để kiểm tra boss mới (asset boss cố định hơn cả boss node theo cụm). Catalog boss Sea headless **không cần login**: tải full config, mỗi row `CampGVGMonsterLO` ghi `info.json` (monster + `CreepLO` + skill/buff + hero gợi ý/tag/thuộc tính) và tải asset `ext-res` theo token ảnh (`shuzhi/head\|half\|Hero_IH`, spine `model/`); asset `CreepLO` trỏ tới nằm ở gốc folder, asset chỉ trùng token vào `others/` — `--out .tmp/boss-catalog` |
+| `sea_socket/per_event/boss_render.py`  | Chạy 1 lần mỗi đợt event, sau `boss_extract.py`. Render spine boss (output của `boss_extract.py`) ra PNG bằng spine-ts 3.8 WebGL headless: frame 0 của `daiji` (idle), ưu tiên atlas `_h`, crop theo alpha → thư mục phẳng `<monsterId>-<model>-<anim>.png` — `--dir .tmp/boss-catalog --out .tmp/boss-render` |
 
 ```bash
 # [1] Crawl đủ 89 node + dump JSON cho FE trong 1 lệnh (--dump mặc định bật,

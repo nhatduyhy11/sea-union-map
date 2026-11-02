@@ -29,6 +29,7 @@ Pipeline chuẩn hóa 4 bước (chi tiết ở [`README.BE.md`](../../README.BE
 | `dist/sea-live-dev.json` | gitignored (cả `dist/`) | Vite copy nguyên thư mục `public/` lúc build | không ai đọc | Được ship lên Pages nhưng **chết** — code build không fetch. Vô hại, có thể bỏ bằng cách xoá file trong `public/` trước khi build |
 | `src/data/sea-live.261027-*.json` | committed | copy tay | **không có code nào import** | Snapshot thủ công theo thời điểm, chỉ để lưu lịch sử |
 | `src/data/snapshots/<YYMMDD>/<server>.json` | committed | `report.py --snapshot [--server N]` | `import.meta.glob` lazy trong `src/data/snapshots.ts` | Snapshot lịch sử theo ngày event × cụm — thanh ngày dưới canvas + server switcher |
+| `src/data/node-bosses/<ngày đầu đợt>/<server>.json` | committed | `report.py --snapshot` (ghi kèm) hoặc `--node-bosses --server N` | `import.meta.glob` eager trong `src/data/nodeBosses.ts` | Boss từng node (gameNodeId → monsterId, key `art` của raw `node-states.jsonl`). Boss cố định cả đợt trong một cụm nên tách khỏi snapshot ngày: file có rồi thì `report.py` chỉ đối chiếu, node lệch boss là dừng. Ảnh nền chi tiết cứ điểm: `public/boss/<monsterId>.webp` |
 
 `src/data/sea-live.json` là bản live (ngày hiện tại, cụm 517) import tĩnh; snapshot lịch sử import lazy (mục dưới). Chunk `sea-data` (tách trong `vite.config.ts`
 qua `manualChunks`) chính là bản baked này.

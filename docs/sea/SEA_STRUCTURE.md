@@ -164,6 +164,9 @@ CreepLO.normalSkill / posSkill* / pSkills → SkillBaseLO.id
 CreepLO.showHeroItem            → HeroLO.code (hero gợi ý)
 ```
 
+- Trong raw crawl (`node-states.jsonl`), `monsterId` nằm dưới key **`art`** — tên key
+  cũ của parser `parse_node_state`, giữ nguyên để không lệch raw run đã crawl. Mọi
+  run có `node-states.jsonl` đều có key này (raw sớm nhất còn lại: 2026-10-29).
 - `monsterId` do server trả trong `GetCityInfoR` và quyết định boss của node; không
   suy từ config node. Kính lúp boss detail (§3.8) không sinh request — game render từ
   config client theo `monsterId` (tên, avatar, mô tả, hero đề xuất).
@@ -174,7 +177,9 @@ CreepLO.showHeroItem            → HeroLO.code (hero gợi ý)
 - Config hiện tại có **13 row** 1001..1013 (tên đều có tiền tố "Tứ Hải-"), giống nhau
   giữa các server đã kiểm tra. Đây không phải giới hạn cứng: ID mới phải được giữ lại,
   hiển thị thiếu thông tin và extract lại config.
-- Export boss cho FE: [BACKLOG_SEA.BE.md](BACKLOG_SEA.BE.md) mục 2.
+- Export boss cho FE: file riêng `src/data/node-bosses/<ngày đầu đợt>/<server>.json`
+  (gameNodeId → monsterId), không nằm trong snapshot — xem
+  [SEA_LIVE_DATA.md](SEA_LIVE_DATA.md#các-file-json).
 - Raw config, cách enumerate và phạm vi đã kiểm chứng:
   [research boss catalog](../research/2026-11-01-boss-catalog.md).
 
