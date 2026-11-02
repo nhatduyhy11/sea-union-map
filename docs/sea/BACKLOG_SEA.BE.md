@@ -68,9 +68,31 @@ Ghi 2026-10-28.
 
 ### 1c. Crawler chưa ghi cụm server vào run
 
-`report.py --snapshot` đang mặc định `--server 517`; crawl cụm khác phải chỉnh
-tay cờ `--server`. Hướng làm: crawler ghi cụm vào metadata run → `report.py`
-tự đọc, `--server` chỉ còn để override.
+Crawler đã ghi `server` (đọc từ acc đăng nhập) vào `meta.json` của run, nhưng
+`report.py --snapshot` vẫn mặc định `--server 517` và không đọc `meta.json`;
+re-dump run cụm khác phải chỉnh tay cờ `--server`. Hướng làm: `report.py` đọc
+`server` từ `meta.json`, `--server` chỉ còn để override (run thiếu key thì báo lỗi
+thay vì rơi về 517).
+
+### 2. Export boss node (`monsterId`) cho FE + backfill snapshot cũ
+
+- **Hiện trạng**: `GetCityInfoR` trả `monsterId` (field 4 `cityInfo`, ý nghĩa và
+  chuỗi ID: [SEA_STRUCTURE.md §4.2](SEA_STRUCTURE.md#42-boss-node-campgvgmonsterlo)).
+  `parse_node_state` đã lưu field này dưới key `art` của node state; đối chiếu
+  2026-11-01 trên 16 run: 1.362/1.362 node state có key, phủ đủ 13 ID 1001..1013.
+  `report.py` chưa export → `SeaLiveDump` không có `monsterId`/mapping boss node.
+  Dữ liệu đã crawl, không cần crawl lại.
+- **Hướng làm (chưa chốt contract FE)**:
+  - Đổi tên key `art` → `monsterId` trong parser; dump mapping `cityId → monsterId`.
+  - Lưu mapping theo server + đợt event (có thể dùng `GetOutInfoR.startDt` định
+    danh đợt). Reuse trong cùng đợt theo quy luật boss cố định 7 ngày; không suy
+    sang server hoặc đợt khác.
+  - Danh mục chung theo phiên bản config: `seaMonstersById[monsterId]` cho config
+    Sea, `creepsByCode[code]` cho unit; skill lookup tách riêng nếu cần.
+  - Backfill snapshot cũ từ `art` của raw crawl tương ứng; thiếu raw thì chỉ dùng
+    mapping cùng server/cùng đợt. FE vẫn chấp nhận node thiếu boss.
+  - Cache boss không giảm request `GetCityInfo` — crawler vẫn cần endpoint này cho
+    điểm phe tại node.
 
 ---
 

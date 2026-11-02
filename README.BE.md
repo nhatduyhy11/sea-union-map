@@ -52,6 +52,7 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 | `core/args.py`             | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
 | `core/runtime_codec.py`    | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
 | `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |
+| `browser/auth.py`          | Đọc JSON localStorage SDK, chọn email, restore auth và xác minh acc cho SEA crawler fresh context |
 | `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                   |
 | `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                                         |
 | `browser/session.py`       | `launch_session` / `close_session`: mở persistent profile, gắn capture WS cho mọi page, cài page guards                                                                   |
@@ -85,6 +86,26 @@ uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 #      summary.json
 #    → public/sea-live-dev.json (transform từ baseline, refresh browser là thấy)
 #    --no-dump: chỉ lấy raw run
+
+#    Fresh auth: chọn email từ JSON localStorage SDK, không cần persistent profile.
+#    Mỗi terminal có context riêng; có thể đọc chung một file auth.
+uv run python tools/socket_log/sea_socket/crawler.py \
+    --auth-json /path/to/auth.json --acc 'account@example.com' \
+    --dump-out src/data/snapshots/261031/
+#    Restore tại origin SDK → mở game → đóng tab auth → chờ login → crawl/dump.
+#    Navigation fresh tối đa 60s mỗi lần; login tối đa 180s, chỉnh trong code.
+#    Luôn đóng context/browser khi thoát bình thường hoặc exception; không ghi lại
+#    JSON nguồn hay giữ profile theo acc. Raw crawl và dump vẫn được giữ.
+#    Thư mục raw mặc định có suffix ngẫu nhiên, tránh trùng giữa các terminal.
+#    Các lượt song song nên dùng --dump-out thư mục để tách theo server;
+#    mặc định public/sea-live-dev.json là một file chung, lượt ghi cuối sẽ thắng.
+
+#    Tự đặt tên <server>.json theo acc đang đăng nhập khi truyền thư mục:
+uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pjen \
+    --dump-out src/data/snapshots/261030/
+#    → src/data/snapshots/261030/<server>.json; server cũng lưu trong meta.json.
+#    Thư mục chưa tồn tại, không có đuôi file cũng được tự tạo.
+#    Truyền tên file .json cụ thể vẫn giữ nguyên tên đã chọn.
 
 # [2] Re-dump run cũ / bake chính thức (report.py là CLI riêng)
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
@@ -154,9 +175,11 @@ uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/<run> m
 
 ### Prerequisite
 
-Cả hai mode đều cần profile `.tmp/<name>` đã có session đăng nhập (persistent
-context của Playwright). Riêng `config_extract.py` boot headless không cần
-login.
+Các logger/capture dùng profile `.tmp/<name>` đã có session đăng nhập
+(persistent context của Playwright). SEA crawler còn hỗ trợ cặp
+`--auth-json PATH --acc EMAIL` để tạo context fresh từ JSON localStorage SDK;
+không kết hợp với `--profile`. File secret chỉ đọc và nên lưu ngoài repo hoặc
+trong đường dẫn đã gitignore. Riêng `config_extract.py` boot headless không cần login.
 
 ## Luồng crawl → UI
 

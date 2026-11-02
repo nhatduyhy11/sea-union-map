@@ -73,13 +73,23 @@ claimable của các phe có mặt (§4).
 
 ## 4. Danh mục icon canvas
 
-### Node chưa phe nào có điểm (chưa từng touch)
+### Base — quy tắc tuyệt đối
 
-| Icon     | Điều kiện           | Ý nghĩa                       | Trạng thái |
-| -------- | ------------------- | ----------------------------- | ---------- |
-| Icon phe | node base           | lãnh thổ gốc, luôn giữ nguyên | đã làm     |
-| Anchor   | đảo thường          | đảo hoang, chưa ai động tới   | đã làm     |
-| Castle   | đảo trung tâm ("4") | trung tâm bản đồ              | đã làm     |
+Base luôn dùng một trong 4 icon đại diện phe: `ZodiacAries` (đông),
+`Flame` (nam), `Sparkles` (bắc), `Snowflake` (tây). Quy tắc này được xét
+đầu tiên và kết thúc phân loại tại đây.
+
+Các mục dưới áp dụng cho các node còn lại, bắt đầu từ Swords.
+
+### Node owned
+
+| Icon                                    | Điều kiện                                                                                                                                      | Ý nghĩa                                                                                  | Trạng thái                                                       |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Kiếm chéo (Swords) + fill chocolate đậm | node giao tranh: phe nhì dồn ≥ 36% điểm phe claim tại node **và** phe nhì owns ít nhất một láng giềng (`frontlineNodes`)                       | phe claim đang bị dồn điểm ngay cửa node                                                 | đã làm — canvas, icon kiếm + pill "Tranh chấp" trong BXH cứ điểm |
+| Khiên (ShieldAlert) + fill màu phe nhạt | node owned, điểm owner **mỏng** (< effort phe owner), giáp ranh phe khác, loại node đang giao tranh                                    | đảo đang giữ mà điểm mỏng chỗ giáp miệng địch                                            | đã làm                                                           |
+| Gift (Gift)                             | node owned bởi phe Y nhưng **Y giữ nhờ cắt đường**: tồn tại phe X claimable-bị-cắt tại node với X.score ≥ 2×effort(X) **và** X.score > Y.score | effort gấp đôi mặt bằng của X đang bị Y "ăn nhờ" — nếu không bị ngắt, X đủ điểm vượt mặt | đã làm                                                           |
+| Biceps (BicepsFlexed)                   | node owned, owner.score ≥ 3×effort(owner) **và không có** đối thủ bị cắt nào đứng trên owner                                                   | owner bỏ nhiều effort hơn mức cần thiết — tự mình đầu tư đậm, không phải nhờ ai          | đã làm                                                           |
+| Trơn                                    | node owned không được chọn icon đặc biệt theo thứ tự ưu tiên                                                                                   | không icon trạng thái, không fill trạng thái — chỉ còn tô màu phe chuẩn của lãnh thổ     | đã làm                                                           |
 
 ### Node trung lập (không ai owned) đã có điểm
 
@@ -96,15 +106,12 @@ Nếu node trung lập có phe claimable **còn nối đường** nhưng server 
 cho own (hòa điểm hoặc snapshot lệch), giữ Anchor/Castle màu neutral làm
 fallback. Không gắn kéo/kiếm đơn sai điều kiện và không tự suy ra owner.
 
-### Node owned
+### Node chưa phe nào có điểm (chưa từng touch)
 
-| Icon                                    | Điều kiện                                                                                                                                      | Ý nghĩa                                                                                  | Trạng thái                                                       |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Kiếm chéo (Swords) + fill chocolate đậm | node giao tranh: phe nhì dồn ≥ 36% điểm phe claim tại node **và** phe nhì owns ít nhất một láng giềng (`frontlineNodes`)                       | phe claim đang bị dồn điểm ngay cửa node                                                 | đã làm — canvas, icon kiếm + pill "Tranh chấp" trong BXH cứ điểm |
-| Khiên (ShieldAlert) + fill màu phe nhạt | node owned, điểm owner **mỏng** (< effort phe owner), giáp ranh phe khác, loại node đang giao tranh và base                                    | đảo đang giữ mà điểm mỏng chỗ giáp miệng địch                                            | đã làm                                                           |
-| Gift (Gift)                             | node owned bởi phe Y nhưng **Y giữ nhờ cắt đường**: tồn tại phe X claimable-bị-cắt tại node với X.score ≥ 2×effort(X) **và** X.score > Y.score | effort gấp đôi mặt bằng của X đang bị Y "ăn nhờ" — nếu không bị ngắt, X đủ điểm vượt mặt | đã làm                                                           |
-| Biceps (BicepsFlexed)                   | node owned, owner.score ≥ 3×effort(owner) **và không có** đối thủ bị cắt nào đứng trên owner                                                   | owner bỏ nhiều effort hơn mức cần thiết — tự mình đầu tư đậm, không phải nhờ ai          | đã làm                                                           |
-| Trơn                                    | node owned không được chọn icon đặc biệt theo thứ tự ưu tiên                                                                                   | không icon trạng thái, không fill trạng thái — chỉ còn tô màu phe chuẩn của lãnh thổ     | đã làm                                                           |
+| Icon   | Điều kiện           | Ý nghĩa                     | Trạng thái |
+| ------ | ------------------- | --------------------------- | ---------- |
+| Anchor | đảo thường          | đảo hoang, chưa ai động tới | đã làm     |
+| Castle | đảo trung tâm ("4") | trung tâm bản đồ            | đã làm     |
 
 ### Màu và thứ tự ưu tiên
 
@@ -120,7 +127,6 @@ fallback. Không gắn kéo/kiếm đơn sai điều kiện và không tự suy 
 - Khiên và gift có thể cùng đủ điều kiện vì xét điểm của hai phe khác nhau.
   Khi đó khiên thắng theo thứ tự ưu tiên. Khiên và biceps tự loại nhau theo
   điểm owner (`< effort` và `≥ 3×effort`).
-- Base luôn giữ icon phe.
 
 Thứ tự ưu tiên trên node owned: **kiếm chéo > khiên > gift / biceps > trơn**.
 
@@ -159,5 +165,5 @@ gift. Nếu node không thỏa điều kiện icon đặc biệt nào khác thì
 - Kiếm chéo giữ quy tắc `frontlineNodes`: phe nhì là phe không own có điểm
   cao nhất; chính phe đó phải own một láng giềng. Khiên xét láng giềng có
   owner phe khác, không tính trung lập hay đầu route không tồn tại.
-- Renderer giữ icon phe trên base; node owned trơn bỏ cả Anchor/Castle,
+- Renderer với node owned trơn bỏ cả Anchor/Castle,
   vẫn giữ khung node, màu phe, tương tác chọn/ghim và popup điểm.

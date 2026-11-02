@@ -110,6 +110,9 @@ response = [len:2 BE][ssid:1][fragIdx:1][fragCount:1][module:1][cmd:2 BE][compre
   - `0x72 / 0x0002` `GetOutInfoR` (response lúc boot): `{isOpen, serverList, startDt, endDt, state, isQualified}` — block đầu chốt boot sync, signal login-done của payload entry.
   - `0x72 / 0x000b` `GetMapInfos` → `0x000c` `GetMapInfosR`: Snapshot 89 cứ điểm (`cityInfos {cityId, occupyCamp}`), 4 phe (`campInfos {campId, guildIds, score, presidentId, vicePresidentId}`), 115 bang hội (`guildInfos {guildId, memberInfos}`), `campId` của account, `markCityIds`. `cityId` 1..89 trùng id config `CampGVGLO` ([`SEA_STRUCTURE.md`](SEA_STRUCTURE.md) §4.1): **1..4 = base 4 phe**, node thường = **5..89** → enumerate đủ node từ 1 frame, không cần zoom/pan map. Gửi lại `0x000b` bất kỳ lúc nào để re-sync.
   - `0x72 / 0x0011` `GetCityInfo {cityId}` → `0x0012` `GetCityInfoR`: `CityInfo {cityId, campHurtScores (Điểm ST 4 phe), occupyCamp, monsterId (boss → `CampGVGMonsterLO`), campScores}` + top-level f3 `occupyRewardCampId`. Đo 9 crawl 2026-10-29/30 (cụm 517, 590):
+    - `cityInfo` field 4 là **`monsterId`** (parser `parse_node_state` lưu dưới key
+      `art`). Chuỗi tra boss: [`SEA_STRUCTURE.md` §4.2](SEA_STRUCTURE.md#42-boss-node-campgvgmonsterlo);
+      export cho FE: [`BACKLOG_SEA.BE.md`](BACKLOG_SEA.BE.md) mục 2.
     - `occupyCamp` trùng owner `0x000c` ở mọi node; `campScores` luôn rỗng.
     - `occupyRewardCampId` = **phe chiếm node lần đầu**: 0 ở base và node chưa từng có chủ; gán khi node bị chiếm lần đầu, giữ nguyên khi node đổi chủ (kể cả đổi qua lại) hoặc mất về trung lập. Parser `parse_node_state` chưa đọc field này.
   - `0x72 / 0x001b` `GetCampsProduct` → `0x001c` `GetCampsProductR`: Bảng nhiên liệu 4 phe — `CampProductScore {campId, score (nhiên liệu), efficiency, rank, cityIds}`, inject được ngay sau login. Push cùng shape: `0x0019` `UpdateCampScoreP`. Crawler ghi `standings.json`; `report.py` dump cho FE qua key `fuel` (campId → nhiên liệu).

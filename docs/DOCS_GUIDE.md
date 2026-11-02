@@ -30,6 +30,8 @@ Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có
 
 ## Thứ tự đọc
 
+Crawl nhiều acc/terminal bằng fresh auth: [fresh-auth-crawl](research/2026-11-01-fresh-auth-crawl.md).
+
 1. Đọc guide này để biết tài liệu nào chứa thông tin cần thiết.
 2. Đọc `PROJECT_INTENT.md` để hiểu mục tiêu và phạm vi.
 3. Đọc `README.BE.md` (các mục Crawler / Luồng crawl → UI) hoặc `README.md` (Web UI, map, tương tác) / `docs/LEADERBOARD_SPECS.md` khi làm việc với giao diện web, map hoặc luồng dữ liệu.

@@ -68,6 +68,9 @@ uv run python tools/socket_log/research/proto_extract.py --ns CampGVG --ns Ranki
 
 Nút UI không sinh request ⇔ data render từ config client hoặc dict đã có từ request trước.
 
+Ngõ cụt đã loại: map hex `ghostWar/maps/map_ghost_01/02.bin` trong bundle **không**
+phải map đảo sea (battlefield gameplay khác) — vị trí node lấy từ `src/data/map-coords.ts`.
+
 ## 5. Manh mối chưa đào (research leads)
 
 | Lead                                                                                                     | Ghi chú                                                     |
