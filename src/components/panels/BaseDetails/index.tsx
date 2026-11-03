@@ -6,7 +6,8 @@ import {
   rankFactions,
   type FactionNodeFilter,
 } from "../../../domain/selectors";
-import { useMapData } from "../../../stores/dataset";
+import { useDataset, useMapData } from "../../../stores/dataset";
+import { useSelection } from "../../../stores/selection";
 import { useFocusIsland } from "../../../hooks/useFocusIsland";
 import { useMapView } from "../../../stores/mapView";
 import { compact } from "../../../utils/format";
@@ -47,6 +48,13 @@ export function BaseDetails({
     frontlineByNode,
   } = useMapData();
   const factionId = island.owner ?? island.id;
+  const server = useDataset((state) => state.server);
+  // Căn cứ người dùng chọn (có onClose) được nhớ theo cụm để đóng chi tiết đảo
+  // thì quay về đúng căn cứ. Căn cứ mặc định không ghi, để vẫn bám phe top 1.
+  const chosen = Boolean(onClose);
+  useEffect(() => {
+    if (chosen) useSelection.getState().rememberBase(server, factionId);
+  }, [chosen, server, factionId]);
   const entry = factionBoard.find((faction) => faction.id === factionId);
   const rank = useMemo(
     () => rankFactions(factionBoard).get(factionId),

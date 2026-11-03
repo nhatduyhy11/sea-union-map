@@ -6,15 +6,20 @@ import { create } from "zustand";
 interface SelectionState {
   selected: string | null;
   pinned: Set<string>;
+  // Phe của căn cứ xem gần nhất, theo cụm server — đóng chi tiết đảo (✕) thì
+  // tab Cứ điểm quay về căn cứ này thay vì căn cứ phe top 1.
+  baseByServer: Record<string, string>;
   open: (id: string) => void;
   close: () => void;
   togglePin: (id: string) => void;
+  rememberBase: (server: string, factionId: string) => void;
 }
 
 export const useSelection = create<SelectionState>()((set) => ({
   // Vào app ở trạng thái trung lập — không mở chi tiết cứ điểm nào.
   selected: null,
   pinned: new Set<string>(),
+  baseByServer: {},
   open: (id) => set({ selected: id }),
   close: () => set({ selected: null }),
   togglePin: (id) =>
@@ -24,4 +29,10 @@ export const useSelection = create<SelectionState>()((set) => ({
       else pinned.add(id);
       return { pinned };
     }),
+  rememberBase: (server, factionId) =>
+    set((state) =>
+      state.baseByServer[server] === factionId
+        ? state
+        : { baseByServer: { ...state.baseByServer, [server]: factionId } }
+    ),
 }));
