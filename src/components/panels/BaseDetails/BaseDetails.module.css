@@ -135,6 +135,7 @@ div.filterRow + div.filterRow {
 
 .dot {
   stroke-width: 1.5;
+  cursor: pointer;
 }
 
 .dot:hover {

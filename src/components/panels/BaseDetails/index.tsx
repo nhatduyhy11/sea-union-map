@@ -7,6 +7,7 @@ import {
   type FactionNodeFilter,
 } from "../../../domain/selectors";
 import { useMapData } from "../../../stores/dataset";
+import { useFocusIsland } from "../../../hooks/useFocusIsland";
 import { useMapView } from "../../../stores/mapView";
 import { compact } from "../../../utils/format";
 import {
@@ -66,6 +67,7 @@ export function BaseDetails({
       ),
     [factionId, ownedIslands, scoresByNode, canvasIconByNode, frontlineByNode]
   );
+  const focusIsland = useFocusIsland();
   const [activeFilter, setActiveFilter] = useState<FactionNodeFilter | null>(
     null
   );
@@ -207,6 +209,7 @@ export function BaseDetails({
             stats={stats.enough}
             color={entry?.color || "#5b7a8c"}
             highlight={highlight}
+            onSelect={focusIsland}
           />
         </>
       )}

@@ -12,17 +12,20 @@ const R = 3.5;
 // đang chiếm, rỗng = mất: đủ điểm chưa chiếm), trục log lớn ở trên, vạch avg /
 // median của cả tập. Đảo 0 điểm (chiếm mà phe không có điểm) nằm ở dải "0"
 // dưới đáy vì log không biểu diễn được 0. highlight (filter trạng thái đang
-// bật) làm nổi chấm thuộc tập, mờ phần còn lại.
+// bật) làm nổi chấm thuộc tập, mờ phần còn lại. Hover chấm hiện id đảo (như
+// nhãn trên map) kèm điểm; click chấm gọi onSelect (focus đảo đó).
 export function ScoreDotPlot({
   islands,
   stats,
   color,
   highlight,
+  onSelect,
 }: {
   islands: IslandPoints[];
   stats: IslandBucketStats;
   color: string;
   highlight?: ReadonlySet<string> | null;
+  onSelect?: (id: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(280);
@@ -81,12 +84,9 @@ export function ScoreDotPlot({
               r={hot ? R + 1.5 : R}
               fill={dot.owned ? color : "#ffffff"}
               stroke={color}
+              onClick={() => onSelect?.(dot.id)}
             >
-              <title>
-                {`${dot.name} · ${compact(dot.points)} · ${
-                  dot.owned ? "đang chiếm" : "mất"
-                }`}
-              </title>
+              <title>{`${dot.id} | ${compact(dot.points)}`}</title>
             </circle>
           );
         })}
