@@ -17,22 +17,13 @@
   background: color-mix(in srgb, var(--tint) 10%, #ffffff);
 }
 
-/* Filter trạng thái đảo (style pill BXH Cứ điểm) + số đảo mỗi filter, hai
-   dòng: icon canvas, rồi tập theo điểm phe (Mất / Đánh). */
-.filters {
+/* Filter theo icon canvas (style pill BXH Cứ điểm) + số đảo mỗi filter. div.
+   để thắng .subTabs / .nodeFilters (margin, nowrap + scroll ngang) bất kể
+   thứ tự CSS. */
+div.filters {
   margin: 16px 0;
-}
-
-/* div. để thắng .subTabs / .nodeFilters (margin, nowrap + scroll ngang) bất
-   kể thứ tự CSS. */
-div.filterRow {
-  margin: 0;
   flex-wrap: wrap;
   overflow-x: visible;
-}
-
-div.filterRow + div.filterRow {
-  margin-top: 6px;
 }
 
 .filters button:disabled {
@@ -95,6 +86,42 @@ div.filterRow + div.filterRow {
 .sum th,
 .sum td {
   border-top: 2px solid #b9c4ca;
+}
+
+/* Dòng bảng là filter: click cả dòng hoặc radio cột đầu (radio ở header =
+   không lọc). Hover dòng chọn được thì nền đậm hơn một chút; dòng đang chọn
+   có vạch màu phe bên trái. */
+.stats .pick {
+  width: 1%;
+  padding-right: 2px;
+  text-align: center;
+}
+
+.pick input {
+  margin: 0;
+  vertical-align: middle;
+  accent-color: var(--tint);
+  cursor: pointer;
+}
+
+.pick input:disabled {
+  cursor: default;
+}
+
+.pickable {
+  cursor: pointer;
+}
+
+.stats .pickable:hover th,
+.stats .pickable:hover td {
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--tint) 10%, transparent),
+    color-mix(in srgb, var(--tint) 10%, transparent)
+  );
+}
+
+.stats .active .pick {
+  box-shadow: inset 3px 0 0 var(--tint);
 }
 
 /* Dot plot phân bố điểm đảo đủ điểm. */
