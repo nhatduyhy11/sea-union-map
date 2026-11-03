@@ -5,7 +5,7 @@ import {
   Swords,
   type LucideIcon,
 } from "lucide-react";
-import type { CanvasIcon } from "../../types";
+import type { CanvasIcon } from "../../domain/selectors/canvasIcons";
 
 // Trạng thái icon canvas mà panel hiện thành icon / pill filter (BXH Cứ điểm,
 // chi tiết căn cứ) — cùng icon với node trên map.

@@ -20,7 +20,7 @@ import styles from "./FactionBoard.module.css";
 import background from "../../../shared/FactionBackground.module.css";
 import pills from "../../../shared/FilterPills.module.css";
 import shared from "../shared.module.css";
-import type { FactionBoardEntry } from "../../../../types";
+import type { FactionBoardEntry } from "../../../../domain/selectors/board/types";
 
 export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   const filterMode = usePanel((state) => state.filterMode);

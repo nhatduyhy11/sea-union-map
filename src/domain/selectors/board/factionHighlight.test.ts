@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { rankFactionsForHighlight } from "./factionHighlight";
-import type { FactionBoardEntry } from "../../../types";
+import type { FactionBoardEntry } from "./types";
 
 // Entry tối giản cho test highlight — các trường khác không tham gia xếp hạng.
 const entry = (id: string, fuel?: number, score = 0): FactionBoardEntry => ({

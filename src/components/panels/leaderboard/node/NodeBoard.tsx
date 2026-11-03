@@ -5,7 +5,9 @@ import { NodeBoardRow } from "./NodeBoardRow";
 import { useNodeBoardFilter, type ScoreSort } from "./useNodeBoardFilter";
 import shared from "../shared.module.css";
 import styles from "./NodeBoard.module.css";
-import type { CanvasIcon, Faction, NodeBoardEntry } from "../../../../types";
+import type { CanvasIcon } from "../../../../domain/selectors/canvasIcons";
+import type { Faction } from "../../../../types";
+import type { NodeBoardEntry } from "../../../../domain/selectors/board/types";
 
 const SORT_UI: Record<ScoreSort, { Icon: LucideIcon; suffix: string }> = {
   none: { Icon: ArrowUpDown, suffix: "" },

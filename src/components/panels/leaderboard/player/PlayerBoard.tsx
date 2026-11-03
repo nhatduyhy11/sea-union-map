@@ -7,7 +7,7 @@ import { usePanel } from "../../../../stores/panel";
 import { EASTER_EGG_PLAYER_ID, tapEasterEgg } from "../../../../stores/debug";
 import shared from "../shared.module.css";
 import styles from "./PlayerBoard.module.css";
-import type { LeaderboardPlayer } from "../../../../types";
+import type { LeaderboardPlayer } from "../../../../domain/selectors/board/types";
 
 // Tab Cá nhân: filter mode — accordion một player mở tại một thời điểm,
 // player mở chính là filter canvas (cùng logic với member-click tab Phe).

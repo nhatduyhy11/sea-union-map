@@ -6,7 +6,7 @@ import type {
   FactionIslandStats,
   IslandBucket,
   IslandBucketStats,
-} from "../../../types";
+} from "../../../domain/selectors/board/types";
 
 const STAT_ROWS: {
   id: IslandBucket;

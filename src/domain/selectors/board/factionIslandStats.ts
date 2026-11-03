@@ -1,16 +1,12 @@
+import type { CanvasIcon } from "../canvasIcons";
+import type { FactionScore, Island } from "../../../types";
 import type {
-  CanvasIcon,
   FactionIslandStats,
-  FactionScore,
-  Island,
+  FactionNodeFilter,
   IslandBucket,
   IslandBucketStats,
   IslandPoints,
-} from "../../../types";
-
-// Filter đảo của chi tiết căn cứ: một dòng của bảng điểm phe (IslandBucket)
-// hoặc một tập theo icon canvas.
-export type FactionNodeFilter = IslandBucket | "frontline" | "overbuilt";
+} from "./types";
 
 // Thống kê điểm một phe dồn vào các đảo (base không tính), một vòng duyệt cho
 // cả số liệu lẫn tập đảo của từng filter để số đếm và đảo được highlight luôn

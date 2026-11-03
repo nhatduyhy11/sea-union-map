@@ -2,7 +2,7 @@ import type { FactionNodeFilter } from "../../../domain/selectors";
 import { NODE_STATUS } from "../../shared/nodeStatus";
 import pills from "../../shared/FilterPills.module.css";
 import styles from "./BaseDetails.module.css";
-import type { FactionIslandStats } from "../../../types";
+import type { FactionIslandStats } from "../../../domain/selectors/board/types";
 
 // Filter theo icon canvas — chỉ giữ filter có nghĩa khi nhìn từ một phe
 // (Cướp / Vết mô tả cặp owner–phe top của đảo, không thuộc riêng phe nào).

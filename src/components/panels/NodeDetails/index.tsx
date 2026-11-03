@@ -5,7 +5,7 @@ import { number } from "../../../utils/format";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
-import type { NodeDetailData } from "../../../types";
+import type { NodeDetailData } from "../../../domain/selectors/nodeDetails";
 
 export interface NodeDetailsProps {
   details: NodeDetailData;

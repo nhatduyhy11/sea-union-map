@@ -1,20 +1,8 @@
-import type {
-  Contribution,
-  Faction,
-  FactionBoardEntry,
-  GuildScore,
-  Island,
-  Player,
-  ServerGuildRow,
-} from "../../../types";
+import type { ServerGuildRow } from "../../../data/sea-live/types";
+import type { FactionBoardEntry, GuildScore, SortBy } from "./types";
+import type { Contribution, Faction, Island, Player } from "../../../types";
 import { playersFromContributions } from "../nodeScores";
-import {
-  buildGuild,
-  NO_GUILD,
-  scoreByPlayer,
-  sortGuilds,
-  type SortBy,
-} from "./guild";
+import { buildGuild, NO_GUILD, scoreByPlayer, sortGuilds } from "./guild";
 
 // Faction board ("BXH Phe"). Live: guild rows + điểm guild là truth server
 // (bảng "Tổng quan phe" trong dump; tổng guild khớp per-faction node-state exact);

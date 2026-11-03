@@ -1,10 +1,13 @@
-import type {
-  Contribution,
-  Faction,
-  Island,
-  NodeDetailData,
-} from "../../types";
-import { attackersForNode, scoresForNode } from "./nodeScores";
+import type { Contribution, Faction, FactionScore, Island } from "../../types";
+import { attackersForNode, scoresForNode, type Attacker } from "./nodeScores";
+
+export interface NodeDetailData {
+  island: Island;
+  owner?: Faction;
+  scores: FactionScore[];
+  total: number;
+  attackers: Attacker[];
+}
 
 export function nodeDetails(
   nodeId: string | null,

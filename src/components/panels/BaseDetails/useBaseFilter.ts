@@ -4,7 +4,7 @@ import {
   type FactionNodeFilter,
 } from "../../../domain/selectors";
 import { useMapView } from "../../../stores/mapView";
-import type { FactionIslandStats } from "../../../types";
+import type { FactionIslandStats } from "../../../domain/selectors/board/types";
 
 // Filter tập đảo của chi tiết căn cứ. Filter đang bật = highlight các đảo đó
 // trên map; rời panel thì gỡ. Filter gắn với phe đã chọn nó: đổi căn cứ thì

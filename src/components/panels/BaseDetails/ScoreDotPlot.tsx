@@ -2,7 +2,10 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useSelection } from "../../../stores/selection";
 import { compact } from "../../../utils/format";
 import styles from "./BaseDetails.module.css";
-import type { IslandBucketStats, IslandPoints } from "../../../types";
+import type {
+  IslandBucketStats,
+  IslandPoints,
+} from "../../../domain/selectors/board/types";
 
 const HEIGHT = 240;
 const PAD = { top: 8, right: 74, bottom: 8, left: 34 };

@@ -1,15 +1,22 @@
 // Translate domain data to React Flow models without rendering components.
 import type { Edge } from "@xyflow/react";
+import type { AppNode } from "../types";
+import type { CanvasIcon } from "./selectors/canvasIcons";
 import type {
-  AppNode,
-  CanvasIcon,
   Faction,
   FactionScore,
   Island,
   LayoutNode,
-  MapFilter,
   Route,
 } from "../types";
+
+// Filter canvas theo guild/player — null = all.
+// Guild dùng guildId từ game làm identity; bucket "Không guild" giữ nguyên
+// chuỗi "Không guild".
+export interface MapFilter {
+  kind: "guild" | "player";
+  id: string;
+}
 
 // Icon box size (px) per node variant — single source of truth; IslandNode
 // consumes it via the inline --icon-box CSS variable and centers the icon on

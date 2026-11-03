@@ -8,7 +8,8 @@ import { PlayerTable } from "../../NodeDetails/PlayerTable";
 import { tintStyle } from "../tint";
 import shared from "../shared.module.css";
 import styles from "./NodeBoard.module.css";
-import type { CanvasIcon, NodeBoardEntry } from "../../../../types";
+import type { CanvasIcon } from "../../../../domain/selectors/canvasIcons";
+import type { NodeBoardEntry } from "../../../../domain/selectors/board/types";
 
 // Mở expand = focus đảo trên map (camera pan + selected), panel giữ nguyên ở
 // bảng; đa mở được — camera theo lần expand cuối. Đóng expand của đảo đang

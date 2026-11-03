@@ -7,13 +7,13 @@ import raw from "./sea-live.json";
 import type { SeaLiveDump } from "./sea-live/dump";
 
 export type { CampRow, SeaLiveDump } from "./sea-live/dump";
-export {
-  buildLiveData,
-  displayNameOf,
-  layoutIdOf,
-  type LiveData,
-  type LivePlayerRow,
-} from "./sea-live/join";
+export type {
+  LiveData,
+  LivePlayerRow,
+  ServerGuildRow,
+  ServerPlayerRow,
+} from "./sea-live/types";
+export { buildLiveData, displayNameOf, layoutIdOf } from "./sea-live/join";
 
 // Tuple fields cần downcast (JSON import infer number[][], không biết tuple).
 const bundledDump: SeaLiveDump = {

@@ -4,7 +4,7 @@
 import { useMapView } from "./mapView";
 import { usePanel, type MapTab, type RankingBoard } from "./panel";
 import { useSelection } from "./selection";
-import type { MapFilter } from "../types";
+import type { MapFilter } from "../domain/mapGraph";
 
 // Mở đảo từ canvas: bật chi tiết + kéo panel về tab cứ điểm. Rời ranking
 // (nếu đang ở đó) cũng reset view BXH.

@@ -2,7 +2,7 @@ import { Fuel, HandFist } from "lucide-react";
 import { compact } from "../../utils/format";
 import { getFactionIcon } from "./factionIcons";
 import styles from "./FactionSummary.module.css";
-import type { FactionBoardEntry } from "../../types";
+import type { FactionBoardEntry } from "../../domain/selectors/board/types";
 
 // Khối tóm tắt phe của BXH Phe (cờ / tên + ba tập đảo / cột điểm) — dùng lại
 // ở popover căn cứ trên canvas và header chi tiết căn cứ.
