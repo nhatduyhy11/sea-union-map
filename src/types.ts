@@ -243,3 +243,22 @@ export type IslandNodeData = Island & {
 };
 
 export type AppNode = Node<IslandNodeData, "island">;
+
+// Một tập đảo trong thống kê căn cứ phe: số đảo + tổng / trung bình / trung vị
+// điểm phe trên các đảo đó (0 khi tập rỗng).
+export interface IslandBucketStats {
+  count: number;
+  total: number;
+  mean: number;
+  median: number;
+}
+
+// Thống kê chi tiết căn cứ phe (BaseDetails): owned / claimable / below là ba
+// tập rời nhau; enough = owned + claimable, touched = cả ba.
+export interface FactionIslandStats {
+  owned: IslandBucketStats;
+  claimable: IslandBucketStats;
+  below: IslandBucketStats;
+  enough: IslandBucketStats;
+  touched: IslandBucketStats;
+}

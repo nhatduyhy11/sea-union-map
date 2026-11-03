@@ -10,6 +10,7 @@ export {
   NO_GUILD,
   rankFactions,
   rankFactionsForHighlight,
+  factionIslandStats,
   sortGuilds,
 } from "./board";
 export { frontlineNodes } from "./frontline";

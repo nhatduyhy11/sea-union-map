@@ -14,52 +14,6 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Cột phải summary/card: tổng điểm phe + Tổng Nhiên Liệu ngay dưới. `b` mất
-   style `.summary > b` (không còn con trực tiếp) nên khai báo lại ở đây. */
-.scoreCol {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 1px;
-}
-
-.scoreCol b {
-  font-size: 10px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-
-.scoreCol small {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-size: 9px;
-  font-style: italic;
-  color: #8496a1;
-  font-variant-numeric: tabular-nums;
-}
-
-.flag {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  font-size: 13px;
-  font-weight: 600;
-  flex-shrink: 0;
-}
-
-/* Tổng LC sau "X guild |": icon nắm đấm + số, canh giữa với chữ 9px. */
-.power {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  font-style: italic;
-  font-weight: 400;
-}
-
 /* Tiêu đề board: tổng điểm ST 4 phe đẩy hẳn phải, cùng dòng chữ h2. */
 .headRow {
   display: flex;
@@ -72,38 +26,4 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: #33424c;
-}
-
-.islandStats {
-  display: inline-grid;
-  grid-template-columns: repeat(3, auto);
-  margin-top: 5px;
-  text-align: center;
-}
-
-.islandStats > span {
-  padding: 0 8px;
-}
-
-.islandStats > span:first-child {
-  padding-left: 0;
-}
-
-.islandStats > span + span {
-  border-left: 1px solid #dce3e7;
-}
-
-.statLabel {
-  display: block;
-  color: #8496a1;
-  font-size: 9px;
-  font-weight: 400;
-  white-space: nowrap;
-}
-
-.statValue {
-  display: block;
-  margin-top: 2px;
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
 }
