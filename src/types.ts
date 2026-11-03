@@ -157,8 +157,8 @@ export interface MapFilter {
 export type CanvasFilter = MapFilter;
 
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'
-// totals (dump factionGuilds, "Tổng quan phe"), islands = owned nodes ("Chiếm đảo"),
-// `touched` = all nodes with positive faction points, including owned nodes.
+// totals (dump factionGuilds, "Tổng quan phe"), islands = owned nodes
+// excluding the base ("Chiếm đảo"), `touched` = all nodes with positive faction points, including owned nodes.
 export interface FactionBoardEntry extends Faction {
   score: number;
   // Tổng lực chiến các guild trong phe (0 = chưa có power data).

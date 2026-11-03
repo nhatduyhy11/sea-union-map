@@ -44,7 +44,8 @@ for (const serverGuilds of [undefined, { a: [] }]) {
     // Server scores override conflicting or absent capped contribution rows.
     const rows = [contribution("below", 500), contribution("empty", 500)];
     const [entry] = buildFactionBoard(rows, [faction], nodes, serverGuilds);
-    assert.equal(entry.islands, 2);
+    // Base owned by the faction is not counted as a held island.
+    assert.equal(entry.islands, 1);
     assert.equal(entry.claimable, 3);
     assert.equal(entry.touched, 4);
   });

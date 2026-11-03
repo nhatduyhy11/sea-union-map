@@ -29,8 +29,8 @@ P  touched      mọi node X có điểm (đã từng tấn công / dồn điể
 ```
 
 - Sơ đồ phân cấp áp dụng cho node thường có điểm. **Base là ngoại lệ**:
-  được own mặc định dù 0 điểm, vẫn tính vào `owned`/Đảo chiếm nhưng không
-  thuộc `touched` hay `claimable` khi không có điểm.
+  được own mặc định dù 0 điểm, không tính vào Đảo chiếm, và không thuộc
+  `touched` hay `claimable` khi không có điểm.
 - `claimable` cố tình **không xét đường nối** — connectivity chỉ quyết định
   điểm có được xét cho ownership hay không (SEA_EVENT_RULE §3, §4), không quyết định việc
   đủ/chưa đủ ngưỡng.
@@ -42,7 +42,8 @@ P  touched      mọi node X có điểm (đã từng tấn công / dồn điể
   |O| / |A| / |P|; label ở hàng trên, giá trị ở hàng dưới.
   `claimable` chỉ xét điểm > 0 và đủ ngưỡng, không xét connection.
   `touched` là tập cha gồm mọi node phe có điểm > 0, kể cả node đang chiếm
-  có điểm. Base được own mặc định nhưng 0 điểm không thuộc hai tập này.
+  có điểm. Base được own mặc định nhưng không tính vào Đảo chiếm, và 0 điểm
+  nên không thuộc hai tập còn lại.
 - Node trung lập có phe claimable thì mọi phe claimable đều đang bị cắt
   đường: phe claimable còn nối đường thì server đã cho phe đó own
   (SEA_EVENT_RULE §2), trừ hoà điểm (chưa gặp, đối chiếu SEA_EVENT_RULE §8).
