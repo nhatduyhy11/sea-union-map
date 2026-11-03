@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { Castle, ChevronLeft, ChevronRight } from "lucide-react";
 import { factionRing } from "../../../data/factions";
+import { useFitMap } from "../../../hooks/useFitMap";
 import { useSelection } from "../../../stores/selection";
 import { getFactionIcon } from "../../shared/factionIcons";
 import styles from "./BaseCarousel.module.css";
@@ -10,6 +11,8 @@ const STEP = 66 + 12;
 // Kéo quá ngưỡng này (px) là chuyển ít nhất một căn cứ.
 const SWIPE_THRESHOLD = 30;
 const DURATION = 260;
+// Zoom ra toàn canvas khi đổi phe — cùng nhịp với focus đảo.
+const FIT_DURATION = 500;
 // Ô xa tâm hơn chừng này (đơn vị ô) nằm ngoài viewport → không render.
 const VISIBLE = 2.5;
 
@@ -28,6 +31,7 @@ const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 // Chuyển bằng mũi tên, bấm icon bên cạnh, phím ←/→ hoặc kéo ngang.
 export function BaseCarousel({ factionId }: { factionId: string }) {
   const open = useSelection((state) => state.open);
+  const fitMap = useFitMap(FIT_DURATION);
   // Đọc trong rAF (closure cũ) nên giữ bản mới nhất qua ref.
   const factionRef = useRef(factionId);
   factionRef.current = factionId;
@@ -60,7 +64,12 @@ export function BaseCarousel({ factionId }: { factionId: string }) {
       if (t < 1) frame.current = requestAnimationFrame(tick);
       else {
         const id = factionRing[wrap(target)]!.id;
-        if (id !== factionRef.current) open(`base-${id}`);
+        // Đổi phe từ carousel → mở căn cứ mới + zoom mượt ra toàn canvas. Trượt theo
+        // căn cứ đổi từ ngoài thì id đã khớp, không đụng camera.
+        if (id !== factionRef.current) {
+          open(`base-${id}`);
+          fitMap();
+        }
       }
     };
     frame.current = requestAnimationFrame(tick);
@@ -117,8 +126,7 @@ export function BaseCarousel({ factionId }: { factionId: string }) {
     (_, i) => first + i
   );
   const centerFaction = factionRing[wrap(Math.round(pos))]!;
-  const near = (delta: number) =>
-    factionRing[wrap(targetRef.current + delta)]!;
+  const near = (delta: number) => factionRing[wrap(targetRef.current + delta)]!;
 
   return (
     <div
