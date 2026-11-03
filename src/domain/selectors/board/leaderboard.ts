@@ -1,9 +1,6 @@
-import type {
-  Contribution,
-  Faction,
-  LeaderboardPlayer,
-  ServerPlayerRow,
-} from "../../../types";
+import type { ServerPlayerRow } from "../../../data/sea-live/types";
+import type { LeaderboardPlayer } from "./types";
+import type { Contribution, Faction } from "../../../types";
 import { playerAllocations } from "../nodeScores";
 
 // Tab Cá nhân live: rows = BXH điểm server (top-200, board 117). Thứ tự và

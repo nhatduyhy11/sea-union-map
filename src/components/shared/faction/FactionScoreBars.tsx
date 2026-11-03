@@ -1,6 +1,6 @@
-import { compact } from "../../utils/format";
+import { compact } from "../../../utils/format";
 import styles from "./FactionScoreBars.module.css";
-import type { FactionScore } from "../../types";
+import type { FactionScore } from "../../../types";
 
 export interface FactionScoreBarsProps {
   scores: FactionScore[];

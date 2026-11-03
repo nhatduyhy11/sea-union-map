@@ -2,10 +2,10 @@ import type { CSSProperties } from "react";
 import { Anchor, Pin, Shield, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../data/nodeBosses";
 import { number } from "../../../utils/format";
-import { FactionScoreBars } from "../../shared/FactionScoreBars";
+import { FactionScoreBars } from "../../shared/faction/FactionScoreBars";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
-import type { NodeDetailData } from "../../../types";
+import type { NodeDetailData } from "../../../domain/selectors/nodeDetails";
 
 export interface NodeDetailsProps {
   details: NodeDetailData;

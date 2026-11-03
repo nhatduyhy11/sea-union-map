@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { battleCountdown } from "../../../data/eventCalendar";
+import { battleCountdown } from "../../../../data/eventCalendar";
 import styles from "./EventClock.module.css";
 
 const pad = (n: number) => String(n).padStart(2, "0");

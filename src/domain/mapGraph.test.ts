@@ -1,7 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { scoresForNode } from "./selectors";
-import { buildMapEdges, buildMapNodes, matchNodeIds } from "./mapGraph";
+import { buildMapEdges } from "./buildMapEdges";
+import { buildMapNodes, matchNodeIds } from "./buildMapNodes";
 import type { Island } from "../types";
 import { contributions, factions, islands } from "./testFixtures";
 

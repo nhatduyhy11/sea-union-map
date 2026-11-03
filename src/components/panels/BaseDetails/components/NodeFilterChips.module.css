@@ -1,0 +1,17 @@
+/* Filter theo icon canvas (style pill BXH Cứ điểm) + số đảo mỗi filter. div.
+   để thắng .subTabs / .nodeFilters (margin, nowrap + scroll ngang) bất kể
+   thứ tự CSS. */
+div.filters {
+  margin: 16px 0;
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
+.filters button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.filterCount {
+  font-weight: 600;
+}

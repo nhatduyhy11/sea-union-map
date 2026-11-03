@@ -1,5 +1,5 @@
 import { Pin } from "lucide-react";
-import { FactionScoreBars } from "../../shared/FactionScoreBars";
+import { FactionScoreBars } from "../../shared/faction/FactionScoreBars";
 import { compact } from "../../../utils/format";
 import styles from "./NodeStats.module.css";
 import type { FactionScore } from "../../../types";

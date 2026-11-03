@@ -1,5 +1,18 @@
-import type { CanvasIcon, FactionScore, Island, Route } from "../../types";
+import type { FactionScore, Island, Route } from "../../types";
 import { PRESSURE_RATIO } from "./frontline";
+
+export type CanvasIcon =
+  | "base"
+  | "anchor"
+  | "castle"
+  | "belowClaim"
+  | "frozen"
+  | "frontline"
+  | "defend"
+  | "gifted"
+  | "aftermath"
+  | "overbuilt"
+  | "plain";
 
 // Owner bị vượt điểm mà chỉ giữ ≤ 30% điểm phe top: giữ node chỉ nhờ phe top
 // bị cắt đường. Từ 40% (PRESSURE_RATIO) trở lên là vết tích tranh chấp lớn;

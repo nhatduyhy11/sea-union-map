@@ -1,0 +1,40 @@
+.debugToggle {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: #8a9aa5;
+  border: 1px solid #d8dfe3;
+  background: #ffffff;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+/* Picker màu ở DEV hoặc sau khi mở easter egg; nút lưới chỉ ở DEV. */
+.debugGroup {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #cfd9de;
+  background: transparent;
+  padding: 5px 9px;
+  border-radius: 7px;
+}
+
+.debugToggle:hover {
+  color: #33424c;
+  border-color: #b9c5cc;
+}
+
+.debugToggle.debugOn,
+.debugToggle.debugOn:hover {
+  color: #e5484d;
+  border-color: #e5484d;
+  background: #fdf1f1;
+}
+
+@media (max-width: 1100px) {
+  .debugGroup {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+}

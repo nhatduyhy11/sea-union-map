@@ -182,7 +182,8 @@ CreepLO.showHeroItem            → HeroLO.code (hero gợi ý)
 - Export boss cho FE: file riêng `src/data/node-bosses/<ngày đầu đợt>/<server>.json`
   (gameNodeId → monsterId), không nằm trong snapshot — xem
   [SEA_LIVE_DATA.md](SEA_LIVE_DATA.md#các-file-json).
-- Raw config, cách enumerate và phạm vi đã kiểm chứng:
+- Extract config/assets: `tools/socket_log/sea_socket/per_event/boss_extract.py`.
+  Catalog mở rộng và câu hỏi combat còn mở:
   [research boss catalog](../research/2026-11-01-boss-catalog.md).
 
 | `monsterId` | Tên (bỏ tiền tố Tứ Hải-) | `_type` | `_showBoss` / `CreepLO.code` |

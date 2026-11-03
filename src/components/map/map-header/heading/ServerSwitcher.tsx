@@ -1,5 +1,5 @@
-import { servers } from "../../../data/snapshots";
-import { selectServer, useDataset } from "../../../stores/dataset";
+import { servers } from "../../../../data/snapshots";
+import { selectServer, useDataset } from "../../../../stores/dataset";
 import styles from "./ServerSwitcher.module.css";
 
 // Chọn cụm server, dòng riêng dưới tiêu đề map. Danh sách tự lấy từ các snapshot đã có

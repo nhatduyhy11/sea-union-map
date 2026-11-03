@@ -1,13 +1,17 @@
 // Pure queries: no React, UI state, or data source — everything arrives as
 // arguments.
 import type {
-  Attacker,
   Contribution,
   Faction,
   FactionScore,
   Island,
   Player,
 } from "../../types";
+
+export interface Attacker extends Contribution {
+  player?: Player;
+  factionInfo?: Faction;
+}
 
 // Điểm phe tại node: số server (island.factionScores) khi dump có; không thì
 // cộng node-board rows — server cắt top-20/node nên thấp hơn thật ở node đông.

@@ -4,33 +4,9 @@
 // per-node boards are capped at top-20 rows and only list players.
 
 import { layoutNodes, layoutRoutes } from "../map-layout";
-import type {
-  Contribution,
-  Island,
-  Route,
-  ServerGuildRow,
-  ServerPlayerRow,
-} from "../../types";
+import type { Contribution, Island } from "../../types";
 import type { CampRow, SeaLiveDump } from "./dump";
-
-// Row BXH server đã resolve phe (row phe không xác định bị bỏ khi join).
-export type LivePlayerRow = ServerPlayerRow & { faction: string };
-
-// Kết quả join một dump → model UI. Hàm thuần: đổi cụm/ngày là gọi lại với
-// dump khác (store dataset), không còn hằng module-level.
-export interface LiveData {
-  islands: Island[];
-  contributions: Contribution[];
-  playerBoard: LivePlayerRow[];
-  factionGuilds: Record<string, ServerGuildRow[]>;
-  guildNames: Record<string, string>;
-  // Tổng Nhiên Liệu từng phe, key theo direction FE. Dump cũ thiếu key fuel
-  // → {} (UI ẩn nhiên liệu, highlight fallback lực chiến).
-  fuel: Record<string, number>;
-  // game faction id (1..4) → hướng của base phe đó đang giữ.
-  factionDir: Record<number, string>;
-  routes: Route[];
-}
+import type { LiveData, LivePlayerRow, ServerGuildRow } from "./types";
 
 // Prefix display id trong _name ("1-23Đảo Câu Cá" → "1-23") khớp layout id;
 // trung tâm "4-1…" là layout "4"; base (type 1) nối qua dump.baseDir.

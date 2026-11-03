@@ -1,11 +1,11 @@
 import { Search, Layers, Crosshair, RotateCcw } from "lucide-react";
-import { useFitMap } from "../../../hooks/useFitMap";
-import { useFocusIsland } from "../../../hooks/useFocusIsland";
+import { useFitMap } from "../../../../hooks/useFitMap";
+import { useFocusIsland } from "../../../../hooks/useFocusIsland";
 import { useIslandMatches } from "./useIslandMatches";
-import { resetAll } from "../../../stores/commands";
-import { useMapView } from "../../../stores/mapView";
-import { usePanel } from "../../../stores/panel";
-import { useSelection } from "../../../stores/selection";
+import { resetAll } from "../../../../stores/commands";
+import { useMapView } from "../../../../stores/mapView";
+import { usePanel } from "../../../../stores/panel";
+import { useSelection } from "../../../../stores/selection";
 import styles from "./MapToolbar.module.css";
 
 export function MapToolbar() {

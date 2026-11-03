@@ -3,7 +3,9 @@ import assert from "node:assert/strict";
 import { factionFilterIds, factionIslandStats } from "./factionIslandStats";
 import { scoresForNode } from "../nodeScores";
 import { factions } from "../../testFixtures";
-import type { CanvasIcon, Island, IslandBucketStats } from "../../../types";
+import type { CanvasIcon } from "../canvasIcons";
+import type { Island } from "../../../types";
+import type { IslandBucketStats } from "./types";
 
 const node = (
   id: string,

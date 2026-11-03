@@ -1,15 +1,32 @@
-// Translate domain data to React Flow models without rendering components.
-import type { Edge } from "@xyflow/react";
+// Translate island data to React Flow nodes.
 import type {
   AppNode,
-  CanvasIcon,
   Faction,
   FactionScore,
   Island,
   LayoutNode,
-  MapFilter,
-  Route,
 } from "../types";
+import type { CanvasIcon } from "./selectors/canvasIcons";
+
+// Filter canvas theo guild/player — null = all.
+// Guild dùng guildId từ game làm identity; bucket "Không guild" giữ nguyên
+// chuỗi "Không guild".
+export interface MapFilter {
+  kind: "guild" | "player";
+  id: string;
+}
+
+// Filter guild/player → tập node được highlight (node có đóng góp của
+// guild/player đó). Trả null khi không filter; guild/player lạ → tập rỗng.
+export function matchNodeIds(
+  filter: MapFilter | null,
+  nodeIdsByGuild: Map<string, Set<string>>,
+  nodeIdsByPlayer: Map<string, Set<string>>
+): Set<string> | null {
+  if (!filter) return null;
+  const index = filter.kind === "guild" ? nodeIdsByGuild : nodeIdsByPlayer;
+  return index.get(filter.id) ?? new Set();
+}
 
 // Icon box size (px) per node variant — single source of truth; IslandNode
 // consumes it via the inline --icon-box CSS variable and centers the icon on
@@ -36,18 +53,6 @@ export interface MapGraphState {
 export interface MapGraphActions {
   openIsland: (id: string) => void;
   togglePin: (id: string) => void;
-}
-
-// Filter guild/player → tập node được highlight (node có đóng góp của
-// guild/player đó). Trả null khi không filter; guild/player lạ → tập rỗng.
-export function matchNodeIds(
-  filter: MapFilter | null,
-  nodeIdsByGuild: Map<string, Set<string>>,
-  nodeIdsByPlayer: Map<string, Set<string>>
-): Set<string> | null {
-  if (!filter) return null;
-  const index = filter.kind === "guild" ? nodeIdsByGuild : nodeIdsByPlayer;
-  return index.get(filter.id) ?? new Set();
 }
 
 export function buildMapNodes(
@@ -97,50 +102,6 @@ export function buildMapNodes(
           : undefined,
         open: actions.openIsland,
         pin: actions.togglePin,
-      },
-    };
-  });
-}
-
-export function buildMapEdges(
-  routes: Route[],
-  islands: Island[],
-  factions: Faction[],
-  filterActive = false,
-  // Màu + opacity nhóm trung lập (edge không thuộc phe) — chỉnh từ picker debug.
-  neutralColor = "#9caeb9",
-  neutralOpacity = 0.5
-): Edge[] {
-  const byId = new Map(islands.map((island) => [island.id, island]));
-  // Filter không highlight edge — chỉ dim toàn bộ connection để node được
-  // highlight nổi lên.
-  return routes.map((route) => {
-    const source = byId.get(route.source);
-    const target = byId.get(route.target);
-    const faction =
-      source?.owner && source.owner === target?.owner
-        ? factions.find((entry) => entry.id === source.owner)
-        : null;
-    // Edge không thuộc cùng một phe dùng nét đứt, kể cả nối hai phe khác nhau.
-    const neutralLink = faction ? undefined : "7 7";
-    return {
-      ...route,
-      id: `${route.source}__${route.target}`,
-      sourceHandle: "out",
-      targetHandle: "in",
-      type: "route",
-      selectable: false,
-      style: {
-        stroke: faction?.edgeColor ?? faction?.color ?? neutralColor,
-        strokeWidth: faction ? 5 : 3.5,
-        opacity: filterActive
-          ? faction
-            ? 0.1
-            : 0.06
-          : faction
-            ? 0.7
-            : neutralOpacity,
-        strokeDasharray: neutralLink,
       },
     };
   });

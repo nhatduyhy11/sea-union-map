@@ -8,7 +8,10 @@ import {
 import { usePanel } from "../../../../stores/panel";
 import styles from "./GuildAccordion.module.css";
 import shared from "../shared.module.css";
-import type { FactionBoardEntry, GuildScore } from "../../../../types";
+import type {
+  FactionBoardEntry,
+  GuildScore,
+} from "../../../../domain/selectors/board/types";
 
 // Danh sách guild của một phe. Filter mode: row điều khiển canvas
 // (GuildAccordion); free mode: <details> thuần xem, member inert.

@@ -1,5 +1,5 @@
-import { MapHeading } from "./MapHeading";
-import { MapToolbar } from "./MapToolbar";
+import { MapHeading } from "./heading/MapHeading";
+import { MapToolbar } from "./toolbar/MapToolbar";
 import styles from "./MapHeader.module.css";
 
 export function MapHeader() {

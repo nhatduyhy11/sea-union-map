@@ -1,55 +1,20 @@
+/* ────────────────────────────── Khung node ────────────────────────────── */
+
 .island {
   width: 140px;
   height: 85px;
   text-align: center;
   position: relative;
-  /* React Flow tắt pointer-events trên node wrapper (nodesDraggable/elementsSelectable = false);
-     bật lại để hover hiện popup điểm và các nút bấm được */
+  /* React Flow tắt pointer-events trên wrapper; bật lại cho hover và nút bấm. */
   pointer-events: auto;
   transition: opacity 0.2s;
   --faction: #9caeb9;
-  /* --icon-box được set inline từ iconBoxSize() (nguồn duy nhất). */
 }
 
-/* Node trung lập (owner: null): mờ nhẹ mặc định để toàn cảnh đỡ rối (opacity
-   chỉnh từ picker debug qua --neutral-opacity), tự un-dim khi hover/focus.
-   Filter dim (.dim) vẫn phải thắng hover. */
-.neutral {
-  opacity: var(--neutral-opacity, 0.4);
-}
+/* ───────────────────────────────── Icon ───────────────────────────────── */
 
-.neutral:hover,
-.neutral:focus-within,
-.neutral.linked {
-  opacity: 1;
-}
-
-/* Đảo chưa chủ có đóng góp khớp filter guild/player (.hot) không hưởng dim
-   neutral nền — đang có giao tranh phải nổi như đảo có chủ, popup điểm giữ
-   nguyên độ rõ khi showAll (không cần hover). */
-.neutral.hot {
-  opacity: 1;
-}
-
-.dim {
-  opacity: 0.1;
-}
-
-.dim:hover {
-  opacity: 0.1;
-}
-
-/* Node khớp filter guild/player: viền icon dày lên rõ (thường 2px → 3.5px,
-   base 3px → 4.5px), kết hợp dim node lạ + edge mờ để cụm được lọc nổi khỏi
-   toàn cảnh. */
-.hot .islandIcon {
-  border-width: 3.5px;
-}
-
-.hot.base .islandIcon {
-  border-width: 4.5px;
-}
-
+/* Dùng transform để tránh margin collapse làm lệch kích thước và tâm node.
+   --icon-box được set inline từ iconBoxSize(). */
 .islandIcon {
   display: grid;
   place-items: center;
@@ -60,9 +25,6 @@
   border: 2px solid var(--faction);
   color: var(--faction);
   border-radius: 18px;
-  /* Căn tâm kim cương vào đúng tâm hộp node (= tọa độ data). Dùng transform
-     thay vì margin-top: margin của con đầu tiên bị collapse ra ngoài .island,
-     làm React Flow đo chiều cao node bị phình và lệch tâm anchor. */
   transform: translateY(calc(42.5px - var(--icon-box, 55px) / 2)) rotate(45deg);
   box-shadow:
     0 0 0 5px rgba(130, 148, 160, 0.14),
@@ -73,56 +35,7 @@
   transform: rotate(-45deg);
 }
 
-/* Hover (chuột trực tiếp, hoặc .linked — trỏ chấm tương ứng trên dot plot
-   chi tiết căn cứ) và node đang focus (.active) cùng nền icon tint màu phe;
-   glow tách hai rule — hover glow màu phe, focus glow xanh lá. */
-.islandIcon:hover,
-.linked .islandIcon,
-.active .islandIcon {
-  background: color-mix(in srgb, var(--faction) 12%, #ffffff);
-}
-
-/* Vòng nét đặc 3px tông đậm hơn màu phe (pha đen) để tách khỏi nền/icon
-   cùng màu phe + vành mờ + quầng sáng rộng màu phe đậm đặc. */
-.islandIcon:hover,
-.linked .islandIcon {
-  box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--faction) 65%, #000000),
-    0 0 0 7px color-mix(in srgb, var(--faction) 45%, transparent),
-    0 0 26px 8px color-mix(in srgb, var(--faction) 85%, transparent);
-}
-
-/* Node đang focus (selected — mở chi tiết hay expand row BXH Cứ điểm đều
-   vậy): glow xanh lá — màu của trạng thái focus, cùng màu pin, tách khỏi
-   màu phe owner để không lẫn fill giao tranh/cần thủ. Đặt sau rule hover
-   để hover đè lên node đang focus vẫn giữ glow xanh. Vòng nét đặc 3px
-   + vành mờ + quầng sáng rộng để node focus nổi bật hẳn trên map. */
-.active .islandIcon {
-  box-shadow:
-    0 0 0 3px var(--highlight-green),
-    0 0 0 7px color-mix(in srgb, var(--highlight-green) 35%, transparent),
-    0 0 22px 6px color-mix(in srgb, var(--highlight-green) 70%, transparent);
-}
-
-/* Node giao tranh (frontlineNodes — phe nhì dồn điểm ngay cửa node): fill
-   chocolate đậm, icon giữ màu phe owner. Đặt sau rule
-   hover/active để nền giữ nguyên khi hover/chọn — hiệu ứng glow shadow vẫn
-   chạy đè lên bình thường. */
-.frontline .islandIcon {
-  background: #3c1f1e;
-}
-
-/* Quầng trắng mảnh giữ kiếm dễ đọc trên nền chocolate đậm mà
-   không đổi màu icon của phe owner. */
-.frontline .islandIcon svg {
-  filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
-}
-
-/* Node cần thủ (canvasIcon "defend" — điểm owner mỏng mà giáp ranh phe khác):
-   fill màu chính phe nhạt — biết đảo yếu chỗ nào mà vẫn ra màu chủ phe. */
-.defend .islandIcon {
-  background: color-mix(in srgb, var(--faction) 50%, #ffffff);
-}
+/* ─────────────────────────── Nhãn và nút ghim ─────────────────────────── */
 
 .islandLabel {
   margin-top: 20px;
@@ -165,6 +78,8 @@
   color: var(--highlight-green);
 }
 
+/* ─────────────────────────── Biến thể căn cứ ──────────────────────────── */
+
 .base .islandIcon {
   border-radius: 18px;
   border-width: 3px;
@@ -172,11 +87,82 @@
 
 .base .islandLabel {
   color: var(--faction);
-  /* Tên căn cứ in-game — cỡ x2 nhãn đảo thường để nổi bật toàn cảnh. */
+  /* Tên căn cứ lớn gấp đôi nhãn đảo thường. */
   font-size: 28px;
 }
 
-/* Debug: dấu tâm node — nằm ở 50%/50% hộp, trùng với điểm neo edge. */
+/* ────────────────────────── Trạng thái: độ mờ ─────────────────────────── */
+
+/* Đảo trung lập tự sáng khi hover, focus, liên kết hoặc khớp filter. */
+.neutral {
+  opacity: var(--neutral-opacity, 0.4);
+}
+
+.neutral:hover,
+.neutral:focus-within,
+.neutral.linked {
+  opacity: 1;
+}
+
+.neutral.hot {
+  opacity: 1;
+}
+
+/* Dim luôn thắng các trạng thái làm sáng ở trên, kể cả neutral + hot. */
+.island.dim {
+  opacity: 0.1;
+}
+
+/* ─────────────────────── Trạng thái: độ dày viền ──────────────────────── */
+
+.hot .islandIcon {
+  border-width: 3.5px;
+}
+
+.hot.base .islandIcon {
+  border-width: 4.5px;
+}
+
+/* ──── Trạng thái: màu nền (frontline/defend ưu tiên hơn hover và active) ──── */
+
+.islandIcon:hover,
+.linked .islandIcon,
+.active .islandIcon {
+  background: color-mix(in srgb, var(--faction) 12%, #ffffff);
+}
+
+.frontline .islandIcon {
+  background: #3c1f1e;
+}
+
+.defend .islandIcon {
+  background: color-mix(in srgb, var(--faction) 50%, #ffffff);
+}
+
+/* Quầng trắng giữ icon màu phe dễ đọc trên nền giao tranh tối. */
+.frontline .islandIcon svg {
+  filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
+}
+
+/* ───── Trạng thái: quầng sáng (active ưu tiên hơn hover và linked) ────── */
+
+.islandIcon:hover,
+.linked .islandIcon {
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--faction) 65%, #000000),
+    0 0 0 7px color-mix(in srgb, var(--faction) 45%, transparent),
+    0 0 26px 8px color-mix(in srgb, var(--faction) 85%, transparent);
+}
+
+.active .islandIcon {
+  box-shadow:
+    0 0 0 3px var(--highlight-green),
+    0 0 0 7px color-mix(in srgb, var(--highlight-green) 35%, transparent),
+    0 0 22px 6px color-mix(in srgb, var(--highlight-green) 70%, transparent);
+}
+
+/* ───────────────── Debug: tâm node trùng điểm neo edge ────────────────── */
+
 .centerDot {
   position: absolute;
   top: 50%;

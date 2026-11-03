@@ -1,12 +1,6 @@
-import type {
-  Contribution,
-  GuildMember,
-  GuildScore,
-  Player,
-} from "../../../types";
+import type { GuildScore, GuildMember, SortBy } from "./types";
+import type { Contribution, Player } from "../../../types";
 import { playerAllocations } from "../nodeScores";
-
-export type SortBy = "power" | "score";
 
 // Bucket gộp player không guild (hoặc guildId không có row server).
 export const NO_GUILD = "Không guild";

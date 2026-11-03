@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { MapFilter } from "../types";
+import type { MapFilter } from "../domain/buildMapNodes";
 
 // Filter/display state của canvas — mọi thứ quyết định map vẽ cái gì nhưng
 // không đổi dữ liệu nào được chọn. Nơi tập hợp các chế độ lọc: thêm filter

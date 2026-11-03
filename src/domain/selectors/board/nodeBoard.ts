@@ -1,9 +1,5 @@
-import type {
-  Contribution,
-  Faction,
-  Island,
-  NodeBoardEntry,
-} from "../../../types";
+import type { NodeBoardEntry } from "./types";
+import type { Contribution, Faction, Island } from "../../../types";
 import { attackersForNode, scoresForNode } from "../nodeScores";
 
 // Node board ("Cứ điểm"): non-base islands in display-id order (1-1, 1-2 …

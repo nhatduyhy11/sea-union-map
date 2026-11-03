@@ -1,4 +1,4 @@
-import type { FactionBoardEntry } from "../../../types";
+import type { FactionBoardEntry } from "./types";
 
 // Xếp hạng phe cho highlight BXH Phe (viền trái màu phe trên summary) — chỉ
 // dùng cho highlight, số hạng trên row vẫn là thứ hạng theo điểm (rankFactions).

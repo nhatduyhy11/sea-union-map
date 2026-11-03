@@ -13,10 +13,10 @@ import {
   Swords,
 } from "lucide-react";
 import { bossImageUrl } from "../../../data/nodeBosses";
-import { iconBoxSize } from "../../../domain/mapGraph";
+import { iconBoxSize } from "../../../domain/buildMapNodes";
 import { useDebug } from "../../../stores/debug";
 import { useSelection } from "../../../stores/selection";
-import { getFactionIcon } from "../../shared/factionIcons";
+import { getFactionIcon } from "../../shared/faction/factionIcons";
 import { BaseStats } from "./BaseStats";
 import { NodeStats } from "./NodeStats";
 import styles from "./IslandNode.module.css";

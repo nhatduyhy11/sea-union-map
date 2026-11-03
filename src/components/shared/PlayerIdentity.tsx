@@ -1,6 +1,6 @@
 import { HandFist } from "lucide-react";
 import { compact } from "../../utils/format";
-import { getFactionIcon } from "./factionIcons";
+import { getFactionIcon } from "./faction/factionIcons";
 import styles from "./PlayerIdentity.module.css";
 import type { Faction, Player } from "../../types";
 
