@@ -66,6 +66,18 @@
   pointer-events: none;
 }
 
+/* Hạng phe ở góc trên trái, nằm trong ô để viewport không cắt mất. */
+.rank {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  color: #5d6e78;
+  font-variant-numeric: tabular-nums;
+}
+
 .current {
   cursor: inherit;
 }

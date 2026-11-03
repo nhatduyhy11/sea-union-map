@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState, type PointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
 import { Castle, ChevronLeft, ChevronRight } from "lucide-react";
 import { factionRing } from "../../../data/factions";
+import { rankFactions } from "../../../domain/selectors";
 import { useFitMap } from "../../../hooks/useFitMap";
+import { useMapData } from "../../../stores/dataset";
+import { roman } from "../../../utils/format";
 import { useSelection } from "../../../stores/selection";
 import { getFactionIcon } from "../../shared/factionIcons";
 import styles from "./BaseCarousel.module.css";
@@ -32,6 +35,13 @@ const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 export function BaseCarousel({ factionId }: { factionId: string }) {
   const open = useSelection((state) => state.open);
   const fitMap = useFitMap(FIT_DURATION);
+  // Hạng theo điểm phe ở góc mỗi ô — chỉ xếp phe đã có điểm; chưa có điểm
+  // (event chưa bắt đầu) thì không hiện số thay vì hạng 1..N tuỳ ý.
+  const { factionBoard } = useMapData();
+  const ranks = useMemo(
+    () => rankFactions(factionBoard.filter((entry) => entry.score > 0)),
+    [factionBoard]
+  );
   // Đọc trong rAF (closure cũ) nên giữ bản mới nhất qua ref.
   const factionRef = useRef(factionId);
   factionRef.current = factionId;
@@ -158,6 +168,7 @@ export function BaseCarousel({ factionId }: { factionId: string }) {
           const Icon = getFactionIcon(faction.id) ?? Castle;
           const distance = Math.min(1, Math.abs(k - pos));
           const isCenter = Math.round(pos) === k;
+          const rank = ranks.get(faction.id);
           return (
             <button
               key={k}
@@ -173,6 +184,11 @@ export function BaseCarousel({ factionId }: { factionId: string }) {
               onClick={() => !isCenter && animateTo(k)}
             >
               <Icon size={33} />
+              {rank && (
+                <span className={styles.rank} aria-label={`Hạng ${rank}`}>
+                  {roman(rank)}
+                </span>
+              )}
             </button>
           );
         })}
