@@ -1,7 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { canvasIcons, factionEfforts } from "./canvasIcons";
-import { defendNodes } from "./defend";
+import { canvasIcons, factionEfforts, type FactionEffort } from "./canvasIcons";
 import { frontlineNodes } from "./frontline";
 import { scoresForNode } from "./nodeScores";
 import { factions } from "../testFixtures";
@@ -25,27 +24,37 @@ const bases = [
   node("a-base", "a", {}, { base: true }),
   node("b-base", "b", {}, { base: true }),
 ];
-const effort = new Map([
-  ["a", 10],
-  ["b", 10],
+const effort = new Map<string, FactionEffort>([
+  ["a", { mean: 30, median: 20 }],
+  ["b", { mean: 30, median: 20 }],
 ]);
+const scoreMap = (nodes: Island[]) =>
+  new Map(nodes.map((n) => [n.id, scoresForNode(n, [], factions)]));
 function classify(nodes: Island[], routes: Route[] = [], efforts = effort) {
   const all = [...bases, ...nodes];
-  const scores = new Map(
-    all.map((n) => [n.id, scoresForNode(n, [], factions)])
-  );
   const fronts = frontlineNodes(all, routes, [], factions);
-  const defend = defendNodes(all, routes, [], factions, fronts, efforts);
-  return canvasIcons(all, routes, scores, efforts, fronts, defend);
+  return canvasIcons(all, routes, scoreMap(all), efforts, fronts);
 }
+// Láng giềng do phe b own, nối với node đang xét.
+const enemy = node("enemy", "b", { b: 10 });
+const toEnemy = [{ source: "x", target: "enemy" }];
 
-test("Effort uses the board total and pure claimable count; zero denominator stays undefined", () => {
-  const result = factionEfforts([
-    { id: "a", score: 100, claimable: 4 },
-    { id: "b", score: 100, claimable: 0 },
-    { id: "c", score: 0, claimable: 0 },
-  ]);
-  assert.deepEqual([...result], [["a", 25]]);
+test("Effort is mean and median of claimable node scores only", () => {
+  const nodes = [
+    node("n1", "a", { a: 10, b: 5 }),
+    node("n2", "a", { a: 30 }),
+    node("n3", null, { a: 20, b: 9 }),
+    node("n4", "a", { a: 100 }),
+    node("n5", "b", { b: 12 }),
+    node("n6", "b", { b: 40 }),
+    node("n7", "b", { b: 20 }),
+  ];
+  const result = factionEfforts(nodes, scoreMap(nodes));
+  assert.deepEqual(result.get("a"), { mean: 40, median: 25 });
+  // Điểm b dưới ngưỡng (5, 9) không vào tử số.
+  assert.deepEqual(result.get("b"), { mean: 24, median: 20 });
+  const none = [node("n1", "a", { a: 9 })];
+  assert.equal(factionEfforts(none, scoreMap(none)).size, 0);
 });
 
 test("Untouched nodes keep geographic icons; positive points split neutral sword and scissors", () => {
@@ -86,108 +95,72 @@ test("A claimable neutral faction connected from base keeps fallback icon withou
   );
 });
 
-test("Gift requires a cut-off claimable rival strictly above owner and at least twice rival effort", () => {
-  assert.equal(classify([node("x", "a", { a: 10, b: 20 })]).get("x"), "gifted");
-  assert.equal(classify([node("x", "a", { a: 10, b: 19 })]).get("x"), "plain");
-  assert.equal(classify([node("x", "a", { a: 20, b: 20 })]).get("x"), "plain");
-  const nodes = [
-    node("x", "a", { a: 10, b: 20 }),
-    node("bridge", "b", { b: 10 }),
-  ];
-  const routes = [
-    { source: "x", target: "bridge" },
-    { source: "b-base", target: "bridge" },
-  ];
-  assert.equal(classify(nodes, routes).get("x"), "frontline");
-  // An isolated owned neighbor is not enough to restore the path to base.
-  const scores = new Map(
-    nodes.map((n) => [n.id, scoresForNode(n, [], factions)])
-  );
+test("Top owner under 40% pressure: swords when rival borders, flag otherwise", () => {
+  const x = node("x", "a", { a: 100, b: 40 });
+  assert.equal(classify([x, enemy], toEnemy).get("x"), "frontline");
+  assert.equal(classify([x]).get("x"), "aftermath");
+  // Áp lực thắng biceps dù owner vượt mean.
   assert.equal(
-    canvasIcons(
-      [...bases, ...nodes],
-      routes.slice(0, 1),
-      scores,
-      effort,
-      new Map(),
-      new Set()
-    ).get("x"),
-    "gifted"
-  );
-});
-
-test("Biceps starts at three times owner effort and a higher cut-off rival blocks it even without gift", () => {
-  assert.equal(classify([node("x", "a", { a: 29 })]).get("x"), "plain");
-  assert.equal(classify([node("x", "a", { a: 30 })]).get("x"), "overbuilt");
-  assert.equal(
-    classify([node("x", "a", { a: 30, b: 30 })]).get("x"),
+    classify([node("x", "a", { a: 100, b: 39 })]).get("x"),
     "overbuilt"
   );
-  const unequal = new Map([
-    ["a", 10],
-    ["b", 20],
-  ]);
+});
+
+test("Biceps needs the top owner at or above its own mean", () => {
+  assert.equal(classify([node("x", "a", { a: 30 })]).get("x"), "overbuilt");
+  assert.equal(classify([node("x", "a", { a: 29 })]).get("x"), "plain");
+});
+
+test("Outscored owner: gift up to 30%, flag from 40%, nothing in between", () => {
   assert.equal(
-    classify([node("x", "a", { a: 30, b: 35 })], [], unequal).get("x"),
-    "plain"
-  );
-  assert.equal(
-    classify([node("x", "a", { a: 30, b: 40 })], [], unequal).get("x"),
+    classify([node("x", "a", { a: 30, b: 100 })]).get("x"),
     "gifted"
+  );
+  assert.equal(classify([node("x", "a", { a: 35, b: 100 })]).get("x"), "plain");
+  assert.equal(
+    classify([node("x", "a", { a: 40, b: 100 })]).get("x"),
+    "aftermath"
+  );
+  // Khoảng giữa vẫn xét khiên.
+  assert.equal(
+    classify([node("x", "a", { a: 17, b: 50 }), enemy], toEnemy).get("x"),
+    "defend"
   );
 });
 
-test("Shield beats gift, requires a foreign owned neighbor, and uses a strict effort boundary", () => {
-  const nodes = [
-    node("x", "a", { a: 9, b: 20 }),
-    node("enemy", "b", { b: 10 }),
-  ];
-  // Highest-scoring rival b is cut off at x. A third faction borders x.
-  const c = { id: "c", name: "C", color: "#ccc", labelColor: "#333" };
-  const all = [...bases, nodes[0], node("enemy", "c", { c: 10 })];
-  const scores = new Map(
-    all.map((n) => [n.id, scoresForNode(n, [], [...factions, c])])
-  );
-  const routes = [{ source: "x", target: "enemy" }];
-  const fronts = frontlineNodes(all, routes, [], [...factions, c]);
-  const defend = defendNodes(all, routes, [], [...factions, c], fronts, effort);
+test("Shield needs a foreign owned neighbor and a score strictly below median", () => {
   assert.equal(
-    canvasIcons(all, routes, scores, effort, fronts, defend).get("x"),
+    classify([node("x", "a", { a: 19, b: 5 }), enemy], toEnemy).get("x"),
     "defend"
   );
   assert.equal(
-    classify([node("x", "a", { a: 10 }), nodes[1]], routes).get("x"),
+    classify([node("x", "a", { a: 20 }), enemy], toEnemy).get("x"),
     "plain"
   );
   assert.equal(
     classify(
-      [node("x", "a", { a: 9 }), node("enemy", null, { b: 10 })],
-      routes
+      [node("x", "a", { a: 19 }), node("enemy", null, { b: 10 })],
+      toEnemy
     ).get("x"),
     "plain"
   );
-  // Missing route endpoint must not count as a foreign owner.
-  assert.equal(classify([node("x", "a", { a: 9 })], routes).get("x"), "plain");
-});
-
-test("Unknown effort skips dependent icons; bases always retain faction icons", () => {
+  // Đầu route không tồn tại không tính là phe khác.
   assert.equal(
-    classify([node("x", "a", { a: 50, b: 100 })], [], new Map()).get("x"),
+    classify([node("x", "a", { a: 19 })], toEnemy).get("x"),
     "plain"
   );
-  const nodes = [...bases, node("x", "b", { b: 100 })];
-  const scores = new Map(
-    nodes.map((n) => [n.id, scoresForNode(n, [], factions)])
-  );
+});
+
+test("Unknown effort skips biceps and shield; bases always retain faction icons", () => {
   assert.equal(
-    canvasIcons(
-      nodes,
-      [],
-      scores,
-      effort,
-      new Map([["a-base", {}]]),
-      new Set(["a-base"])
-    ).get("a-base"),
+    classify([node("x", "a", { a: 50 }), enemy], toEnemy, new Map()).get("x"),
+    "plain"
+  );
+  const all = [...bases, node("x", "b", { b: 100 })];
+  assert.equal(
+    canvasIcons(all, [], scoreMap(all), effort, new Map([["a-base", {}]])).get(
+      "a-base"
+    ),
     "base"
   );
 });

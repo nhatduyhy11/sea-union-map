@@ -56,7 +56,7 @@ export function buildMapNodes(
   // Node giao tranh (domain/selectors/frontline.ts) — data node mang theo
   // { rival, ratio } để viền hồng, sẵn cho popup/tooltip sau này.
   frontlineByNode: Map<string, { rival: Faction; ratio: number }>,
-  // Node cần thủ (domain/selectors/defend.ts) — flag cho icon shield-alert
+  // Node cần thủ (canvasIcon "defend") — flag cho icon shield-alert
   // + fill màu phe nhạt.
   defendNodeIds: Set<string>,
   factions: Faction[],

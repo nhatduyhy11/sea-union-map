@@ -4,6 +4,7 @@ import {
   Anchor,
   BicepsFlexed,
   Castle,
+  Flag,
   Gift,
   Pin,
   Scissors,
@@ -37,6 +38,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
     frontline: Swords,
     defend: ShieldAlert,
     gifted: Gift,
+    aftermath: Flag,
     overbuilt: BicepsFlexed,
     plain: null,
   };

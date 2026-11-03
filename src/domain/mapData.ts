@@ -5,7 +5,6 @@ import {
   buildFactionBoard,
   buildNodeBoard,
   buildServerLeaderboard,
-  defendNodes,
   frontlineNodes,
   NO_GUILD,
   playersFromContributions,
@@ -55,7 +54,7 @@ export function buildMapData(
     undefined,
     live.fuel
   );
-  const effortByFaction = factionEfforts(factionBoard);
+  const effortByFaction = factionEfforts(islands, scoresByNode);
   // Node giao tranh — phe nhì dồn điểm ngay cửa node (fill chocolate + icon
   // kiếm).
   const frontlineByNode = frontlineNodes(
@@ -64,23 +63,19 @@ export function buildMapData(
     contributions,
     factions
   );
-  // Node cần thủ — điểm phe claim mỏng mà giáp ranh phe khác, loại node đang
-  // tranh chấp (icon shield-alert + fill màu phe nhạt).
-  const defendNodeIds = defendNodes(
-    islands,
-    routes,
-    contributions,
-    factions,
-    frontlineByNode,
-    effortByFaction
-  );
   const canvasIconByNode = canvasIcons(
     islands,
     routes,
     scoresByNode,
     effortByFaction,
-    frontlineByNode,
-    defendNodeIds
+    frontlineByNode
+  );
+  // Node cần thủ — điểm owner mỏng mà giáp ranh phe khác (icon shield-alert
+  // + fill màu phe nhạt).
+  const defendNodeIds = new Set(
+    [...canvasIconByNode]
+      .filter(([, icon]) => icon === "defend")
+      .map(([id]) => id)
   );
 
   const knownGuildIds = new Set(

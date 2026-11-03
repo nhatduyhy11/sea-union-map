@@ -34,6 +34,29 @@ test("Map has unique nodes, four unclaimable bases, and valid routes", () => {
     }
   assert.equal(visited.size, islands.length);
 });
+test("Routes do not skip through another island on the same line", () => {
+  // A long edge can hide behind two valid shorter edges, making an invalid
+  // adjacency invisible (previously 2-31 → 2-48 skipped through 2-8).
+  for (const route of routes) {
+    const a = at(route.source);
+    const b = at(route.target);
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const lengthSquared = dx * dx + dy * dy;
+    for (const node of islands) {
+      if (node.id === route.source || node.id === route.target) continue;
+      const px = node.position.x - a.x;
+      const py = node.position.y - a.y;
+      const t = (px * dx + py * dy) / lengthSquared;
+      if (t <= 0 || t >= 1) continue;
+      const distance = Math.abs(px * dy - py * dx) / Math.sqrt(lengthSquared);
+      assert.ok(
+        distance > 1,
+        `${route.source} → ${route.target} skips through ${node.id}`
+      );
+    }
+  }
+});
 test("Screenshot landmarks use the central axis and matching opposite sectors", () => {
   assert.deepEqual(at("4"), { x: 0, y: 0 });
   for (const node of islands.filter((n) => n.central))

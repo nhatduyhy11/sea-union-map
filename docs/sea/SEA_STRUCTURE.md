@@ -66,8 +66,10 @@ vòng theo ngày.
 
 - Podium top 3 (hộp rank 2/1/3) + list xếp hạng bên dưới (server trả top-200).
 - Dòng cố định đáy màn: acc đang đăng nhập + **"Điểm ST"** tổng của acc.
-- Đây là bảng "thống kê tổng điểm các player" của intent §4. Không đối chiếu được
-  với tổng node board: [SEA_STATS_RECONCILE.md](SEA_STATS_RECONCILE.md).
+- Đây là bảng "thống kê tổng điểm các player" của intent §4. Tổng điểm player
+  qua node-board có thể thiếu vì giới hạn top-20/node; không kỳ vọng bằng điểm
+  BXH. Nguồn điểm và giới hạn dữ liệu:
+  [SEA_STATS_RECONCILE.md §2](SEA_STATS_RECONCILE.md#2-các-nguồn-điểm).
 
 ### 3.4. Tổng quan phe — `docs/assets/sea-socket/5-4faction-detail.png` (detail faction)
 
@@ -210,8 +212,9 @@ CreepLO.showHeroItem            → HeroLO.code (hero gợi ý)
 ## 6. Ánh xạ vào UI
 
 Cấu trúc 3 tab Phe / Cá nhân / Cứ điểm và dump field ↔ chỗ tiêu thụ trên web:
-[LEADERBOARD_SPECS.md](../LEADERBOARD_SPECS.md) §1.2, §1.3, §3; nguồn từng con số:
-[SEA_STATS_RECONCILE.md](SEA_STATS_RECONCILE.md) §3.
+[LEADERBOARD_SPECS.md](../LEADERBOARD_SPECS.md) §1.2, §1.3, §3; cách dump/FE sử dụng
+các nguồn điểm và fallback khi thiếu node state:
+[SEA_STATS_RECONCILE.md §3](SEA_STATS_RECONCILE.md#3-hiện-trạng).
 
 ## 7. Điểm còn mở
 
