@@ -159,7 +159,7 @@ export function NodeBoard({
             }}
           >
             <summary
-              className={`${styles.summary} ${styles.tintedSummary} ${bossHalf ? styles.bossSummary : ""}`}
+              className={`${styles.summary} ${styles.tintedSummary} ${bossHalf ? styles.bossSummary : ""} ${entry.island.tier === 4 ? styles.centerSummary : ""}`}
               style={
                 {
                   ...tintStyle(entry.owner?.color),
@@ -169,7 +169,9 @@ export function NodeBoard({
             >
               <span className={styles.rank}>{index + 1}</span>
               <div className={styles.factionName}>
-                {entry.island.id} {entry.island.name}
+                <span className={styles.nodeTitle}>
+                  {entry.island.id} {entry.island.name}
+                </span>
                 <small>
                   {entry.scores.filter((s) => s.score > 0).length} phe
                   {entry.total > 0 ? (

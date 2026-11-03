@@ -112,6 +112,15 @@
   font-weight: 500;
 }
 
+/* Đảo trung tâm (tier 4): số thứ hạng, tên đảo và tổng điểm màu xanh lá
+   kiểu Matrix, glow nhẹ. */
+.centerSummary .rank,
+.centerSummary .nodeTitle,
+.centerSummary > b {
+  color: #00b140;
+  text-shadow: 0 0 3px rgba(0, 255, 65, 0.3);
+}
+
 .factionName small {
   display: block;
   font-size: 9px;
