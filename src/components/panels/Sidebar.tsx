@@ -1,8 +1,8 @@
-import { Compass, Flag, Trophy } from "lucide-react";
+import { Flag, Trophy } from "lucide-react";
 import { BaseDetails } from "./BaseDetails";
 import { NodeDetails } from "./NodeDetails";
 import { Leaderboard } from "./leaderboard/Leaderboard";
-import { useNodeDetails } from "./useNodeDetails";
+import { useDefaultBase, useNodeDetails } from "./useNodeDetails";
 import { setPanelTab } from "../../stores/commands";
 import { useSelection } from "../../stores/selection";
 import { usePanel } from "../../stores/panel";
@@ -13,6 +13,9 @@ import styles from "./Sidebar.module.css";
 export function Sidebar() {
   const tab = usePanel((state) => state.tab);
   const details = useNodeDetails();
+  // Chưa chọn đảo: tab Cứ điểm mặc định là căn cứ phe top 1; click đảo / chấm
+  // dot plot / carousel mới đè lên.
+  const defaultBase = useDefaultBase();
   const pinned = useSelection((state) => state.pinned);
   const close = useSelection((state) => state.close);
   const togglePin = useSelection((state) => state.togglePin);
@@ -50,11 +53,11 @@ export function Sidebar() {
             onTogglePin={togglePin}
           />
         ) : (
-          <div className={styles.empty}>
-            <Compass size={40} />
-            <h2>Khám phá chiến trường</h2>
-            <p>Chọn một đảo trên map để xem điểm các phe và người chơi.</p>
-          </div>
+          <BaseDetails
+            island={defaultBase}
+            pinned={pinned.has(defaultBase.id)}
+            onTogglePin={togglePin}
+          />
         )}
       </div>
     </aside>

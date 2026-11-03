@@ -25,7 +25,8 @@ import type { Island, IslandBucketStats } from "../../../types";
 export interface BaseDetailsProps {
   island: Island;
   pinned: boolean;
-  onClose: () => void;
+  // Không truyền = căn cứ mặc định của tab (chưa chọn đảo): ẩn nút đóng.
+  onClose?: () => void;
   onTogglePin: (id: string) => void;
 }
 
@@ -95,9 +96,11 @@ export function BaseDetails({
             </p>
           </InfoHint>
         </span>
-        <button aria-label="Đóng chi tiết" onClick={onClose}>
-          <X size={17} />
-        </button>
+        {onClose && (
+          <button aria-label="Đóng chi tiết" onClick={onClose}>
+            <X size={17} />
+          </button>
+        )}
       </div>
       <BaseCarousel factionId={factionId} />
       <h2 className={detail.title}>{island.name}</h2>
