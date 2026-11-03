@@ -33,7 +33,7 @@ for (const serverGuilds of [undefined, { a: [] }]) {
         owner: "a",
         base: true,
         claimThreshold: 0,
-        factionScores: {},
+        factionScores: { a: 999 },
       }),
       island("owned", { owner: "a", factionScores: { a: 100 } }),
       island("outbid", { owner: "b", factionScores: { a: 120, b: 150 } }),
@@ -44,7 +44,7 @@ for (const serverGuilds of [undefined, { a: [] }]) {
     // Server scores override conflicting or absent capped contribution rows.
     const rows = [contribution("below", 500), contribution("empty", 500)];
     const [entry] = buildFactionBoard(rows, [faction], nodes, serverGuilds);
-    // Base owned by the faction is not counted as a held island.
+    // Base is excluded from all three counts, even with points on it.
     assert.equal(entry.islands, 1);
     assert.equal(entry.claimable, 3);
     assert.equal(entry.touched, 4);

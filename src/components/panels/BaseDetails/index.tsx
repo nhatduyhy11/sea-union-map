@@ -25,6 +25,7 @@ import {
 import detail from "../NodeDetails/NodeDetails.module.css";
 import board from "../leaderboard/shared.module.css";
 import styles from "./BaseDetails.module.css";
+import { InfoHint } from "../../shared/InfoHint";
 import { BaseCarousel } from "./BaseCarousel";
 import { ScoreDotPlot } from "./ScoreDotPlot";
 import type { Island, IslandBucketStats } from "../../../types";
@@ -83,7 +84,19 @@ export function BaseDetails({
   return (
     <div className={detail.detail}>
       <div className={detail.detailTop}>
-        <span className={detail.eyebrow}>THÔNG TIN CĂN CỨ PHE</span>
+        <span className={detail.eyebrow}>
+          THÔNG TIN CĂN CỨ PHE
+          <InfoHint>
+            <p>
+              Mọi số đếm đảo ở đây (Đảo chiếm, Đủ điểm, Đánh và bảng "Điểm phe
+              trên các đảo") đều không tính căn cứ phe.
+            </p>
+            <p>
+              Trong game Đảo chiếm có tính cả căn cứ, nên số trên web thấp hơn
+              1.
+            </p>
+          </InfoHint>
+        </span>
         <button aria-label="Đóng chi tiết" onClick={onClose}>
           <X size={17} />
         </button>

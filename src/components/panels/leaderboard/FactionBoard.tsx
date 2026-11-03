@@ -13,6 +13,7 @@ import {
   FactionLines,
   ScoreCol,
 } from "../../shared/FactionSummary";
+import { InfoHint } from "../../shared/InfoHint";
 import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
 import shared from "./shared.module.css";
@@ -51,7 +52,15 @@ export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   return (
     <>
       <div className={styles.headRow}>
-        <h2>Xếp hạng phe</h2>
+        <h2>
+          Xếp hạng phe
+          <InfoHint>
+            <p>
+              Đảo chiếm, Đủ điểm và Đánh không tính căn cứ phe. Trong game Đảo
+              chiếm có tính cả căn cứ, nên số trên web thấp hơn 1.
+            </p>
+          </InfoHint>
+        </h2>
         <span className={styles.headTotal} title="Tổng điểm ST của 4 phe">
           {compact(totalScore)}
         </span>
