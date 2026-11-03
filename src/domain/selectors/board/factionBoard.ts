@@ -138,21 +138,21 @@ function factionEntry(
   touched: Map<string, Map<string, number>>
 ): FactionBoardEntry {
   const sorted = sortGuilds(guilds, sortBy);
+  // Căn cứ luôn thuộc phe, không chiếm được: loại khỏi cả ba số đếm đảo.
+  const nodes = islands.filter((node) => !node.base);
   const pointsAt = (node: Island) =>
     node.factionScores
       ? (node.factionScores[faction.id] ?? 0)
       : (touched.get(node.id)?.get(faction.id) ?? 0);
   return {
     ...faction,
-    // Đảo chiếm: không tính căn cứ (luôn thuộc phe, không chiếm được).
-    islands: islands.filter((node) => !node.base && node.owner === faction.id)
-      .length,
+    islands: nodes.filter((node) => node.owner === faction.id).length,
     // Đã đánh (touched): mọi đảo có điểm phe > 0, gồm cả đảo đang chiếm.
     // Nguồn điểm phe/đảo như scoresForNode: server state (đủ — node board bị
     // cắt top-20/đảo), dump cũ thiếu thì cộng contributions.
-    touched: islands.filter((node) => pointsAt(node) > 0).length,
-    // Thuần ngưỡng điểm, không xét owner hay đường nối. Base 0 điểm không tính.
-    claimable: islands.filter((node) => {
+    touched: nodes.filter((node) => pointsAt(node) > 0).length,
+    // Thuần ngưỡng điểm, không xét owner hay đường nối.
+    claimable: nodes.filter((node) => {
       const points = pointsAt(node);
       return points > 0 && points >= node.claimThreshold;
     }).length,

@@ -1,0 +1,83 @@
+/* Hàng icon căn cứ: mũi tên hai bên, viewport cắt icon liền kề còn 3/4
+   (66px tile → ló 50px). Viewport = tile giữa + 2 × (gap + 50px).
+   --tile + --gap = STEP trong BaseCarousel.tsx. */
+.carousel {
+  --tile: 66px;
+  --gap: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 25px 0 14px;
+  outline: none;
+}
+
+.carousel:focus-visible .current {
+  box-shadow: 0 0 0 2px #9caeb9;
+}
+
+.arrow {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  color: #5d6e78;
+  border-radius: 50%;
+}
+
+.arrow:hover {
+  background: #eef2f4;
+  color: #33424c;
+}
+
+.viewport {
+  position: relative;
+  width: calc(var(--tile) + 2 * (var(--gap) + var(--tile) * 0.75));
+  height: var(--tile);
+  overflow: hidden;
+  cursor: grab;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.viewport:active {
+  cursor: grabbing;
+}
+
+/* Ô đặt từ tâm viewport; vị trí / độ mờ / scale set inline theo khoảng cách
+   tới tâm (JS animate từng frame, không dùng transition CSS). */
+.tile {
+  position: absolute;
+  top: 0;
+  left: calc(50% - var(--tile) / 2);
+  width: var(--tile);
+  height: var(--tile);
+  display: grid;
+  place-items: center;
+  background: #eef2f4;
+  border: 1px solid #dce3e6;
+  border-radius: 16px;
+  cursor: pointer;
+  will-change: transform, opacity;
+}
+
+.tile svg {
+  pointer-events: none;
+}
+
+/* Hạng phe ở góc trên trái, nằm trong ô để viewport không cắt mất. */
+.rank {
+  position: absolute;
+  top: 5px;
+  left: 7px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  color: #5d6e78;
+  font-variant-numeric: tabular-nums;
+}
+
+.current {
+  cursor: inherit;
+}

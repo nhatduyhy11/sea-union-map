@@ -4,7 +4,7 @@ export { buildFactionBoard, rankFactions } from "./factionBoard";
 export { rankFactionsForHighlight } from "./factionHighlight";
 export {
   factionIslandStats,
-  factionNodeFilters,
+  factionFilterIds,
   type FactionNodeFilter,
 } from "./factionIslandStats";
 export { NO_GUILD, sortGuilds } from "./guild";

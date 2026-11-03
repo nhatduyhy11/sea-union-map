@@ -1,7 +1,7 @@
 import type { Faction } from "../types";
 
 // Tên phe = tên base in-game (không dùng hướng Đông/Tây/Nam/Bắc). Thứ tự mảng
-// là thứ tự hiển thị cố định (pill + list Tab Phe, legend chân canvas).
+// là thứ tự hiển thị cố định (pill + list Tab Phe).
 // Hai field màu vẫn tách để có thể đổi riêng sau này, nhưng hiện Owner chốt
 // (2026-10-29) dùng chung một màu cho label và edge mỗi phe:
 // - color: swatch/edge/viền đảo/icon căn cứ/bar điểm.
@@ -37,3 +37,10 @@ export const factions: Faction[] = [
     labelColor: "#8e44d8",
   },
 ];
+
+// Vòng căn cứ ngược chiều kim đồng hồ trên map: Vịnh → Thần Tự → Thánh Đảo →
+// Long Khư. Legend chân canvas và vòng chuyển căn cứ trong chi tiết căn cứ đi
+// theo thứ tự này.
+export const factionRing: Faction[] = ["east", "north", "west", "south"].map(
+  (id) => factions.find((faction) => faction.id === id)!
+);

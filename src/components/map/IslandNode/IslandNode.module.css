@@ -19,7 +19,8 @@
 }
 
 .neutral:hover,
-.neutral:focus-within {
+.neutral:focus-within,
+.neutral.linked {
   opacity: 1;
 }
 
@@ -31,11 +32,11 @@
 }
 
 .dim {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 .dim:hover {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 /* Node khớp filter guild/player: viền icon dày lên rõ (thường 2px → 3.5px,
@@ -72,27 +73,35 @@
   transform: rotate(-45deg);
 }
 
-/* Hover và node đang focus (.active) cùng nền icon tint màu phe; glow tách
-   hai rule — hover glow màu phe, focus glow xanh lá. */
+/* Hover (chuột trực tiếp, hoặc .linked — trỏ chấm tương ứng trên dot plot
+   chi tiết căn cứ) và node đang focus (.active) cùng nền icon tint màu phe;
+   glow tách hai rule — hover glow màu phe, focus glow xanh lá. */
 .islandIcon:hover,
+.linked .islandIcon,
 .active .islandIcon {
   background: color-mix(in srgb, var(--faction) 12%, #ffffff);
 }
 
-.islandIcon:hover {
+/* Vòng nét đặc 3px tông đậm hơn màu phe (pha đen) để tách khỏi nền/icon
+   cùng màu phe + vành mờ + quầng sáng rộng màu phe đậm đặc. */
+.islandIcon:hover,
+.linked .islandIcon {
   box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--faction) 22%, transparent),
-    0 6px 18px color-mix(in srgb, var(--faction) 32%, transparent);
+    0 0 0 3px color-mix(in srgb, var(--faction) 65%, #000000),
+    0 0 0 7px color-mix(in srgb, var(--faction) 45%, transparent),
+    0 0 26px 8px color-mix(in srgb, var(--faction) 85%, transparent);
 }
 
 /* Node đang focus (selected — mở chi tiết hay expand row BXH Cứ điểm đều
    vậy): glow xanh lá — màu của trạng thái focus, cùng màu pin, tách khỏi
    màu phe owner để không lẫn fill giao tranh/cần thủ. Đặt sau rule hover
-   để hover đè lên node đang focus vẫn giữ glow xanh. */
+   để hover đè lên node đang focus vẫn giữ glow xanh. Vòng nét đặc 3px
+   + vành mờ + quầng sáng rộng để node focus nổi bật hẳn trên map. */
 .active .islandIcon {
   box-shadow:
-    0 0 0 6px color-mix(in srgb, var(--highlight-green) 22%, transparent),
-    0 6px 18px color-mix(in srgb, var(--highlight-green) 32%, transparent);
+    0 0 0 3px var(--highlight-green),
+    0 0 0 7px color-mix(in srgb, var(--highlight-green) 35%, transparent),
+    0 0 22px 6px color-mix(in srgb, var(--highlight-green) 70%, transparent);
 }
 
 /* Node giao tranh (frontlineNodes — phe nhì dồn điểm ngay cửa node): fill

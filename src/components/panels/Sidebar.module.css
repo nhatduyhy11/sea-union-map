@@ -39,28 +39,6 @@
   overflow-y: auto;
 }
 
-.empty {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  text-align: center;
-  padding: 24px;
-  color: #7b8d98;
-}
-
-.empty h2 {
-  font-size: 16px;
-  margin-top: 20px;
-  color: #33424c;
-}
-
-.empty p {
-  font-size: 11px;
-  line-height: 1.8;
-}
-
 @media (min-width: 1600px) {
   .sidebar {
     width: 370px;
@@ -86,9 +64,5 @@
 
   .tabs {
     height: 54px;
-  }
-
-  .empty {
-    padding: 40px;
   }
 }

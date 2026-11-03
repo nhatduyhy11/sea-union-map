@@ -12,9 +12,13 @@ export const FIT_VIEW_OPTIONS = {
   duration: 0,
 } as const;
 
-// Fit toàn cảnh — consumed directly by the fixed set of components with a fit
-// button (NavigationRail, MapToolbar), not routed through any store.
-export function useFitMap() {
+// Fit toàn cảnh — consumed directly by the components that re-frame the map
+// (nút fit của NavigationRail / MapToolbar, đổi phe ở BaseCarousel), not
+// routed through any store. `duration` > 0 = zoom ra mượt thay vì nhảy khung.
+export function useFitMap(duration: number = FIT_VIEW_OPTIONS.duration) {
   const { fitView } = useReactFlow<AppNode, Edge>();
-  return useCallback(() => fitView(FIT_VIEW_OPTIONS), [fitView]);
+  return useCallback(
+    () => fitView({ ...FIT_VIEW_OPTIONS, duration }),
+    [fitView, duration]
+  );
 }

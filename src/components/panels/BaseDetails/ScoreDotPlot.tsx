@@ -1,4 +1,5 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useSelection } from "../../../stores/selection";
 import { compact } from "../../../utils/format";
 import styles from "./BaseDetails.module.css";
 import type { IslandBucketStats, IslandPoints } from "../../../types";
@@ -12,20 +13,28 @@ const R = 3.5;
 // đang chiếm, rỗng = mất: đủ điểm chưa chiếm), trục log lớn ở trên, vạch avg /
 // median của cả tập. Đảo 0 điểm (chiếm mà phe không có điểm) nằm ở dải "0"
 // dưới đáy vì log không biểu diễn được 0. highlight (filter trạng thái đang
-// bật) làm nổi chấm thuộc tập, mờ phần còn lại.
+// bật) làm nổi chấm thuộc tập, mờ phần còn lại. Hover chấm hiện id đảo (như
+// nhãn trên map) kèm điểm và bật viền hover của node đó trên canvas; click
+// chấm gọi onSelect (focus đảo đó).
 export function ScoreDotPlot({
   islands,
   stats,
   color,
   highlight,
+  onSelect,
 }: {
   islands: IslandPoints[];
   stats: IslandBucketStats;
   color: string;
   highlight?: ReadonlySet<string> | null;
+  onSelect?: (id: string) => void;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(280);
+  const hover = useSelection((state) => state.hover);
+  // Graph unmount (đổi phe/đóng panel) khi chuột còn trên chấm → không có
+  // mouseleave, xoá hover để node trên canvas không kẹt viền.
+  useEffect(() => () => hover(null), [hover]);
   useLayoutEffect(() => {
     const element = box.current;
     if (!element) return;
@@ -81,12 +90,11 @@ export function ScoreDotPlot({
               r={hot ? R + 1.5 : R}
               fill={dot.owned ? color : "#ffffff"}
               stroke={color}
+              onClick={() => onSelect?.(dot.id)}
+              onMouseEnter={() => hover(dot.id)}
+              onMouseLeave={() => hover(null)}
             >
-              <title>
-                {`${dot.name} · ${compact(dot.points)} · ${
-                  dot.owned ? "đang chiếm" : "mất"
-                }`}
-              </title>
+              <title>{`${dot.id} | ${compact(dot.points)}`}</title>
             </circle>
           );
         })}

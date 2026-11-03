@@ -5,6 +5,7 @@ import {
   buildFactionBoard,
   buildNodeBoard,
   buildServerLeaderboard,
+  factionIslandStats,
   frontlineNodes,
   NO_GUILD,
   playersFromContributions,
@@ -78,6 +79,21 @@ export function buildMapData(
       .map(([id]) => id)
   );
 
+  // Chi tiết căn cứ: thống kê + tập đảo từng filter của mỗi phe, tính một lần
+  // theo bộ dữ liệu (vuốt carousel đổi phe chỉ tra map).
+  const islandStatsByFaction = new Map(
+    factions.map((faction) => [
+      faction.id,
+      factionIslandStats(
+        faction.id,
+        islands,
+        scoresByNode,
+        canvasIconByNode,
+        frontlineByNode
+      ),
+    ])
+  );
+
   const knownGuildIds = new Set(
     Object.values(live.factionGuilds).flatMap((rows) =>
       rows.map((row) => row.guildId)
@@ -104,6 +120,7 @@ export function buildMapData(
     defendNodeIds,
     canvasIconByNode,
     effortByFaction,
+    islandStatsByFaction,
     ownedIslands: islands,
     // Tab Cá nhân: BXH điểm server (dump playerBoard) — thứ tự/điểm truth.
     // Tab Phe: gắn guild scores server (dump factionGuilds).

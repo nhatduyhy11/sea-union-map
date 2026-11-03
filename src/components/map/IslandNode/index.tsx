@@ -15,6 +15,7 @@ import {
 import { bossImageUrl } from "../../../data/nodeBosses";
 import { iconBoxSize } from "../../../domain/mapGraph";
 import { useDebug } from "../../../stores/debug";
+import { useSelection } from "../../../stores/selection";
 import { getFactionIcon } from "../../shared/factionIcons";
 import { BaseStats } from "./BaseStats";
 import { NodeStats } from "./NodeStats";
@@ -27,6 +28,9 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   // debug store); fallback của --faction vì inline style luôn ghi đè CSS default.
   const neutralColor = useDebug((state) => state.neutralColor);
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
+  // Trỏ từ panel (chấm dot plot chi tiết căn cứ) — chỉ viền hover, không bật
+  // popup điểm.
+  const linked = useSelection((state) => state.hovered === data.id);
   const FactionIcon = data.base
     ? getFactionIcon(data.factionInfo?.id ?? data.owner ?? data.id)
     : null;
@@ -65,6 +69,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
     data.base && styles.base,
     data.central && styles.central,
     !data.owner && styles.neutral,
+    linked && styles.linked,
     data.active && styles.active,
     data.matched && styles.hot,
     data.frontline && styles.frontline,
