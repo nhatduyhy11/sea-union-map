@@ -15,27 +15,37 @@ export function nodeBossesOf(server: string): Record<string, number> {
   return modules[`./node-bosses/${EVENT_DAYS[0]}/${server}.json`] ?? {};
 }
 
-// Tên boss theo monsterId (bỏ tiền tố "Tứ Hải-" của tên trong game).
-const BOSS_NAMES: Record<number, string> = {
-  1001: "Oán Linh",
-  1002: "Nữ Hoàng Alien",
-  1003: "Vô Diện Giả",
-  1004: "Pharaoh Cổ Đại",
-  1005: "Thỏ Cưa Máy",
-  1006: "Bọ Cạp Hoàng Tuyền",
-  1007: "Khỉ Điên Đánh Trống",
-  1008: "Vô Diện Tử Thần",
-  1009: "Hắc Trảo",
-  1010: "Hắc Nữ Tăng Ca",
-  1011: "Cổ Thần",
-  1012: "Kỵ Sĩ Không Đầu",
-  1013: "U Ảnh Phu Nhân",
+// Boss theo monsterId: tên (bỏ tiền tố "Tứ Hải-" của tên trong game) và model
+// spine. Ảnh boss nằm ở public/boss/<monsterId>-<model>/ gồm render.webp (render
+// frame idle từ model spine), half.webp (ảnh bán thân) và head.webp (avatar).
+const BOSSES: Record<number, { name: string; model: string }> = {
+  1001: { name: "Oán Linh", model: "Boss_009" },
+  1002: { name: "Nữ Hoàng Alien", model: "Boss_008" },
+  1003: { name: "Vô Diện Giả", model: "Boss_010" },
+  1004: { name: "Pharaoh Cổ Đại", model: "Boss_014" },
+  1005: { name: "Thỏ Cưa Máy", model: "Boss_019_sea" },
+  1006: { name: "Bọ Cạp Hoàng Tuyền", model: "Boss_034" },
+  1007: { name: "Khỉ Điên Đánh Trống", model: "Boss_029" },
+  1008: { name: "Vô Diện Tử Thần", model: "Boss_026" },
+  1009: { name: "Hắc Trảo", model: "Boss_025" },
+  1010: { name: "Hắc Nữ Tăng Ca", model: "Boss_024" },
+  1011: { name: "Cổ Thần", model: "Boss_021" },
+  1012: { name: "Kỵ Sĩ Không Đầu", model: "Boss_017" },
+  1013: { name: "U Ảnh Phu Nhân", model: "Boss_015" },
 };
 
 // monsterId mới chưa có trong bảng vẫn hiện, kèm id để biết cần bổ sung tên.
 export const bossName = (monsterId: number) =>
-  BOSS_NAMES[monsterId] ?? `Boss #${monsterId}`;
+  BOSSES[monsterId]?.name ?? `Boss #${monsterId}`;
 
-// Ảnh boss (public/boss/<monsterId>.webp, render từ model spine của boss).
-export const bossImageUrl = (monsterId: number) =>
-  `${import.meta.env.BASE_URL}boss/${monsterId}.webp`;
+export type BossImageKind = "render" | "half" | "head";
+
+// monsterId chưa có trong bảng → không có ảnh.
+export function bossImageUrl(
+  monsterId: number,
+  kind: BossImageKind = "render"
+): string | undefined {
+  const boss = BOSSES[monsterId];
+  if (!boss) return undefined;
+  return `${import.meta.env.BASE_URL}boss/${monsterId}-${boss.model}/${kind}.webp`;
+}

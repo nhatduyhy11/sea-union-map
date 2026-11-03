@@ -35,13 +35,14 @@ export function NodeDetails({
     Math.abs(attackerSum - total) / total > 0.01;
   // Base không bị đánh nên không phủ ảnh boss dù bảng boss có giá trị.
   const bossId = island.base ? undefined : island.monsterId;
+  const bossImage = bossId ? bossImageUrl(bossId) : undefined;
   return (
     <div
-      className={`${styles.detail} ${bossId ? styles.hasBoss : ""}`}
+      className={`${styles.detail} ${bossImage ? styles.hasBoss : ""}`}
       style={
-        bossId
+        bossImage
           ? ({
-              "--boss-bg": `url(${bossImageUrl(bossId)})`,
+              "--boss-bg": `url(${bossImage})`,
             } as CSSProperties)
           : undefined
       }
