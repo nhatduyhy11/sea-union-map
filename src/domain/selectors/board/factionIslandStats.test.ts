@@ -72,16 +72,14 @@ test("factionIslandStats returns zeroed buckets when nothing matches", () => {
   assert.deepEqual(result.touched, { count: 0, total: 0, mean: 0, median: 0 });
 });
 
-test("factionNodeFilters picks islands the faction is involved in per icon", () => {
+test("factionNodeFilters keeps frontline only where the faction is owner or rival", () => {
   const islands = [
     node("base", "a", { a: 999 }, { base: true }),
     node("f1", "a", { a: 20, b: 15 }),
     node("f2", "b", { a: 12, b: 20 }),
-    node("f3", "b", { b: 20, c: 15 }),
+    node("f3", "b", { a: 3, b: 20, c: 15 }),
     node("ob", "a", { a: 50 }),
     node("ob2", "b", { a: 3, b: 50 }),
-    node("g1", "a", { a: 2, b: 30 }),
-    node("v1", "a", { a: 0 }),
     node("u1", null, { a: 15 }),
   ];
   const icons = new Map<string, CanvasIcon>([
@@ -91,21 +89,28 @@ test("factionNodeFilters picks islands the faction is involved in per icon", () 
     ["f3", "frontline"],
     ["ob", "overbuilt"],
     ["ob2", "overbuilt"],
-    ["g1", "gifted"],
-    ["v1", "aftermath"],
+  ]);
+  const front = (owner: string, rival: string) => ({
+    owner: { id: owner },
+    rival: { id: rival },
+  });
+  const frontlines = new Map([
+    ["f1", front("a", "b")],
+    ["f2", front("b", "a")],
+    // a chỉ có điểm lẻ trên đảo b–c đang giành: không phải giao tranh của a.
+    ["f3", front("b", "c")],
   ]);
   const result = factionNodeFilters(
     "a",
     islands,
     new Map(islands.map((n) => [n.id, scoresForNode(n, [], factions)])),
-    icons
+    icons,
+    frontlines
   );
   assert.deepEqual(result, {
     frontline: ["f1", "f2"],
     overbuilt: ["ob"],
-    gifted: ["g1"],
-    aftermath: ["v1"],
     lost: ["f2", "u1"],
-    attacked: ["f1", "f2", "ob", "ob2", "g1", "u1"],
+    attacked: ["f1", "f2", "f3", "ob", "ob2", "u1"],
   });
 });

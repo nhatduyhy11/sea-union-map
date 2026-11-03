@@ -1,13 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  BicepsFlexed,
-  Flag,
-  Gift,
-  Pin,
-  Swords,
-  X,
-  type LucideIcon,
-} from "lucide-react";
+import { BicepsFlexed, Pin, Swords, X, type LucideIcon } from "lucide-react";
 import {
   factionIslandStats,
   factionNodeFilters,
@@ -45,8 +37,13 @@ export function BaseDetails({
   onClose,
   onTogglePin,
 }: BaseDetailsProps) {
-  const { factionBoard, ownedIslands, scoresByNode, canvasIconByNode } =
-    useMapData();
+  const {
+    factionBoard,
+    ownedIslands,
+    scoresByNode,
+    canvasIconByNode,
+    frontlineByNode,
+  } = useMapData();
   const factionId = island.owner ?? island.id;
   const entry = factionBoard.find((faction) => faction.id === factionId);
   const rank = useMemo(
@@ -63,9 +60,10 @@ export function BaseDetails({
         factionId,
         ownedIslands,
         scoresByNode,
-        canvasIconByNode
+        canvasIconByNode,
+        frontlineByNode
       ),
-    [factionId, ownedIslands, scoresByNode, canvasIconByNode]
+    [factionId, ownedIslands, scoresByNode, canvasIconByNode, frontlineByNode]
   );
   const [activeFilter, setActiveFilter] = useState<FactionNodeFilter | null>(
     null
@@ -227,34 +225,23 @@ interface NodeFilterDef {
   hint: string;
 }
 
-// Dòng 1: cùng icon / nhãn với filter trạng thái BXH Cứ điểm. Dòng 2: tập đảo
-// theo điểm phe — "Mất" (cùng tập dòng "Mất" của bảng) và "Đánh" thay "Chưa
-// chiếm" vì panel đã gắn với một phe.
+// Dòng 1: cùng icon / nhãn với filter trạng thái BXH Cứ điểm — chỉ giữ filter
+// có nghĩa khi nhìn từ một phe (Cướp / Vết mô tả cặp owner–phe top của đảo,
+// không thuộc riêng phe nào). Dòng 2: tập đảo theo điểm phe — "Mất" (cùng tập
+// dòng "Mất" của bảng) và "Đánh" thay "Chưa chiếm" vì panel đã gắn với một phe.
 const NODE_FILTER_ROWS: NodeFilterDef[][] = [
   [
     {
       id: "frontline",
       Icon: Swords,
       label: "Tranh",
-      hint: "Đảo giao tranh phe đang chiếm hoặc có điểm",
+      hint: "Đảo giao tranh mà phe là một bên: đang chiếm và bị phe nhì ép, hoặc là phe nhì ép ngay cửa đảo",
     },
     {
       id: "overbuilt",
       Icon: BicepsFlexed,
       label: "Dồn",
       hint: "Đảo phe đang chiếm với điểm vượt mức trung bình của phe",
-    },
-    {
-      id: "gifted",
-      Icon: Gift,
-      label: "Cướp",
-      hint: "Owner bị vượt xa điểm nhưng vẫn giữ đảo vì phe top bị cắt đường — phe là owner hoặc phe bị cắt",
-    },
-    {
-      id: "aftermath",
-      Icon: Flag,
-      label: "Vết",
-      hint: "Vết tích tranh chấp lớn trên đảo phe đang chiếm hoặc có điểm",
     },
   ],
   [

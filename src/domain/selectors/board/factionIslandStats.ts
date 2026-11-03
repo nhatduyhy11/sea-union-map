@@ -68,25 +68,30 @@ function bucket(values: number[]): IslandBucketStats {
   };
 }
 
-export type FactionNodeFilter =
-  "frontline" | "overbuilt" | "gifted" | "aftermath" | "lost" | "attacked";
+export type FactionNodeFilter = "frontline" | "overbuilt" | "lost" | "attacked";
 
-// Đảo của một phe theo filter trạng thái (chi tiết căn cứ, base không tính).
-// Tranh / Cướp / Vết = icon canvas tương ứng trên đảo phe có dính vào (đang
-// chiếm hoặc có điểm); Dồn chỉ đảo phe đang chiếm vì icon đó đo điểm owner;
-// Mất = đảo phe có điểm đủ ngưỡng claim nhưng không sở hữu (phe khác chiếm
-// hoặc chưa ai chiếm — cùng tập dòng "Mất" của factionIslandStats); Đánh = mọi đảo phe có điểm > 0. Giữ thứ tự islands.
+// Đảo của một phe theo filter (chi tiết căn cứ, base không tính). Giữ thứ tự
+// islands.
+// - Tranh: node giao tranh mà phe là một trong hai bên — owner hoặc rival
+//   (phe nhì đứng ở cửa node). Phe chỉ có điểm lẻ trên node hai phe khác đang
+//   giành không tính.
+// - Dồn: icon overbuilt trên đảo phe đang chiếm (icon đo điểm owner).
+// - Mất: phe có điểm đủ ngưỡng claim nhưng không sở hữu (cùng tập dòng "Mất"
+//   của factionIslandStats).
+// - Đánh: mọi đảo phe có điểm > 0.
 export function factionNodeFilters(
   factionId: string,
   islands: Island[],
   scoresByNode: ReadonlyMap<string, FactionScore[]>,
-  canvasIconByNode: ReadonlyMap<string, CanvasIcon>
+  canvasIconByNode: ReadonlyMap<string, CanvasIcon>,
+  frontlineByNode: ReadonlyMap<
+    string,
+    { owner: { id: string }; rival: { id: string } }
+  >
 ): Record<FactionNodeFilter, string[]> {
   const result: Record<FactionNodeFilter, string[]> = {
     frontline: [],
     overbuilt: [],
-    gifted: [],
-    aftermath: [],
     lost: [],
     attacked: [],
   };
@@ -97,17 +102,13 @@ export function factionNodeFilters(
         ?.score ?? 0;
     const isOwned = node.owner === factionId;
     if (points > 0) result.attacked.push(node.id);
-    if (!isOwned && points <= 0) continue;
-    if (!isOwned && points >= node.claimThreshold) result.lost.push(node.id);
-    const icon = canvasIconByNode.get(node.id);
-    if (icon === "overbuilt") {
-      if (isOwned) result.overbuilt.push(node.id);
-    } else if (
-      icon === "frontline" ||
-      icon === "gifted" ||
-      icon === "aftermath"
-    )
-      result[icon].push(node.id);
+    if (!isOwned && points >= node.claimThreshold && points > 0)
+      result.lost.push(node.id);
+    const front = frontlineByNode.get(node.id);
+    if (front && (front.owner.id === factionId || front.rival.id === factionId))
+      result.frontline.push(node.id);
+    if (isOwned && canvasIconByNode.get(node.id) === "overbuilt")
+      result.overbuilt.push(node.id);
   }
   return result;
 }
