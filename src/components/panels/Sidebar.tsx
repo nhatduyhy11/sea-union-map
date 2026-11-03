@@ -1,4 +1,5 @@
 import { Compass, Flag, Trophy } from "lucide-react";
+import { BaseDetails } from "./BaseDetails";
 import { NodeDetails } from "./NodeDetails";
 import { Leaderboard } from "./leaderboard/Leaderboard";
 import { useNodeDetails } from "./useNodeDetails";
@@ -34,6 +35,13 @@ export function Sidebar() {
       <div className={styles.body}>
         {tab === "ranking" ? (
           <Leaderboard />
+        ) : details?.island.base ? (
+          <BaseDetails
+            island={details.island}
+            pinned={pinned.has(details.island.id)}
+            onClose={close}
+            onTogglePin={togglePin}
+          />
         ) : details ? (
           <NodeDetails
             details={details}

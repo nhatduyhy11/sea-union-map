@@ -1,0 +1,66 @@
+/* Card tóm tắt phe — cùng bố cục dòng BXH Phe, viền màu phe. */
+.card {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-top: 18px;
+  padding: 11px 10px;
+  border: 1px solid;
+  border-left-width: 3px;
+  border-radius: 6px;
+  font-size: 11px;
+  background: #ffffff;
+}
+
+.rank {
+  font-size: 10px;
+  color: #8496a1;
+}
+
+.stats {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+  color: #33424c;
+}
+
+.stats th,
+.stats td {
+  padding: 7px 4px;
+  border-bottom: 1px solid #eaeef0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.stats thead th {
+  font-size: 9px;
+  font-weight: 400;
+  color: #8496a1;
+}
+
+.stats tbody th {
+  text-align: left;
+  font-weight: 500;
+  white-space: normal;
+}
+
+/* Hai tập theo ngưỡng (đủ / chưa đủ điểm) nền màu phe thật nhạt; dòng "Tất
+   cả" (tổng hai tập đó) cùng màu phe nhưng đậm hơn một bậc. */
+.tinted th,
+.tinted td {
+  background: color-mix(in srgb, var(--tint) 8%, #ffffff);
+}
+
+.total th,
+.total td {
+  background: color-mix(in srgb, var(--tint) 18%, #ffffff);
+  font-weight: 600;
+}
+
+/* Dòng tổng của các dòng ngay trên ("Đủ điểm" = 2 dòng đầu, "Tất cả" = đủ +
+   chưa đủ điểm) — vạch đậm phía trên như dòng cộng dồn. */
+.sum th,
+.sum td {
+  border-top: 2px solid #b9c4ca;
+}
