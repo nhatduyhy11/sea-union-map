@@ -1,24 +1,24 @@
 import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { compact } from "../../../utils/format";
+import { compact } from "../../../../utils/format";
 import {
   rankFactions,
   rankFactionsForHighlight,
   sortGuilds,
-} from "../../../domain/selectors";
-import { toggleFactionView } from "../../../stores/commands";
-import { usePanel } from "../../../stores/panel";
+} from "../../../../domain/selectors";
+import { toggleFactionView } from "../../../../stores/commands";
+import { usePanel } from "../../../../stores/panel";
 import {
   FactionFlag,
   FactionLines,
   ScoreCol,
-} from "../../shared/FactionSummary";
-import { InfoHint } from "../../shared/InfoHint";
+} from "../../../shared/FactionSummary";
+import { InfoHint } from "../../../shared/InfoHint";
 import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
-import pills from "../../shared/FilterPills.module.css";
-import shared from "./shared.module.css";
-import type { FactionBoardEntry } from "../../../types";
+import pills from "../../../shared/FilterPills.module.css";
+import shared from "../shared.module.css";
+import type { FactionBoardEntry } from "../../../../types";
 
 export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   const filterMode = usePanel((state) => state.filterMode);

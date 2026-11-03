@@ -3,7 +3,7 @@
 ## 1. Trạng thái của tài liệu
 
 Ghi lại hành vi tab Cứ điểm
-([`NodeBoard.tsx`](../src/components/panels/leaderboard/NodeBoard.tsx)) với các scenario ownership / ngắt đường,
+([`NodeBoard.tsx`](../src/components/panels/leaderboard/node/NodeBoard.tsx)) với các scenario ownership / ngắt đường,
 và các điểm còn mở. Rule gốc nằm ở [SEA_EVENT_RULE.md](SEA_EVENT_RULE.md); tài liệu này không thay đổi rule.
 
 **Chốt (chủ dự án 2026-10-30):** ownership theo **owner server**. Server trả một owner/node đã áp rule ngưỡng,

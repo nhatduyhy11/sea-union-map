@@ -1,11 +1,14 @@
 import { ChevronRight, Users } from "lucide-react";
-import { compact, number } from "../../../utils/format";
-import { PlayerIdentity } from "../../shared/PlayerIdentity";
-import { selectGuildMember, toggleGuildFilter } from "../../../stores/commands";
-import { usePanel } from "../../../stores/panel";
+import { compact, number } from "../../../../utils/format";
+import { PlayerIdentity } from "../../../shared/PlayerIdentity";
+import {
+  selectGuildMember,
+  toggleGuildFilter,
+} from "../../../../stores/commands";
+import { usePanel } from "../../../../stores/panel";
 import styles from "./GuildAccordion.module.css";
-import shared from "./shared.module.css";
-import type { FactionBoardEntry, GuildScore } from "../../../types";
+import shared from "../shared.module.css";
+import type { FactionBoardEntry, GuildScore } from "../../../../types";
 
 // Danh sách guild của một phe. Filter mode: row điều khiển canvas
 // (GuildAccordion); free mode: <details> thuần xem, member inert.

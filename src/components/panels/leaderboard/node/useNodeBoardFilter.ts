@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
-import type { NodeStatus } from "../../shared/nodeStatus";
-import type { CanvasIcon, NodeBoardEntry } from "../../../types";
+import type { NodeStatus } from "../../../shared/nodeStatus";
+import type { CanvasIcon, NodeBoardEntry } from "../../../../types";
 
 // Pill phe lọc đảo theo phe đang chiếm; pill trạng thái lọc theo icon canvas
 // của đảo (cùng kết quả phân loại với map); "Chưa chiếm" = đảo trung lập.

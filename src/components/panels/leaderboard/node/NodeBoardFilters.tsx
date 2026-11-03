@@ -1,7 +1,7 @@
-import { NODE_STATUS, NODE_STATUSES } from "../../shared/nodeStatus";
+import { NODE_STATUS, NODE_STATUSES } from "../../../shared/nodeStatus";
 import { sameFilter, type NodeBoardFilter } from "./useNodeBoardFilter";
-import pills from "../../shared/FilterPills.module.css";
-import type { Faction } from "../../../types";
+import pills from "../../../shared/FilterPills.module.css";
+import type { Faction } from "../../../../types";
 
 const UNCLAIMED: NodeBoardFilter = { kind: "unclaimed" };
 

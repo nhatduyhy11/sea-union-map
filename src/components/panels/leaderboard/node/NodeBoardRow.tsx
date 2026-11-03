@@ -1,14 +1,14 @@
 import { ChevronRight } from "lucide-react";
-import { compact } from "../../../utils/format";
-import { bossImageUrl } from "../../../data/nodeBosses";
-import { FactionScoreBars } from "../../shared/FactionScoreBars";
-import { isNodeStatus, NODE_STATUS } from "../../shared/nodeStatus";
-import { useSelection } from "../../../stores/selection";
-import { PlayerTable } from "../NodeDetails/PlayerTable";
-import { tintStyle } from "./tint";
-import shared from "./shared.module.css";
+import { compact } from "../../../../utils/format";
+import { bossImageUrl } from "../../../../data/nodeBosses";
+import { FactionScoreBars } from "../../../shared/FactionScoreBars";
+import { isNodeStatus, NODE_STATUS } from "../../../shared/nodeStatus";
+import { useSelection } from "../../../../stores/selection";
+import { PlayerTable } from "../../NodeDetails/PlayerTable";
+import { tintStyle } from "../tint";
+import shared from "../shared.module.css";
 import styles from "./NodeBoard.module.css";
-import type { CanvasIcon, NodeBoardEntry } from "../../../types";
+import type { CanvasIcon, NodeBoardEntry } from "../../../../types";
 
 // Mở expand = focus đảo trên map (camera pan + selected), panel giữ nguyên ở
 // bảng; đa mở được — camera theo lần expand cuối. Đóng expand của đảo đang

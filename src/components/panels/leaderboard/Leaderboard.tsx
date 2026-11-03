@@ -1,9 +1,9 @@
 import { setFilterMode, setRankingBoard } from "../../../stores/commands";
 import { useMapData } from "../../../stores/dataset";
 import { usePanel } from "../../../stores/panel";
-import { FactionBoard } from "./FactionBoard";
-import { NodeBoard } from "./NodeBoard";
-import { PlayerBoard } from "./PlayerBoard";
+import { FactionBoard } from "./faction/FactionBoard";
+import { NodeBoard } from "./node/NodeBoard";
+import { PlayerBoard } from "./player/PlayerBoard";
 import styles from "./Leaderboard.module.css";
 
 // Web BXH (game chỉ có 2 tab): 3 tab với thứ tự UI

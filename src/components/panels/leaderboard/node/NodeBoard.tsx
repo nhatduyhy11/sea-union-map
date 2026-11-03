@@ -1,11 +1,11 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from "lucide-react";
-import { useFocusIslandOnBoard } from "../../../hooks/useFocusIsland";
+import { useFocusIslandOnBoard } from "../../../../hooks/useFocusIsland";
 import { NodeBoardFilters } from "./NodeBoardFilters";
 import { NodeBoardRow } from "./NodeBoardRow";
 import { useNodeBoardFilter, type ScoreSort } from "./useNodeBoardFilter";
-import shared from "./shared.module.css";
+import shared from "../shared.module.css";
 import styles from "./NodeBoard.module.css";
-import type { CanvasIcon, Faction, NodeBoardEntry } from "../../../types";
+import type { CanvasIcon, Faction, NodeBoardEntry } from "../../../../types";
 
 const SORT_UI: Record<ScoreSort, { Icon: LucideIcon; suffix: string }> = {
   none: { Icon: ArrowUpDown, suffix: "" },
