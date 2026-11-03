@@ -1,12 +1,12 @@
 import { useId, type CSSProperties } from "react";
-import type { FactionNodeFilter } from "../../../domain/selectors";
-import { compact } from "../../../utils/format";
-import styles from "./BaseDetails.module.css";
+import type { FactionNodeFilter } from "../../../../domain/selectors";
+import { compact } from "../../../../utils/format";
+import styles from "./FactionStatsTable.module.css";
 import type {
   FactionIslandStats,
   IslandBucket,
   IslandBucketStats,
-} from "../../../domain/selectors/board/types";
+} from "../../../../domain/selectors/board/types";
 
 const STAT_ROWS: {
   id: IslandBucket;

@@ -14,10 +14,10 @@ import detail from "../NodeDetails/NodeDetails.module.css";
 import styles from "./BaseDetails.module.css";
 import background from "../../shared/faction/FactionBackground.module.css";
 import { InfoHint } from "../../shared/InfoHint";
-import { BaseCarousel } from "./BaseCarousel";
-import { FactionStatsTable } from "./FactionStatsTable";
-import { NodeFilterChips } from "./NodeFilterChips";
-import { ScoreDotPlot } from "./ScoreDotPlot";
+import { BaseCarousel } from "./components/BaseCarousel";
+import { FactionStatsTable } from "./components/FactionStatsTable";
+import { NodeFilterChips } from "./components/NodeFilterChips";
+import { ScoreDotPlot } from "./components/ScoreDotPlot";
 import { useBaseFilter } from "./useBaseFilter";
 import type { Island } from "../../../types";
 
