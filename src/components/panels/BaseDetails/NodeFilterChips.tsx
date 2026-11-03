@@ -1,29 +1,22 @@
-import { BicepsFlexed, Swords, type LucideIcon } from "lucide-react";
 import type { FactionNodeFilter } from "../../../domain/selectors";
+import { NODE_STATUS } from "../../shared/nodeStatus";
 import board from "../leaderboard/shared.module.css";
 import styles from "./BaseDetails.module.css";
 import type { FactionIslandStats } from "../../../types";
 
-// Filter theo icon canvas, cùng icon / nhãn với filter trạng thái BXH Cứ điểm
-// — chỉ giữ filter có nghĩa khi nhìn từ một phe (Cướp / Vết mô tả cặp
-// owner–phe top của đảo, không thuộc riêng phe nào). Filter theo điểm phe là
-// các dòng của bảng FactionStatsTable.
+// Filter theo icon canvas — chỉ giữ filter có nghĩa khi nhìn từ một phe
+// (Cướp / Vết mô tả cặp owner–phe top của đảo, không thuộc riêng phe nào).
+// Filter theo điểm phe là các dòng của bảng FactionStatsTable.
 const NODE_FILTERS: {
   id: "frontline" | "overbuilt";
-  Icon: LucideIcon;
-  label: string;
   hint: string;
 }[] = [
   {
     id: "frontline",
-    Icon: Swords,
-    label: "Tranh",
     hint: "Đảo giao tranh mà phe là một bên: đang chiếm và bị phe nhì ép, hoặc là phe nhì ép ngay cửa đảo",
   },
   {
     id: "overbuilt",
-    Icon: BicepsFlexed,
-    label: "Dồn",
     hint: "Đảo phe đang chiếm với điểm vượt mức trung bình của phe",
   },
 ];
@@ -39,7 +32,8 @@ export function NodeFilterChips({
 }) {
   return (
     <div className={`${board.subTabs} ${board.nodeFilters} ${styles.filters}`}>
-      {NODE_FILTERS.map(({ id, Icon, label, hint }) => {
+      {NODE_FILTERS.map(({ id, hint }) => {
+        const { Icon, label } = NODE_STATUS[id];
         const count = stats[id].size;
         return (
           <button

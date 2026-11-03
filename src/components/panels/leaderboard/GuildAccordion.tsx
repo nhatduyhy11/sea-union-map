@@ -19,7 +19,7 @@ export function GuildList({
   const openGuild = usePanel((state) => state.openGuild);
   const selectedMember = usePanel((state) => state.selectedMember);
   return (
-    <div className={`${shared.allocation} ${shared.allocationTall}`}>
+    <div className={`${shared.allocation} ${styles.allocationTall}`}>
       {faction.guilds.map((guild) =>
         filterMode ? (
           <GuildAccordion

@@ -5,7 +5,8 @@ import { PlayerIdentity } from "../../shared/PlayerIdentity";
 import { togglePlayerFilter } from "../../../stores/commands";
 import { usePanel } from "../../../stores/panel";
 import { EASTER_EGG_PLAYER_ID, tapEasterEgg } from "../../../stores/debug";
-import styles from "./shared.module.css";
+import shared from "./shared.module.css";
+import styles from "./PlayerBoard.module.css";
 import type { LeaderboardPlayer } from "../../../types";
 
 // Tab Cá nhân: filter mode — accordion một player mở tại một thời điểm,
@@ -30,9 +31,9 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
   return (
     <>
       <h2>Xếp hạng cá nhân</h2>
-      <div className={styles.sortBar}>
+      <div className={shared.sortBar}>
         <label
-          className={styles.sortOption}
+          className={shared.sortOption}
           title="Bật: sắp xếp theo Lực chiến (LC) giảm dần. Tắt: thứ tự BXH điểm server (mặc định). Số hạng đầu row luôn là hạng server."
         >
           <input
@@ -49,7 +50,7 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
           player.id === EASTER_EGG_PLAYER_ID ? tapEasterEgg : undefined;
         const summary = (
           <>
-            <span className={styles.rank}>{player.rank}</span>
+            <span className={shared.rank}>{player.rank}</span>
             <PlayerIdentity
               player={player}
               faction={player.factionInfo}
@@ -62,9 +63,9 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
           </>
         );
         const allocations = (
-          <div className={styles.allocation}>
+          <div className={shared.allocation}>
             {player.allocations.map((entry) => (
-              <div key={entry.nodeId} className={styles.guildRow}>
+              <div key={entry.nodeId} className={styles.allocRow}>
                 <span>Đảo {entry.nodeId}</span>
                 <b>{number(entry.score)}</b>
               </div>
@@ -74,11 +75,11 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
         return filterMode ? (
           <details
             key={player.id}
-            className={styles.item}
+            className={shared.item}
             open={openPlayer === player.id}
           >
             <summary
-              className={styles.summary}
+              className={shared.summary}
               onClick={(event) => {
                 event.preventDefault();
                 togglePlayerFilter(player.id);
@@ -90,8 +91,8 @@ export function PlayerBoard({ players }: { players: LeaderboardPlayer[] }) {
             {allocations}
           </details>
         ) : (
-          <details key={player.id} className={styles.item}>
-            <summary className={styles.summary} onClick={onEasterEgg}>
+          <details key={player.id} className={shared.item}>
+            <summary className={shared.summary} onClick={onEasterEgg}>
               {summary}
             </summary>
             {allocations}
