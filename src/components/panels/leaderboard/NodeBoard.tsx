@@ -11,6 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { compact } from "../../../utils/format";
+import { bossImageUrl } from "../../../data/nodeBosses";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
 import { useFocusIslandOnBoard } from "../../../hooks/useFocusIsland";
 import { useSelection } from "../../../stores/selection";
@@ -141,6 +142,11 @@ export function NodeBoard({
         const canvasIcon = canvasIconByNode.get(entry.island.id);
         const status = BOARD_STATUS_ICONS[canvasIcon ?? "plain"];
         const StatusIcon = status?.Icon;
+        // Base không bị đánh nên không có nền boss (giống chi tiết cứ điểm).
+        const bossHalf =
+          !entry.island.base && entry.island.monsterId
+            ? bossImageUrl(entry.island.monsterId, "half")
+            : undefined;
         return (
           <details
             key={entry.island.id}
@@ -153,12 +159,19 @@ export function NodeBoard({
             }}
           >
             <summary
-              className={`${styles.summary} ${styles.tintedSummary}`}
-              style={tintStyle(entry.owner?.color)}
+              className={`${styles.summary} ${styles.tintedSummary} ${bossHalf ? styles.bossSummary : ""} ${entry.island.tier === 4 ? styles.centerSummary : ""}`}
+              style={
+                {
+                  ...tintStyle(entry.owner?.color),
+                  ...(bossHalf && { "--boss-bg": `url(${bossHalf})` }),
+                } as React.CSSProperties
+              }
             >
               <span className={styles.rank}>{index + 1}</span>
               <div className={styles.factionName}>
-                {entry.island.id} {entry.island.name}
+                <span className={styles.nodeTitle}>
+                  {entry.island.id} {entry.island.name}
+                </span>
                 <small>
                   {entry.scores.filter((s) => s.score > 0).length} phe
                   {entry.total > 0 ? (

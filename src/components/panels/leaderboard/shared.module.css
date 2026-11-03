@@ -24,6 +24,23 @@
   border-left: 3px solid transparent;
 }
 
+/* Row cứ điểm có boss: ảnh boss (--boss-bg) vẽ mờ ở lớp ::before nằm dưới
+   chữ, màu phe vẫn là background-color của row. */
+.bossSummary {
+  position: relative;
+  isolation: isolate;
+}
+
+.bossSummary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--boss-bg) left 120px center / 110px auto no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
 .summary::-webkit-details-marker {
   display: none;
 }
@@ -93,6 +110,15 @@
   flex: 1;
   font-size: 11px;
   font-weight: 500;
+}
+
+/* Đảo trung tâm (tier 4): số thứ hạng, tên đảo và tổng điểm màu xanh lá
+   kiểu Matrix, glow nhẹ. */
+.centerSummary .rank,
+.centerSummary .nodeTitle,
+.centerSummary > b {
+  color: #00b140;
+  text-shadow: 0 0 3px rgba(0, 255, 65, 0.3);
 }
 
 .factionName small {
