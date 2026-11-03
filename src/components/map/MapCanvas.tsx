@@ -7,6 +7,7 @@ import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
 import { RouteEdge } from "./RouteEdge";
+import { FactionBackdrop } from "./FactionBackdrop";
 import styles from "./MapCanvas.module.css";
 
 const nodeTypes = { island: IslandNode };
@@ -45,6 +46,7 @@ export function MapCanvas() {
         colorMode="light"
         proOptions={{ hideAttribution: true }}
       >
+        <FactionBackdrop />
         <Background color="#ece7d7" gap={40} size={1} />
         <Controls showInteractive={false} />
         {debug && <CanvasDebugGrid />}
