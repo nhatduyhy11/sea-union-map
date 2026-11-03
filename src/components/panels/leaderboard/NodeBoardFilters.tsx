@@ -1,6 +1,6 @@
 import { NODE_STATUS, NODE_STATUSES } from "../../shared/nodeStatus";
 import { sameFilter, type NodeBoardFilter } from "./useNodeBoardFilter";
-import shared from "./shared.module.css";
+import pills from "../../shared/FilterPills.module.css";
 import type { Faction } from "../../../types";
 
 const UNCLAIMED: NodeBoardFilter = { kind: "unclaimed" };
@@ -18,8 +18,8 @@ export function NodeBoardFilters({
 }) {
   return (
     <>
-      <div className={shared.subTabs}>
-        <button className={filter ? "" : shared.selected} onClick={onClear}>
+      <div className={pills.subTabs}>
+        <button className={filter ? "" : pills.selected} onClick={onClear}>
           Tất cả
         </button>
         {factions.map((faction) => {
@@ -27,7 +27,7 @@ export function NodeBoardFilters({
           return (
             <button
               key={faction.id}
-              className={`${shared.factionPill} ${sameFilter(filter, pill) ? shared.selected : ""}`}
+              className={`${pills.factionPill} ${sameFilter(filter, pill) ? pills.selected : ""}`}
               style={{ "--label": faction.labelColor } as React.CSSProperties}
               onClick={() => onToggle(pill)}
             >
@@ -36,7 +36,7 @@ export function NodeBoardFilters({
           );
         })}
       </div>
-      <div className={`${shared.subTabs} ${shared.nodeFilters}`}>
+      <div className={`${pills.subTabs} ${pills.nodeFilters}`}>
         {NODE_STATUSES.map((status) => {
           const { Icon, label } = NODE_STATUS[status];
           const pill: NodeBoardFilter = { kind: "status", status };
@@ -44,7 +44,7 @@ export function NodeBoardFilters({
           return (
             <button
               key={status}
-              className={active ? shared.selected : ""}
+              className={active ? pills.selected : ""}
               aria-pressed={active}
               onClick={() => onToggle(pill)}
             >
@@ -54,7 +54,7 @@ export function NodeBoardFilters({
           );
         })}
         <button
-          className={sameFilter(filter, UNCLAIMED) ? shared.selected : ""}
+          className={sameFilter(filter, UNCLAIMED) ? pills.selected : ""}
           aria-pressed={sameFilter(filter, UNCLAIMED)}
           onClick={() => onToggle(UNCLAIMED)}
         >

@@ -16,6 +16,7 @@ import {
 import { InfoHint } from "../../shared/InfoHint";
 import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
+import pills from "../../shared/FilterPills.module.css";
 import shared from "./shared.module.css";
 import type { FactionBoardEntry } from "../../../types";
 
@@ -107,9 +108,9 @@ function FactionTabs({
   onFocus: (id: string | null) => void;
 }) {
   return (
-    <div className={shared.subTabs}>
+    <div className={pills.subTabs}>
       <button
-        className={focus ? "" : shared.selected}
+        className={focus ? "" : pills.selected}
         onClick={() => onFocus(null)}
       >
         Chung
@@ -117,7 +118,7 @@ function FactionTabs({
       {factions.map((entry) => (
         <button
           key={entry.id}
-          className={`${shared.factionPill} ${focus === entry.id ? shared.selected : ""}`}
+          className={`${pills.factionPill} ${focus === entry.id ? pills.selected : ""}`}
           style={{ "--label": entry.labelColor } as React.CSSProperties}
           onClick={() => onFocus(focus === entry.id ? null : entry.id)}
         >

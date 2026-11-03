@@ -1,6 +1,6 @@
 import type { FactionNodeFilter } from "../../../domain/selectors";
 import { NODE_STATUS } from "../../shared/nodeStatus";
-import board from "../leaderboard/shared.module.css";
+import pills from "../../shared/FilterPills.module.css";
 import styles from "./BaseDetails.module.css";
 import type { FactionIslandStats } from "../../../types";
 
@@ -31,14 +31,14 @@ export function NodeFilterChips({
   onToggle: (id: FactionNodeFilter) => void;
 }) {
   return (
-    <div className={`${board.subTabs} ${board.nodeFilters} ${styles.filters}`}>
+    <div className={`${pills.subTabs} ${pills.nodeFilters} ${styles.filters}`}>
       {NODE_FILTERS.map(({ id, hint }) => {
         const { Icon, label } = NODE_STATUS[id];
         const count = stats[id].size;
         return (
           <button
             key={id}
-            className={activeFilter === id ? board.selected : ""}
+            className={activeFilter === id ? pills.selected : ""}
             aria-pressed={activeFilter === id}
             title={hint}
             disabled={count === 0}
