@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   BicepsFlexed,
-  Castle,
   Flag,
   Gift,
   Pin,
@@ -18,7 +17,6 @@ import {
 import { useMapData } from "../../../stores/dataset";
 import { useMapView } from "../../../stores/mapView";
 import { compact } from "../../../utils/format";
-import { getFactionIcon } from "../../shared/factionIcons";
 import {
   FactionFlag,
   FactionLines,
@@ -27,6 +25,7 @@ import {
 import detail from "../NodeDetails/NodeDetails.module.css";
 import board from "../leaderboard/shared.module.css";
 import styles from "./BaseDetails.module.css";
+import { BaseCarousel } from "./BaseCarousel";
 import { ScoreDotPlot } from "./ScoreDotPlot";
 import type { Island, IslandBucketStats } from "../../../types";
 
@@ -81,7 +80,6 @@ export function BaseDetails({
     useMapView.getState().setNodeHighlight(highlight);
   }, [highlight]);
   useEffect(() => () => useMapView.getState().setNodeHighlight(null), []);
-  const FactionIcon = getFactionIcon(factionId) ?? Castle;
   return (
     <div className={detail.detail}>
       <div className={detail.detailTop}>
@@ -90,15 +88,18 @@ export function BaseDetails({
           <X size={17} />
         </button>
       </div>
-      <div
-        className={detail.detailIcon}
-        style={{ color: entry?.color || "#b8c6cf" }}
-      >
-        <FactionIcon size={33} />
-      </div>
+      <BaseCarousel factionId={factionId} />
       <h2 className={detail.title}>{island.name}</h2>
       {entry && (
-        <div className={styles.card} style={{ borderColor: entry.color }}>
+        <div
+          className={`${styles.card} ${rank === 1 ? styles.leading : ""}`}
+          style={
+            {
+              borderColor: entry.color,
+              "--tint": entry.color,
+            } as React.CSSProperties
+          }
+        >
           <span className={styles.rank} title="Hạng theo điểm phe">
             {rank}
           </span>

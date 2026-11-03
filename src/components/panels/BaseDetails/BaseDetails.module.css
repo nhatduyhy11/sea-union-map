@@ -12,6 +12,11 @@
   background: #ffffff;
 }
 
+/* Phe hạng 1 theo điểm phe: cả card nền màu phe nhạt. */
+.card.leading {
+  background: color-mix(in srgb, var(--tint) 10%, #ffffff);
+}
+
 /* Filter trạng thái đảo (style pill BXH Cứ điểm) + số đảo mỗi filter, hai
    dòng: icon canvas, rồi tập theo điểm phe (Mất / Đánh). */
 .filters {

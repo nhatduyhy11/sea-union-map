@@ -1,13 +1,13 @@
-import { factions } from "../../../data/factions";
+import { factionRing } from "../../../data/factions";
 import { getFactionIcon } from "../../shared/factionIcons";
 import styles from "./FactionLegend.module.css";
 
-// Legend chỉ đọc: icon đại diện + label (labelColor) các phe để đối chiếu màu và căn cứ trên
-// canvas. Không còn hành vi filter — filter guild/player điều khiển từ BXH.
+// Legend chỉ đọc: icon đại diện + label (labelColor) các phe để đối chiếu màu
+// và căn cứ trên canvas, theo vòng căn cứ factionRing. Không còn hành vi filter — filter guild/player điều khiển từ BXH.
 export function FactionLegend() {
   return (
     <div className={styles.legend}>
-      {factions.map((faction) => {
+      {factionRing.map((faction) => {
         const Icon = getFactionIcon(faction.id);
         return (
           <span
