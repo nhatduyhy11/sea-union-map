@@ -123,3 +123,9 @@ button.memberRow:hover {
   padding-right: 0;
   background: transparent;
 }
+
+/* Khối guild tab Phe: khi expand guild cần thấy ~15 member cùng lúc, giữ
+   max-height 225px của shared .allocation là bị cuộn chỉ thấy 6-8 dòng. */
+div.allocationTall {
+  max-height: 440px;
+}

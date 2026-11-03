@@ -58,7 +58,7 @@ Contract: **mỗi tab dùng đúng bảng server của tab đó**, chỉ những
 - **Icon đại diện phe ([`src/components/shared/factionIcons.ts`](../src/components/shared/factionIcons.ts)):**
   - **Base nodes trên canvas:** 4 căn cứ phe hiển thị icon tương ứng của phe (`ZodiacAries`, `Flame`, `Sparkles`, `Snowflake`), Các node còn lại phân loại icon theo [CANVAS_ICONS.md](CANVAS_ICONS.md); `Anchor` / `Castle` dành cho node trung lập chưa có điểm hoặc fallback, node có chủ có thể không có icon trạng thái. Badge header tại panel chi tiết ([`NodeDetails`](../src/components/panels/NodeDetails/index.tsx)) cũng hiển thị icon phe này khi chọn căn cứ.
   - **Avatar người chơi ([`PlayerIdentity`](../src/components/shared/PlayerIdentity.tsx)):** BXH cá nhân (và bảng người chơi) dùng icon phe với màu `labelColor` trên nền nhạt làm avatar thay vì chữ cái đầu tên player.
-  - **BXH Phe ([`FactionBoard`](../src/components/panels/leaderboard/FactionBoard.tsx)):** Cờ/avatar đại diện phe dùng icon phe với màu `labelColor` trên nền nhạt thay vì chữ cái đầu tên phe.
+  - **BXH Phe ([`FactionBoard`](../src/components/panels/leaderboard/faction/FactionBoard.tsx)):** Cờ/avatar đại diện phe dùng icon phe với màu `labelColor` trên nền nhạt thay vì chữ cái đầu tên phe.
   - **Legend chân canvas ([`FactionLegend`](../src/components/map/map-footer/FactionLegend.tsx)):** Hiển thị icon tương ứng của phe thay vì ô vuông màu.
 
 ### 1.5. Tên đảo hiển thị

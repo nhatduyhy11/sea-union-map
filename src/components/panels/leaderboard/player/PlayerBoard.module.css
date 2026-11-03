@@ -1,0 +1,19 @@
+/* Dòng điểm theo đảo trong expand của player. */
+.allocRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 7px 2px;
+  font-size: 10px;
+  color: #5d707b;
+}
+
+.allocRow span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.allocRow b {
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}

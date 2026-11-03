@@ -1,23 +1,24 @@
 import { useMemo, useState } from "react";
 import { ChevronRight } from "lucide-react";
-import { compact } from "../../../utils/format";
+import { compact } from "../../../../utils/format";
 import {
   rankFactions,
   rankFactionsForHighlight,
   sortGuilds,
-} from "../../../domain/selectors";
-import { toggleFactionView } from "../../../stores/commands";
-import { usePanel } from "../../../stores/panel";
+} from "../../../../domain/selectors";
+import { toggleFactionView } from "../../../../stores/commands";
+import { usePanel } from "../../../../stores/panel";
 import {
   FactionFlag,
   FactionLines,
   ScoreCol,
-} from "../../shared/FactionSummary";
-import { InfoHint } from "../../shared/InfoHint";
+} from "../../../shared/FactionSummary";
+import { InfoHint } from "../../../shared/InfoHint";
 import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
-import shared from "./shared.module.css";
-import type { FactionBoardEntry } from "../../../types";
+import pills from "../../../shared/FilterPills.module.css";
+import shared from "../shared.module.css";
+import type { FactionBoardEntry } from "../../../../types";
 
 export function FactionBoard({ factions }: { factions: FactionBoardEntry[] }) {
   const filterMode = usePanel((state) => state.filterMode);
@@ -107,9 +108,9 @@ function FactionTabs({
   onFocus: (id: string | null) => void;
 }) {
   return (
-    <div className={shared.subTabs}>
+    <div className={pills.subTabs}>
       <button
-        className={focus ? "" : shared.selected}
+        className={focus ? "" : pills.selected}
         onClick={() => onFocus(null)}
       >
         Chung
@@ -117,7 +118,7 @@ function FactionTabs({
       {factions.map((entry) => (
         <button
           key={entry.id}
-          className={`${shared.factionPill} ${focus === entry.id ? shared.selected : ""}`}
+          className={`${pills.factionPill} ${focus === entry.id ? pills.selected : ""}`}
           style={{ "--label": entry.labelColor } as React.CSSProperties}
           onClick={() => onFocus(focus === entry.id ? null : entry.id)}
         >

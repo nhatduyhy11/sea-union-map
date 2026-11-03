@@ -1,0 +1,77 @@
+/* Riêng Tab Cứ điểm. Dùng chung element với class của shared.module.css
+   (summary, allocation, sortOption, rank) nên các rule đè lên shared
+   gắn thêm tag/combinator để specificity cao hơn, không phụ thuộc thứ tự
+   bundle CSS giữa hai module. */
+
+/* Row cứ điểm có boss: ảnh boss (--boss-bg) vẽ mờ ở lớp ::before nằm dưới
+   chữ, màu phe vẫn là background-color của row. */
+.bossSummary {
+  position: relative;
+  isolation: isolate;
+}
+
+.bossSummary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--boss-bg) left 120px center / 110px auto no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Đảo trung tâm (tier 4): số thứ hạng, tên đảo và
+   tổng điểm màu xanh lá kiểu Matrix, glow nhẹ. */
+.centerSummary .rankCell,
+.centerSummary .nodeTitle,
+.centerSummary > b {
+  color: #00b140;
+  text-shadow: 0 0 3px rgba(0, 255, 65, 0.3);
+}
+
+.factionName {
+  flex: 1;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.factionName small {
+  display: block;
+  font-size: 9px;
+  margin-top: 1px;
+}
+
+/* Icon trạng thái trước tổng điểm (kiếm/gift/flag/biceps). Kiếm màu
+   chocolate; icon khác theo màu owner (inline). */
+.nodeStatusIcon {
+  flex-shrink: 0;
+}
+
+.frontlineIcon {
+  color: #d2691e;
+}
+
+/* Điểm phe top (màu label phe, inline) và "/ điểm cần claim" (chữ đen). */
+.topShare {
+  font-weight: 500;
+}
+
+.claimNeed {
+  color: #000;
+}
+
+div.nodeAllocation {
+  max-height: 337.5px;
+}
+
+/* Khối BXH player trong expand — tách khỏi bảng điểm 4 phe. */
+.playerBlock {
+  margin-top: 8px;
+  border-top: 1px solid #dfe5e8;
+}
+
+/* Nút sort 3 trạng thái: đang sort thì tô màu nhấn. */
+button.sortActive {
+  color: #0d8a65;
+  font-weight: 500;
+}
