@@ -1,0 +1,19 @@
+/* Cờ trang trí nằm dưới lớp nền sáng để tên và điểm luôn đọc rõ. */
+.row {
+  background:
+    linear-gradient(to right, rgb(248 250 250 / 0.96), rgb(248 250 250 / 0.7)),
+    var(--faction-flag, none) right 24px center / 115px auto no-repeat;
+}
+
+/* Nền chỉ bắt đầu từ phần nội dung bên dưới carousel căn cứ. */
+.detail {
+  display: flow-root;
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(248 250 250 / 0.65) 0,
+      rgb(248 250 250 / 0.82) 260px,
+      rgb(248 250 250 / 0.96) 420px
+    ),
+    var(--faction-flag, none) right 12px top / 90% auto no-repeat;
+}
