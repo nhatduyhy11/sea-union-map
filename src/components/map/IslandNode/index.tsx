@@ -16,6 +16,7 @@ import { bossImageUrl } from "../../../data/nodeBosses";
 import { iconBoxSize } from "../../../domain/mapGraph";
 import { useDebug } from "../../../stores/debug";
 import { getFactionIcon } from "../../shared/factionIcons";
+import { BaseStats } from "./BaseStats";
 import { NodeStats } from "./NodeStats";
 import styles from "./IslandNode.module.css";
 import type { AppNode } from "../../../types";
@@ -73,6 +74,9 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
     .filter(Boolean)
     .join(" ");
   const showStats = !data.base && (data.showAll || data.pinned || hovered);
+  // Căn cứ: popover tóm tắt phe — chỉ hover/ghim, "Điểm toàn map" không bật
+  // (4 khối phe phủ kín góc map).
+  const showBaseStats = data.base && (data.pinned || hovered);
   // Phe đại diện cho màu nền popup: phe đang giữ đảo, hoặc với đảo chưa chủ
   // là phe đủ ngưỡng claim đứng đầu (undefined → nền trắng như cũ).
   const statTint = data.factionInfo?.color ?? claimLeader?.color;
@@ -126,6 +130,9 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         </div>
       </div>
       {data.debug && <span className={styles.centerDot} aria-hidden />}
+      {showBaseStats && (
+        <BaseStats factionId={data.owner ?? data.id} pinned={data.pinned} />
+      )}
       {showStats && (
         <NodeStats
           nodeId={data.id}

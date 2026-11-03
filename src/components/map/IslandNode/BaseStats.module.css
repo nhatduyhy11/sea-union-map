@@ -1,0 +1,31 @@
+/* Popover căn cứ: canh giữa dưới tên căn cứ, nền pha nhạt màu phe + viền trái
+   màu phe như dòng phe dẫn đầu ở BXH Phe. */
+.baseStats {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: max-content;
+  padding: 9px 11px;
+  background: color-mix(in srgb, var(--tint) 12%, #ffffff);
+  border: 1px solid #d8dfe3;
+  border-left: 3px solid var(--tint);
+  border-radius: 7px;
+  box-shadow: 0 8px 20px rgba(25, 42, 52, 0.12);
+  z-index: 20;
+  font-size: 11px;
+  color: #2c3941;
+}
+
+.baseStats.pinned {
+  border-color: var(--highlight-green);
+  border-left-color: var(--tint);
+}
+
+.rank {
+  font-size: 10px;
+  color: #8496a1;
+}
