@@ -1,5 +1,5 @@
 import { factionRing } from "../../../data/factions";
-import { getFactionIcon } from "../../shared/factionIcons";
+import { getFactionIcon } from "../../shared/faction/factionIcons";
 import styles from "./FactionLegend.module.css";
 
 // Legend chỉ đọc: icon đại diện + label (labelColor) các phe để đối chiếu màu

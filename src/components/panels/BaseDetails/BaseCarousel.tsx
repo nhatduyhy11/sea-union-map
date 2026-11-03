@@ -6,7 +6,7 @@ import { useFitMap } from "../../../hooks/useFitMap";
 import { useMapData } from "../../../stores/dataset";
 import { roman } from "../../../utils/format";
 import { useSelection } from "../../../stores/selection";
-import { getFactionIcon } from "../../shared/factionIcons";
+import { getFactionIcon } from "../../shared/faction/factionIcons";
 import styles from "./BaseCarousel.module.css";
 
 // Khớp --tile + --gap trong BaseCarousel.module.css: khoảng cách hai ô.

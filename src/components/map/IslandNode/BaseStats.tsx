@@ -5,7 +5,7 @@ import {
   FactionFlag,
   FactionLines,
   ScoreCol,
-} from "../../shared/FactionSummary";
+} from "../../shared/faction/FactionSummary";
 import styles from "./BaseStats.module.css";
 
 // Popover hover của căn cứ: tóm tắt phe giống một dòng BXH Phe (hạng theo

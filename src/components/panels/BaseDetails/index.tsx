@@ -9,10 +9,10 @@ import {
   FactionFlag,
   FactionLines,
   ScoreCol,
-} from "../../shared/FactionSummary";
+} from "../../shared/faction/FactionSummary";
 import detail from "../NodeDetails/NodeDetails.module.css";
 import styles from "./BaseDetails.module.css";
-import background from "../../shared/FactionBackground.module.css";
+import background from "../../shared/faction/FactionBackground.module.css";
 import { InfoHint } from "../../shared/InfoHint";
 import { BaseCarousel } from "./BaseCarousel";
 import { FactionStatsTable } from "./FactionStatsTable";
