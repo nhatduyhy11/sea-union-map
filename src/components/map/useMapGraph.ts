@@ -1,10 +1,7 @@
 import { useMemo } from "react";
 import { factions } from "../../data/factions";
-import {
-  buildMapEdges,
-  buildMapNodes,
-  matchNodeIds,
-} from "../../domain/mapGraph";
+import { buildMapEdges } from "../../domain/buildMapEdges";
+import { buildMapNodes, matchNodeIds } from "../../domain/buildMapNodes";
 import { openIsland } from "../../stores/commands";
 import { useMapData } from "../../stores/dataset";
 import { useDebug } from "../../stores/debug";
