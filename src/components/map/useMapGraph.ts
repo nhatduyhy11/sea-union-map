@@ -22,6 +22,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
   const togglePin = useSelection((state) => state.togglePin);
   const showAll = useMapView((state) => state.showAll);
   const filter = useMapView((state) => state.filter);
+  const nodeHighlight = useMapView((state) => state.nodeHighlight);
   const debug = useDebug((state) => state.debug);
   const neutralColor = useDebug((state) => state.neutralColor);
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
@@ -39,10 +40,14 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     leaderboard,
   } = useMapData();
 
-  // Node ids được filter guild/player highlight — dim phần còn lại.
+  // Node ids được highlight — dim phần còn lại. Highlight trực tiếp (chi
+  // tiết căn cứ) thắng filter guild/player.
   const matched = useMemo(
-    () => matchNodeIds(filter, nodeIdsByGuild, nodeIdsByPlayer),
-    [filter, nodeIdsByGuild, nodeIdsByPlayer]
+    () =>
+      nodeHighlight
+        ? new Set(nodeHighlight)
+        : matchNodeIds(filter, nodeIdsByGuild, nodeIdsByPlayer),
+    [nodeHighlight, filter, nodeIdsByGuild, nodeIdsByPlayer]
   );
   // Highlight đóng góp của player trên từng đảo khi đang filter theo player.
   const playerHighlight = useMemo(() => {

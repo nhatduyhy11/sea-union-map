@@ -12,6 +12,33 @@
   background: #ffffff;
 }
 
+/* Filter trạng thái đảo (style pill BXH Cứ điểm) + số đảo mỗi filter, hai
+   dòng: icon canvas, rồi tập theo điểm phe (Mất / Đánh). */
+.filters {
+  margin: 16px 0;
+}
+
+/* div. để thắng .subTabs / .nodeFilters (margin, nowrap + scroll ngang) bất
+   kể thứ tự CSS. */
+div.filterRow {
+  margin: 0;
+  flex-wrap: wrap;
+  overflow-x: visible;
+}
+
+div.filterRow + div.filterRow {
+  margin-top: 6px;
+}
+
+.filters button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.filterCount {
+  font-weight: 600;
+}
+
 .rank {
   font-size: 10px;
   color: #8496a1;
@@ -58,7 +85,7 @@
   font-weight: 600;
 }
 
-/* Dòng tổng của các dòng ngay trên ("Đủ điểm" = 2 dòng đầu, "Tất cả" = đủ +
+/* Dòng tổng của các dòng ngay trên ("Đủ điểm" = Mất + Đang chiếm, "Tất cả" = đủ +
    chưa đủ điểm) — vạch đậm phía trên như dòng cộng dồn. */
 .sum th,
 .sum td {
@@ -107,6 +134,11 @@
 
 .dot:hover {
   stroke-width: 3;
+}
+
+/* Filter trạng thái đang bật: chấm ngoài tập mờ đi. */
+.dot.faded {
+  opacity: 0.15;
 }
 
 .legend {

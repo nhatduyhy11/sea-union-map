@@ -1,7 +1,22 @@
-import { useMemo } from "react";
-import { Castle, Pin, X } from "lucide-react";
-import { factionIslandStats, rankFactions } from "../../../domain/selectors";
+import { useEffect, useMemo, useState } from "react";
+import {
+  BicepsFlexed,
+  Castle,
+  Flag,
+  Gift,
+  Pin,
+  Swords,
+  X,
+  type LucideIcon,
+} from "lucide-react";
+import {
+  factionIslandStats,
+  factionNodeFilters,
+  rankFactions,
+  type FactionNodeFilter,
+} from "../../../domain/selectors";
 import { useMapData } from "../../../stores/dataset";
+import { useMapView } from "../../../stores/mapView";
 import { compact } from "../../../utils/format";
 import { getFactionIcon } from "../../shared/factionIcons";
 import {
@@ -10,6 +25,7 @@ import {
   ScoreCol,
 } from "../../shared/FactionSummary";
 import detail from "../NodeDetails/NodeDetails.module.css";
+import board from "../leaderboard/shared.module.css";
 import styles from "./BaseDetails.module.css";
 import { ScoreDotPlot } from "./ScoreDotPlot";
 import type { Island, IslandBucketStats } from "../../../types";
@@ -22,14 +38,15 @@ export interface BaseDetailsProps {
 }
 
 // Chi tiết căn cứ = thống kê phe sở hữu căn cứ: tóm tắt như BXH Phe + điểm
-// phe dồn vào từng tập đảo (chiếm / đủ điểm chưa chiếm / chưa đủ điểm).
+// phe dồn vào từng tập đảo (chiếm / mất / chưa đủ điểm).
 export function BaseDetails({
   island,
   pinned,
   onClose,
   onTogglePin,
 }: BaseDetailsProps) {
-  const { factionBoard, ownedIslands, scoresByNode } = useMapData();
+  const { factionBoard, ownedIslands, scoresByNode, canvasIconByNode } =
+    useMapData();
   const factionId = island.owner ?? island.id;
   const entry = factionBoard.find((faction) => faction.id === factionId);
   const rank = useMemo(
@@ -40,6 +57,30 @@ export function BaseDetails({
     () => factionIslandStats(factionId, ownedIslands, scoresByNode),
     [factionId, ownedIslands, scoresByNode]
   );
+  const nodeFilters = useMemo(
+    () =>
+      factionNodeFilters(
+        factionId,
+        ownedIslands,
+        scoresByNode,
+        canvasIconByNode
+      ),
+    [factionId, ownedIslands, scoresByNode, canvasIconByNode]
+  );
+  const [activeFilter, setActiveFilter] = useState<FactionNodeFilter | null>(
+    null
+  );
+  // Đổi căn cứ thì bỏ filter của căn cứ cũ.
+  useEffect(() => setActiveFilter(null), [factionId]);
+  const highlight = useMemo(
+    () => (activeFilter ? new Set(nodeFilters[activeFilter]) : null),
+    [activeFilter, nodeFilters]
+  );
+  // Filter đang bật = highlight các đảo đó trên map; rời panel thì gỡ.
+  useEffect(() => {
+    useMapView.getState().setNodeHighlight(highlight);
+  }, [highlight]);
+  useEffect(() => () => useMapView.getState().setNodeHighlight(null), []);
   const FactionIcon = getFactionIcon(factionId) ?? Castle;
   return (
     <div className={detail.detail}>
@@ -66,6 +107,34 @@ export function BaseDetails({
           <ScoreCol entry={entry} />
         </div>
       )}
+      <div className={styles.filters}>
+        {NODE_FILTER_ROWS.map((row, index) => (
+          <div
+            key={index}
+            className={`${board.subTabs} ${board.nodeFilters} ${styles.filterRow}`}
+          >
+            {row.map(({ id, Icon, label, hint }) => {
+              const count = nodeFilters[id].length;
+              return (
+                <button
+                  key={id}
+                  className={activeFilter === id ? board.selected : ""}
+                  aria-pressed={activeFilter === id}
+                  title={hint}
+                  disabled={count === 0}
+                  onClick={() =>
+                    setActiveFilter(activeFilter === id ? null : id)
+                  }
+                >
+                  {Icon && <Icon size={13} aria-hidden="true" />}
+                  {label}
+                  <b className={styles.filterCount}>{count}</b>
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
       <div className={detail.sectionTitle}>
         Điểm phe trên các đảo<span>tổng / trung bình / trung vị</span>
       </div>
@@ -84,8 +153,8 @@ export function BaseDetails({
         </thead>
         <tbody>
           <StatRow
-            label="Đủ điểm, chưa chiếm"
-            hint="Có điểm ≥ ngưỡng claim nhưng phe không sở hữu (bị outbid hoặc mất đường nối)"
+            label="Mất"
+            hint="Đủ điểm, chưa chiếm: có điểm ≥ ngưỡng claim nhưng phe không sở hữu (bị outbid hoặc mất đường nối)"
             stats={stats.claimable}
           />
           <StatRow
@@ -96,7 +165,7 @@ export function BaseDetails({
           <StatRow
             className={`${styles.tinted} ${styles.sum}`}
             label="Đủ điểm"
-            hint="Đang chiếm + đủ điểm chưa chiếm"
+            hint="Đang chiếm + mất"
             stats={stats.enough}
           />
           <StatRow
@@ -122,6 +191,7 @@ export function BaseDetails({
             islands={stats.enoughIslands}
             stats={stats.enough}
             color={entry?.color || "#5b7a8c"}
+            highlight={highlight}
           />
         </>
       )}
@@ -135,6 +205,57 @@ export function BaseDetails({
     </div>
   );
 }
+
+interface NodeFilterDef {
+  id: FactionNodeFilter;
+  Icon?: LucideIcon;
+  label: string;
+  hint: string;
+}
+
+// Dòng 1: cùng icon / nhãn với filter trạng thái BXH Cứ điểm. Dòng 2: tập đảo
+// theo điểm phe — "Mất" (cùng tập dòng "Mất" của bảng) và "Đánh" thay "Chưa
+// chiếm" vì panel đã gắn với một phe.
+const NODE_FILTER_ROWS: NodeFilterDef[][] = [
+  [
+    {
+      id: "frontline",
+      Icon: Swords,
+      label: "Tranh",
+      hint: "Đảo giao tranh phe đang chiếm hoặc có điểm",
+    },
+    {
+      id: "overbuilt",
+      Icon: BicepsFlexed,
+      label: "Dồn",
+      hint: "Đảo phe đang chiếm với điểm vượt mức trung bình của phe",
+    },
+    {
+      id: "gifted",
+      Icon: Gift,
+      label: "Cướp",
+      hint: "Owner bị vượt xa điểm nhưng vẫn giữ đảo vì phe top bị cắt đường — phe là owner hoặc phe bị cắt",
+    },
+    {
+      id: "aftermath",
+      Icon: Flag,
+      label: "Vết",
+      hint: "Vết tích tranh chấp lớn trên đảo phe đang chiếm hoặc có điểm",
+    },
+  ],
+  [
+    {
+      id: "lost",
+      label: "Mất",
+      hint: "Đủ điểm, chưa chiếm: có điểm ≥ ngưỡng claim nhưng phe không sở hữu",
+    },
+    {
+      id: "attacked",
+      label: "Đánh",
+      hint: "Mọi đảo phe có điểm",
+    },
+  ],
+];
 
 function StatRow({
   className,

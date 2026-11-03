@@ -9,17 +9,20 @@ const ZERO_BAND = 20;
 const R = 3.5;
 
 // Dot plot dọc phân bố điểm phe trên các đảo đủ điểm: mỗi chấm một đảo (đặc =
-// đang chiếm, rỗng = đủ điểm chưa chiếm), trục log lớn ở trên, vạch avg /
+// đang chiếm, rỗng = mất: đủ điểm chưa chiếm), trục log lớn ở trên, vạch avg /
 // median của cả tập. Đảo 0 điểm (chiếm mà phe không có điểm) nằm ở dải "0"
-// dưới đáy vì log không biểu diễn được 0.
+// dưới đáy vì log không biểu diễn được 0. highlight (filter trạng thái đang
+// bật) làm nổi chấm thuộc tập, mờ phần còn lại.
 export function ScoreDotPlot({
   islands,
   stats,
   color,
+  highlight,
 }: {
   islands: IslandPoints[];
   stats: IslandBucketStats;
   color: string;
+  highlight?: ReadonlySet<string> | null;
 }) {
   const box = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(280);
@@ -67,23 +70,26 @@ export function ScoreDotPlot({
             </text>
           </g>
         ))}
-        {plot.dots.map((dot) => (
-          <circle
-            key={dot.id}
-            className={styles.dot}
-            cx={dot.x}
-            cy={dot.y}
-            r={R}
-            fill={dot.owned ? color : "#ffffff"}
-            stroke={color}
-          >
-            <title>
-              {`${dot.name} · ${compact(dot.points)} · ${
-                dot.owned ? "đang chiếm" : "đủ điểm, chưa chiếm"
-              }`}
-            </title>
-          </circle>
-        ))}
+        {plot.dots.map((dot) => {
+          const hot = highlight?.has(dot.id);
+          return (
+            <circle
+              key={dot.id}
+              className={`${styles.dot} ${highlight && !hot ? styles.faded : ""}`}
+              cx={dot.x}
+              cy={dot.y}
+              r={hot ? R + 1.5 : R}
+              fill={dot.owned ? color : "#ffffff"}
+              stroke={color}
+            >
+              <title>
+                {`${dot.name} · ${compact(dot.points)} · ${
+                  dot.owned ? "đang chiếm" : "mất"
+                }`}
+              </title>
+            </circle>
+          );
+        })}
       </svg>
       <div className={styles.legend}>
         <span>
@@ -92,7 +98,7 @@ export function ScoreDotPlot({
         </span>
         <span>
           <i style={{ borderColor: color }} />
-          Đủ điểm, chưa chiếm
+          Mất
         </span>
         <span className={styles.legendRef}>— avg / median của cả tập</span>
       </div>

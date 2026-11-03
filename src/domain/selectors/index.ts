@@ -11,6 +11,8 @@ export {
   rankFactions,
   rankFactionsForHighlight,
   factionIslandStats,
+  factionNodeFilters,
+  type FactionNodeFilter,
   sortGuilds,
 } from "./board";
 export { frontlineNodes } from "./frontline";
