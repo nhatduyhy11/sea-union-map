@@ -11,7 +11,7 @@ export {
   rankFactions,
   rankFactionsForHighlight,
   factionIslandStats,
-  factionNodeFilters,
+  factionFilterIds,
   type FactionNodeFilter,
   sortGuilds,
 } from "./board";

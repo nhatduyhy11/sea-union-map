@@ -1,9 +1,9 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { factionIslandStats, factionNodeFilters } from "./factionIslandStats";
+import { factionFilterIds, factionIslandStats } from "./factionIslandStats";
 import { scoresForNode } from "../nodeScores";
 import { factions } from "../../testFixtures";
-import type { CanvasIcon, Island } from "../../../types";
+import type { CanvasIcon, Island, IslandBucketStats } from "../../../types";
 
 const node = (
   id: string,
@@ -20,12 +20,28 @@ const node = (
   ...extra,
 });
 
-const stats = (islands: Island[]) =>
+const stats = (
+  islands: Island[],
+  icons = new Map<string, CanvasIcon>(),
+  frontlines = new Map<
+    string,
+    { owner: { id: string }; rival: { id: string } }
+  >()
+) =>
   factionIslandStats(
     "a",
     islands,
-    new Map(islands.map((n) => [n.id, scoresForNode(n, [], factions)]))
+    new Map(islands.map((n) => [n.id, scoresForNode(n, [], factions)])),
+    icons,
+    frontlines
   );
+
+const numbers = ({ count, total, mean, median }: IslandBucketStats) => ({
+  count,
+  total,
+  mean,
+  median,
+});
 
 test("factionIslandStats splits owned / claimable / below and combines", () => {
   const result = stats([
@@ -38,15 +54,25 @@ test("factionIslandStats splits owned / claimable / below and combines", () => {
     node("l1", "b", { a: 4, b: 20 }),
     node("none", "b", { b: 20 }),
   ]);
-  assert.deepEqual(result.owned, { count: 3, total: 90, mean: 30, median: 30 });
-  assert.deepEqual(result.claimable, {
+  assert.deepEqual(numbers(result.owned), {
+    count: 3,
+    total: 90,
+    mean: 30,
+    median: 30,
+  });
+  assert.deepEqual(numbers(result.claimable), {
     count: 2,
     total: 25,
     mean: 12.5,
     median: 12.5,
   });
-  assert.deepEqual(result.below, { count: 1, total: 4, mean: 4, median: 4 });
-  assert.deepEqual(result.enough, {
+  assert.deepEqual(numbers(result.below), {
+    count: 1,
+    total: 4,
+    mean: 4,
+    median: 4,
+  });
+  assert.deepEqual(numbers(result.enough), {
     count: 5,
     total: 115,
     mean: 23,
@@ -55,6 +81,14 @@ test("factionIslandStats splits owned / claimable / below and combines", () => {
   assert.equal(result.touched.count, 6);
   assert.equal(result.touched.total, 119);
   assert.equal(result.touched.median, 17.5);
+  assert.deepEqual([...result.owned.ids], ["o1", "o2", "o3"]);
+  assert.deepEqual([...result.claimable.ids], ["c1", "c2"]);
+  assert.deepEqual([...result.below.ids], ["l1"]);
+  assert.deepEqual([...result.enough.ids], ["o1", "o2", "o3", "c1", "c2"]);
+  assert.deepEqual(
+    [...result.touched.ids],
+    ["o1", "o2", "o3", "c1", "c2", "l1"]
+  );
   assert.deepEqual(
     result.enoughIslands.map(({ id, points, owned }) => [id, points, owned]),
     [
@@ -69,10 +103,16 @@ test("factionIslandStats splits owned / claimable / below and combines", () => {
 
 test("factionIslandStats returns zeroed buckets when nothing matches", () => {
   const result = stats([node("x", "b", { b: 20 })]);
-  assert.deepEqual(result.touched, { count: 0, total: 0, mean: 0, median: 0 });
+  assert.deepEqual(numbers(result.touched), {
+    count: 0,
+    total: 0,
+    mean: 0,
+    median: 0,
+  });
+  assert.equal(result.touched.ids.size, 0);
 });
 
-test("factionNodeFilters keeps frontline only where the faction is owner or rival", () => {
+test("factionIslandStats keeps frontline only where the faction is owner or rival", () => {
   const islands = [
     node("base", "a", { a: 999 }, { base: true }),
     node("f1", "a", { a: 20, b: 15 }),
@@ -100,17 +140,8 @@ test("factionNodeFilters keeps frontline only where the faction is owner or riva
     // a chỉ có điểm lẻ trên đảo b–c đang giành: không phải giao tranh của a.
     ["f3", front("b", "c")],
   ]);
-  const result = factionNodeFilters(
-    "a",
-    islands,
-    new Map(islands.map((n) => [n.id, scoresForNode(n, [], factions)])),
-    icons,
-    frontlines
-  );
-  assert.deepEqual(result, {
-    frontline: ["f1", "f2"],
-    overbuilt: ["ob"],
-    lost: ["f2", "u1"],
-    attacked: ["f1", "f2", "f3", "ob", "ob2", "u1"],
-  });
+  const result = stats(islands, icons, frontlines);
+  assert.deepEqual([...factionFilterIds(result, "frontline")], ["f1", "f2"]);
+  assert.deepEqual([...factionFilterIds(result, "overbuilt")], ["ob"]);
+  assert.deepEqual([...factionFilterIds(result, "claimable")], ["f2", "u1"]);
 });

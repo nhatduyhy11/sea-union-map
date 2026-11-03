@@ -245,12 +245,14 @@ export type IslandNodeData = Island & {
 export type AppNode = Node<IslandNodeData, "island">;
 
 // Một tập đảo trong thống kê căn cứ phe: số đảo + tổng / trung bình / trung vị
-// điểm phe trên các đảo đó (0 khi tập rỗng).
+// điểm phe trên các đảo đó (0 khi tập rỗng); ids = các đảo của tập (highlight
+// trên map khi bật dòng đó làm filter).
 export interface IslandBucketStats {
   count: number;
   total: number;
   mean: number;
   median: number;
+  ids: ReadonlySet<string>;
 }
 
 // Điểm phe trên một đảo thuộc tập enough; owned = phe đang chiếm đảo đó.
@@ -261,14 +263,20 @@ export interface IslandPoints {
   owned: boolean;
 }
 
-// Thống kê chi tiết căn cứ phe (BaseDetails): owned / claimable / below là ba
-// tập rời nhau; enough = owned + claimable, touched = cả ba. enoughIslands là
+// Tập đảo theo điểm phe: owned / claimable / below rời nhau; enough = owned +
+// claimable, touched = cả ba.
+export type IslandBucket =
+  "owned" | "claimable" | "below" | "enough" | "touched";
+
+// Thống kê chi tiết căn cứ phe (BaseDetails): năm tập theo điểm phe, cộng hai
+// tập theo icon canvas — frontline (đảo giao tranh mà phe là owner hoặc phe
+// nhì ở cửa) và overbuilt (đảo phe chiếm có icon overbuilt). enoughIslands là
 // từng đảo của enough, tăng dần theo điểm.
-export interface FactionIslandStats {
-  owned: IslandBucketStats;
-  claimable: IslandBucketStats;
-  below: IslandBucketStats;
-  enough: IslandBucketStats;
-  touched: IslandBucketStats;
+export interface FactionIslandStats extends Record<
+  IslandBucket,
+  IslandBucketStats
+> {
+  frontline: ReadonlySet<string>;
+  overbuilt: ReadonlySet<string>;
   enoughIslands: IslandPoints[];
 }
