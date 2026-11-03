@@ -253,12 +253,22 @@ export interface IslandBucketStats {
   median: number;
 }
 
+// Điểm phe trên một đảo thuộc tập enough; owned = phe đang chiếm đảo đó.
+export interface IslandPoints {
+  id: string;
+  name: string;
+  points: number;
+  owned: boolean;
+}
+
 // Thống kê chi tiết căn cứ phe (BaseDetails): owned / claimable / below là ba
-// tập rời nhau; enough = owned + claimable, touched = cả ba.
+// tập rời nhau; enough = owned + claimable, touched = cả ba. enoughIslands là
+// từng đảo của enough, tăng dần theo điểm.
 export interface FactionIslandStats {
   owned: IslandBucketStats;
   claimable: IslandBucketStats;
   below: IslandBucketStats;
   enough: IslandBucketStats;
   touched: IslandBucketStats;
+  enoughIslands: IslandPoints[];
 }

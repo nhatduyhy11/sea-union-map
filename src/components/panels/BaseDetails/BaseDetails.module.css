@@ -64,3 +64,72 @@
 .sum td {
   border-top: 2px solid #b9c4ca;
 }
+
+/* Dot plot phân bố điểm đảo đủ điểm. */
+.plot {
+  width: 100%;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.plot svg {
+  display: block;
+  overflow: visible;
+}
+
+.tick line {
+  stroke: #eaeef0;
+}
+
+.tick text {
+  fill: #8496a1;
+  text-anchor: end;
+  dominant-baseline: middle;
+}
+
+.ref line {
+  stroke: #33424c;
+  stroke-dasharray: 3 3;
+}
+
+.ref text {
+  fill: #33424c;
+  dominant-baseline: middle;
+}
+
+.ref tspan {
+  font-weight: 600;
+}
+
+.dot {
+  stroke-width: 1.5;
+}
+
+.dot:hover {
+  stroke-width: 3;
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 8px;
+  color: #5d6e78;
+}
+
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legend i {
+  width: 7px;
+  height: 7px;
+  border: 1.5px solid;
+  border-radius: 50%;
+}
+
+.legendRef {
+  color: #8496a1;
+}

@@ -11,6 +11,7 @@ import {
 } from "../../shared/FactionSummary";
 import detail from "../NodeDetails/NodeDetails.module.css";
 import styles from "./BaseDetails.module.css";
+import { ScoreDotPlot } from "./ScoreDotPlot";
 import type { Island, IslandBucketStats } from "../../../types";
 
 export interface BaseDetailsProps {
@@ -112,6 +113,18 @@ export function BaseDetails({
           />
         </tbody>
       </table>
+      {stats.enoughIslands.length > 0 && (
+        <>
+          <div className={detail.sectionTitle}>
+            Phân bố điểm đảo đủ điểm<span>mỗi chấm một đảo, trục log</span>
+          </div>
+          <ScoreDotPlot
+            islands={stats.enoughIslands}
+            stats={stats.enough}
+            color={entry?.color || "#5b7a8c"}
+          />
+        </>
+      )}
       <button
         className={`${detail.pinDetail} ${pinned ? detail.isPinned : ""}`}
         onClick={() => onTogglePin(island.id)}

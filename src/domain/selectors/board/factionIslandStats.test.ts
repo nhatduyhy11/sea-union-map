@@ -55,6 +55,16 @@ test("factionIslandStats splits owned / claimable / below and combines", () => {
   assert.equal(result.touched.count, 6);
   assert.equal(result.touched.total, 119);
   assert.equal(result.touched.median, 17.5);
+  assert.deepEqual(
+    result.enoughIslands.map(({ id, points, owned }) => [id, points, owned]),
+    [
+      ["c2", 10, false],
+      ["c1", 15, false],
+      ["o1", 20, true],
+      ["o3", 30, true],
+      ["o2", 40, true],
+    ]
+  );
 });
 
 test("factionIslandStats returns zeroed buckets when nothing matches", () => {
