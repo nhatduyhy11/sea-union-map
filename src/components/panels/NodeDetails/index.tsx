@@ -1,9 +1,8 @@
 import type { CSSProperties } from "react";
-import { Anchor, Castle, Pin, Shield, X } from "lucide-react";
+import { Anchor, Pin, Shield, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../data/nodeBosses";
 import { number } from "../../../utils/format";
 import { FactionScoreBars } from "../../shared/FactionScoreBars";
-import { getFactionIcon } from "../../shared/factionIcons";
 import { PlayerTable } from "./PlayerTable";
 import styles from "./NodeDetails.module.css";
 import type { NodeDetailData } from "../../../types";
@@ -33,8 +32,8 @@ export function NodeDetails({
     attackers.length === ATTACKER_CAP &&
     total > 0 &&
     Math.abs(attackerSum - total) / total > 0.01;
-  // Base không bị đánh nên không phủ ảnh boss dù bảng boss có giá trị.
-  const bossId = island.base ? undefined : island.monsterId;
+  // Căn cứ phe render BaseDetails (Sidebar) — ở đây luôn là đảo thường.
+  const bossId = island.monsterId;
   const bossImage = bossId ? bossImageUrl(bossId) : undefined;
   return (
     <div
@@ -57,18 +56,7 @@ export function NodeDetails({
         className={styles.detailIcon}
         style={{ color: owner?.color || "#b8c6cf" }}
       >
-        {island.base ? (
-          (() => {
-            const FactionIcon = getFactionIcon(island.owner || island.id);
-            return FactionIcon ? (
-              <FactionIcon size={33} />
-            ) : (
-              <Castle size={33} />
-            );
-          })()
-        ) : (
-          <Anchor size={33} />
-        )}
+        <Anchor size={33} />
       </div>
       <h2 className={styles.title}>{island.name}</h2>
       <div className={styles.detailTags}>
@@ -90,35 +78,25 @@ export function NodeDetails({
       <div className={styles.claim}>
         <Shield size={19} />
         <div>
-          <small>
-            {island.base ? "CĂN CỨ PHE" : "ĐIỂM CẦN / ĐIỂM PHE CHIẾM"}
-          </small>
-          {island.base ? (
-            <b>Không thể bị chiếm</b>
-          ) : (
-            <b style={{ color: ownerScore?.labelColor }}>
-              {number(island.claimThreshold)}
-              {ownerScore && ` / ${number(ownerScore.score)}`}
-            </b>
-          )}
+          <small>ĐIỂM CẦN / ĐIỂM PHE CHIẾM</small>
+          <b style={{ color: ownerScore?.labelColor }}>
+            {number(island.claimThreshold)}
+            {ownerScore && ` / ${number(ownerScore.score)}`}
+          </b>
         </div>
       </div>
-      {!island.base && (
-        <>
-          <div className={styles.sectionTitle}>
-            Điểm các phe<span>{number(total)} tổng</span>
-          </div>
-          <FactionScoreBars scores={scores} total={total} />
-          <div className={styles.sectionTitle}>
-            Người chơi tấn công
-            <span>
-              {attackers.length}
-              {attackersTruncated && "(+)"} người
-            </span>
-          </div>
-          <PlayerTable attackers={attackers} />
-        </>
-      )}
+      <div className={styles.sectionTitle}>
+        Điểm các phe<span>{number(total)} tổng</span>
+      </div>
+      <FactionScoreBars scores={scores} total={total} />
+      <div className={styles.sectionTitle}>
+        Người chơi tấn công
+        <span>
+          {attackers.length}
+          {attackersTruncated && "(+)"} người
+        </span>
+      </div>
+      <PlayerTable attackers={attackers} />
       <button
         className={`${styles.pinDetail} ${pinned ? styles.isPinned : ""}`}
         onClick={() => onTogglePin(island.id)}

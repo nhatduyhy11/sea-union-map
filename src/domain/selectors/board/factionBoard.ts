@@ -144,7 +144,9 @@ function factionEntry(
       : (touched.get(node.id)?.get(faction.id) ?? 0);
   return {
     ...faction,
-    islands: islands.filter((node) => node.owner === faction.id).length,
+    // Đảo chiếm: không tính căn cứ (luôn thuộc phe, không chiếm được).
+    islands: islands.filter((node) => !node.base && node.owner === faction.id)
+      .length,
     // Đã đánh (touched): mọi đảo có điểm phe > 0, gồm cả đảo đang chiếm.
     // Nguồn điểm phe/đảo như scoresForNode: server state (đủ — node board bị
     // cắt top-20/đảo), dump cũ thiếu thì cộng contributions.

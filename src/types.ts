@@ -157,8 +157,8 @@ export interface MapFilter {
 export type CanvasFilter = MapFilter;
 
 // "BXH Phe" entry: the faction's score is the sum of its member guilds'
-// totals (dump factionGuilds, "Tổng quan phe"), islands = owned nodes ("Chiếm đảo"),
-// `touched` = all nodes with positive faction points, including owned nodes.
+// totals (dump factionGuilds, "Tổng quan phe"), islands = owned nodes
+// excluding the base ("Chiếm đảo"), `touched` = all nodes with positive faction points, including owned nodes.
 export interface FactionBoardEntry extends Faction {
   score: number;
   // Tổng lực chiến các guild trong phe (0 = chưa có power data).
@@ -243,3 +243,32 @@ export type IslandNodeData = Island & {
 };
 
 export type AppNode = Node<IslandNodeData, "island">;
+
+// Một tập đảo trong thống kê căn cứ phe: số đảo + tổng / trung bình / trung vị
+// điểm phe trên các đảo đó (0 khi tập rỗng).
+export interface IslandBucketStats {
+  count: number;
+  total: number;
+  mean: number;
+  median: number;
+}
+
+// Điểm phe trên một đảo thuộc tập enough; owned = phe đang chiếm đảo đó.
+export interface IslandPoints {
+  id: string;
+  name: string;
+  points: number;
+  owned: boolean;
+}
+
+// Thống kê chi tiết căn cứ phe (BaseDetails): owned / claimable / below là ba
+// tập rời nhau; enough = owned + claimable, touched = cả ba. enoughIslands là
+// từng đảo của enough, tăng dần theo điểm.
+export interface FactionIslandStats {
+  owned: IslandBucketStats;
+  claimable: IslandBucketStats;
+  below: IslandBucketStats;
+  enough: IslandBucketStats;
+  touched: IslandBucketStats;
+  enoughIslands: IslandPoints[];
+}
