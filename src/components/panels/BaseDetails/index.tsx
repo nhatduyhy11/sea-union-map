@@ -1,5 +1,6 @@
 import { useEffect, useMemo, type CSSProperties } from "react";
 import { Pin, X } from "lucide-react";
+import { factionFlagUrl } from "../../../data/factionFlags";
 import { factionIslandStats, rankFactions } from "../../../domain/selectors";
 import { useDataset, useMapData } from "../../../stores/dataset";
 import { useSelection } from "../../../stores/selection";
@@ -11,6 +12,7 @@ import {
 } from "../../shared/FactionSummary";
 import detail from "../NodeDetails/NodeDetails.module.css";
 import styles from "./BaseDetails.module.css";
+import background from "../../shared/FactionBackground.module.css";
 import { InfoHint } from "../../shared/InfoHint";
 import { BaseCarousel } from "./BaseCarousel";
 import { FactionStatsTable } from "./FactionStatsTable";
@@ -37,6 +39,7 @@ export function BaseDetails({
 }: BaseDetailsProps) {
   const { factionBoard, islandStatsByFaction } = useMapData();
   const factionId = island.owner ?? island.id;
+  const flag = factionFlagUrl(factionId);
   const server = useDataset((state) => state.server);
   // Căn cứ người dùng chọn (có onClose) được nhớ theo cụm để đóng chi tiết đảo
   // thì quay về đúng căn cứ. Căn cứ mặc định không ghi, để vẫn bám phe top 1.
@@ -76,61 +79,70 @@ export function BaseDetails({
         )}
       </div>
       <BaseCarousel factionId={factionId} />
-      <h2 className={detail.title}>{island.name}</h2>
-      {entry && (
-        <div
-          className={`${styles.card} ${rank === 1 ? styles.leading : ""}`}
-          style={
-            {
-              borderColor: entry.color,
-              "--tint": entry.color,
-            } as CSSProperties
-          }
-        >
-          <span className={styles.rank} title="Hạng theo điểm phe">
-            {rank}
-          </span>
-          <FactionFlag entry={entry} />
-          <FactionLines entry={entry} />
-          <ScoreCol entry={entry} />
-        </div>
-      )}
-      <NodeFilterChips
-        stats={stats}
-        activeFilter={activeFilter}
-        onToggle={toggleFilter}
-      />
-      <div className={detail.sectionTitle}>
-        Điểm phe trên các đảo<span>tổng / trung bình / trung vị</span>
-      </div>
-      <FactionStatsTable
-        stats={stats}
-        color={entry?.color}
-        activeFilter={activeFilter}
-        onSelect={setActiveFilter}
-        onToggle={toggleFilter}
-      />
-      {stats.enoughIslands.length > 0 && (
-        <>
-          <div className={detail.sectionTitle}>
-            Phân bố điểm đảo đủ điểm<span>mỗi chấm một đảo, trục log</span>
-          </div>
-          <ScoreDotPlot
-            islands={stats.enoughIslands}
-            stats={stats.enough}
-            color={entry?.color || "#5b7a8c"}
-            highlight={highlight}
-            onSelect={focusIsland}
-          />
-        </>
-      )}
-      <button
-        className={`${detail.pinDetail} ${pinned ? detail.isPinned : ""}`}
-        onClick={() => onTogglePin(island.id)}
+      <div
+        className={flag ? background.detail : undefined}
+        style={
+          flag
+            ? ({ "--faction-flag": `url(${flag})` } as CSSProperties)
+            : undefined
+        }
       >
-        <Pin size={15} />
-        {pinned ? "Bỏ ghim tóm tắt trên map" : "Ghim tóm tắt trên map"}
-      </button>
+        <h2 className={detail.title}>{island.name}</h2>
+        {entry && (
+          <div
+            className={`${styles.card} ${rank === 1 ? styles.leading : ""}`}
+            style={
+              {
+                borderColor: entry.color,
+                "--tint": entry.color,
+              } as CSSProperties
+            }
+          >
+            <span className={styles.rank} title="Hạng theo điểm phe">
+              {rank}
+            </span>
+            <FactionFlag entry={entry} />
+            <FactionLines entry={entry} />
+            <ScoreCol entry={entry} />
+          </div>
+        )}
+        <NodeFilterChips
+          stats={stats}
+          activeFilter={activeFilter}
+          onToggle={toggleFilter}
+        />
+        <div className={detail.sectionTitle}>
+          Điểm phe trên các đảo<span>tổng / trung bình / trung vị</span>
+        </div>
+        <FactionStatsTable
+          stats={stats}
+          color={entry?.color}
+          activeFilter={activeFilter}
+          onSelect={setActiveFilter}
+          onToggle={toggleFilter}
+        />
+        {stats.enoughIslands.length > 0 && (
+          <>
+            <div className={detail.sectionTitle}>
+              Phân bố điểm đảo đủ điểm<span>mỗi chấm một đảo, trục log</span>
+            </div>
+            <ScoreDotPlot
+              islands={stats.enoughIslands}
+              stats={stats.enough}
+              color={entry?.color || "#5b7a8c"}
+              highlight={highlight}
+              onSelect={focusIsland}
+            />
+          </>
+        )}
+        <button
+          className={`${detail.pinDetail} ${pinned ? detail.isPinned : ""}`}
+          onClick={() => onTogglePin(island.id)}
+        >
+          <Pin size={15} />
+          {pinned ? "Bỏ ghim tóm tắt trên map" : "Ghim tóm tắt trên map"}
+        </button>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import { ChevronRight } from "lucide-react";
+import { factionFlagUrl } from "../../../../data/factionFlags";
 import { compact } from "../../../../utils/format";
 import {
   rankFactions,
@@ -16,6 +17,7 @@ import {
 import { InfoHint } from "../../../shared/InfoHint";
 import { GuildList } from "./GuildAccordion";
 import styles from "./FactionBoard.module.css";
+import background from "../../../shared/FactionBackground.module.css";
 import pills from "../../../shared/FilterPills.module.css";
 import shared from "../shared.module.css";
 import type { FactionBoardEntry } from "../../../../types";
@@ -147,10 +149,17 @@ function FactionItem({
   return (
     <details className={shared.item} open={filterMode ? open : undefined}>
       <summary
-        className={`${shared.summary} ${shared.tintedSummary}`}
+        className={`${shared.summary} ${shared.tintedSummary} ${background.row}`}
         // Highlight phe dẫn đầu nhiên liệu (data cũ thiếu fuel → fallback Điểm
         // phe, xem factionHighlight): chỉ viền trái màu phe, không tô nền.
-        style={leading ? { borderLeftColor: entry.color } : undefined}
+        style={
+          {
+            borderLeftColor: leading ? entry.color : undefined,
+            "--faction-flag": factionFlagUrl(entry.id)
+              ? `url(${factionFlagUrl(entry.id)})`
+              : undefined,
+          } as CSSProperties
+        }
         onClick={
           filterMode
             ? (event) => {
@@ -184,8 +193,15 @@ function SingleFaction({
   return (
     <>
       <div
-        className={styles.factionCard}
-        style={{ borderColor: faction.color }}
+        className={`${styles.factionCard} ${background.row}`}
+        style={
+          {
+            borderColor: faction.color,
+            "--faction-flag": factionFlagUrl(faction.id)
+              ? `url(${factionFlagUrl(faction.id)})`
+              : undefined,
+          } as CSSProperties
+        }
       >
         <FactionFlag entry={faction} />
         <FactionLines entry={faction} />
