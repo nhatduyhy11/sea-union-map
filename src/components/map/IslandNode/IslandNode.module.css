@@ -31,11 +31,11 @@
 }
 
 .dim {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 .dim:hover {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 /* Node khớp filter guild/player: viền icon dày lên rõ (thường 2px → 3.5px,

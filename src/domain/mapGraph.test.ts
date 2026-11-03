@@ -203,8 +203,8 @@ test("Edges style by ownership and dim under filter", () => {
   assert.equal(edges[2]?.style?.opacity, 0.5);
   // Có filter: mọi connection dim xuống để node highlight nổi lên.
   const dimmed = buildMapEdges(routes, withNeutral, factions, true);
-  assert.equal(dimmed[3]?.style?.opacity, 0.2);
-  assert.equal(dimmed[0]?.style?.opacity, 0.12);
+  assert.equal(dimmed[3]?.style?.opacity, 0.1);
+  assert.equal(dimmed[0]?.style?.opacity, 0.06);
   assert.equal(dimmed[3]?.style?.strokeWidth, 5);
   assert.equal(dimmed[2]?.style?.strokeDasharray, "7 7");
 });
