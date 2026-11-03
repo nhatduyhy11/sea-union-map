@@ -24,6 +24,23 @@
   border-left: 3px solid transparent;
 }
 
+/* Row cứ điểm có boss: ảnh boss (--boss-bg) vẽ mờ ở lớp ::before nằm dưới
+   chữ, màu phe vẫn là background-color của row. */
+.bossSummary {
+  position: relative;
+  isolation: isolate;
+}
+
+.bossSummary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--boss-bg) left 120px center / 110px auto no-repeat;
+  opacity: 0.35;
+  pointer-events: none;
+}
+
 .summary::-webkit-details-marker {
   display: none;
 }
