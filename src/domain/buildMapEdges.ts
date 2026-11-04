@@ -32,7 +32,7 @@ export function buildMapEdges(
       selectable: false,
       style: {
         stroke: faction?.edgeColor ?? faction?.color ?? neutralColor,
-        strokeWidth: faction ? 5 : 3.5,
+        strokeWidth: faction ? 8 : 6,
         opacity: filterActive
           ? faction
             ? 0.1

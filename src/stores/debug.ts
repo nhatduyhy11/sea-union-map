@@ -29,7 +29,7 @@ export const useDebug = create<DebugState>()((set) => ({
   debug: false,
   canvasBg: "#fefdfa",
   neutralColor: "#9caeb9",
-  neutralOpacity: 0.4,
+  neutralOpacity: 0.55,
   paletteUnlocked: false,
   toggleDebug: () => set((state) => ({ debug: !state.debug })),
   setCanvasBg: (canvasBg) => set({ canvasBg }),
