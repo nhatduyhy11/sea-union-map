@@ -4,6 +4,7 @@ import { mapBounds } from "../../data/map-layout";
 import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
 import { useMapGraph } from "./useMapGraph";
 import { useDebug } from "../../stores/debug";
+import { useSelection } from "../../stores/selection";
 import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
@@ -21,8 +22,10 @@ function ZoomLabel() {
 
 export function MapCanvas() {
   const { nodes, edges } = useMapGraph();
-  // Node đang hover trên canvas — lớp boss giữ cửa đậm lên theo node đó.
+  // Node đang hover — rê chuột trực tiếp trên canvas hoặc trỏ từ panel
+  // (BXH cứ điểm / dot plot / ô tìm đảo); lớp boss giữ cửa đậm lên theo node đó.
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const linkedNode = useSelection((state) => state.hovered);
   const debug = useDebug((state) => state.debug);
   // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
   const canvasBg = useDebug((state) => state.canvasBg);
@@ -51,7 +54,7 @@ export function MapCanvas() {
         colorMode="light"
         proOptions={{ hideAttribution: true }}
       >
-        <MapBackdrop nodes={nodes} hoveredId={hoveredNode} />
+        <MapBackdrop nodes={nodes} hoveredId={hoveredNode ?? linkedNode} />
         <Background color="#ece7d7" gap={40} size={1} />
         <Controls showInteractive={false} />
         {debug && <CanvasDebugGrid />}
