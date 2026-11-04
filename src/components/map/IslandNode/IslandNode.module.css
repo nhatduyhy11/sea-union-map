@@ -100,6 +100,7 @@
 
 .neutral:hover,
 .neutral:focus-within,
+.neutral.active,
 .neutral.linked {
   opacity: 1;
 }
@@ -144,21 +145,24 @@
   filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
 }
 
-/* ───── Trạng thái: quầng sáng (active ưu tiên hơn hover và linked) ────── */
+/* ── Trạng thái: quầng sáng (active ưu tiên hơn hover, focus và linked) ── */
 
-.islandIcon:hover,
+.island:hover .islandIcon,
+.island:focus-within .islandIcon,
 .linked .islandIcon {
   box-shadow:
-    0 0 0 3px color-mix(in srgb, var(--faction) 65%, #000000),
-    0 0 0 7px color-mix(in srgb, var(--faction) 45%, transparent),
-    0 0 26px 8px color-mix(in srgb, var(--faction) 85%, transparent);
+    0 0 0 4px color-mix(in srgb, var(--faction) 75%, #000000),
+    0 0 0 10px color-mix(in srgb, var(--faction) 60%, transparent),
+    0 0 32px 14px color-mix(in srgb, var(--faction) 95%, transparent),
+    0 0 56px 22px color-mix(in srgb, var(--faction) 45%, transparent);
 }
 
-.active .islandIcon {
+.island.active .islandIcon {
   box-shadow:
-    0 0 0 3px var(--highlight-green),
-    0 0 0 7px color-mix(in srgb, var(--highlight-green) 35%, transparent),
-    0 0 22px 6px color-mix(in srgb, var(--highlight-green) 70%, transparent);
+    0 0 0 5px var(--highlight-green),
+    0 0 0 12px color-mix(in srgb, var(--highlight-green) 65%, transparent),
+    0 0 38px 16px var(--highlight-green),
+    0 0 64px 26px color-mix(in srgb, var(--highlight-green) 50%, transparent);
 }
 
 /* ───────────────── Debug: tâm node trùng điểm neo edge ────────────────── */

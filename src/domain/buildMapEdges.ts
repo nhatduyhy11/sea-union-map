@@ -22,7 +22,7 @@ export function buildMapEdges(
         ? factions.find((entry) => entry.id === source.owner)
         : null;
     // Edge không thuộc cùng một phe dùng nét đứt, kể cả nối hai phe khác nhau.
-    const neutralLink = faction ? undefined : "7 7";
+    const neutralLink = faction ? undefined : "16 16";
     return {
       ...route,
       id: `${route.source}__${route.target}`,
@@ -32,7 +32,7 @@ export function buildMapEdges(
       selectable: false,
       style: {
         stroke: faction?.edgeColor ?? faction?.color ?? neutralColor,
-        strokeWidth: faction ? 5 : 3.5,
+        strokeWidth: faction ? 8 : 6,
         opacity: filterActive
           ? faction
             ? 0.1

@@ -1,5 +1,6 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from "lucide-react";
 import { useFocusIslandOnBoard } from "../../../../hooks/useFocusIsland";
+import { useFitMap } from "../../../../hooks/useFitMap";
 import { NodeBoardFilters } from "./NodeBoardFilters";
 import { NodeBoardRow } from "./NodeBoardRow";
 import { useNodeBoardFilter, type ScoreSort } from "./useNodeBoardFilter";
@@ -28,6 +29,7 @@ export function NodeBoard({
   canvasIconByNode: ReadonlyMap<string, CanvasIcon>;
 }) {
   const focusIslandOnBoard = useFocusIslandOnBoard();
+  const fitMap = useFitMap(500);
   const { filter, toggleFilter, clearFilter, sort, cycleSort, displayNodes } =
     useNodeBoardFilter(nodes, canvasIconByNode);
   const { Icon: SortIcon, suffix } = SORT_UI[sort];
@@ -57,6 +59,7 @@ export function NodeBoard({
           rank={index + 1}
           canvasIcon={canvasIconByNode.get(entry.island.id)}
           onOpen={focusIslandOnBoard}
+          onClose={fitMap}
         />
       ))}
     </>

@@ -25,6 +25,16 @@
   cursor: pointer;
 }
 
+.label {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
 /* Swatch mở picker — hiển thị màu hiện tại theo opacity. */
 .swatch {
   width: 24px;
@@ -68,8 +78,8 @@
   }
 }
 
-/* Mã hex dưới picker — override rule `.bgPicker input` của swatch. */
-.pickerPop .hexValue {
+/* Mã hex và alpha dưới picker — override rule `.bgPicker input` của swatch. */
+.pickerPop .colorValue {
   display: block;
   box-sizing: border-box;
   width: 100%;
@@ -81,6 +91,7 @@
   background: #f6f9fa;
   font-family: ui-monospace, Consolas, monospace;
   font-size: 12px;
+  letter-spacing: normal;
   color: #2d3e4b;
   text-align: center;
   cursor: text;

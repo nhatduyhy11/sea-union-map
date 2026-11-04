@@ -20,6 +20,11 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
   const [Picker, setPicker] = useState<HexAlphaPicker | null>(null);
   const [open, setOpen] = useState(false);
   const chipRef = useRef<HTMLDivElement>(null);
+  const alpha =
+    value.length === 9
+      ? Number((parseInt(value.slice(7, 9), 16) / 255).toFixed(2))
+      : 1;
+  const colorValue = `${value.slice(0, 7)} , ${alpha}`;
 
   // Swatch chỉ mount ở DEV hoặc sau easter egg — dynamic import để react-colorful
   // thành chunk riêng, user thường không tải. Lỗi tải (vd 404 chunk cũ sau
@@ -32,17 +37,26 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
 
   useEffect(() => {
     if (!open) return;
-    const onPointerDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (chipRef.current && !chipRef.current.contains(event.target as Node))
         setOpen(false);
     };
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    // Capture trước khi canvas chặn event để xử lý pan/drag.
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", onPointerDown, true);
   }, [open]);
 
   return (
     <div ref={chipRef} className={styles.bgPicker} title={label}>
-      {label}
+      <button
+        type="button"
+        className={styles.label}
+        onClick={() => setOpen(true)}
+        aria-expanded={open}
+      >
+        {label}
+      </button>
       <button
         type="button"
         className={styles.swatch}
@@ -54,13 +68,14 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
       {open && Picker && (
         <div className={styles.pickerPop}>
           <Picker color={value} onChange={onChange} />
-          {/* Mã hex đúng như giá trị đưa vào canvas — click để chọn hết & copy. */}
+          {/* Mã hex + alpha (0–1) — click để chọn hết & copy. */}
           <input
-            className={styles.hexValue}
-            value={value}
+            className={styles.colorValue}
+            value={colorValue}
+            title={value}
             readOnly
             onFocus={(e) => e.currentTarget.select()}
-            aria-label={`Mã màu ${label.toLowerCase()}`}
+            aria-label={`Mã màu hex và alpha ${label.toLowerCase()}`}
           />
         </div>
       )}

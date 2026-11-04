@@ -54,7 +54,8 @@
   color: #0d8a65;
 }
 
-.searchResults button:hover {
+.searchResults button:hover,
+.searchResults button.active {
   background: #eff4f5;
 }
 
