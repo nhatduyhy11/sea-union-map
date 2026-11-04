@@ -1,6 +1,7 @@
 import { ViewportPortal } from "@xyflow/react";
 import { FactionBackdrop } from "./FactionBackdrop";
 import { GuardianBackdrop } from "./GuardianBackdrop";
+import { SceneryBackdrop } from "./SceneryBackdrop";
 import styles from "./MapBackdrop.module.css";
 import type { AppNode } from "../../../types";
 
@@ -16,6 +17,7 @@ export function MapBackdrop({
   return (
     <ViewportPortal>
       <div className={styles.backdrop} aria-hidden="true">
+        <SceneryBackdrop />
         <FactionBackdrop />
         <GuardianBackdrop nodes={nodes} hoveredId={hoveredId} />
       </div>
