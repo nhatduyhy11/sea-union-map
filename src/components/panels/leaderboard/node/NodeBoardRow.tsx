@@ -13,19 +13,21 @@ import type { CanvasIcon } from "../../../../domain/selectors/canvasIcons";
 import type { NodeBoardEntry } from "../../../../domain/selectors/board/types";
 
 // Mở expand = focus đảo trên map (camera pan + selected), panel giữ nguyên ở
-// bảng; đa mở được — camera theo lần expand cuối. Đóng expand của đảo đang
-// selected thì gỡ selection (viền active) — đảo khác đang chọn thì giữ nguyên.
+// bảng; đa mở được — camera theo lần expand cuối. Đóng expand thì fit toàn
+// map, đồng thời gỡ selection nếu đảo đó đang được chọn.
 // Row có trạng thái icon canvas hiện icon đó trước tổng điểm.
 export function NodeBoardRow({
   entry,
   rank,
   canvasIcon,
   onOpen,
+  onClose,
 }: {
   entry: NodeBoardEntry;
   rank: number;
   canvasIcon: CanvasIcon | undefined;
   onOpen: (id: string) => void;
+  onClose: () => void;
 }) {
   const { island, owner } = entry;
   const hover = useSelection((state) => state.hover);
@@ -58,8 +60,11 @@ export function NodeBoardRow({
       onMouseLeave={() => hover(null)}
       onToggle={(event) => {
         if ((event.target as HTMLDetailsElement).open) onOpen(island.id);
-        else if (useSelection.getState().selected === island.id)
-          useSelection.getState().close();
+        else {
+          if (useSelection.getState().selected === island.id)
+            useSelection.getState().close();
+          onClose();
+        }
       }}
     >
       <summary
