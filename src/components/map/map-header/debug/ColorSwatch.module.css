@@ -25,6 +25,16 @@
   cursor: pointer;
 }
 
+.label {
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  cursor: pointer;
+}
+
 /* Swatch mở picker — hiển thị màu hiện tại theo opacity. */
 .swatch {
   width: 24px;

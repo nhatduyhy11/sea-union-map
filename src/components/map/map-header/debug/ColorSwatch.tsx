@@ -37,17 +37,26 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
 
   useEffect(() => {
     if (!open) return;
-    const onPointerDown = (event: MouseEvent) => {
+    const onPointerDown = (event: PointerEvent) => {
       if (chipRef.current && !chipRef.current.contains(event.target as Node))
         setOpen(false);
     };
-    document.addEventListener("mousedown", onPointerDown);
-    return () => document.removeEventListener("mousedown", onPointerDown);
+    // Capture trước khi canvas chặn event để xử lý pan/drag.
+    document.addEventListener("pointerdown", onPointerDown, true);
+    return () =>
+      document.removeEventListener("pointerdown", onPointerDown, true);
   }, [open]);
 
   return (
     <div ref={chipRef} className={styles.bgPicker} title={label}>
-      {label}
+      <button
+        type="button"
+        className={styles.label}
+        onClick={() => setOpen(true)}
+        aria-expanded={open}
+      >
+        {label}
+      </button>
       <button
         type="button"
         className={styles.swatch}
