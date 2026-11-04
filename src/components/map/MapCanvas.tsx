@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { ReactFlow, Background, Controls, useStore } from "@xyflow/react";
 import { mapBounds } from "../../data/map-layout";
 import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
@@ -7,7 +8,7 @@ import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
 import { RouteEdge } from "./RouteEdge";
-import { FactionBackdrop } from "./FactionBackdrop";
+import { MapBackdrop } from "./map-backdrop";
 import styles from "./MapCanvas.module.css";
 
 const nodeTypes = { island: IslandNode };
@@ -20,6 +21,8 @@ function ZoomLabel() {
 
 export function MapCanvas() {
   const { nodes, edges } = useMapGraph();
+  // Node đang hover trên canvas — lớp boss giữ cửa đậm lên theo node đó.
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const debug = useDebug((state) => state.debug);
   // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
   const canvasBg = useDebug((state) => state.canvasBg);
@@ -31,6 +34,8 @@ export function MapCanvas() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodeOrigin={[0.5, 0.5]}
+        onNodeMouseEnter={(_, node) => setHoveredNode(node.id)}
+        onNodeMouseLeave={() => setHoveredNode(null)}
         fitView
         fitViewOptions={FIT_VIEW_OPTIONS}
         // Sàn zoom đủ thấp để fit cả map (rộng ~5100) vào canvas điện thoại
@@ -46,7 +51,7 @@ export function MapCanvas() {
         colorMode="light"
         proOptions={{ hideAttribution: true }}
       >
-        <FactionBackdrop />
+        <MapBackdrop nodes={nodes} hoveredId={hoveredNode} />
         <Background color="#ece7d7" gap={40} size={1} />
         <Controls showInteractive={false} />
         {debug && <CanvasDebugGrid />}
