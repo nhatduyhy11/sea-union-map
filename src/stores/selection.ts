@@ -6,7 +6,7 @@ import { create } from "zustand";
 interface SelectionState {
   selected: string | null;
   pinned: Set<string>;
-  // Đảo đang được trỏ từ panel (chấm dot plot chi tiết căn cứ) — node tương
+  // Đảo đang được trỏ từ panel (BXH cứ điểm / dot plot căn cứ) — node tương
   // ứng trên canvas hiện viền hover như khi rê chuột trực tiếp.
   hovered: string | null;
   // Phe của căn cứ xem gần nhất, theo cụm server — đóng chi tiết đảo (✕) thì

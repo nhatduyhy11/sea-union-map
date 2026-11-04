@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { ChevronRight } from "lucide-react";
 import { compact } from "../../../../utils/format";
 import { bossImageUrl } from "../../../../data/nodeBosses";
@@ -27,6 +28,14 @@ export function NodeBoardRow({
   onOpen: (id: string) => void;
 }) {
   const { island, owner } = entry;
+  const hover = useSelection((state) => state.hover);
+  // Lọc danh sách hoặc đổi tab có thể gỡ row trước khi mouseleave chạy.
+  useEffect(
+    () => () => {
+      if (useSelection.getState().hovered === island.id) hover(null);
+    },
+    [hover, island.id]
+  );
   const status = isNodeStatus(canvasIcon) ? canvasIcon : undefined;
   const StatusIcon = status && NODE_STATUS[status].Icon;
   // Base không bị đánh nên không có nền boss (giống chi tiết cứ điểm).
@@ -45,6 +54,8 @@ export function NodeBoardRow({
   return (
     <details
       className={shared.item}
+      onMouseEnter={() => hover(island.id)}
+      onMouseLeave={() => hover(null)}
       onToggle={(event) => {
         if ((event.target as HTMLDetailsElement).open) onOpen(island.id);
         else if (useSelection.getState().selected === island.id)

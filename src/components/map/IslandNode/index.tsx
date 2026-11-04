@@ -28,7 +28,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   // debug store); fallback của --faction vì inline style luôn ghi đè CSS default.
   const neutralColor = useDebug((state) => state.neutralColor);
   const neutralOpacity = useDebug((state) => state.neutralOpacity);
-  // Trỏ từ panel (chấm dot plot chi tiết căn cứ) — chỉ viền hover, không bật
+  // Trỏ từ panel (BXH cứ điểm / dot plot căn cứ) — chỉ viền hover, không bật
   // popup điểm.
   const linked = useSelection((state) => state.hovered === data.id);
   const FactionIcon = data.base
