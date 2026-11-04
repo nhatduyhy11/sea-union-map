@@ -8,10 +8,10 @@
 
 .city {
   position: absolute;
-  width: 1100px;
+  width: 1700px;
   height: auto;
   max-width: none;
   transform: translate(-50%, -50%);
-  opacity: 0.2;
+  opacity: 0.15;
   pointer-events: none;
 }
