@@ -189,9 +189,9 @@ test("Edges style by ownership and dim under filter", () => {
     { source: "1-1", target: "1-1" },
   ];
   const edges = buildMapEdges(routes, withNeutral, factions);
-  assert.equal(edges[0]?.style?.strokeDasharray, "7 7");
-  assert.equal(edges[1]?.style?.strokeDasharray, "7 7");
-  assert.equal(edges[2]?.style?.strokeDasharray, "7 7");
+  assert.equal(edges[0]?.style?.strokeDasharray, "16 16");
+  assert.equal(edges[1]?.style?.strokeDasharray, "16 16");
+  assert.equal(edges[2]?.style?.strokeDasharray, "16 16");
   assert.equal(edges[3]?.style?.strokeDasharray, undefined);
   assert.equal(edges[2]?.style?.stroke, "#9caeb9");
   assert.equal(edges[3]?.style?.stroke, "#123456");
@@ -207,5 +207,5 @@ test("Edges style by ownership and dim under filter", () => {
   assert.equal(dimmed[3]?.style?.opacity, 0.1);
   assert.equal(dimmed[0]?.style?.opacity, 0.06);
   assert.equal(dimmed[3]?.style?.strokeWidth, 8);
-  assert.equal(dimmed[2]?.style?.strokeDasharray, "7 7");
+  assert.equal(dimmed[2]?.style?.strokeDasharray, "16 16");
 });
