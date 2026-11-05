@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { KNOWN_BOSS_IDS } from "../../../../data/nodeBosses";
 import { useMapView } from "../../../../stores/mapView";
 import { usePanel } from "../../../../stores/panel";
 import type { NodeStatus } from "../../../shared/nodeStatus";
@@ -14,6 +15,8 @@ export type NodeBoardFilter =
   | { kind: "unclaimed" };
 
 export type ScoreSort = "none" | "asc" | "desc";
+
+export type BossOption = { id: number; count: number };
 
 // Nút sort xoay vòng giảm dần → tăng dần → không sort (giữ thứ tự id đảo
 // 1-1, 1-2 … của input).
@@ -69,15 +72,22 @@ export function useNodeBoardFilter(
   const [filter, setFilter] = useState<NodeBoardFilter | null>(null);
   const [bossIds, setBossIds] = useState<ReadonlySet<number>>(new Set());
   const [sort, setSort] = useState<ScoreSort>("none");
-  // Boss có trên map đang xem, theo monsterId tăng dần.
-  const bossOptions = useMemo(() => {
-    const ids = new Set<number>();
+  // Mọi boss đã biết + boss lạ có trên map, theo monsterId tăng dần, kèm số
+  // cứ điểm mang boss đó trên map đang xem (đếm trên toàn map, không theo
+  // pill); count 0 = boss không có trên map này.
+  const bossOptions = useMemo<BossOption[]>(() => {
+    const counts = new Map<number, number>(
+      KNOWN_BOSS_IDS.map((id) => [id, 0])
+    );
     for (const entry of nodes) {
       const boss = bossOf(entry);
-      if (boss) ids.add(boss);
+      if (boss) counts.set(boss, (counts.get(boss) ?? 0) + 1);
     }
-    return [...ids].sort((a, b) => a - b);
+    return [...counts]
+      .sort(([a], [b]) => a - b)
+      .map(([id, count]) => ({ id, count }));
   }, [nodes]);
+  const availableBossCount = bossOptions.filter((o) => o.count > 0).length;
   const filtered = useMemo(() => {
     const byPill = filter
       ? nodes.filter((entry) =>
@@ -118,7 +128,7 @@ export function useNodeBoardFilter(
     toggleBoss: (id: number) => {
       const next = new Set(bossIds);
       if (!next.delete(id)) next.add(id);
-      setBossIds(next.size >= bossOptions.length ? new Set() : next);
+      setBossIds(next.size >= availableBossCount ? new Set() : next);
     },
     clearBoss: () => setBossIds(new Set()),
     sort,
