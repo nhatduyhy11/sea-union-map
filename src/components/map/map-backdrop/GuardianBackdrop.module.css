@@ -1,11 +1,10 @@
 /* node.position là tâm node (nodeOrigin [0.5, 0.5]); dịch quá -50% ngang để
-   ảnh dạt ra xa trung tâm. */
+   ảnh dạt ra xa trung tâm. Ảnh gốc quay mặt sang đông. */
 .guardian {
   position: absolute;
   height: 400px;
   width: auto;
   max-width: none;
-  transform: translate(-65%, -55%);
   opacity: 0.2;
   transition: opacity 0.2s;
   pointer-events: none;
@@ -15,6 +14,12 @@
   opacity: 0.35;
 }
 
+/* Hộ vệ phía tây: dạt sang trái, lật ngang để quay mặt ra ngoài. */
 .guardian.faceWest {
-  transform: translate(-35%, -50%) scaleX(-1);
+  transform: translate(-70%, -50%) scaleX(-1);
+}
+
+/* Hộ vệ phía đông: dạt sang phải, giữ hướng gốc (quay ra ngoài). */
+.guardian.faceEast {
+  transform: translate(-30%, -50%);
 }

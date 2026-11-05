@@ -4,12 +4,12 @@ import type { AppNode } from "../../../types";
 
 // Hai cứ điểm kẹp hai đầu trung tâm 4 trên trục giữa: boss của node hiện mờ
 // làm nền như hai hộ vệ giữ cửa, tâm ảnh dạt ra xa trung tâm ~15% bề ngang ảnh
-// để chừa chỗ cho ảnh đảo trung tâm; 3-2 lật ngang để cả hai cùng quay mặt vào
-// trung tâm. Nằm ở lớp nền thay vì trong node để độ mờ cố định, không ăn theo
+// để chừa chỗ cho ảnh đảo trung tâm; 3-1 lật ngang để cả hai cùng quay mặt ra
+// ngoài, xa trung tâm. Nằm ở lớp nền thay vì trong node để độ mờ cố định, không ăn theo
 // opacity của node (trung lập / dim).
 const GUARDIANS: Record<string, "east" | "west"> = {
-  "3-1": "east",
-  "3-2": "west",
+  "3-1": "west",
+  "3-2": "east",
 };
 
 export function GuardianBackdrop({
@@ -29,7 +29,7 @@ export function GuardianBackdrop({
     return (
       <img
         key={node.id}
-        className={`${styles.guardian} ${facing === "west" ? styles.faceWest : ""} ${litIds.includes(node.id) ? styles.lit : ""}`}
+        className={`${styles.guardian} ${facing === "west" ? styles.faceWest : styles.faceEast} ${litIds.includes(node.id) ? styles.lit : ""}`}
         src={src}
         alt=""
         draggable={false}
