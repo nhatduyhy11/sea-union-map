@@ -1,4 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMapView } from "../../../../stores/mapView";
+import { usePanel } from "../../../../stores/panel";
 import type { NodeStatus } from "../../../shared/nodeStatus";
 import type { CanvasIcon } from "../../../../domain/selectors/canvasIcons";
 import type { NodeBoardEntry } from "../../../../domain/selectors/board/types";
@@ -50,23 +52,42 @@ function matches(
   }
 }
 
-// State local, rời board là reset.
+// State local, rời board là reset. Filter mode bật thì pill đang chọn cũng
+// highlight đúng tập đảo đó trên canvas (dim phần còn lại); bỏ pill / tắt
+// Filter mode / rời board là gỡ highlight.
 export function useNodeBoardFilter(
   nodes: NodeBoardEntry[],
   canvasIconByNode: ReadonlyMap<string, CanvasIcon>
 ) {
+  const filterMode = usePanel((state) => state.filterMode);
   const [filter, setFilter] = useState<NodeBoardFilter | null>(null);
   const [sort, setSort] = useState<ScoreSort>("none");
+  const filtered = useMemo(
+    () =>
+      filter
+        ? nodes.filter((entry) =>
+            matches(filter, entry, canvasIconByNode.get(entry.island.id))
+          )
+        : nodes,
+    [nodes, canvasIconByNode, filter]
+  );
+  const highlight = useMemo(
+    () =>
+      filter && filterMode
+        ? new Set(filtered.map((entry) => entry.island.id))
+        : null,
+    [filter, filterMode, filtered]
+  );
+  useEffect(() => {
+    const { setNodeHighlight } = useMapView.getState();
+    setNodeHighlight(highlight);
+    return () => setNodeHighlight(null);
+  }, [highlight]);
   const displayNodes = useMemo(() => {
-    const filtered = filter
-      ? nodes.filter((entry) =>
-          matches(filter, entry, canvasIconByNode.get(entry.island.id))
-        )
-      : nodes;
     if (sort === "none") return filtered;
     const sign = sort === "asc" ? 1 : -1;
     return [...filtered].sort((a, b) => sign * (a.total - b.total));
-  }, [nodes, canvasIconByNode, filter, sort]);
+  }, [filtered, sort]);
   return {
     filter,
     toggleFilter: (next: NodeBoardFilter) =>

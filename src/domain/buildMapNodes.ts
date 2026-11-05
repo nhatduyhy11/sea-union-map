@@ -31,9 +31,14 @@ export function matchNodeIds(
 // Icon box size (px) per node variant — single source of truth; IslandNode
 // consumes it via the inline --icon-box CSS variable and centers the icon on
 // the node position, so edges anchored at node centers hit the icon centers.
+// The map center (tier 4) shows its island artwork instead of the diamond,
+// sized to fill the gap between the 3-1/3-2 guardian illustrations. Its CSS
+// centering offset is a % of this size, so retune it when this changes.
+const CENTER_ICON_BOX = 240;
 export function iconBoxSize(
-  node: Pick<LayoutNode, "base" | "central">
+  node: Pick<LayoutNode, "base" | "central" | "tier">
 ): number {
+  if (node.tier === 4) return CENTER_ICON_BOX;
   return node.base ? 66 : node.central ? 68 : 55;
 }
 

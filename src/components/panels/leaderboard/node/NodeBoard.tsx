@@ -17,8 +17,8 @@ const SORT_UI: Record<ScoreSort, { Icon: LucideIcon; suffix: string }> = {
 };
 
 // Tab Cứ điểm: mặc định theo id đảo (1-1, 1-2 …), lọc theo phe / trạng thái,
-// sort theo tổng Điểm ST; tiêu đề đếm số cứ điểm đang hiển thị. Không phụ
-// thuộc Filter mode.
+// sort theo tổng Điểm ST; tiêu đề đếm số cứ điểm đang hiển thị. Lọc list
+// luôn chạy; Filter mode bật thì pill lọc cũng highlight canvas.
 export function NodeBoard({
   nodes,
   factions,

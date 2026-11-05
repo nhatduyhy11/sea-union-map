@@ -1,6 +1,7 @@
 .nodeStats {
   position: absolute;
-  top: 101px;
+  /* --stats-top: node có icon lớn hơn (trung tâm 4) đẩy popup xuống dưới nhãn. */
+  top: var(--stats-top, 101px);
   left: 0;
   width: 170px;
   background: rgba(255, 255, 255, 0.97);
@@ -28,9 +29,11 @@
    10px sọc đặc) để số điểm và bar không bị wash; băng đủ dày hạn chế moiré
    khi popup thu nhỏ lúc zoom. */
 .nodeStats.claimable {
-  background: repeating-linear-gradient(45deg,
-      #ffffff 0 7px,
-      color-mix(in srgb, var(--tint) 35%, #ffffff) 20px 30px);
+  background: repeating-linear-gradient(
+    45deg,
+    #ffffff 0 7px,
+    color-mix(in srgb, var(--tint) 35%, #ffffff) 20px 30px
+  );
 }
 
 /* Ảnh boss mờ dạt phải, nằm trên nền tint/sọc nhưng dưới chữ và bar điểm
