@@ -56,7 +56,8 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         : data.central
           ? Castle
           : Anchor);
-  const direction = data.id === "4" ? "TRUNG TÂM" : "";
+  const isCenter = data.tier === 4;
+  const direction = isCenter ? "TRUNG TÂM" : "";
   // Đảo chưa có chủ mà phe điểm cao nhất đã đạt ngưỡng claim → popup điểm
   // (NodeStats) đánh dấu claimable bằng nền sọc chéo màu phe đó.
   const claimLeader = !data.owner
@@ -68,6 +69,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
     styles.island,
     data.base && styles.base,
     data.central && styles.central,
+    isCenter && styles.center,
     !data.owner && styles.neutral,
     linked && styles.linked,
     data.active && styles.active,
@@ -112,7 +114,16 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
         onFocus={() => setHovered(true)}
         onBlur={() => setHovered(false)}
       >
-        {Icon && <Icon size={data.base ? 31 : 24} />}
+        {isCenter ? (
+          <img
+            className={styles.centerArt}
+            src={`${import.meta.env.BASE_URL}aaa/center.png`}
+            alt=""
+            draggable={false}
+          />
+        ) : (
+          Icon && <Icon size={data.base ? 31 : 24} />
+        )}
       </button>
       <div className={styles.islandLabel}>
         <div className={styles.labelWrapper}>
