@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ReactFlow, Background, Controls, useStore } from "@xyflow/react";
 import { mapBounds } from "../../data/map-layout";
-import { FIT_VIEW_OPTIONS } from "../../hooks/useFitMap";
+import { FIT_VIEW_OPTIONS, useFitZoom } from "../../hooks/useFitMap";
 import { useMapGraph } from "./useMapGraph";
 import { useDebug } from "../../stores/debug";
 import { useSelection } from "../../stores/selection";
@@ -14,6 +14,10 @@ import styles from "./MapCanvas.module.css";
 
 const nodeTypes = { island: IslandNode };
 const edgeTypes = { route: RouteEdge };
+
+// Sàn dự phòng khi canvas/node chưa đo xong — đủ thấp để fitView lúc mount
+// không bị kẹp trên màn nào.
+const FALLBACK_MIN_ZOOM = 0.05;
 
 function ZoomLabel() {
   const zoom = useStore((state) => state.transform[2]);
@@ -29,6 +33,7 @@ export function MapCanvas() {
   const debug = useDebug((state) => state.debug);
   // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
   const canvasBg = useDebug((state) => state.canvasBg);
+  const fitZoom = useFitZoom();
   return (
     <div className={styles.mapCanvas} style={{ background: canvasBg }}>
       <ReactFlow
@@ -41,9 +46,9 @@ export function MapCanvas() {
         onNodeMouseLeave={() => setHoveredNode(null)}
         fitView
         fitViewOptions={FIT_VIEW_OPTIONS}
-        // Sàn zoom đủ thấp để fit cả map (rộng ~5100) vào canvas điện thoại
-        // (~360px); 0.19 cũ kẹp fitView, màn hẹp chỉ thấy vùng giữa.
-        minZoom={0.05}
+        // Sàn zoom = đúng mức fit toàn map của canvas hiện tại: zoom-out tối
+        // đa là thấy trọn map, không nhỏ hơn — tự theo kích thước màn hình.
+        minZoom={fitZoom ?? FALLBACK_MIN_ZOOM}
         maxZoom={2}
         translateExtent={mapBounds}
         nodesDraggable={false}
@@ -56,7 +61,7 @@ export function MapCanvas() {
       >
         <MapBackdrop nodes={nodes} hoveredId={hoveredNode ?? linkedNode} />
         <Background color="#ece7d7" gap={40} size={1} />
-        <Controls showInteractive={false} />
+        <Controls showInteractive={false} fitViewOptions={FIT_VIEW_OPTIONS} />
         {debug && <CanvasDebugGrid />}
         <ZoomLabel />
       </ReactFlow>
