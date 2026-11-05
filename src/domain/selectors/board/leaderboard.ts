@@ -3,7 +3,7 @@ import type { LeaderboardPlayer } from "./types";
 import type { Contribution, Faction } from "../../../types";
 import { playerAllocations } from "../nodeScores";
 
-// Tab Cá nhân live: rows = BXH điểm server (top-200, board 117). Thứ tự và
+// Tab Cá nhân live: rows = BXH điểm server (top-200). Thứ tự và
 // điểm giữ nguyên server — chỉ ghép thêm allocations từ node boards cho phần
 // expand ("contribute vào đâu"). Player ngoài top-N node nào thì expand rỗng.
 export function buildServerLeaderboard(

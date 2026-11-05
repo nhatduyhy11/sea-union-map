@@ -1,5 +1,5 @@
-// Adapter FE cho dữ liệu crawl live. Đầu vào là JSON dump (sea-live.json) —
-// script dump chỉ xuất JSON, không sinh file này. File này chọn dump nào được
+// Adapter FE cho dữ liệu live. Đầu vào là JSON dump (sea-live.json). File này
+// chọn dump nào được
 // nạp; format ở sea-live/dump.ts, join game-id → layout-id và faction → hướng
 // ở sea-live/join.ts (code client: sửa tay được, unit test ở sea-live.test.ts).
 
@@ -24,7 +24,7 @@ const bundledDump: SeaLiveDump = {
 };
 
 // Dev: ưu tiên dump mới nhất ở public/sea-live-dev.json (gitignored —
-// script dump ghi vào đây mỗi lần crawl, refresh browser là thấy). Thiếu file
+// thay file rồi refresh browser là thấy). Thiếu file
 // hay sai format thì rơi về bản baked trong bundle. Build: luôn dùng bản baked,
 // không fetch. Guard ?.: ngoài Vite (tsx --test) import.meta.env không có →
 // bundled luôn, không đụng fetch.

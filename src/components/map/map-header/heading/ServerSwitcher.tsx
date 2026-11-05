@@ -3,8 +3,7 @@ import { selectServer, useDataset } from "../../../../stores/dataset";
 import styles from "./ServerSwitcher.module.css";
 
 // Chọn cụm server, dòng riêng dưới tiêu đề map. Danh sách tự lấy từ các snapshot đã có
-// (src/data/snapshots) — không có nút tạo mới: data cụm chỉ sinh từ pipeline
-// crawl nội bộ.
+// (src/data/snapshots) — không có nút tạo mới: FE chỉ đọc data cụm có sẵn.
 export function ServerSwitcher() {
   const active = useDataset((state) => state.server);
   return (

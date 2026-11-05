@@ -68,7 +68,7 @@ export function playerAllocations(
 }
 
 // The player universe is the union of every node leaderboard (top-N per node).
-// First row wins on identity — crawl rows of one player describe the same
+// First row wins on identity — rows of one player describe the same
 // person, dedupe only picks who reported it first.
 export function playersFromContributions(
   contributions: Contribution[]

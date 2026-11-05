@@ -1,6 +1,6 @@
 // Snapshot lịch sử theo ngày event × cụm server:
-// src/data/snapshots/<YYMMDD>/<server>.json (cùng format dump sea-live.json,
-// ghi bằng `report.py --snapshot`). Vite tự phát hiện file qua glob — thêm
+// src/data/snapshots/<YYMMDD>/<server>.json (cùng format dump sea-live.json).
+// Vite tự phát hiện file qua glob — thêm
 // snapshot = thêm file, không có manifest; mỗi file là một chunk lazy, chỉ
 // tải khi người dùng chọn ngày/cụm đó.
 //

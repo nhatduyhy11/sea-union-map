@@ -2,7 +2,7 @@
 // chiến trường mở 10:00~22:00 mỗi ngày, giờ VN). Day key dạng YYMMDD
 // ("261028") — trùng tên thư mục src/data/snapshots/<day>/.
 //
-// Rule quy ngày (khớp report.py --snapshot): thời điểm từ 22:00 tới trước
+// Rule quy ngày (khớp day key của snapshot): thời điểm từ 22:00 tới trước
 // 10:00 hôm sau (ngoài khung chiến trường) tính là của ngày trước; trong khung
 // 10:00~22:00 tính là ngày hôm đó. Tương đương: lấy ngày lịch của (t − 10h)
 // theo giờ VN.
