@@ -67,7 +67,7 @@ export function MapCanvas() {
       </ReactFlow>
       <FilterChip />
       <div className={styles.watermark} aria-hidden>
-        HUNTERS [S517]
+        HUNTERS [s517]
       </div>
     </div>
   );

@@ -26,10 +26,10 @@
   right: 14px;
   bottom: 10px;
   z-index: 5;
-  font-size: 12px;
+  font-size: 30px;
   font-weight: 700;
-  letter-spacing: 2.5px;
-  color: rgba(45, 62, 75, 0.14);
+  letter-spacing: 3.5px;
+  color: rgba(45, 62, 75, 0.1);
   pointer-events: none;
   user-select: none;
 }
