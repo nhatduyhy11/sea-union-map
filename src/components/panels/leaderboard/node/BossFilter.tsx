@@ -1,5 +1,6 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
+import { useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useAnchoredPosition } from "../../../../hooks/useAnchoredPosition";
 import { useDismiss } from "../../../../hooks/useDismiss";
 import { Skull, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../../data/nodeBosses";
@@ -27,38 +28,9 @@ export function BossFilter({
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<CSSProperties>();
   const active = selected.size > 0;
 
-  useLayoutEffect(() => {
-    if (!open) return;
-    const place = () => {
-      const anchor = rootRef.current?.getBoundingClientRect();
-      const popover = popoverRef.current;
-      if (!anchor || !popover) return;
-      const gap = 6;
-      const height = popover.offsetHeight;
-      const below = anchor.bottom + gap;
-      const top =
-        below + height > window.innerHeight && anchor.top - gap - height >= 0
-          ? anchor.top - gap - height
-          : below;
-      const left = Math.max(
-        gap,
-        Math.min(anchor.left, window.innerWidth - popover.offsetWidth - gap)
-      );
-      setPosition({ top, left });
-    };
-    place();
-    // Capture để bắt cả scroll của panel chứa nút.
-    window.addEventListener("scroll", place, true);
-    window.addEventListener("resize", place);
-    return () => {
-      window.removeEventListener("scroll", place, true);
-      window.removeEventListener("resize", place);
-    };
-  }, [open]);
-
+  const position = useAnchoredPosition(open, rootRef, popoverRef);
   useDismiss(open, [rootRef, popoverRef], () => setOpen(false));
 
   return (
@@ -93,7 +65,7 @@ export function BossFilter({
           <div
             ref={popoverRef}
             className={styles.popover}
-            style={position ?? { visibility: "hidden" }}
+            style={position}
             role="dialog"
             aria-label="Lọc boss"
           >
