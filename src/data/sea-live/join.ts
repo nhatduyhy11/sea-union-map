@@ -53,8 +53,8 @@ function indexCamps(dump: SeaLiveDump): CampIndex {
   return { gameIdByLayout, layoutIdByGame, factionDir };
 }
 
-// guildId: brief trước, fallback guildRoster — player bị server từ chối brief
-// vẫn đúng guild.
+// guildId: brief trước, fallback guildRoster — player không có brief vẫn đúng
+// guild.
 function guildIdOf(dump: SeaLiveDump, playerId: number | string) {
   return dump.briefs[playerId]?.guildId ?? dump.guildRoster[playerId];
 }
@@ -128,7 +128,7 @@ function buildContributions(
   });
 }
 
-// BXH điểm server (board 117, top-200): rank + điểm là truth, tên/phe ghép từ
+// BXH điểm server (top-200): rank + điểm là truth, tên/phe ghép từ
 // brief + factionDir. Row phe không xác định (mất base) bị bỏ — không render được.
 function buildPlayerBoard(
   dump: SeaLiveDump,
@@ -141,7 +141,7 @@ function buildPlayerBoard(
   });
 }
 
-// guildId → lực chiến guild: ưu tiên guild brief server (dump guildPower, f16);
+// guildId → lực chiến guild: ưu tiên guild brief server (dump guildPower);
 // dump cũ thiếu thì cộng power mọi player brief — chỉ phủ member đã được brief
 // nên thấp hơn thật.
 function guildPowerOf(dump: SeaLiveDump): Map<string, number> {

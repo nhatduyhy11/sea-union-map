@@ -35,7 +35,7 @@ export interface LayoutNode {
 
 export interface Island extends LayoutNode {
   owner: string | null;
-  // Points a faction needs to claim the node (CampGVG pointRequire).
+  // Points a faction needs to claim the node (camp pointRequire).
   claimThreshold: number;
   // Server total per faction at this node (faction id → score). Undefined when
   // the dump lacks it; selectors then sum the capped node-board rows.
@@ -51,7 +51,7 @@ export interface Route {
 }
 
 // Player identity — derived from node-board rows (playersFromContributions),
-// never a separate source: crawled data only knows players through the
+// never a separate source: the data only knows players through the
 // per-node leaderboards.
 export interface Player {
   id: string;

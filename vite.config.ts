@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig(({ command, mode }) => {
@@ -6,6 +6,13 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     plugins: [
+      // Dev server dùng favicon màu cam để phân biệt tab dev với bản build.
+      {
+        name: "dev-favicon",
+        apply: "serve",
+        transformIndexHtml: (html) =>
+          html.replace('href="/favicon.svg"', 'href="/src/favicon-dev.svg"'),
+      } satisfies Plugin,
       isAnalyze &&
         visualizer({
           filename: "dist/stats.html",

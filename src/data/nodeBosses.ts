@@ -1,7 +1,6 @@
 // Boss từng node theo đợt event × cụm server:
 // src/data/node-bosses/<ngày đầu đợt>/<server>.json — gameNodeId → monsterId
-// (boss hiện ở kính lúp chi tiết cứ điểm), ghi bằng `report.py --snapshot` /
-// `--node-bosses`. Boss cố định suốt đợt trong một cụm nên không nằm trong
+// (boss hiện ở kính lúp chi tiết cứ điểm). Boss cố định suốt đợt trong một cụm nên không nằm trong
 // snapshot từng ngày; cụm thiếu file → node không có boss.
 
 import { EVENT_DAYS } from "./eventCalendar";

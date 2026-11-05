@@ -1,7 +1,7 @@
-// Format file dump crawl (sea-live.json, dev dump, snapshot lịch sử) — script
-// dump Python sinh JSON theo đúng hình dạng này.
+// Format file dump (sea-live.json, dev dump, snapshot lịch sử) — hợp đồng dữ
+// liệu FE nhận vào.
 
-// CampGVG (client config, id == server node id): tên node, loại, ngưỡng chiếm.
+// Thông tin tĩnh của node (key = game node id): tên node, loại, ngưỡng chiếm.
 export interface CampRow {
   name: string;
   type: number;
@@ -23,7 +23,7 @@ export interface SeaLiveDump {
   playerBoard: [number, number, number, number | null][];
   factionGuilds: Record<string, [number, number][]>;
   guildNames: Record<string, string>;
-  // Optional: dump cũ (trước khi parse guild brief f16) không có key này.
+  // Optional: dump cũ không có key này.
   guildPower?: Record<string, number>;
   guildRoster: Record<string, string>;
   briefs: Record<

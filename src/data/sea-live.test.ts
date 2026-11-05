@@ -9,8 +9,8 @@ const { contributions, factionDir, factionGuilds, islands, playerBoard } =
   buildLiveData(liveDump);
 
 // Join game-id → layout-id chạy trong sea-live.ts, dữ liệu từ sea-live.json
-// (Python dump thuần). Test này khoá hợp đồng của join để re-crawl đè JSON
-// không lọt data lệch layout.
+// Test này khoá hợp đồng của join để dump mới đè JSON không lọt data lệch
+// layout.
 test("layoutIdOf reads the trailing display-id prefix", () => {
   assert.equal(
     layoutIdOf({ name: "1-23Đảo Câu Cá", type: 2, pointRequire: 0 }),
@@ -102,8 +102,7 @@ test("Every valid board row becomes one contribution on a known island", () => {
     assert.ok(Object.values(factionDir).includes(entry.faction));
     assert.match(entry.name, /^(#|\S)/);
   }
-  // Player không brief hiển thị #id, không mất dòng. Run 2026-10-27 backfill
-  // đủ 100% (cooldown server hết) — assertion giữ chuẩn hoá cho run thiếu tên.
+  // Player không brief hiển thị #id, không mất dòng.
   const briefIds = new Set(Object.keys(raw.briefs));
   for (const entry of contributions) {
     if (!briefIds.has(entry.playerId))
@@ -118,13 +117,12 @@ test("playerBoard keeps server top-200 order and joins brief names", () => {
   );
   for (let i = 1; i < playerBoard.length; i++)
     assert.ok(playerBoard[i - 1].rank < playerBoard[i].rank, "rank tăng dần");
-  // Row 1 = server hạng 1, có phe, tên từ brief hoặc #id (player bị từ chối brief).
+  // Row 1 = server hạng 1, có phe, tên từ brief hoặc #id (player không có brief).
   const top = playerBoard[0];
   assert.equal(top.rank, 1);
   assert.ok(Object.values(factionDir).includes(top.faction));
   assert.match(top.name, /^(#|\S)/);
-  // Run 2026-10-27 đủ tên nên không còn #id; nếu run sau thiếu brief thì
-  // đúng hợp đồng là #<id>, không được drop row.
+  // Thiếu brief thì đúng hợp đồng là #<id>, không được drop row.
   for (const row of playerBoard)
     if (row.name.startsWith("#")) assert.equal(row.name, `#${row.playerId}`);
   // guildId cùng rule contribution: brief trước, fallback guildRoster.

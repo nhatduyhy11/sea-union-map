@@ -23,3 +23,7 @@ public/sea-live-dev.json
 
 # Output của `npm run loc` (scripts/loc.mjs), sinh lại mỗi lần chạy.
 scripts/loc-report.md
+
+# Claude Code: worktree tạm + setting cá nhân
+.claude/worktrees/
+.claude/settings.local.json

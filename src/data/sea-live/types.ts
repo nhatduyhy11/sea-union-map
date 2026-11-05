@@ -22,7 +22,7 @@ export interface ServerGuildRow {
   // Tên guild từ brief member; guild không có member được brief thì #id.
   name: string;
   score: number;
-  // Lực chiến guild: guild brief server (f16), fallback tổng player brief.
+  // Lực chiến guild: guild brief server, fallback tổng player brief.
   power?: number;
   server?: number;
 }
