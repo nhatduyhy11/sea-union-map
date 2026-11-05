@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, ArrowUpDown, type LucideIcon } from "lucide-react";
 import { useFocusIslandOnBoard } from "../../../../hooks/useFocusIsland";
 import { useFitMap } from "../../../../hooks/useFitMap";
+import { BossFilter } from "./BossFilter";
 import { NodeBoardFilters } from "./NodeBoardFilters";
 import { NodeBoardRow } from "./NodeBoardRow";
 import { useNodeBoardFilter, type ScoreSort } from "./useNodeBoardFilter";
@@ -16,8 +17,8 @@ const SORT_UI: Record<ScoreSort, { Icon: LucideIcon; suffix: string }> = {
   asc: { Icon: ArrowUp, suffix: " (tăng dần)" },
 };
 
-// Tab Cứ điểm: mặc định theo id đảo (1-1, 1-2 …), lọc theo phe / trạng thái,
-// sort theo tổng Điểm ST; tiêu đề đếm số cứ điểm đang hiển thị. Lọc list
+// Tab Cứ điểm: mặc định theo id đảo (1-1, 1-2 …), lọc theo phe / trạng thái
+// rồi theo boss (nút đầu thanh sort), sort theo tổng Điểm ST; tiêu đề đếm số cứ điểm đang hiển thị. Lọc list
 // luôn chạy; Filter mode bật thì pill lọc cũng highlight canvas.
 export function NodeBoard({
   nodes,
@@ -30,8 +31,18 @@ export function NodeBoard({
 }) {
   const focusIslandOnBoard = useFocusIslandOnBoard();
   const fitMap = useFitMap(500);
-  const { filter, toggleFilter, clearFilter, sort, cycleSort, displayNodes } =
-    useNodeBoardFilter(nodes, canvasIconByNode);
+  const {
+    filter,
+    toggleFilter,
+    clearFilter,
+    bossOptions,
+    bossIds,
+    toggleBoss,
+    clearBoss,
+    sort,
+    cycleSort,
+    displayNodes,
+  } = useNodeBoardFilter(nodes, canvasIconByNode);
   const { Icon: SortIcon, suffix } = SORT_UI[sort];
   return (
     <>
@@ -42,7 +53,13 @@ export function NodeBoard({
         onToggle={toggleFilter}
         onClear={clearFilter}
       />
-      <div className={shared.sortBar}>
+      <div className={`${shared.sortBar} ${styles.sortBar}`}>
+        <BossFilter
+          options={bossOptions}
+          selected={bossIds}
+          onToggle={toggleBoss}
+          onClear={clearBoss}
+        />
         <button
           className={`${shared.sortOption} ${sort !== "none" ? styles.sortActive : ""}`}
           title="Bấm để đổi: giảm dần → tăng dần → không sort (theo số đảo 1-1, 1-2 …)."

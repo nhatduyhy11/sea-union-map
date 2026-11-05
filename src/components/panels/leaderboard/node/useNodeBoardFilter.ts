@@ -52,31 +52,51 @@ function matches(
   }
 }
 
-// State local, rời board là reset. Filter mode bật thì pill đang chọn cũng
-// highlight đúng tập đảo đó trên canvas (dim phần còn lại); bỏ pill / tắt
-// Filter mode / rời board là gỡ highlight.
+// Boss của cứ điểm; căn cứ không bị đánh nên không tính boss.
+const bossOf = (entry: NodeBoardEntry) =>
+  entry.island.base ? undefined : entry.island.monsterId;
+
+// State local, rời board là reset. Lọc boss là bước cuối, chồng (AND) lên
+// pill phe / trạng thái; tập boss rỗng = không lọc, chọn đủ mọi boss cũng
+// quy về rỗng. Filter mode bật thì kết quả lọc cũng highlight đúng tập đảo
+// đó trên canvas (dim phần còn lại); bỏ lọc / tắt Filter mode / rời board là
+// gỡ highlight.
 export function useNodeBoardFilter(
   nodes: NodeBoardEntry[],
   canvasIconByNode: ReadonlyMap<string, CanvasIcon>
 ) {
   const filterMode = usePanel((state) => state.filterMode);
   const [filter, setFilter] = useState<NodeBoardFilter | null>(null);
+  const [bossIds, setBossIds] = useState<ReadonlySet<number>>(new Set());
   const [sort, setSort] = useState<ScoreSort>("none");
-  const filtered = useMemo(
-    () =>
-      filter
-        ? nodes.filter((entry) =>
-            matches(filter, entry, canvasIconByNode.get(entry.island.id))
-          )
-        : nodes,
-    [nodes, canvasIconByNode, filter]
-  );
+  // Boss có trên map đang xem, theo monsterId tăng dần.
+  const bossOptions = useMemo(() => {
+    const ids = new Set<number>();
+    for (const entry of nodes) {
+      const boss = bossOf(entry);
+      if (boss) ids.add(boss);
+    }
+    return [...ids].sort((a, b) => a - b);
+  }, [nodes]);
+  const filtered = useMemo(() => {
+    const byPill = filter
+      ? nodes.filter((entry) =>
+          matches(filter, entry, canvasIconByNode.get(entry.island.id))
+        )
+      : nodes;
+    if (bossIds.size === 0) return byPill;
+    return byPill.filter((entry) => {
+      const boss = bossOf(entry);
+      return boss !== undefined && bossIds.has(boss);
+    });
+  }, [nodes, canvasIconByNode, filter, bossIds]);
+  const active = filter !== null || bossIds.size > 0;
   const highlight = useMemo(
     () =>
-      filter && filterMode
+      active && filterMode
         ? new Set(filtered.map((entry) => entry.island.id))
         : null,
-    [filter, filterMode, filtered]
+    [active, filterMode, filtered]
   );
   useEffect(() => {
     const { setNodeHighlight } = useMapView.getState();
@@ -93,6 +113,14 @@ export function useNodeBoardFilter(
     toggleFilter: (next: NodeBoardFilter) =>
       setFilter(sameFilter(filter, next) ? null : next),
     clearFilter: () => setFilter(null),
+    bossOptions,
+    bossIds,
+    toggleBoss: (id: number) => {
+      const next = new Set(bossIds);
+      if (!next.delete(id)) next.add(id);
+      setBossIds(next.size >= bossOptions.length ? new Set() : next);
+    },
+    clearBoss: () => setBossIds(new Set()),
     sort,
     cycleSort: () => setSort(NEXT_SORT[sort]),
     displayNodes,

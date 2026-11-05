@@ -1,0 +1,125 @@
+/* Nút lọc boss + popover; root relative để popover neo theo nút. */
+.root {
+  position: relative;
+}
+
+/* Nút: tắt = icon xám như pill chưa chọn; bật = nền xanh nhấn như pill
+   selected, kèm số boss và ✕ bỏ lọc. */
+.trigger {
+  display: flex;
+  align-items: center;
+  border-radius: 20px;
+  background: #eff2f4;
+  color: #7d8f9a;
+}
+
+.trigger.active {
+  background: #0d8a65;
+  color: #fff;
+}
+
+.trigger button {
+  display: flex;
+  align-items: center;
+  color: inherit;
+}
+
+.open {
+  gap: 4px;
+  padding: 3px 7px;
+  font-size: 9px;
+}
+
+.open b {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.trigger.active .open {
+  padding-right: 3px;
+}
+
+.clear {
+  padding: 3px 6px 3px 2px;
+  opacity: 0.8;
+}
+
+.clear:hover {
+  opacity: 1;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #e3eaee;
+  border-radius: 8px;
+  box-shadow: 0 6px 18px rgba(30, 50, 60, 0.14);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 10px;
+  font-weight: 500;
+  color: #5d707b;
+}
+
+.header button {
+  font-size: 9px;
+  color: #0d8a65;
+}
+
+.header button:disabled {
+  color: #b5c1c8;
+  cursor: default;
+}
+
+/* Lưới avatar boss: chưa chọn thì xám mờ, chọn thì đủ màu + viền nhấn. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 36px);
+  gap: 5px;
+}
+
+.grid button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #eff2f4;
+  box-shadow: inset 0 0 0 1px #e3eaee;
+  font-size: 9px;
+  color: #7d8f9a;
+}
+
+.grid img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1);
+  opacity: 0.45;
+  transition:
+    filter 0.12s,
+    opacity 0.12s;
+}
+
+.grid button:hover img {
+  opacity: 0.8;
+}
+
+.grid button.on {
+  box-shadow: 0 0 0 2px #0d8a65;
+}
+
+.grid button.on img {
+  filter: none;
+  opacity: 1;
+}
