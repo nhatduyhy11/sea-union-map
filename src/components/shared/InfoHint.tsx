@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { Info } from "lucide-react";
+import { useDismiss } from "../../hooks/useDismiss";
 import styles from "./InfoHint.module.css";
 
 // Lề hai bên của note so với mép panel chứa icon.
@@ -64,21 +65,7 @@ export function InfoHint({
     };
   }, [open, place]);
 
-  useEffect(() => {
-    if (!pinned) return;
-    const onPointer = (event: PointerEvent) => {
-      if (!ref.current?.contains(event.target as Node)) setPinned(false);
-    };
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setPinned(false);
-    };
-    document.addEventListener("pointerdown", onPointer);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointer);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [pinned]);
+  useDismiss(pinned, [ref], () => setPinned(false));
 
   return (
     <span

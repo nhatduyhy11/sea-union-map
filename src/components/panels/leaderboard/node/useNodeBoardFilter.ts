@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMapView } from "../../../../stores/mapView";
 import { usePanel } from "../../../../stores/panel";
+import { useBossFilter } from "./useBossFilter";
 import type { NodeStatus } from "../../../shared/nodeStatus";
 import type { CanvasIcon } from "../../../../domain/selectors/canvasIcons";
 import type { NodeBoardEntry } from "../../../../domain/selectors/board/types";
@@ -52,8 +53,9 @@ function matches(
   }
 }
 
-// State local, rời board là reset. Filter mode bật thì pill đang chọn cũng
-// highlight đúng tập đảo đó trên canvas (dim phần còn lại); bỏ pill / tắt
+// State local, rời board là reset. Lọc boss (useBossFilter) là bước cuối,
+// chồng (AND) lên pill phe / trạng thái. Filter mode bật thì kết quả lọc cũng
+// highlight đúng tập đảo đó trên canvas (dim phần còn lại); bỏ lọc / tắt
 // Filter mode / rời board là gỡ highlight.
 export function useNodeBoardFilter(
   nodes: NodeBoardEntry[],
@@ -62,7 +64,7 @@ export function useNodeBoardFilter(
   const filterMode = usePanel((state) => state.filterMode);
   const [filter, setFilter] = useState<NodeBoardFilter | null>(null);
   const [sort, setSort] = useState<ScoreSort>("none");
-  const filtered = useMemo(
+  const byPill = useMemo(
     () =>
       filter
         ? nodes.filter((entry) =>
@@ -71,12 +73,14 @@ export function useNodeBoardFilter(
         : nodes,
     [nodes, canvasIconByNode, filter]
   );
+  const { filtered, ...boss } = useBossFilter(nodes, byPill);
+  const active = filter !== null || boss.active;
   const highlight = useMemo(
     () =>
-      filter && filterMode
+      active && filterMode
         ? new Set(filtered.map((entry) => entry.island.id))
         : null,
-    [filter, filterMode, filtered]
+    [active, filterMode, filtered]
   );
   useEffect(() => {
     const { setNodeHighlight } = useMapView.getState();
@@ -93,6 +97,7 @@ export function useNodeBoardFilter(
     toggleFilter: (next: NodeBoardFilter) =>
       setFilter(sameFilter(filter, next) ? null : next),
     clearFilter: () => setFilter(null),
+    boss,
     sort,
     cycleSort: () => setSort(NEXT_SORT[sort]),
     displayNodes,

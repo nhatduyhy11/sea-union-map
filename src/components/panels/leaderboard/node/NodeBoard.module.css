@@ -75,3 +75,12 @@ button.sortActive {
   color: #0d8a65;
   font-weight: 500;
 }
+
+/* Thanh sort có nút lọc boss bên trái, nút sort vẫn ở mép phải. */
+div.sortBar {
+  align-items: center;
+}
+
+div.sortBar > :last-child {
+  margin-left: auto;
+}

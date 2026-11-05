@@ -34,6 +34,11 @@ const BOSSES: Record<number, { name: string; model: string }> = {
   1013: { name: "U Ảnh Phu Nhân", model: "Boss_015" },
 };
 
+// Mọi boss đã biết, theo monsterId tăng dần.
+export const KNOWN_BOSS_IDS: readonly number[] = Object.keys(BOSSES)
+  .map(Number)
+  .sort((a, b) => a - b);
+
 // monsterId mới chưa có trong bảng vẫn hiện, kèm id để biết cần bổ sung tên.
 export const bossName = (monsterId: number) =>
   BOSSES[monsterId]?.name ?? `Boss #${monsterId}`;

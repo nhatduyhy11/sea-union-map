@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ComponentType } from "react";
+import { useDismiss } from "../../../../hooks/useDismiss";
 import styles from "./ColorSwatch.module.css";
 
 // HexAlphaColorPicker của react-colorful — DEV hoặc sau easter egg, load động.
@@ -14,7 +15,7 @@ export interface ColorSwatchProps {
 }
 
 // Chip debug chọn màu: swatch mở popover react-colorful (màu + alpha trong
-// một control); click ra ngoài tự đóng. value/onChange làm việc trên hex
+// một control); click ra ngoài hoặc Esc thì đóng. value/onChange làm việc trên hex
 // 6 hoặc 8 ký tự — picker trả #rrggbbaa (alpha 1 thì rút gọn 6 ký tự).
 export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
   const [Picker, setPicker] = useState<HexAlphaPicker | null>(null);
@@ -35,17 +36,7 @@ export function ColorSwatch({ label, value, onChange }: ColorSwatchProps) {
       .catch(() => {});
   }, []);
 
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (event: PointerEvent) => {
-      if (chipRef.current && !chipRef.current.contains(event.target as Node))
-        setOpen(false);
-    };
-    // Capture trước khi canvas chặn event để xử lý pan/drag.
-    document.addEventListener("pointerdown", onPointerDown, true);
-    return () =>
-      document.removeEventListener("pointerdown", onPointerDown, true);
-  }, [open]);
+  useDismiss(open, [chipRef], () => setOpen(false));
 
   return (
     <div ref={chipRef} className={styles.bgPicker} title={label}>
