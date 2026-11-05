@@ -1,5 +1,6 @@
 import { useDebug } from "../../../../stores/debug";
 import { ColorSwatch } from "./ColorSwatch";
+import { CornerPicker } from "./CornerPicker";
 import styles from "./MapDebugControls.module.css";
 
 export function MapDebugControls() {
@@ -31,6 +32,11 @@ export function MapDebugControls() {
 
   return (
     <div className={styles.debugGroup}>
+      {/* Nháp DEV: ảnh 4 góc canvas, 1 = trên-trái rồi theo chiều kim đồng hồ. */}
+      {import.meta.env.DEV &&
+        [0, 1, 2, 3].map((index) => (
+          <CornerPicker key={index} index={index} />
+        ))}
       <ColorSwatch label="Nền" value={canvasBg} onChange={setCanvasBg} />
       <ColorSwatch label="Đảo" value={neutralHex8} onChange={applyNeutral} />
       {import.meta.env.DEV && (

@@ -1,6 +1,7 @@
 import { ViewportPortal } from "@xyflow/react";
 import { FactionBackdrop } from "./FactionBackdrop";
 import { GuardianBackdrop } from "./GuardianBackdrop";
+import { HeroBackdrop } from "./HeroBackdrop";
 import { SceneryBackdrop } from "./SceneryBackdrop";
 import styles from "./MapBackdrop.module.css";
 import { useSelection } from "../../../stores/selection";
@@ -23,6 +24,7 @@ export function MapBackdrop({
     <ViewportPortal>
       <div className={styles.backdrop} aria-hidden="true">
         <SceneryBackdrop />
+        <HeroBackdrop />
         <FactionBackdrop litIds={litIds} />
         <GuardianBackdrop nodes={nodes} litIds={litIds} />
       </div>
