@@ -11,86 +11,6 @@
   --faction: #9caeb9;
 }
 
-/* ───────────────────────────────── Icon ───────────────────────────────── */
-
-/* Dùng transform để tránh margin collapse làm lệch kích thước và tâm node.
-   --icon-box được set inline từ iconBoxSize(). */
-.islandIcon {
-  display: grid;
-  place-items: center;
-  margin: auto;
-  width: var(--icon-box, 55px);
-  height: var(--icon-box, 55px);
-  background: #ffffff;
-  border: 2px solid var(--faction);
-  color: var(--faction);
-  border-radius: 18px;
-  transform: translateY(calc(42.5px - var(--icon-box, 55px) / 2)) rotate(45deg);
-  box-shadow:
-    0 0 0 5px rgba(130, 148, 160, 0.14),
-    0 6px 18px color-mix(in srgb, var(--faction) 22%, transparent);
-}
-
-.islandIcon svg {
-  transform: rotate(-45deg);
-}
-
-/* ─────────────────────────── Nhãn và nút ghim ─────────────────────────── */
-
-.islandLabel {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  color: #33424c;
-  white-space: nowrap;
-  font-weight: 600;
-}
-
-.labelWrapper {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.islandLabel span {
-  background: rgba(255, 255, 255, 0.85);
-  padding: 2px 5px;
-  border-radius: 4px;
-}
-
-.pin {
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-left: 2px;
-  display: grid;
-  place-items: center;
-  padding: 3px;
-  color: #8a9aa5;
-}
-
-.pin.pinned {
-  color: var(--highlight-green);
-}
-
-/* ─────────────────────────── Biến thể căn cứ ──────────────────────────── */
-
-.base .islandIcon {
-  border-radius: 18px;
-  border-width: 3px;
-}
-
-.base .islandLabel {
-  color: var(--faction);
-  /* Tên căn cứ lớn gấp đôi nhãn đảo thường. */
-  font-size: 28px;
-}
-
 /* ────────────────────────── Trạng thái: độ mờ ─────────────────────────── */
 
 /* Đảo trung lập tự sáng khi hover, focus, liên kết hoặc khớp filter. */
@@ -101,68 +21,26 @@
 .neutral:hover,
 .neutral:focus-within,
 .neutral.active,
-.neutral.linked {
-  opacity: 1;
-}
-
+.neutral.linked,
 .neutral.hot {
   opacity: 1;
 }
 
-/* Dim luôn thắng các trạng thái làm sáng ở trên, kể cả neutral + hot. */
+/* Trung tâm 4: độ mờ đặt trên ảnh (CenterIcon), không trên cả node, để nhãn
+   và popup điểm vẫn rõ. */
+.island.center {
+  opacity: 1;
+}
+
+/* Dim (filter guild/player) luôn thắng các trạng thái làm sáng ở trên, kể cả
+   neutral + hot và trung tâm. */
 .island.dim {
   opacity: 0.1;
 }
 
-/* ─────────────────────── Trạng thái: độ dày viền ──────────────────────── */
-
-.hot .islandIcon {
-  border-width: 3.5px;
-}
-
-.hot.base .islandIcon {
-  border-width: 4.5px;
-}
-
-/* ──── Trạng thái: màu nền (frontline/defend ưu tiên hơn hover và active) ──── */
-
-.islandIcon:hover,
-.linked .islandIcon,
-.active .islandIcon {
-  background: color-mix(in srgb, var(--faction) 12%, #ffffff);
-}
-
-.frontline .islandIcon {
-  background: #3c1f1e;
-}
-
-.defend .islandIcon {
-  background: color-mix(in srgb, var(--faction) 50%, #ffffff);
-}
-
-/* Quầng trắng giữ icon màu phe dễ đọc trên nền giao tranh tối. */
-.frontline .islandIcon svg {
-  filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
-}
-
-/* ── Trạng thái: quầng sáng (active ưu tiên hơn hover, focus và linked) ── */
-
-.island:hover .islandIcon,
-.island:focus-within .islandIcon,
-.linked .islandIcon {
-  box-shadow:
-    0 0 0 4px color-mix(in srgb, var(--faction) 75%, #000000),
-    0 0 0 10px color-mix(in srgb, var(--faction) 60%, transparent),
-    0 0 32px 14px color-mix(in srgb, var(--faction) 95%, transparent),
-    0 0 56px 22px color-mix(in srgb, var(--faction) 45%, transparent);
-}
-
-.island.active .islandIcon {
-  box-shadow:
-    0 0 0 5px var(--highlight-green),
-    0 0 0 12px color-mix(in srgb, var(--highlight-green) 65%, transparent),
-    0 0 38px 16px var(--highlight-green),
-    0 0 64px 26px color-mix(in srgb, var(--highlight-green) 50%, transparent);
+/* Popup điểm nằm dưới nhãn: mép dưới ảnh + nhãn + khoảng hở như node thường. */
+.center {
+  --stats-top: calc(42.5px + var(--icon-box) / 2 + 30px);
 }
 
 /* ───────────────── Debug: tâm node trùng điểm neo edge ────────────────── */
@@ -179,109 +57,4 @@
   box-shadow: 0 0 0 1.5px #ffffff;
   z-index: 40;
   pointer-events: none;
-}
-
-/* ─────────────── Trung tâm 4: ảnh đảo thay cho ô kim cương ─────────────── */
-
-/* Bỏ hẳn khung vuông (nền, viền, vòng box-shadow, outline focus) ở mọi trạng
-   thái; hiệu ứng chuyển sang drop-shadow bám theo viền ảnh ở .centerArt. */
-.island.center .islandIcon,
-.island.center:hover .islandIcon,
-.island.center:focus-within .islandIcon,
-.island.center.linked .islandIcon,
-.island.center.active .islandIcon,
-.island.center.frontline .islandIcon,
-.island.center.defend .islandIcon {
-  background: none;
-  border: none;
-  border-radius: 0;
-  box-shadow: none;
-  outline: none;
-  /* Hộp 240px rộng hơn node 140×85 nên margin auto về 0: tâm hộp lệch
-     (+50, +77.5)px so với tâm node; % tính theo chính hộp 240px. */
-  transform: translate(-21%, -32%);
-}
-
-.centerArt {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  /* Viền sát · quầng (2 lớp cho đậm) · bóng đổ; trạng thái chỉ đổi biến màu.
-     Filter đổi tức thì như box-shadow của ô kim cương: transition filter
-     nội suy màu drop-shadow lệch (transparent → xám đi qua quầng đen, xám →
-     xanh lá đi qua vàng), nên chỉ transition phóng to. */
-  --ring: transparent;
-  --halo: transparent;
-  --drop: color-mix(in srgb, var(--faction) 45%, transparent);
-  filter: drop-shadow(0 0 2px var(--ring)) drop-shadow(0 0 10px var(--halo))
-    drop-shadow(0 0 22px var(--halo)) drop-shadow(0 6px 14px var(--drop));
-  transition:
-    transform 0.2s,
-    opacity 0.2s;
-}
-
-/* Cùng bộ trạng thái và thứ tự ưu tiên như ô kim cương: active thắng
-   hover/focus/linked, các trạng thái đó thắng hot/defend/frontline. */
-.hot .centerArt {
-  --ring: var(--faction);
-}
-
-.defend .centerArt {
-  --ring: var(--faction);
-  --halo: color-mix(in srgb, var(--faction) 60%, transparent);
-}
-
-.frontline .centerArt {
-  --ring: #3c1f1e;
-  --halo: color-mix(in srgb, #3c1f1e 80%, transparent);
-}
-
-.island.center:hover .centerArt,
-.island.center:focus-within .centerArt,
-.island.center.linked .centerArt {
-  --ring: color-mix(in srgb, var(--faction) 75%, #000000);
-  --halo: var(--faction);
-  transform: scale(1.04);
-}
-
-.island.center.active .centerArt,
-.island.center.active:hover .centerArt,
-.island.center.active:focus-within .centerArt {
-  --ring: var(--highlight-green);
-  --halo: var(--highlight-green);
-  transform: scale(1.04);
-}
-
-.center {
-  /* Popup điểm nằm dưới nhãn: mép dưới ảnh + nhãn + khoảng hở như node thường. */
-  --stats-top: calc(42.5px + var(--icon-box) / 2 + 30px);
-}
-
-/* Nhãn sát mép dưới ảnh thay vì dưới hộp layout của nút. */
-.center .islandLabel {
-  margin-top: calc(42.5px - var(--icon-box) / 2 + 4px);
-}
-
-/* Độ mờ đặt trên ảnh, không trên cả node, để nhãn và popup điểm vẫn rõ.
-   Lúc nghỉ mờ để không lấn các node quanh; hover/focus/active/linked/khớp
-   filter chỉ sáng thêm một nấc, không về 1. Dim (filter guild/player) làm mờ
-   cả node như đảo thường. */
-.island.center {
-  opacity: 1;
-}
-
-.centerArt {
-  opacity: 0.5;
-}
-
-.island.center:hover .centerArt,
-.island.center:focus-within .centerArt,
-.island.center.active .centerArt,
-.island.center.linked .centerArt,
-.island.center.hot .centerArt {
-  opacity: 0.9;
-}
-
-.island.center.dim {
-  opacity: 0.1;
 }

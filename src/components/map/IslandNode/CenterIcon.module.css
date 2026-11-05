@@ -1,0 +1,74 @@
+/* Nút không khung (nền, viền, outline focus); hiệu ứng trạng thái là
+   drop-shadow bám theo viền ảnh ở .centerArt. */
+.centerIcon {
+  display: grid;
+  place-items: center;
+  margin: auto;
+  width: var(--icon-box);
+  height: var(--icon-box);
+  padding: 0;
+  /* Hộp 240px rộng hơn node 140×85 nên margin auto về 0: tâm hộp lệch
+     (+50, +77.5)px so với tâm node; % tính theo chính hộp 240px. */
+  transform: translate(-21%, -32%);
+}
+
+.centerIcon:focus-visible {
+  outline: none;
+}
+
+.centerArt {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  /* Lúc nghỉ mờ để không lấn các node quanh; các trạng thái chỉ sáng thêm một
+     nấc, không về 1. */
+  opacity: 0.5;
+  /* Viền sát · quầng (2 lớp cho đậm) · bóng đổ; trạng thái chỉ đổi biến màu.
+     Filter đổi tức thì như box-shadow của ô kim cương: transition filter
+     nội suy màu drop-shadow lệch (transparent → xám đi qua quầng đen, xám →
+     xanh lá đi qua vàng), nên chỉ transition phóng to. */
+  --ring: transparent;
+  --halo: transparent;
+  --drop: color-mix(in srgb, var(--faction) 45%, transparent);
+  filter: drop-shadow(0 0 2px var(--ring)) drop-shadow(0 0 10px var(--halo))
+    drop-shadow(0 0 22px var(--halo)) drop-shadow(0 6px 14px var(--drop));
+  transition:
+    transform 0.2s,
+    opacity 0.2s;
+}
+
+/* Cùng thứ tự ưu tiên như ô kim cương: active thắng hovered/linked, các trạng
+   thái đó thắng hot/defend/frontline. */
+.centerArt.hot {
+  --ring: var(--faction);
+}
+
+.centerArt.defend {
+  --ring: var(--faction);
+  --halo: color-mix(in srgb, var(--faction) 60%, transparent);
+}
+
+.centerArt.frontline {
+  --ring: #3c1f1e;
+  --halo: color-mix(in srgb, #3c1f1e 80%, transparent);
+}
+
+.centerArt.hovered,
+.centerArt.linked {
+  --ring: color-mix(in srgb, var(--faction) 75%, #000000);
+  --halo: var(--faction);
+  transform: scale(1.04);
+}
+
+.centerArt.active {
+  --ring: var(--highlight-green);
+  --halo: var(--highlight-green);
+  transform: scale(1.04);
+}
+
+.centerArt.hot,
+.centerArt.hovered,
+.centerArt.linked,
+.centerArt.active {
+  opacity: 0.9;
+}

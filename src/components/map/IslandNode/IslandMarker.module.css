@@ -1,0 +1,134 @@
+/* Trạng thái (.hovered/.linked/.active/.hot/.frontline/.defend) được gắn
+   thẳng lên phần tử, không lên root node. */
+
+/* ───────────────────────────────── Icon ───────────────────────────────── */
+
+/* Dùng transform để tránh margin collapse làm lệch kích thước và tâm node.
+   --icon-box được set inline từ iconBoxSize(). */
+.islandIcon {
+  display: grid;
+  place-items: center;
+  margin: auto;
+  width: var(--icon-box, 55px);
+  height: var(--icon-box, 55px);
+  background: #ffffff;
+  border: 2px solid var(--faction);
+  color: var(--faction);
+  border-radius: 18px;
+  transform: translateY(calc(42.5px - var(--icon-box, 55px) / 2)) rotate(45deg);
+  box-shadow:
+    0 0 0 5px rgba(130, 148, 160, 0.14),
+    0 6px 18px color-mix(in srgb, var(--faction) 22%, transparent);
+}
+
+.islandIcon svg {
+  transform: rotate(-45deg);
+}
+
+.islandIcon.base {
+  border-width: 3px;
+}
+
+/* ─────────────────────── Trạng thái: độ dày viền ──────────────────────── */
+
+.islandIcon.hot {
+  border-width: 3.5px;
+}
+
+.islandIcon.hot.base {
+  border-width: 4.5px;
+}
+
+/* ──── Trạng thái: màu nền (frontline/defend ưu tiên hơn hover và active) ──── */
+
+.islandIcon:hover,
+.islandIcon.linked,
+.islandIcon.active {
+  background: color-mix(in srgb, var(--faction) 12%, #ffffff);
+}
+
+.islandIcon.frontline {
+  background: #3c1f1e;
+}
+
+.islandIcon.defend {
+  background: color-mix(in srgb, var(--faction) 50%, #ffffff);
+}
+
+/* Quầng trắng giữ icon màu phe dễ đọc trên nền giao tranh tối. */
+.islandIcon.frontline svg {
+  filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
+}
+
+/* ─── Trạng thái: quầng sáng (active ưu tiên hơn hovered và linked) ─── */
+
+.islandIcon.hovered,
+.islandIcon.linked {
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--faction) 75%, #000000),
+    0 0 0 10px color-mix(in srgb, var(--faction) 60%, transparent),
+    0 0 32px 14px color-mix(in srgb, var(--faction) 95%, transparent),
+    0 0 56px 22px color-mix(in srgb, var(--faction) 45%, transparent);
+}
+
+.islandIcon.active {
+  box-shadow:
+    0 0 0 5px var(--highlight-green),
+    0 0 0 12px color-mix(in srgb, var(--highlight-green) 65%, transparent),
+    0 0 38px 16px var(--highlight-green),
+    0 0 64px 26px color-mix(in srgb, var(--highlight-green) 50%, transparent);
+}
+
+/* ─────────────────────────── Nhãn và nút ghim ─────────────────────────── */
+
+.islandLabel {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #33424c;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.labelWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.islandLabel span {
+  background: rgba(255, 255, 255, 0.85);
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+
+.pin {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 2px;
+  display: grid;
+  place-items: center;
+  padding: 3px;
+  color: #8a9aa5;
+}
+
+.pin.pinned {
+  color: var(--highlight-green);
+}
+
+.islandLabel.base {
+  color: var(--faction);
+  /* Tên căn cứ lớn gấp đôi nhãn đảo thường. */
+  font-size: 28px;
+}
+
+/* Trung tâm 4: nhãn sát mép dưới ảnh thay vì dưới hộp layout của nút. */
+.islandLabel.center {
+  margin-top: calc(42.5px - var(--icon-box) / 2 + 4px);
+}
