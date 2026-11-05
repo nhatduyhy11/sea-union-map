@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { battleCountdown } from "../../../../data/eventCalendar";
+import {
+  battleCountdown,
+  eventRangeLabel,
+} from "../../../../data/eventCalendar";
 import styles from "./EventClock.module.css";
 
 const pad = (n: number) => String(n).padStart(2, "0");
@@ -21,7 +24,12 @@ export function EventClock() {
 
   const countdown = battleCountdown(now);
   if (countdown.phase === "ended") {
-    return <div className={styles.clock}>Event kết thúc</div>;
+    return (
+      <div className={styles.clock}>
+        <span>Event kết thúc</span>
+        <span className={styles.range}>{eventRangeLabel()}</span>
+      </div>
+    );
   }
   const open = countdown.phase === "open";
   return (

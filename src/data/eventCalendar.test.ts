@@ -5,6 +5,7 @@ import {
   dayLabel,
   dayOfMonth,
   eventDayOf,
+  eventRangeLabel,
 } from "./eventCalendar";
 
 // Rule quy ngày snapshot: 22:00 → trước 10:00 hôm sau tính là ngày trước;
@@ -24,6 +25,7 @@ test("eventDayOf maps VN time onto event days via the 10:00 cutoff", () => {
 test("day labels", () => {
   assert.equal(dayOfMonth("261101"), "01");
   assert.equal(dayLabel("261028"), "28/10");
+  assert.equal(eventRangeLabel(), "26/10 – 01/11");
 });
 
 // Trong khung 10:00~22:00 → đếm tới 22:00; ngoài khung → 10:00 kế tiếp nếu

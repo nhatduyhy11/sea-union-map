@@ -24,3 +24,8 @@
 .open .time {
   color: #0d8a65;
 }
+
+.range {
+  color: #33424c;
+  font-variant-numeric: tabular-nums;
+}

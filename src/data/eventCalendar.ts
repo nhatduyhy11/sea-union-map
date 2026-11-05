@@ -79,3 +79,9 @@ export function battleCountdown(at: Date): BattleCountdown {
 // "261028" → "28" (nhãn nút) / "28/10" (tooltip, toast).
 export const dayOfMonth = (day: string) => day.slice(4);
 export const dayLabel = (day: string) => `${day.slice(4)}/${day.slice(2, 4)}`;
+
+export const LAST_EVENT_DAY = EVENT_DAYS[EVENT_DAYS.length - 1];
+
+// "26/10 – 01/11": ngày đầu → ngày cuối event, không kèm năm.
+export const eventRangeLabel = () =>
+  `${dayLabel(EVENT_DAYS[0])} – ${dayLabel(LAST_EVENT_DAY)}`;

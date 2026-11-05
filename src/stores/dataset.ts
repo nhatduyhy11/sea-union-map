@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import {
   EVENT_DAYS,
+  LAST_EVENT_DAY,
   battleCountdown,
   dayLabel,
   eventDayOf,
@@ -26,7 +27,8 @@ import { showToast } from "./toast";
 // bản đầy đủ nhất, live dump có thể bake giữa war → ưu tiên snapshot, không
 // có mới dùng live; còn lại → snapshot
 // src/data/snapshots/<day>/<server>.json. Cụm khác LIVE_SERVER ở ngày hiện
-// tại chưa hỗ trợ live → fallback snapshot gần nhất của cụm đó.
+// tại chưa hỗ trợ live → fallback snapshot gần nhất của cụm đó. Đã qua hết
+// ngày event → mặc định snapshot cuối cùng của event (bản chốt).
 export type DataSource = "live" | "snapshot";
 
 interface DatasetState {
@@ -43,13 +45,15 @@ const liveData = buildMapData(liveDump, nodeBossesOf(LIVE_SERVER));
 export const today = () => eventDayOf(new Date());
 const inEvent = (day: string) =>
   (EVENT_DAYS as readonly string[]).includes(day);
+const eventOver = () => today() > LAST_EVENT_DAY;
 
 export const useDataset = create<DatasetState>()(() => ({
   server: LIVE_SERVER,
   day: inEvent(today()) ? today() : null,
   source: "live",
   data: liveData,
-  loading: false,
+  // Event đã qua: syncSourceWithClock lúc mount sẽ nạp snapshot cuối.
+  loading: eventOver(),
 }));
 
 export const useMapData = () => useDataset((state) => state.data);
@@ -61,10 +65,18 @@ export const currentMapData = () => useDataset.getState().data;
 // trường today + LIVE_SERVER ưu tiên snapshot hôm nay (xem resolve). Chỉ đụng
 // khi đang xem đúng ngày hiện tại mà nguồn đang hiển thị khác nguồn resolve
 // yêu cầu — mở trang lúc 22:05 hay vừa qua mốc 22:00/10:00 đều tự chỉnh; đang
-// xem ngày cũ thì bỏ qua, không giật người dùng khỏi lịch sử.
+// xem ngày cũ thì bỏ qua, không giật người dùng khỏi lịch sử. Đang xem live
+// ngoài lịch mà event đã qua hết → chuyển sang snapshot cuối cùng của event.
 export function syncSourceWithClock() {
   const { server, day, source } = useDataset.getState();
-  if (day === null || day !== today()) return;
+  if (day === null) {
+    if (!eventOver()) return;
+    const last = latestSnapshotDay(server, LAST_EVENT_DAY);
+    if (last) void apply(server, last, "snapshot");
+    else useDataset.setState({ loading: false });
+    return;
+  }
+  if (day !== today()) return;
   const want = resolve(server, day);
   if (want && want !== source) void apply(server, day, want);
 }
