@@ -1,11 +1,6 @@
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { createPortal } from "react-dom";
+import { useDismiss } from "../../../../hooks/useDismiss";
 import { Skull, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../../data/nodeBosses";
 import type { BossOption } from "./useBossFilter";
@@ -64,27 +59,7 @@ export function BossFilter({
     };
   }, [open]);
 
-  useEffect(() => {
-    if (!open) return;
-    const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Node;
-      if (
-        !rootRef.current?.contains(target) &&
-        !popoverRef.current?.contains(target)
-      )
-        setOpen(false);
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
-    };
-    // Capture trước khi canvas chặn event để xử lý pan/drag.
-    document.addEventListener("pointerdown", onPointerDown, true);
-    document.addEventListener("keydown", onKeyDown);
-    return () => {
-      document.removeEventListener("pointerdown", onPointerDown, true);
-      document.removeEventListener("keydown", onKeyDown);
-    };
-  }, [open]);
+  useDismiss(open, [rootRef, popoverRef], () => setOpen(false));
 
   return (
     <div ref={rootRef} className={styles.root}>
