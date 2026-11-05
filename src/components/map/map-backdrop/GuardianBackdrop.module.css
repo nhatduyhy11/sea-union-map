@@ -1,5 +1,5 @@
-/* node.position là tâm node (nodeOrigin [0.5, 0.5]) → dịch -50% để tâm ảnh
-   trùng tâm node. */
+/* node.position là tâm node (nodeOrigin [0.5, 0.5]); dịch quá -50% ngang để
+   ảnh dạt ra xa trung tâm. */
 .guardian {
   position: absolute;
   height: 400px;
@@ -11,7 +11,7 @@
   pointer-events: none;
 }
 
-.guardian.hovered {
+.guardian.lit {
   opacity: 0.35;
 }
 

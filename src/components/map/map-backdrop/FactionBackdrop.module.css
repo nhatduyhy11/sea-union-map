@@ -9,6 +9,6 @@
   pointer-events: none;
 }
 
-.hovered {
+.lit {
   opacity: 0.25;
 }
