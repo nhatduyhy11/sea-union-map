@@ -18,7 +18,7 @@ export function MapBackdrop({
     <ViewportPortal>
       <div className={styles.backdrop} aria-hidden="true">
         <SceneryBackdrop />
-        <FactionBackdrop />
+        <FactionBackdrop hoveredId={hoveredId} />
         <GuardianBackdrop nodes={nodes} hoveredId={hoveredId} />
       </div>
     </ViewportPortal>

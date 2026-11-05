@@ -10,14 +10,14 @@ const artwork: Record<string, { file: string; dx: number; dy: number }> = {
   east: { file: "Vinh_thao_thiet", dx: -650, dy: 0 },
 };
 
-export function FactionBackdrop() {
+export function FactionBackdrop({ hoveredId }: { hoveredId: string | null }) {
   return layoutNodes.flatMap((node) => {
     const art = node.base && node.owner ? artwork[node.owner] : undefined;
     if (!art) return [];
     return (
       <img
         key={node.id}
-        className={styles.city}
+        className={`${styles.city} ${node.id === hoveredId ? styles.hovered : ""}`}
         src={`${import.meta.env.BASE_URL}faction/${art.file}.webp`}
         alt=""
         draggable={false}
