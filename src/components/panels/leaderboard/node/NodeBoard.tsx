@@ -35,10 +35,7 @@ export function NodeBoard({
     filter,
     toggleFilter,
     clearFilter,
-    bossOptions,
-    bossIds,
-    toggleBoss,
-    clearBoss,
+    boss,
     sort,
     cycleSort,
     displayNodes,
@@ -54,12 +51,14 @@ export function NodeBoard({
         onClear={clearFilter}
       />
       <div className={`${shared.sortBar} ${styles.sortBar}`}>
-        <BossFilter
-          options={bossOptions}
-          selected={bossIds}
-          onToggle={toggleBoss}
-          onClear={clearBoss}
-        />
+        {boss.mapHasBosses && (
+          <BossFilter
+            options={boss.options}
+            selected={boss.selected}
+            onToggle={boss.toggle}
+            onClear={boss.clear}
+          />
+        )}
         <button
           className={`${shared.sortOption} ${sort !== "none" ? styles.sortActive : ""}`}
           title="Bấm để đổi: giảm dần → tăng dần → không sort (theo số đảo 1-1, 1-2 …)."

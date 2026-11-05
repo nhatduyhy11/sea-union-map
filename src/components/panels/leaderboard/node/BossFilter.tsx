@@ -8,13 +8,13 @@ import {
 import { createPortal } from "react-dom";
 import { Skull, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../../data/nodeBosses";
-import type { BossOption } from "./useNodeBoardFilter";
+import type { BossOption } from "./useBossFilter";
 import styles from "./BossFilter.module.css";
 
 // Nút lọc boss đầu thanh sort: chưa lọc thì chỉ có icon; đang lọc thì sáng
 // kèm số boss đã chọn và ✕ bỏ lọc. Bấm nút mở popover lưới avatar boss —
-// avatar là ô bật/tắt, góc dưới ghi số cứ điểm mang boss đó trên map; boss
-// không có trên map vẫn hiện nhưng khoá (không chọn được). Click ra ngoài
+// avatar là ô bật/tắt, badge góc trên ghi số cứ điểm mang boss đó (sau pill
+// phe / trạng thái); boss count 0 vẫn hiện nhưng khoá. Click ra ngoài
 // hoặc Esc thì đóng. Popover render qua portal, position fixed neo theo nút
 // để không bị vùng cuộn của panel cắt khi list ngắn; thiếu chỗ bên dưới thì
 // lật lên trên nút.
@@ -86,7 +86,6 @@ export function BossFilter({
     };
   }, [open]);
 
-  if (!options.some((option) => option.count > 0)) return null;
   return (
     <div ref={rootRef} className={styles.root}>
       <div className={`${styles.trigger} ${active ? styles.active : ""}`}>
@@ -136,7 +135,7 @@ export function BossFilter({
                 const label =
                   count > 0
                     ? `${name} · ${count} cứ điểm`
-                    : `${name} · không có trên map`;
+                    : `${name} · không có cứ điểm nào`;
                 return (
                   <button
                     key={id}
