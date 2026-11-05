@@ -3,8 +3,9 @@ import styles from "./GuardianBackdrop.module.css";
 import type { AppNode } from "../../../types";
 
 // Hai cứ điểm kẹp hai đầu trung tâm 4 trên trục giữa: boss của node hiện mờ
-// làm nền như hai hộ vệ giữ cửa, tâm ảnh trùng tâm node; 3-2 lật ngang để cả
-// hai cùng quay mặt vào trung tâm. Nằm ở lớp nền thay vì trong node để độ mờ
+// làm nền như hai hộ vệ giữ cửa, tâm ảnh dạt ra xa trung tâm ~15% bề ngang ảnh
+// để chừa chỗ cho ảnh đảo trung tâm; 3-2 lật ngang để cả hai cùng quay mặt vào
+// trung tâm. Nằm ở lớp nền thay vì trong node để độ mờ
 // cố định, không ăn theo opacity của node (trung lập / dim); chỉ đậm lên khi
 // hover đúng node đó.
 const GUARDIANS: Record<string, "east" | "west"> = {
