@@ -10,7 +10,8 @@ import styles from "./BossFilter.module.css";
 // Nút lọc boss đầu thanh sort: chưa lọc thì chỉ có icon; đang lọc thì sáng
 // kèm số boss đã chọn và ✕ bỏ lọc. Bấm nút mở popover lưới avatar boss —
 // avatar là ô bật/tắt, badge góc trên ghi số cứ điểm mang boss đó (sau pill
-// phe / trạng thái); boss count 0 vẫn hiện nhưng khoá. Click ra ngoài
+// phe / trạng thái); boss count 0 vẫn hiện nhưng khoá. Hover làm sáng ảnh để
+// xem trước, trừ ô vừa bỏ chọn (tới khi con trỏ rời ô). Click ra ngoài
 // hoặc Esc thì đóng. Popover render qua portal, position fixed neo theo nút
 // để không bị vùng cuộn của panel cắt khi list ngắn; thiếu chỗ bên dưới thì
 // lật lên trên nút.
@@ -26,6 +27,8 @@ export function BossFilter({
   onClear: () => void;
 }) {
   const [open, setOpen] = useState(false);
+  // Ô vừa bỏ chọn: tắt hiệu ứng hover cho tới khi con trỏ rời ô.
+  const [settledId, setSettledId] = useState<number | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const active = selected.size > 0;
@@ -87,12 +90,20 @@ export function BossFilter({
                   <button
                     key={id}
                     type="button"
-                    className={on ? styles.on : ""}
+                    className={
+                      on ? styles.on : settledId === id ? styles.settled : ""
+                    }
                     disabled={count === 0}
                     aria-pressed={on}
                     aria-label={label}
                     title={label}
-                    onClick={() => onToggle(id)}
+                    onClick={() => {
+                      setSettledId(on ? id : null);
+                      onToggle(id);
+                    }}
+                    onPointerLeave={() => {
+                      if (settledId === id) setSettledId(null);
+                    }}
                   >
                     {head ? (
                       <img src={head} alt="" draggable={false} />

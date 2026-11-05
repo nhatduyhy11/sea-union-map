@@ -111,8 +111,15 @@
     opacity 0.12s;
 }
 
-.grid button:hover img {
-  opacity: 0.8;
+/* Hover hiện ảnh đủ màu để xem trước; viền và badge số vẫn giữ trạng thái
+   chưa chọn, chỉ khi chọn mới chuyển xanh. Ô vừa bỏ chọn (.settled) không sáng
+   lại cho tới khi con trỏ rời ô, để ảnh về đúng trạng thái tắt như các ô xung
+   quanh. Chỉ áp dụng cho thiết bị có chuột: trên cảm ứng :hover dính sau tap. */
+@media (hover: hover) {
+  .grid button:not(:disabled):not(.settled):hover img {
+    filter: none;
+    opacity: 1;
+  }
 }
 
 .grid button.on {
@@ -162,9 +169,5 @@
 }
 
 .grid button:disabled img {
-  opacity: 0.15;
-}
-
-.grid button:disabled:hover img {
   opacity: 0.15;
 }
