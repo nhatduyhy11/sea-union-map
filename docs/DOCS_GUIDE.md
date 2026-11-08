@@ -30,6 +30,8 @@
 
 Thư mục `specs/` hiện chứa ảnh tham chiếu; tên thư mục không có nghĩa là đã có specs triển khai.
 
+Doomsday: [đối chiếu chiến công và BXH](research/2026-11-08-doomday-merit-vs-rank.md) — protocol, bằng chứng live và giới hạn kết luận về cách tính điểm. Cách chạy collector ở [README.BE.md](../README.BE.md).
+
 ## Thứ tự đọc
 
 Crawl nhiều acc/terminal bằng fresh auth: [fresh-auth-crawl](research/2026-11-01-fresh-auth-crawl.md).

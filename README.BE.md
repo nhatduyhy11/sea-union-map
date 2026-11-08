@@ -4,8 +4,8 @@ Web UI (React Flow) xem map **Tranh Bá Tứ Hải** theo data crawl, và crawle
 Python bắt/giải mã packet websocket của game H5. Repo gồm hai nửa nối nhau bằng
 pipeline crawl → JSON → UI:
 
-- `tools/socket_log/` — crawler & decoder WS, 2 mode: **mine** (Khai Thác
-  Guild) và **sea** (Tranh Bá Tứ Hải)
+- `tools/socket_log/` — crawler & decoder WS, 3 mode: **mine** (Khai Thác
+  Guild), **sea** (Tranh Bá Tứ Hải) và **doomday** (Trận Chiến Chung Cuộc)
 - `src/` — web UI React + React Flow, chạy hoàn toàn phía trình duyệt
 
 ## Web UI
@@ -25,14 +25,15 @@ Mở URL local do Vite in ra (mặc định `http://localhost:5173`). `pnpm run 
 
 ## Crawler (`tools/socket_log/`)
 
-Có **2 mode** dùng chung một tầng generic — chọn mode theo entry point:
+Có **3 mode** dùng chung một tầng generic — chọn mode theo entry point:
 
 - **Mode sea** — Tranh Bá Tứ Hải (module 0x72 + board 0x0c), kèm pipeline crawl → JSON cho FE
 - **Mode mine** — event world mỏ (module 0x48 + broadcast type 150)
+- **Mode doomday** — BXH Trận Chiến Chung Cuộc (module 0x67), kèm chiến công từng player
 
-Layout: 4 package generic (`core/`, `browser/`, `capture/`, `gui/`) + 2 package event
-(`sea_socket/`, `mine_socket/`) độc lập nhau — xóa 1 package event thì package
-kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì không đụng socket.
+Layout: 4 package generic (`core/`, `browser/`, `capture/`, `gui/`) + 3 package event
+(`sea_socket/`, `mine_socket/`, `doomday_socket/`). Doomsday dùng lại router và
+brief helpers trong `sea_socket/crawl/`; `config_extract.py` đứng top-level vì không đụng socket.
 
 ### Dùng chung
 
@@ -174,6 +175,29 @@ uv run python tools/socket_log/mine_socket/report.py
 # Decode offline từ capture binary của capture/capture.py
 uv run python tools/socket_log/mine_socket/decode.py .tmp/socket-capture/<run> mine-events
 ```
+
+### Mode 3 — doomday (`doomday_socket/`)
+
+```bash
+uv run python tools/socket_log/doomday_socket/crawler.py \
+    --profile .tmp/pmain --headless --feats
+```
+
+`crawler.py` lấy context sự kiện, BXH cá nhân/guild của vòng hiện tại và
+player/guild briefs để giải tên. `--feats` hỏi thêm `GetWarfieldMembers`
+theo player ID (gồm các dòng BXH trả về và chính mình). Không truyền cờ này
+thì chỉ lấy BXH. Chỉ gửi request đọc dữ liệu, không vào trận hay nhận thưởng.
+
+Mỗi lượt tạo thư mục riêng dưới `--out` (mặc định `.tmp/doomday-crawl/`),
+lưu raw frames, context, hai BXH, briefs và `summary.json` để xem kết quả.
+Summary giữ `score` và `feat` riêng; `feat` thiếu là `null`, ID thiếu được
+liệt kê trong `missingMemberIds`. BXH chỉ gồm số dòng server trả về, không
+đại diện toàn bộ người tham gia. Chưa tích hợp vào frontend.
+
+`codec.py` giải mã theo schema runtime game. Nếu API trả lỗi hoặc header
+không khớp request, lượt crawl dừng và giữ các file đã lấy được.
+Xem [kết quả đối chiếu chiến công và BXH](docs/research/2026-11-08-doomday-merit-vs-rank.md)
+cho protocol, ảnh GUI và những điểm chưa rõ về cách tính điểm phía game.
 
 ### Prerequisite
 
