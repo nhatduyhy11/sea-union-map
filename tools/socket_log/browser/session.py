@@ -26,6 +26,7 @@ from browser.ws_inject import WS_SEND_HOOK_JS
 LAUNCH_ARGS = [
     "--disable-blink-features=AutomationControlled",
     "--hide-crash-restore-bubble",
+    "--mute-audio",  # game H5 mở tiếng khi login; crawl không cần nghe
 ]
 WS_SEND_INIT_JS = f"({WS_SEND_HOOK_JS})();"
 
