@@ -53,6 +53,13 @@ class AuthSelectionTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "absent"):
             select_account(SOURCE, "missing@example.invalid")
 
+    def test_list_only_dump_synthesizes_wrapper(self):
+        list_only = {"sdk_allLoginList": copy.deepcopy(SOURCE["sdk_allLoginList"])}
+        selected, key = select_account(list_only, ACCOUNTS[0])
+        self.assertEqual(
+            selected[key]["value"],
+            {"username": ACCOUNTS[0], "access_token": "synthetic"})
+
 
 class SessionTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):

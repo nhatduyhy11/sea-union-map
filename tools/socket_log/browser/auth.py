@@ -44,10 +44,15 @@ def select_account(data: object, email: str) -> tuple[dict, str]:
         raise ValueError("Selected account must be an object with matching username")
     if not account.get("access_token"):
         raise ValueError("Selected account has no access_token")
-    if not isinstance(data.get(login_key), dict):
-        raise TypeError("Expected userLoginData wrapper object")
     selected = copy.deepcopy(data)
-    selected[login_key]["value"] = copy.deepcopy(account)
+    if login_key in data:
+        if not isinstance(data[login_key], dict):
+            raise TypeError("Expected userLoginData wrapper object")
+        selected[login_key]["value"] = copy.deepcopy(account)
+    else:
+        # Dump list-only (chỉ có allLoginList, không có userLoginData) —
+        # dựng wrapper tối thiểu; SDK đọc username từ <prefix>_userLoginData.value.
+        selected[login_key] = {"value": copy.deepcopy(account)}
     return selected, login_key
 
 
