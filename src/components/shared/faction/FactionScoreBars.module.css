@@ -14,11 +14,27 @@
 }
 
 .scoreFill {
+  display: block;
   position: relative;
   height: 100%;
   border-radius: 4px;
   overflow: hidden;
   transition: box-shadow 0.15s ease;
+}
+
+.scoreBar.interactive {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+
+.interactive:hover,
+.interactive:focus-visible,
+.interactive.selected {
+  outline: 2px solid #607985;
+  outline-offset: 1px;
 }
 
 /* Glow viền xanh lá trên phần màu của faction (thanh điểm phe), không viền phần rãnh trống:

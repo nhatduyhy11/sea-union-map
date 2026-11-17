@@ -7,6 +7,8 @@ export interface FactionScoreBarsProps {
   total: number;
   // Ẩn bar của phe chưa có đóng góp (0 điểm) thay vì bar rỗng.
   hideEmpty?: boolean;
+  selectedFaction?: string | null;
+  onFactionClick?: (id: string) => void;
   // Thông tin đóng góp của player khi đang filter theo player
   playerHighlight?: {
     faction: string;
@@ -21,6 +23,8 @@ export function FactionScoreBars({
   scores,
   total,
   hideEmpty,
+  selectedFaction,
+  onFactionClick,
   playerHighlight,
 }: FactionScoreBarsProps) {
   const bars = hideEmpty
@@ -51,12 +55,28 @@ export function FactionScoreBars({
         const hasPlayerScore =
           hasFactionScore && playerHighlight && playerHighlight.score > 0;
 
+        const Bar = onFactionClick ? "button" : "div";
         return (
-          <div
+          <Bar
             key={faction.id}
-            className={`${styles.scoreBar} ${isOtherFaction ? styles.dimmed : ""}`}
+            type={onFactionClick ? "button" : undefined}
+            onClick={
+              onFactionClick ? () => onFactionClick(faction.id) : undefined
+            }
+            aria-pressed={
+              onFactionClick ? selectedFaction === faction.id : undefined
+            }
+            aria-label={
+              onFactionClick ? `Lọc người chơi phe ${faction.name}` : undefined
+            }
+            title={
+              onFactionClick
+                ? `${faction.name}: bấm để lọc người chơi, bấm lại để bỏ lọc`
+                : undefined
+            }
+            className={`${styles.scoreBar} ${onFactionClick ? styles.interactive : ""} ${selectedFaction === faction.id ? styles.selected : ""} ${isOtherFaction || (selectedFaction && selectedFaction !== faction.id) ? styles.dimmed : ""}`}
           >
-            <div
+            <span
               className={`${styles.scoreFill} ${
                 hasFactionScore ? styles.playerFactionFill : ""
               } ${hasPlayerScore ? styles.hasScore : ""}`}
@@ -70,7 +90,7 @@ export function FactionScoreBars({
               }}
             >
               {isPlayerFaction && playerPct > 0 && (
-                <div
+                <span
                   className={styles.playerFill}
                   style={
                     {
@@ -83,7 +103,7 @@ export function FactionScoreBars({
                   }
                 />
               )}
-            </div>
+            </span>
             <b
               className={`${styles.scoreValue} ${
                 isPlayerFaction ? styles.playerScoreValue : ""
@@ -91,7 +111,7 @@ export function FactionScoreBars({
             >
               {scoreLabel}
             </b>
-          </div>
+          </Bar>
         );
       })}
     </>

@@ -47,6 +47,7 @@ export function Sidebar() {
           />
         ) : details ? (
           <NodeDetails
+            key={details.island.id}
             details={details}
             pinned={pinned.has(details.island.id)}
             onClose={close}

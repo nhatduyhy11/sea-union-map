@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { Anchor, Pin, Shield, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../data/nodeBosses";
 import { number } from "../../../utils/format";
@@ -21,6 +21,10 @@ export function NodeDetails({
   onTogglePin,
 }: NodeDetailsProps) {
   const { island, owner, scores, total, attackers } = details;
+  const [selectedFaction, setSelectedFaction] = useState<string | null>(null);
+  const visibleAttackers = selectedFaction
+    ? attackers.filter((entry) => entry.faction === selectedFaction)
+    : attackers;
   // Owner là truth server (đã áp rule ngắt đường) — hiện điểm của owner cạnh
   // ngưỡng chiếm; node trung lập chỉ hiện ngưỡng.
   const ownerScore = scores.find((faction) => faction.id === owner?.id);
@@ -88,15 +92,22 @@ export function NodeDetails({
       <div className={styles.sectionTitle}>
         Điểm các phe<span>{number(total)} tổng</span>
       </div>
-      <FactionScoreBars scores={scores} total={total} />
+      <FactionScoreBars
+        scores={scores}
+        total={total}
+        selectedFaction={selectedFaction}
+        onFactionClick={(id) =>
+          setSelectedFaction((current) => (current === id ? null : id))
+        }
+      />
       <div className={styles.sectionTitle}>
         Người chơi tấn công
         <span>
-          {attackers.length}
+          {visibleAttackers.length}
           {attackersTruncated && "(+)"} người
         </span>
       </div>
-      <PlayerTable attackers={attackers} />
+      <PlayerTable attackers={attackers} faction={selectedFaction} />
       <button
         className={`${styles.pinDetail} ${pinned ? styles.isPinned : ""}`}
         onClick={() => onTogglePin(island.id)}
