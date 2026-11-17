@@ -58,9 +58,14 @@ export function useFitZoom(): number | null {
 // mất mức zoom, nên trên mobile hook tự fit và trả false để tắt prop đó.
 const MOBILE_QUERY = "(max-width: 760px)";
 const MOBILE_ZOOM_FACTOR = 2;
+// Trần zoom: 100% trên mobile (đủ đọc nhãn/popup trên màn nhỏ) — zoom 200% ở
+// màn 3x bắt WebKit rasterize world map gấp đôi mỗi chiều, dễ hết bộ nhớ tab.
+const MAX_ZOOM = 2;
+const MOBILE_MAX_ZOOM = 1;
 
 export function useInitialFraming(fitZoom: number | null): {
   autoFit: boolean;
+  maxZoom: number;
 } {
   const { fitView, zoomTo } = useReactFlow<AppNode, Edge>();
   const [mobile] = useState(() => window.matchMedia(MOBILE_QUERY).matches);
@@ -72,7 +77,7 @@ export function useInitialFraming(fitZoom: number | null): {
       zoomTo(fitZoom * MOBILE_ZOOM_FACTOR, { duration: 0 })
     );
   }, [mobile, fitZoom, fitView, zoomTo]);
-  return { autoFit: !mobile };
+  return { autoFit: !mobile, maxZoom: mobile ? MOBILE_MAX_ZOOM : MAX_ZOOM };
 }
 
 // Fit toàn cảnh — consumed directly by the components that re-frame the map

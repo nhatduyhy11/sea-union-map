@@ -39,7 +39,7 @@ export function MapCanvas() {
   // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
   const canvasBg = useDebug((state) => state.canvasBg);
   const fitZoom = useFitZoom();
-  const { autoFit } = useInitialFraming(fitZoom);
+  const { autoFit, maxZoom } = useInitialFraming(fitZoom);
   return (
     <div className={styles.mapCanvas} style={{ background: canvasBg }}>
       <ReactFlow
@@ -55,7 +55,7 @@ export function MapCanvas() {
         // Sàn zoom = đúng mức fit toàn map của canvas hiện tại: zoom-out tối
         // đa là thấy trọn map, không nhỏ hơn — tự theo kích thước màn hình.
         minZoom={fitZoom ?? FALLBACK_MIN_ZOOM}
-        maxZoom={2}
+        maxZoom={maxZoom}
         translateExtent={mapBounds}
         nodesDraggable={false}
         nodesConnectable={false}

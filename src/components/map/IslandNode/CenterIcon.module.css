@@ -72,3 +72,23 @@
 .centerArt.active {
   opacity: 0.9;
 }
+
+/* Cảm ứng (iPhone): 4 lớp drop-shadow (blur tới 22px) trên ảnh 240px là
+   buffer filter riêng mỗi lần vẽ lại — bỏ hẳn lúc nghỉ, trạng thái chỉ còn 1
+   viền sát nhỏ; không phóng to/transition để khỏi tạo layer động. */
+@media (hover: none) {
+  .centerArt {
+    filter: none;
+    transition: none;
+  }
+
+  .centerArt.hot,
+  .centerArt.defend,
+  .centerArt.frontline,
+  .centerArt.hovered,
+  .centerArt.linked,
+  .centerArt.active {
+    filter: drop-shadow(0 0 3px var(--ring));
+    transform: none;
+  }
+}
