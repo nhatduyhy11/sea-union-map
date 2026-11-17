@@ -1,5 +1,4 @@
-// Format file dump (sea-live.json, dev dump, snapshot lịch sử) — hợp đồng dữ
-// liệu FE nhận vào.
+// Snapshot chứa dữ liệu biến động và identity đợt/cụm. Info ghép riêng từ event cache.
 
 // Thông tin tĩnh của node (key = game node id): tên node, loại, ngưỡng chiếm.
 export interface CampRow {
@@ -10,7 +9,9 @@ export interface CampRow {
 
 // Hình dạng file dump — key số đến đây là string (JSON). Snapshot lịch sử
 // (src/data/snapshots/) cùng format.
-export interface SeaLiveDump {
+export interface SeaSnapshot {
+  eventStart: string;
+  server: string;
   snapshotAt: string;
   camp: Record<string, CampRow>;
   owner: Record<string, number>;
@@ -22,9 +23,13 @@ export interface SeaLiveDump {
   fuel?: Record<string, number>;
   playerBoard: [number, number, number, number | null][];
   factionGuilds: Record<string, [number, number][]>;
+  baseDir: Record<string, string>;
+}
+
+// In-memory join input, assembled exclusively from snapshot + event cache.
+export interface SeaLiveDump extends SeaSnapshot {
   guildNames: Record<string, string>;
-  // Optional: dump cũ không có key này.
-  guildPower?: Record<string, number>;
+  guildPower: Record<string, number>;
   guildRoster: Record<string, string>;
   briefs: Record<
     string,
@@ -36,5 +41,4 @@ export interface SeaLiveDump {
       server?: number;
     }
   >;
-  baseDir: Record<string, string>;
 }
