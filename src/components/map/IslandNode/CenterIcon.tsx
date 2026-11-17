@@ -21,7 +21,7 @@ export function CenterIcon({
     >
       <img
         className={artClass}
-        src={`${import.meta.env.BASE_URL}aaa/center.png`}
+        src={`${import.meta.env.BASE_URL}aaa/center.webp`}
         alt=""
         draggable={false}
       />

@@ -58,3 +58,11 @@
   z-index: 40;
   pointer-events: none;
 }
+
+/* Cảm ứng: đổi độ mờ tức thì — transition opacity trên cả loạt node (đổi
+   filter dim) tạo hàng chục layer động cùng lúc trên WebKit. */
+@media (hover: none) {
+  .island {
+    transition: none;
+  }
+}

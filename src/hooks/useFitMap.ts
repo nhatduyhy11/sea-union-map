@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   getNodesBounds,
   getViewportForBounds,
@@ -48,6 +48,36 @@ export function useFitZoom(): number | null {
     if (currentZoom < fitZoom - 1e-4) fitView(FIT_VIEW_OPTIONS);
   }, [fitZoom, store, fitView]);
   return fitZoom;
+}
+
+// Màn hẹp (khớp breakpoint mobile của MapCanvas): canvas vuông, map ngang fit
+// theo bề rộng nên ở mức fit = sàn minZoom map bị translateExtent khóa cứng,
+// kéo không đi đâu. Lần đầu có fitZoom thì mở sẵn ở mức zoom gấp
+// MOBILE_ZOOM_FACTOR quanh tâm map để vào là kéo được ngay; nút fit vẫn về
+// toàn cảnh như cũ. Prop fitView của <ReactFlow> chạy sau effect này và đè
+// mất mức zoom, nên trên mobile hook tự fit và trả false để tắt prop đó.
+const MOBILE_QUERY = "(max-width: 760px)";
+const MOBILE_ZOOM_FACTOR = 2;
+// Trần zoom: 100% trên mobile (đủ đọc nhãn/popup trên màn nhỏ) — zoom 200% ở
+// màn 3x bắt WebKit rasterize world map gấp đôi mỗi chiều, dễ hết bộ nhớ tab.
+const MAX_ZOOM = 2;
+const MOBILE_MAX_ZOOM = 1;
+
+export function useInitialFraming(fitZoom: number | null): {
+  autoFit: boolean;
+  maxZoom: number;
+} {
+  const { fitView, zoomTo } = useReactFlow<AppNode, Edge>();
+  const [mobile] = useState(() => window.matchMedia(MOBILE_QUERY).matches);
+  const done = useRef(false);
+  useEffect(() => {
+    if (!mobile || done.current || fitZoom === null) return;
+    done.current = true;
+    void fitView(FIT_VIEW_OPTIONS).then(() =>
+      zoomTo(fitZoom * MOBILE_ZOOM_FACTOR, { duration: 0 })
+    );
+  }, [mobile, fitZoom, fitView, zoomTo]);
+  return { autoFit: !mobile, maxZoom: mobile ? MOBILE_MAX_ZOOM : MAX_ZOOM };
 }
 
 // Fit toàn cảnh — consumed directly by the components that re-frame the map

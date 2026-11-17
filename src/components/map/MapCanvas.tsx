@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { ReactFlow, Background, Controls, useStore } from "@xyflow/react";
 import { mapBounds } from "../../data/map-layout";
-import { FIT_VIEW_OPTIONS, useFitZoom } from "../../hooks/useFitMap";
+import {
+  FIT_VIEW_OPTIONS,
+  useFitZoom,
+  useInitialFraming,
+} from "../../hooks/useFitMap";
 import { useMapGraph } from "./useMapGraph";
 import { useDebug } from "../../stores/debug";
 import { useSelection } from "../../stores/selection";
+import { canHover } from "../../utils/hover";
 import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
@@ -34,6 +39,7 @@ export function MapCanvas() {
   // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
   const canvasBg = useDebug((state) => state.canvasBg);
   const fitZoom = useFitZoom();
+  const { autoFit, maxZoom } = useInitialFraming(fitZoom);
   return (
     <div className={styles.mapCanvas} style={{ background: canvasBg }}>
       <ReactFlow
@@ -42,14 +48,14 @@ export function MapCanvas() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodeOrigin={[0.5, 0.5]}
-        onNodeMouseEnter={(_, node) => setHoveredNode(node.id)}
+        onNodeMouseEnter={(_, node) => canHover() && setHoveredNode(node.id)}
         onNodeMouseLeave={() => setHoveredNode(null)}
-        fitView
+        fitView={autoFit}
         fitViewOptions={FIT_VIEW_OPTIONS}
         // Sàn zoom = đúng mức fit toàn map của canvas hiện tại: zoom-out tối
         // đa là thấy trọn map, không nhỏ hơn — tự theo kích thước màn hình.
         minZoom={fitZoom ?? FALLBACK_MIN_ZOOM}
-        maxZoom={2}
+        maxZoom={maxZoom}
         translateExtent={mapBounds}
         nodesDraggable={false}
         nodesConnectable={false}

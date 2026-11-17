@@ -12,3 +12,11 @@
 .lit {
   opacity: 0.25;
 }
+
+/* Cảm ứng: ảnh rộng 1700px world — transition opacity biến nó thành layer
+   động cỡ lớn trên WebKit; đổi tức thì. */
+@media (hover: none) {
+  .city {
+    transition: none;
+  }
+}
