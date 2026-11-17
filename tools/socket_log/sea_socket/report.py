@@ -86,7 +86,7 @@ SNAPSHOT_ROOT = REPO_ROOT / "src/data/snapshots"
 NODE_BOSS_ROOT = REPO_ROOT / "src/data/node-bosses"
 # Ngày đầu đợt event đang chạy — cùng EVENT_DAYS[0] của FE
 # src/data/eventCalendar.ts; đổi khi sang đợt mới.
-EVENT_START = "261026"
+EVENT_START = "261116"
 # Tạm thời mặc định cụm 517 — cụm khác chỉnh tay (--server / đổi tên file).
 DEFAULT_SERVER = "517"
 VN_TZ = timezone(timedelta(hours=7))
