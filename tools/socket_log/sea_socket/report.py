@@ -29,18 +29,14 @@ Nội dung dump (key → nguồn):
                    file thì bỏ key, FE coi như không có nhiên liệu
 - ``factionGuilds`` ← ``guild-scores.json`` (0x72/0x0025): factionId →
                    [[guildId, điểm ST], ...] sort giảm dần (tab Phe)
-- ``guildNames`` ← ``players.jsonl``: guildId → tên (từ brief member; guild
-                   không có member nào được brief thì thiếu tên)
-- ``guildPower`` ← ``guild-names.json`` (0x24/0x0036 f16): guildId → tổng
-                   lực chiến guild do server tính (không phụ thuộc brief member)
-- ``guildRoster`` ← ``map-snapshot.json`` f4: playerId → guildId (mapping đầy
-                   đủ 115 guild độc lập với brief — cứu player bị refuse brief)
-- ``briefs``     ← ``players.jsonl``: playerId → tên + guild (+guildId, +power, +server)
+- ``eventStart``, ``server`` ← meta.json: cache identity
+- Guild/player info is stored exclusively in event-cache/<eventStart>/<server>/info.json;
+  it is not embedded in this dump. Missing cache is an error, missing brief is valid.
 - ``baseDir``    ← tên 4 đảo base → hướng trên layout (specs/map-*.PNG)
 - ``snapshotAt`` ← ``map-snapshot.json``: logged_at (nếu có)
 
 Boss node KHÔNG nằm trong dump: boss của node cố định theo (đợt event × cụm)
-nên ghi một file riêng ``src/data/node-bosses/<EVENT_START>/<server>.json``
+nên ghi một file riêng ``src/data/event-cache/<event-start>/<server>/bosses.json``
 (gameNodeId → monsterId, từ key ``art`` của ``node-states.jsonl``). ``--snapshot``
 ghi kèm file này nếu chưa có; có rồi thì chỉ đối chiếu, lệch là dừng —
 boss đổi giữa đợt nghĩa là quy luật cố định 7 ngày sai, cần xem lại tay.
@@ -63,9 +59,7 @@ Usage:
 Snapshot (``--snapshot``) — ngày quy theo thời điểm CHẠY SCRIPT (giờ VN):
 trong khung chiến trường 10:00~22:00 là ngày hôm đó; từ 22:00 tới trước
 10:00 hôm sau (ngoài khung) tính là ngày trước. Cùng rule với FE
-``src/data/eventCalendar.ts``. ``--server`` mặc định 517 — TẠM THỜI: crawler
-chưa ghi cụm vào run, dump cụm khác thì truyền ``--server`` hoặc đổi tên file
-tay sau khi dump.
+``src/data/eventCalendar.ts``. Cụm và đợt đọc từ ``meta.json``; ``--server`` chỉ được dùng nếu khớp metadata.
 """
 
 import argparse
@@ -83,12 +77,9 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 CONFIG_BASELINE = Path(__file__).resolve().parent / "campgvg.json"
 DEV_DUMP_OUT = REPO_ROOT / "public/sea-live-dev.json"
 SNAPSHOT_ROOT = REPO_ROOT / "src/data/snapshots"
-NODE_BOSS_ROOT = REPO_ROOT / "src/data/node-bosses"
-# Ngày đầu đợt event đang chạy — cùng EVENT_DAYS[0] của FE
-# src/data/eventCalendar.ts; đổi khi sang đợt mới.
-EVENT_START = "261116"
-# Tạm thời mặc định cụm 517 — cụm khác chỉnh tay (--server / đổi tên file).
-DEFAULT_SERVER = "517"
+from sea_socket.event_cache import ROOT as CACHE_ROOT
+from sea_socket.event_cache import atomic_json, load_info
+
 VN_TZ = timezone(timedelta(hours=7))
 BATTLE_OPEN_HOUR = 10
 
@@ -103,7 +94,7 @@ def event_day(at: datetime | None = None) -> str:
     return (at - timedelta(hours=BATTLE_OPEN_HOUR)).strftime("%y%m%d")
 
 
-def snapshot_out(server: str = DEFAULT_SERVER,
+def snapshot_out(server: str,
                  at: datetime | None = None) -> Path:
     return SNAPSHOT_ROOT / event_day(at) / f"{server}.json"
 
@@ -202,18 +193,19 @@ def node_bosses(crawl: Path) -> dict | None:
     return bosses
 
 
-def write_node_bosses(crawl: Path, server: str) -> Path | None:
-    """Ghi ``node-bosses/<EVENT_START>/<server>.json`` nếu chưa có; có rồi thì
+def write_node_bosses(crawl: Path, server: str, event_start: str,
+                      cache_root: Path = CACHE_ROOT) -> Path | None:
+    """Ghi ``event-cache/<event-start>/<server>/bosses.json`` nếu chưa có; có rồi thì
     đối chiếu với run — node nào lệch boss là ``SystemExit`` (không ghi đè)."""
     bosses = node_bosses(crawl)
     if not bosses:
         print(f"[node-bosses] {crawl}: không có node-states.jsonl — bỏ qua")
         return None
-    out = NODE_BOSS_ROOT / EVENT_START / f"{server}.json"
+    out = cache_root / event_start / server / "bosses.json"
     if out.exists():
         known = json.loads(out.read_text(encoding="utf-8"))
-        diff = sorted((int(k) for k in bosses.keys() & known.keys()
-                       if bosses[k] != known[k]))
+        diff = sorted(int(k) for k in bosses.keys() & known.keys()
+                       if bosses[k] != known[k])
         if diff:
             raise SystemExit(
                 f"[node-bosses] {out}: boss lệch ở node {diff} — run "
@@ -223,11 +215,7 @@ def write_node_bosses(crawl: Path, server: str) -> Path | None:
             print(f"[node-bosses] {out}: khớp {len(bosses)} node")
             return out
         bosses = {**known, **bosses}
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(
-        json.dumps(dict(sorted(bosses.items(), key=lambda kv: int(kv[0]))),
-                   indent=1) + "\n",
-        encoding="utf-8")
+    atomic_json(out, dict(sorted(bosses.items(), key=lambda kv: int(kv[0]))))
     print(f"[node-bosses] {out}: {len(bosses)} node")
     return out
 
@@ -243,28 +231,8 @@ def camp_fuel(crawl: Path) -> dict | None:
     return {str(row["f1"]): row["f2"] for row in raw if "f2" in row}
 
 
-def guild_brief_names(crawl: Path) -> dict:
-    """guild-names.json (0x24/0x0035) — tên guild trực tiếp, không cần member
-    brief; phủ cả guild mà mọi member đều bị refuse brief chéo server."""
-    path = crawl / "guild-names.json"
-    if not path.exists():
-        return {}
-    raw = json.loads(path.read_text(encoding="utf-8"))
-    return {gid: brief["name"] for gid, brief in raw.items() if brief.get("name")}
-
-
-def guild_brief_power(crawl: Path) -> dict:
-    """guild-names.json f16 — lực chiến guild server-side; run cũ (trước khi
-    parse f16) không có field → {} và FE tự cộng power brief member."""
-    path = crawl / "guild-names.json"
-    if not path.exists():
-        return {}
-    raw = json.loads(path.read_text(encoding="utf-8"))
-    return {gid: brief["power"] for gid, brief in raw.items() if brief.get("power")}
-
-
 def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
-             out: Path = DEV_DUMP_OUT) -> Path:
+             out: Path = DEV_DUMP_OUT, *, cache_root: Path = CACHE_ROOT) -> Path:
     """Transform 1 raw run + config baseline thành JSON cho FE, ghi ra ``out``.
 
     Được gọi từ CLI của module này và từ ``crawler.py --dump`` sau khi crawl.
@@ -280,25 +248,17 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
         (crawl / "map-snapshot.json").read_text(encoding="utf-8"))
     owner = {n["id"]: n["owner"] for n in snapshot["nodes"]}
     boards = load_boards_decoded(crawl)
-    briefs = {}
-    guild_names = {}
-    with (crawl / "players.jsonl").open(encoding="utf-8") as fh:
-        for line in fh:
-            p = json.loads(line)
-            entry = {"name": p["name"]}
-            if p.get("guild_id"):
-                entry["guildId"] = str(p["guild_id"])
-                guild_names.setdefault(str(p["guild_id"]), p.get("guild_name"))
-            if p.get("guild_name"):
-                entry["guild"] = p["guild_name"]
-            if p.get("power") is not None:
-                entry["power"] = p["power"]
-            if p.get("server") is not None:
-                entry["server"] = p["server"]
-            briefs[p["id"]] = entry
-    guild_names = {gid: name for gid, name in guild_names.items() if name}
-    guild_names.update(guild_brief_names(crawl))
-    guild_power = guild_brief_power(crawl)
+    meta = json.loads((crawl / "meta.json").read_text(encoding="utf-8"))
+    server = meta.get("server")
+    event_start = meta.get("event_start")
+    if not server or not event_start:
+        raise SystemExit("run metadata requires server and event_start")
+    info = load_info(event_start, server, cache_root)
+    if info is None:
+        raise SystemExit(f"missing Sea info cache {event_start}/{server}; crawl to create it")
+    briefs = info["briefs"]
+    guild_names = info["guildNames"]
+    guild_power = info["guildPower"]
     camp_raw = json.loads(config.read_text(encoding="utf-8"))["CampGVGLO"]
     camp = {
         int(rid): {
@@ -328,22 +288,17 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
     rows = node_rows(boards)
     board_rows = player_board(boards)
     guilds_by_faction = faction_guilds(crawl)
-    roster = {str(pid): str(gid)
-              for gid, members in snapshot.get("guild_roster", {}).items()
-              for pid in members}
     known = {pid for _g, pid, _s, _c in rows}
     unnamed = sorted(known - set(briefs))
     payload = {
-        "snapshotAt": snapshot.get("logged_at", "n/a"),
+        "snapshotAt": snapshot.get("logged_at") or meta["started_at"],
         "camp": {str(g): c for g, c in camp.items()},
         "owner": {str(g): o for g, o in owner.items()},
         "nodeRows": rows,
         "playerBoard": board_rows,
         "factionGuilds": {str(f): g for f, g in guilds_by_faction.items()},
-        "guildNames": guild_names,
-        "guildPower": guild_power,
-        "guildRoster": roster,
-        "briefs": {str(p): b for p, b in briefs.items()},
+        "eventStart": event_start,
+        "server": server,
         "baseDir": BASE_DIR,
     }
     node_scores = node_faction_scores(crawl)
@@ -381,20 +336,24 @@ def main() -> None:
                              "<server>.json (ngày theo rule 10:00~22:00), "
                              "kèm bảng boss node")
     target.add_argument("--node-bosses", action="store_true",
-                        help="Chỉ ghi/đối chiếu src/data/node-bosses/"
-                             "<EVENT_START>/<server>.json, không dump")
-    parser.add_argument("--server", default=DEFAULT_SERVER,
-                        help="Cụm server của run khi --snapshot/--node-bosses "
-                             "(mặc định 517 — "
-                             "tạm thời, cụm khác chỉnh tay)")
+                        help="Chỉ ghi/đối chiếu src/data/event-cache/"
+                             "<event-start>/<server>/bosses.json, không dump")
+    parser.add_argument("--server", default=None,
+                        help="Cụm server của run (mặc định đọc meta.json; override phải khớp)")
     args = parser.parse_args()
+    meta = json.loads((args.crawl / "meta.json").read_text())
+    server = args.server or meta.get("server")
+    if not server or not meta.get("event_start"):
+        parser.error("run metadata requires server and event_start")
+    if args.server and args.server != meta.get("server"):
+        parser.error("--server does not match run metadata")
     if args.node_bosses:
-        write_node_bosses(args.crawl, args.server)
+        write_node_bosses(args.crawl, server, meta["event_start"])
         return
-    out = snapshot_out(args.server) if args.snapshot else args.out
+    out = snapshot_out(server) if args.snapshot else args.out
     dump_run(args.crawl, args.config, out)
     if args.snapshot:
-        write_node_bosses(args.crawl, args.server)
+        write_node_bosses(args.crawl, server, meta["event_start"])
 
 
 if __name__ == "__main__":

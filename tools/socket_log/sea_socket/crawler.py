@@ -39,7 +39,7 @@ just the raw run; report.py stays the standalone CLI to re-dump old runs or
 bake src/data/sea-live.json.
 
 --bosses-only stops after the per-node states (no boards/guilds/briefs, no
-dump) and writes src/data/node-bosses/<event start>/<server>.json for the
+dump) and writes src/data/event-cache/<event start>/<server>/bosses.json for the
 logged-in server via sea_socket.report.write_node_bosses — or only
 cross-checks it when the file exists. Bosses are fixed per event and server,
 so one run per server per event is enough.
@@ -79,7 +79,9 @@ from capture.frames import FrameWriter
 from sea_socket.crawl import LOCK_FILENAME
 from sea_socket.crawl.phases import payload_entry, run_boss_crawl, run_crawl, wait_login
 from sea_socket.crawl.router import CrawlRouter
-from sea_socket.report import DEV_DUMP_OUT, dump_run, write_node_bosses
+from sea_socket.event_cache import ROOT as CACHE_ROOT
+from sea_socket.event_cache import event_start_for_day
+from sea_socket.report import DEV_DUMP_OUT, dump_run, event_day, write_node_bosses
 from sea_socket.walkthrough import STAGES, run_stages
 
 # --gui-entry: login -> open-sea -> battle-map; the map-open click is what
@@ -149,8 +151,15 @@ def parse_args() -> argparse.Namespace:
                              "acc đăng nhập. Mặc định public/sea-live-dev.json")
     parser.add_argument("--bosses-only", action="store_true",
                         help="Chỉ lấy state từng node (boss), bỏ board/guild/brief và "
-                             "dump; ghi/đối chiếu src/data/node-bosses/<EVENT_START>/"
-                             "<server>.json theo server của acc đăng nhập")
+                             "dump; ghi/đối chiếu src/data/event-cache/<event-start>/"
+                             "<server>/bosses.json theo server của acc đăng nhập")
+    parser.add_argument("--rebuild-info-cache", action="store_true",
+                        help="Chủ động lấy lại toàn bộ guild/player info của đợt/cụm")
+    parser.add_argument("--expect-server", help="Abort before crawl if logged-in server differs")
+    parser.add_argument("--event-start", default=None,
+                        help="Override ngày đầu đợt YYMMDD (mặc định theo lịch event FE)")
+    parser.add_argument("--cache-root", type=Path, default=CACHE_ROOT,
+                        help="Root cache Sea; dùng đường dẫn tạm để kiểm tra lần tạo đầu")
     args = parser.parse_args()
     if args.bosses_only and args.dump_out is not None:
         parser.error("--bosses-only does not dump; drop --dump-out")
@@ -173,11 +182,14 @@ def write_meta(out_dir: Path, args: argparse.Namespace, started_at: datetime,
         "entry": "gui" if args.gui_entry else "payload",
         "stages": [name for name, _ in entry_stages],
         "server": server,
+        "event_start": args.event_start,
     }, indent=2), encoding="utf-8")
 
 
 async def main() -> None:
     args = parse_args()
+    if args.event_start is None:
+        args.event_start = event_start_for_day(event_day())
     try:
         auth = load_auth(args.auth_json, args.acc) if args.auth_json is not None else None
     except (ValueError, TypeError) as exc:
@@ -223,6 +235,8 @@ async def main() -> None:
             else:
                 await payload_entry(page, router, out_dir, LOGIN_TIMEOUT_SECONDS)
             server = await read_server(page)
+            if args.expect_server and server != args.expect_server:
+                raise SystemExit(f"Expected server {args.expect_server}, got {server}")
             write_meta(out_dir, args, started_at, entry_stages, server)
             if args.bosses_only:
                 if server is None:
@@ -230,14 +244,18 @@ async def main() -> None:
                                      f"run kept at {out_dir}")
                 summary = await run_boss_crawl(page, router, out_dir)
                 print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
-                write_node_bosses(out_dir, server)
+                write_node_bosses(out_dir, server, args.event_start, args.cache_root)
                 return
             dump_out = resolve_dump_out(args.dump_out, server) if args.dump else None
-            summary = await run_crawl(page, router, out_dir)
+            if server is None:
+                raise SystemExit("Cannot select Sea cache without logged-in server")
+            summary = await run_crawl(page, router, out_dir, server=server,
+                                      event_start=args.event_start, cache_root=args.cache_root,
+                                      rebuild_info=args.rebuild_info_cache)
             print(f"[done] {json.dumps(summary, ensure_ascii=False)}", flush=True)
             if args.dump:
                 try:
-                    dump_run(out_dir, out=dump_out)
+                    dump_run(out_dir, out=dump_out, cache_root=args.cache_root)
                 except SystemExit as exc:
                     # Raw run đã an toàn trên đĩa — chỉ nhắc chỗ re-dump.
                     print(f"[dump] transform failed, raw run kept at "
