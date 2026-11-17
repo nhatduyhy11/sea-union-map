@@ -23,14 +23,18 @@ uv run python tools/socket_log/sea_socket/crawler.py \
 
 - [browser/auth.py](../../tools/socket_log/browser/auth.py) đọc JSON, thay
   `userLoginData.value` bằng object của email trong `allLoginList.value`, giữ các
-  key khác, restore localStorage tại origin SDK. File JSON chỉ đọc, token không
-  ghi vào meta.
+  key khác, restore localStorage tại origin SDK. Dump list-only (chỉ có
+  `allLoginList`, thiếu `userLoginData`) cũng dùng được — tự dựng wrapper tối
+  thiểu. File JSON chỉ đọc, token không ghi vào meta.
 - [browser/session.py](../../tools/socket_log/browser/session.py) mở browser +
   context non-persistent riêng cho mỗi terminal; không lock, không tạo profile.
 - `--auth-json`/`--acc` đi cùng nhau và loại trừ `--profile`. Không truyền thì
   crawler dùng persistent profile như cũ.
 - Timeout navigation fresh 60 giây mỗi attempt; timeout login cố định 180 giây.
 - `--out` phải là thư mục mới; `--dump-out` cùng server thì lần ghi sau thay file.
+- Crawl tuần tự mọi acc trong một file auth: [scripts/fullcrawl.py](../../scripts/fullcrawl.py)
+  — wrapper gọi crawler cho từng key email trong `allLoginList.value`, log
+  START/DONE/FAIL kèm timestamp từng lượt; xem chi tiết flag ở README.BE.
 
 Test (Chrome + trang SDK/game và socket giả, không gọi game thật):
 

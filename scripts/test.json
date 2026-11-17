@@ -9,7 +9,29 @@
   },
   "HwGameSdk_1766998981760410_allLoginList": {
     "value": {
-      "EMAIL_ACCOUNT_HERE": {
+      "EMAIL_ACCOUNT_1": {
+        "username": "EMAIL_ACCOUNT_HERE",
+        "suid": 111111111,
+        "timestamp": 1111111111,
+        "signStr": "TOKEN",
+        "suidSignStr": "TOKEN",
+        "access_token": "TOKEN",
+        "autoStr": "TOKEN",
+        "expires_in": 1111111,
+        "is_tmp_account": "no",
+        "source": "www",
+        "user_type": "REGISTER",
+        "isNewUser": 0,
+        "is_new_game_user": 0,
+        "first_login_after_bind_account": 0,
+        "sydid": "",
+        "targetServerId": 0,
+        "warn_tmp_user_bind_min_time": 0,
+        "mail_status": 1,
+        "rns_status": 0,
+        "p": ""
+      },
+      "EMAIL_ACCOUNT_2": {
         "username": "EMAIL_ACCOUNT_HERE",
         "suid": 111111111,
         "timestamp": 1111111111,

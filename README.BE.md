@@ -92,8 +92,9 @@ uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 #    Fresh auth: chọn email từ JSON localStorage SDK, không cần persistent profile.
 #    Mỗi terminal có context riêng; có thể đọc chung một file auth.
 uv run python tools/socket_log/sea_socket/crawler.py \
-    --auth-json /path/to/auth.json --acc 'account@example.com' \
-    --dump-out src/data/snapshots/261031/
+  --dump-out src/data/snapshots/261116/ \
+  --auth-json /path/to/auth.json \
+  --acc 'email-cua-jeon@example.com'
 #    Restore tại origin SDK → mở game → đóng tab auth → chờ login → crawl/dump.
 #    Navigation fresh tối đa 60s mỗi lần; login tối đa 180s, chỉnh trong code.
 #    Luôn đóng context/browser khi thoát bình thường hoặc exception; không ghi lại
@@ -102,9 +103,24 @@ uv run python tools/socket_log/sea_socket/crawler.py \
 #    Các lượt song song nên dùng --dump-out thư mục để tách theo server;
 #    mặc định public/sea-live-dev.json là một file chung, lượt ghi cuối sẽ thắng.
 
+#    Crawl tuần tự MỌI acc trong auth JSON — wrapper scripts/fullcrawl.py:
+uv run python scripts/fullcrawl.py /path/to/auth.json
+#    Mỗi key email trong *_allLoginList.value là 1 lượt crawler như trên
+#    (dump-only thiếu userLoginData cũng dùng được — tự dựng wrapper);
+#    log START/DONE/FAIL kèm timestamp trước/sau từng lượt (START/DONE xanh,
+#    FAIL đỏ trên tty), tổng kết cuối; bản sao không màu ghi
+#    .tmp/fullcrawl.<yymmdd_HHMMSS>.log mỗi lần chạy.
+#    Acc lỗi validation bị SKIP trước khi mở browser; lượt FAIL không chặn
+#    lượt kế (dừng cả loạt: --fail-fast; kill lượt treo: --timeout-min N).
+#    --dry-run list acc + validation; --only 'a@x.com,b@x.com' chọn acc;
+#    --headless không mở cửa sổ; --dump-out như crawler, mặc định
+#    src/data/snapshots/<event-day>/ (rule ngày t−10h trong report.py).
+
 #    Tự đặt tên <server>.json theo acc đang đăng nhập khi truyền thư mục:
-uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/pjen \
-    --dump-out src/data/snapshots/261030/
+uv run python tools/socket_log/sea_socket/crawler.py \
+    --dump-out src/data/snapshots/261030/ \
+    --profile .tmp/pjen
+
 #    → src/data/snapshots/261030/<server>.json; server cũng lưu trong meta.json.
 #    Thư mục chưa tồn tại, không có đuôi file cũng được tự tạo.
 #    Truyền tên file .json cụ thể vẫn giữ nguyên tên đã chọn.
