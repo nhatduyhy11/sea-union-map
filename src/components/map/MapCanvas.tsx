@@ -9,6 +9,7 @@ import {
 import { useMapGraph } from "./useMapGraph";
 import { useDebug } from "../../stores/debug";
 import { useSelection } from "../../stores/selection";
+import { canHover } from "../../utils/hover";
 import { CanvasDebugGrid } from "./map-debug";
 import { FilterChip } from "./FilterChip";
 import { IslandNode } from "./IslandNode";
@@ -47,7 +48,7 @@ export function MapCanvas() {
         nodeTypes={nodeTypes}
         edgeTypes={edgeTypes}
         nodeOrigin={[0.5, 0.5]}
-        onNodeMouseEnter={(_, node) => setHoveredNode(node.id)}
+        onNodeMouseEnter={(_, node) => canHover() && setHoveredNode(node.id)}
         onNodeMouseLeave={() => setHoveredNode(null)}
         fitView={autoFit}
         fitViewOptions={FIT_VIEW_OPTIONS}

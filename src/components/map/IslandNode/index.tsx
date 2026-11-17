@@ -4,6 +4,7 @@ import { bossImageUrl } from "../../../data/nodeBosses";
 import { iconBoxSize } from "../../../domain/buildMapNodes";
 import { useDebug } from "../../../stores/debug";
 import { useSelection } from "../../../stores/selection";
+import { canHover } from "../../../utils/hover";
 import { BaseStats } from "./BaseStats";
 import { IslandMarker } from "./IslandMarker";
 import { NodeStats } from "./NodeStats";
@@ -40,10 +41,14 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   ]
     .filter(Boolean)
     .join(" ");
-  const showStats = !data.base && (data.showAll || data.pinned || hovered);
+  // Cảm ứng không có hover thật: popup đi theo node đang chọn — tap 1 lần vừa
+  // mở chi tiết vừa hiện popup, tap node khác thì popup chuyển theo.
+  const touchSelected = Boolean(data.active) && !canHover();
+  const showStats =
+    !data.base && (data.showAll || data.pinned || hovered || touchSelected);
   // Căn cứ: popover tóm tắt phe — chỉ hover/ghim, "Điểm toàn map" không bật
   // (4 khối phe phủ kín góc map).
-  const showBaseStats = data.base && (data.pinned || hovered);
+  const showBaseStats = data.base && (data.pinned || hovered || touchSelected);
   // Phe đại diện cho màu nền popup: phe đang giữ đảo, hoặc với đảo chưa chủ
   // là phe đủ ngưỡng claim đứng đầu (undefined → nền trắng như cũ).
   const statTint = data.factionInfo?.color ?? claimLeader?.color;
@@ -58,9 +63,9 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
           "--icon-box": `${iconBoxSize(data)}px`,
         } as React.CSSProperties
       }
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={() => canHover() && setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onFocus={() => setHovered(true)}
+      onFocus={() => canHover() && setHovered(true)}
       onBlur={(event) => {
         // Chuyển focus giữa các nút trong node (icon → ghim → popup) không
         // tính là rời node, tránh popup unmount ngay trước khi nhận focus.
