@@ -146,9 +146,12 @@ cần. Không còn đọc info embedded hoặc đường dẫn `node-bosses` cũ
 và cache riêng, không bị thay đổi.
 
 Crawler tự kiểm tra cache: lượt đầu chưa có thì lấy roster và brief toàn bộ
-member để tạo cache; lượt sau bỏ request guild/player brief, kể cả ID còn thiếu.
-User thiếu brief vẫn giữ điểm/BXH và hiện `#id`. Info đã cache giữ nguyên suốt
-đợt; `--rebuild-info-cache` là cách chủ động lấy lại. Cache lỗi schema sẽ báo lỗi;
+member để tạo cache; lượt sau chỉ lấy thêm player brief còn thiếu cho ID có điểm
+contribution > 0 trên BXH node/player (kể cả self), rồi bổ sung vào cache.
+ID chưa đóng góp không được hỏi lại; ID chưa lấy được brief vẫn hiện `#id` và sẽ
+được thử lại ở lượt crawl sau nếu có contribution. Roster, guild info và brief
+đã có giữ nguyên; `--rebuild-info-cache` là cách chủ động lấy lại toàn bộ.
+Cache lỗi schema sẽ báo lỗi;
 file info chỉ được ghi atomically sau khi chuẩn hóa/validate xong.
 
 Đợt mặc định lấy từ `EVENT_ROUNDS` của FE theo ngày event hiện tại; có thể
@@ -170,7 +173,7 @@ Kiểm tra một cụm mà không ghi vào cache đã migrate:
 uv run python tools/socket_log/sea_socket/crawler.py \
   --profile /path/to/logged-in-profile --expect-server 517 \
   --cache-root .tmp/sea-cache-check --dump-out .tmp/sea-cache-check/517.json
-# Chạy lại cùng lệnh: dùng cache vừa tạo, bỏ request brief.
+# Chạy lại: dùng cache, chỉ hỏi brief còn thiếu cho player có contribution > 0.
 uv run python -m unittest discover -s tools/socket_log/tests -v
 ```
 

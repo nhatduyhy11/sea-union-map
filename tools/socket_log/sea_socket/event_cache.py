@@ -1,4 +1,4 @@
-"""Sea-only identity cache, immutable during an event. Shared by migration and crawl."""
+"""Sea-only identity cache with additive contributor briefs during an event."""
 
 import json
 import os
@@ -117,6 +117,24 @@ def load_info(event_start: str, server: str, root: Path = ROOT) -> dict | None:
 def save_info(info: dict, root: Path = ROOT) -> None:
     validate_info(info, info["eventStart"], info["server"])
     atomic_json(root / info["eventStart"] / info["server"] / "info.json", info)
+
+
+def supplement_briefs(info: dict, players: list[dict]) -> dict:
+    """Add named briefs only; preserve event roster, guild data and existing briefs."""
+    briefs = dict(info["briefs"])
+    for b in players:
+        pid = str(b["id"])
+        if pid in briefs or not b.get("name"):
+            continue
+        entry = {k: b[k] for k in ("name", "power", "server") if b.get(k) is not None}
+        if b.get("guild_id"):
+            entry["guildId"] = str(b["guild_id"])
+        if b.get("guild_name"):
+            entry["guild"] = b["guild_name"]
+        briefs[pid] = entry
+    return normalize_info(
+        info["eventStart"], info["server"], info["sourceAt"], {**info, "briefs": briefs}
+    )
 
 
 def info_from_run(crawl: Path, event_start: str, server: str) -> dict:

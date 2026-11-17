@@ -1,7 +1,7 @@
 """Retired legacy run backfill after Sea event-cache migration.
 
 To refresh identity explicitly, run crawler.py with the same login options and
---rebuild-info-cache. Ordinary crawls never backfill missing players.
+--rebuild-info-cache. Ordinary crawls supplement missing contributor briefs.
 """
 
 if __name__ == "__main__":

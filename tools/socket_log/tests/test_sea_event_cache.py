@@ -57,20 +57,24 @@ class SeaCacheTests(unittest.TestCase):
         built = info_from_run(run, event, "517")
         migrated = load_info(event, "517")
         self.assertEqual(set(built), set(migrated))
-        # Migration may fill additional IDs/fields from later snapshots/live dumps.
-        # Every value in this earlier raw capture must still be preserved.
-        for key in INFO_KEYS:
-            for ident, value in built[key].items():
-                self.assertIn(ident, migrated[key], (key, ident))
-                if isinstance(value, dict):
-                    for field, field_value in value.items():
-                        self.assertEqual(
-                            field_value,
-                            migrated[key][ident][field],
-                            (key, ident, field),
-                        )
-                else:
-                    self.assertEqual(value, migrated[key][ident], (key, ident))
+        # Migration and a later crawl share a schema and event roster, but can
+        # have different brief coverage, names and power. Validate the builder
+        # against its own captured source, not against migrated identity values.
+        self.assertEqual(built["guildRoster"], target_roster)
+        captured = {
+            str(b["id"]): b
+            for line in (run / "players.jsonl").read_text().splitlines()
+            if (b := json.loads(line)).get("name")
+        }
+        self.assertEqual(set(built["briefs"]), set(captured))
+        for pid, brief in built["briefs"].items():
+            self.assertEqual(brief["name"], captured[pid]["name"], pid)
+            for field in ("power", "server"):
+                self.assertEqual(brief.get(field), captured[pid].get(field), (pid, field))
+            if pid in target_roster:
+                gid = target_roster[pid]
+                self.assertEqual(brief["guildId"], gid, pid)
+                self.assertEqual(brief.get("guild"), built["guildNames"].get(gid), pid)
         with tempfile.TemporaryDirectory() as tmp:
             save_info(built, Path(tmp))
             self.assertEqual(built, load_info(event, "517", Path(tmp)))
@@ -106,7 +110,7 @@ class SeaCacheTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 load_info("261116", "517", root)
 
-    def test_first_crawl_builds_then_reuses_even_with_missing_player(self):
+    def test_first_crawl_reuses_then_supplements_only_missing_contributors(self):
         from types import SimpleNamespace
 
         from sea_socket.crawl import phases
@@ -131,8 +135,13 @@ class SeaCacheTests(unittest.TestCase):
                 )
 
             async def players(*args):
-                # ID 2 was requested but refused: a valid, permanent cache miss.
-                self.assertEqual(args[-1], {"1", "2"})
+                wanted = args[-1]
+                self.assertIn(wanted, ({"1", "2"}, {"2", "4"}, {"4"}))
+                if wanted == {"2", "4"}:
+                    # One success and one refused brief; roster identity must win.
+                    router.briefs["2"] = {
+                        "id": 2, "name": "Two", "guild_id": 999, "guild_name": "Other"
+                    }
                 (run / "players.jsonl").write_text(
                     json.dumps({"id": 1, "name": "One", "guild_id": 100}) + "\n"
                 )
@@ -146,7 +155,7 @@ class SeaCacheTests(unittest.TestCase):
                 patch.object(
                     phases, "fetch_faction_details", AsyncMock(return_value={})
                 ),
-                patch.object(phases, "decode_all_boards", AsyncMock(return_value={})),
+                patch.object(phases, "decode_all_boards", AsyncMock(return_value={})) as decode_mock,
                 patch.object(
                     phases, "fetch_guild_names", AsyncMock(side_effect=guilds)
                 ) as guild_mock,
@@ -176,6 +185,34 @@ class SeaCacheTests(unittest.TestCase):
                 self.assertEqual(first, load_info("261116", "517", root))
                 self.assertEqual(guild_mock.await_count, 1)
                 self.assertEqual(player_mock.await_count, 1)
+                decode_mock.return_value = {
+                    (118, 1): {"id_type": 1, "rows": [
+                        {"player_id": "1", "score": 30},  # already cached
+                        {"player_id": "2", "score": 20},
+                        {"player_id": "3", "score": 0},  # no contribution
+                        {"player_id": "4", "score": 10},  # refused
+                    ], "self": {"player_id": "2", "score": 20}},
+                    (117, 0): {"rows": [{"id_type": 1, "player_id": "2", "score": 20}]},
+                    (116, 0): {"id_type": 5, "rows": [
+                        {"player_id": "5", "score": 100}
+                    ], "self": {"player_id": "6", "score": 100}},
+                }
+                await run_crawl(None, router, run, server="517", event_start="261116",
+                                cache_root=root)
+                updated = load_info("261116", "517", root)
+                self.assertEqual(set(updated["briefs"]), {"1", "2"})
+                self.assertEqual(updated["briefs"]["2"], {
+                    "name": "Two", "guildId": "100", "guild": "Guild"
+                })
+                self.assertEqual(updated["briefs"]["1"], first["briefs"]["1"])
+                for key in ("guildRoster", "guildNames", "guildPower", "sourceAt"):
+                    self.assertEqual(updated[key], first[key])
+                self.assertEqual(guild_mock.await_count, 1)
+                self.assertEqual(player_mock.await_count, 2)
+                await run_crawl(None, router, run, server="517", event_start="261116",
+                                cache_root=root)
+                self.assertEqual(player_mock.call_args.args[-1], {"4"})
+                self.assertEqual(updated, load_info("261116", "517", root))
 
         with tempfile.TemporaryDirectory() as tmp:
             asyncio.run(exercise(Path(tmp)))

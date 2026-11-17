@@ -20,6 +20,7 @@ from sea_socket.crawl.board_codec import decode_boards
 from sea_socket.crawl.briefs import (
     fetch_guild_briefs,
     fetch_player_briefs,
+    player_ids_from_boards,
 )
 from sea_socket.crawl.router import (
     REQUEST_PACE,
@@ -29,7 +30,7 @@ from sea_socket.crawl.router import (
     state_throttled,
 )
 from sea_socket.event_cache import ROOT as CACHE_ROOT
-from sea_socket.event_cache import info_from_run, load_info, save_info
+from sea_socket.event_cache import info_from_run, load_info, save_info, supplement_briefs
 from sea_socket.protocol import (
     BATTLEFIELD_CMD,
     FACTION_DETAIL_CMD,
@@ -242,7 +243,7 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path, *,
     counts = await crawl_nodes(page, router, out_dir, node_ids)
     await fetch_global_boards(page, router)
     faction_details = await fetch_faction_details(page, router, out_dir)
-    await decode_all_boards(page, router, out_dir)
+    decoded = await decode_all_boards(page, router, out_dir)
     # Bosses may need extending as locked nodes open, independently of identity cache.
     from sea_socket.report import write_node_bosses
     write_node_bosses(out_dir, server, event_start, cache_root)
@@ -254,7 +255,21 @@ async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path, *,
         save_info(cached, cache_root)
         print(f"[cache] created {event_start}/{server}: {len(cached['briefs'])} briefs", flush=True)
     else:
-        print(f"[cache] reused {event_start}/{server}; no guild/player brief requests", flush=True)
+        missing = player_ids_from_boards(decoded, contributed_only=True) - cached["briefs"].keys()
+        if missing:
+            await fetch_players(page, router, out_dir, missing)
+            updated = supplement_briefs(
+                cached, [router.briefs[pid] for pid in sorted(missing, key=int)
+                         if pid in router.briefs]
+            )
+            added = len(updated["briefs"]) - len(cached["briefs"])
+            if added:
+                save_info(updated, cache_root)
+                cached = updated
+            print(f"[cache] {len(missing)} missing contributors: added {added} briefs; "
+                  f"{len(missing) - added} still missing", flush=True)
+        else:
+            print(f"[cache] reused {event_start}/{server}; no missing contributor briefs", flush=True)
 
     summary = {
         "nodes": len(node_ids),

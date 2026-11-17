@@ -18,19 +18,22 @@ BRIEF_RETRY_ROUNDS = 3
 BRIEF_RETRY_BACKOFF = 4.0  # per-round step: round N waits 4s*N -> 4s, 8s, 12s
 
 
-def player_ids_from_boards(boards: dict) -> set[str]:
+def player_ids_from_boards(boards: dict, *, contributed_only: bool = False) -> set[str]:
     """Every player rankId in decoded boards (rows + self).
 
     id_type 1 = player; board 116 rows are factions (id_type 5, ids "1".."4")
     — the brief endpoint refuses those, asking for them is wasted quota.
     """
     ids: set[str] = set()
-    for row in boards.values():
-        for entry in row.get("rows", []):
-            if entry.get("id_type") == 1:
+    for board in boards.values():
+        entries = list(board.get("rows", []))
+        if board.get("self"):
+            entries.append(board["self"])
+        for entry in entries:
+            if entry.get("id_type", board.get("id_type")) == 1 and (
+                not contributed_only or (entry.get("score") or 0) > 0
+            ):
                 ids.add(str(entry["player_id"]))
-        if row.get("self"):
-            ids.add(str(row["self"]["player_id"]))
     return ids
 
 
@@ -60,7 +63,7 @@ async def fetch_player_briefs(page: Page, router: CrawlRouter, wanted: list[str]
     A throttled batch can come back empty (2026-10-27: one 60-id batch
     answered 0 briefs) — the tail is re-asked in smaller chunks with linear
     backoff. Ids still missing after this are server-refused (cross-server
-    group); brief_backfill.py re-asks them in a later session.
+    group); later crawls can re-ask missing contributors.
     """
     await ask_briefs(page, router, wanted, chunk, pace)
     still = [pid for pid in wanted if pid not in router.briefs]

@@ -9,6 +9,12 @@
 
 ### 1. Cache Sea theo đợt event × cụm server; migrate data cũ, bỏ fallback format cũ
 
+**Cập nhật rule bổ sung 2026-11-18**: crawl thường bổ sung brief còn thiếu cho
+player có contribution > 0 trên BXH node/player (kể cả self), theo batch 60 ID.
+Giữ nguyên roster, guild info và brief đã có; không fetch member chưa đóng góp.
+Brief chưa trả về được thử lại ở lần crawl sau nếu player vẫn có contribution.
+Rule này thay quy định không hỏi lại player cache miss trong scope ban đầu bên dưới.
+
 **Đã triển khai 2026-11-18**: migration one-off (72 dump → 26 bộ cache),
 crawler tự tạo/dùng lại cache, FE chỉ đọc format mới. Đợt mặc định theo lịch
 `EVENT_ROUNDS`, có `--event-start` override; chưa tự suy ngày thi đấu từ
