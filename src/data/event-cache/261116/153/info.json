@@ -1967,6 +1967,13 @@
    "server": 135,
    "guild": "Lurker"
   },
+  "13547513": {
+   "name": "LuSKY",
+   "power": 10437645,
+   "server": 135,
+   "guildId": "1330005",
+   "guild": "Lurker"
+  },
   "13547597": {
    "name": "kitman9",
    "guildId": "1330005",
@@ -2002,6 +2009,20 @@
    "server": 137,
    "guild": "NOCTURN"
   },
+  "13759338": {
+   "name": "PhxAce",
+   "power": 2747534,
+   "server": 137,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
+  "13769338": {
+   "name": "PhxDiva",
+   "power": 1629320,
+   "server": 137,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
   "13799313": {
    "name": "ShaThai",
    "guildId": "1430003",
@@ -2016,12 +2037,47 @@
    "server": 138,
    "guild": "ShadowS143"
   },
+  "13850131": {
+   "name": "NOxApw",
+   "power": 1201661,
+   "server": 138,
+   "guildId": "1380005",
+   "guild": "NOCTURN"
+  },
+  "13880863": {
+   "name": "Phx灭尽",
+   "power": 1715396,
+   "server": 138,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
+  "13890963": {
+   "name": "PhxMage",
+   "power": 927215,
+   "server": 138,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
+  "13901039": {
+   "name": "Phx真任性",
+   "power": 7242142,
+   "server": 139,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
   "13901139": {
    "name": "Shakira",
    "guildId": "1430003",
    "power": 14162444,
    "server": 139,
    "guild": "ShadowS143"
+  },
+  "13901248": {
+   "name": "随便玩玩",
+   "power": 1874640,
+   "server": 139,
+   "guildId": "1380005",
+   "guild": "NOCTURN"
   },
   "13931642": {
    "name": "PhxZero",
@@ -2049,6 +2105,13 @@
    "guildId": "1390004",
    "power": 12325288,
    "server": 140,
+   "guild": "Phoenix"
+  },
+  "14022661": {
+   "name": "Phx虚空",
+   "power": 1927023,
+   "server": 140,
+   "guildId": "1390004",
    "guild": "Phoenix"
   },
   "14042046": {
@@ -2114,6 +2177,13 @@
    "server": 143,
    "guild": "ShadowS143"
   },
+  "14315689": {
+   "name": "ShSTAR",
+   "power": 16653131,
+   "server": 143,
+   "guildId": "1430003",
+   "guild": "ShadowS143"
+  },
   "14325477": {
    "name": "shadow",
    "guildId": "1430003",
@@ -2161,6 +2231,13 @@
    "guildId": "1430003",
    "power": 22624369,
    "server": 143,
+   "guild": "ShadowS143"
+  },
+  "14385094": {
+   "name": "Jaded",
+   "power": 8631957,
+   "server": 143,
+   "guildId": "1430003",
    "guild": "ShadowS143"
   },
   "14385870": {
@@ -2254,6 +2331,20 @@
    "server": 145,
    "guild": "Xenoria"
   },
+  "14608127": {
+   "name": "หอแต๋ว",
+   "power": 4510477,
+   "server": 146,
+   "guildId": "1470011",
+   "guild": "Xenoria"
+  },
+  "14618327": {
+   "name": "XeXoXo",
+   "power": 1685965,
+   "server": 146,
+   "guildId": "1520050",
+   "guild": "Exotic"
+  },
   "14628404": {
    "name": "XeOmega",
    "guildId": "1470011",
@@ -2345,11 +2436,25 @@
    "server": 147,
    "guild": "Xenoria"
   },
+  "14759838": {
+   "name": "XeJezz",
+   "power": 3706846,
+   "server": 147,
+   "guildId": "1520050",
+   "guild": "Exotic"
+  },
   "14800149": {
    "name": "UTMBWDG",
    "guildId": "1470011",
    "power": 26187549,
    "server": 148,
+   "guild": "Xenoria"
+  },
+  "14820948": {
+   "name": "XePuen",
+   "power": 2850843,
+   "server": 148,
+   "guildId": "1470011",
    "guild": "Xenoria"
   },
   "14840227": {
@@ -2443,6 +2548,13 @@
    "server": 150,
    "guild": "Xenoria"
   },
+  "15143970": {
+   "name": "Elyse",
+   "power": 11529423,
+   "server": 151,
+   "guildId": "1470011",
+   "guild": "Xenoria"
+  },
   "15173572": {
    "name": "XELOR",
    "guildId": "1470011",
@@ -2463,6 +2575,20 @@
    "power": 26742741,
    "server": 152,
    "guild": "Xenoria"
+  },
+  "15214375": {
+   "name": "PaaaS",
+   "power": 15286346,
+   "server": 152,
+   "guildId": "1470011",
+   "guild": "Xenoria"
+  },
+  "15224570": {
+   "name": "อีกริด",
+   "power": 2366787,
+   "server": 152,
+   "guildId": "1520050",
+   "guild": "Exotic"
   },
   "15274979": {
    "name": "หวาย",
@@ -2548,6 +2674,20 @@
    "server": 155,
    "guild": "soul"
   },
+  "15537198": {
+   "name": "soYuu",
+   "power": 7402484,
+   "server": 155,
+   "guildId": "1550015",
+   "guild": "soul"
+  },
+  "15547521": {
+   "name": "Sofel",
+   "power": 12237337,
+   "server": 155,
+   "guildId": "1550015",
+   "guild": "soul"
+  },
   "15547529": {
    "name": "soLuna",
    "guildId": "1550015",
@@ -2562,11 +2702,32 @@
    "server": 155,
    "guild": "soul"
   },
+  "15567596": {
+   "name": "soTIAN",
+   "power": 38118494,
+   "server": 155,
+   "guildId": "1550015",
+   "guild": "soul"
+  },
+  "15567705": {
+   "name": "AyoABM",
+   "power": 12962608,
+   "server": 155,
+   "guildId": "1550015",
+   "guild": "soul"
+  },
   "15567790": {
    "name": "soS",
    "guildId": "1550015",
    "power": 20979432,
    "server": 155,
+   "guild": "soul"
+  },
+  "15577023": {
+   "name": "sodayns",
+   "power": 12016939,
+   "server": 155,
+   "guildId": "1550015",
    "guild": "soul"
   },
   "15577230": {
@@ -2692,6 +2853,13 @@
    "power": 15518936,
    "server": 164,
    "guild": "KDKMP"
+  },
+  "16557491": {
+   "name": "Rred",
+   "power": 13948627,
+   "server": 165,
+   "guildId": "1670011",
+   "guild": "JoKer"
   },
   "16587910": {
    "name": "JoRenz",
@@ -2833,6 +3001,13 @@
    "server": 172,
    "guild": "HOT"
   },
+  "17204467": {
+   "name": "HOTjade",
+   "power": 4708159,
+   "server": 172,
+   "guildId": "1720033",
+   "guild": "HOT"
+  },
   "17204907": {
    "name": "HOTd1ck",
    "guildId": "1720033",
@@ -2875,6 +3050,13 @@
    "server": 172,
    "guild": "HOT"
   },
+  "17234199": {
+   "name": "HOTxRex",
+   "power": 9652433,
+   "server": 172,
+   "guildId": "1720033",
+   "guild": "HOT"
+  },
   "17234563": {
    "name": "HOTviel",
    "guildId": "1720033",
@@ -2908,6 +3090,13 @@
    "guildId": "1720033",
    "power": 16118182,
    "server": 172,
+   "guild": "HOT"
+  },
+  "17254307": {
+   "name": "HOTcuyy",
+   "power": 2876555,
+   "server": 172,
+   "guildId": "1720033",
    "guild": "HOT"
   },
   "17254461": {
@@ -3001,6 +3190,13 @@
    "server": 174,
    "guild": "TH.Xeno"
   },
+  "17496501": {
+   "name": "TH.AnAn",
+   "power": 11833207,
+   "server": 174,
+   "guildId": "1740040",
+   "guild": "TH.Xeno"
+  },
   "17496991": {
    "name": "แม็ก",
    "guildId": "1740040",
@@ -3092,6 +3288,13 @@
    "server": 176,
    "guild": "TH.Xeno"
   },
+  "17709338": {
+   "name": "LUxi",
+   "power": 9419240,
+   "server": 177,
+   "guildId": "1770016",
+   "guild": "LUNAR"
+  },
   "17719238": {
    "name": "LUV",
    "guildId": "1770016",
@@ -3111,6 +3314,20 @@
    "guildId": "1770016",
    "power": 16914217,
    "server": 177,
+   "guild": "LUNAR"
+  },
+  "17729438": {
+   "name": "LUSH",
+   "power": 1633413,
+   "server": 177,
+   "guildId": "1770016",
+   "guild": "LUNAR"
+  },
+  "17749338": {
+   "name": "LUNATIC",
+   "power": 7746786,
+   "server": 177,
+   "guildId": "1770016",
    "guild": "LUNAR"
   },
   "17759438": {
@@ -3160,6 +3377,13 @@
    "guildId": "1770016",
    "power": 21123657,
    "server": 179,
+   "guild": "LUNAR"
+  },
+  "17921350": {
+   "name": "燼絆蝕心",
+   "power": 3053277,
+   "server": 179,
+   "guildId": "1770016",
    "guild": "LUNAR"
   },
   "17921646": {
@@ -3225,6 +3449,13 @@
    "server": 181,
    "guild": "LUNAR"
   },
+  "18153696": {
+   "name": "LUGELUT",
+   "power": 258376,
+   "server": 181,
+   "guildId": "1770016",
+   "guild": "LUNAR"
+  },
   "18163864": {
    "name": "LUCA",
    "guildId": "1770016",
@@ -3237,6 +3468,13 @@
    "guildId": "1770016",
    "power": 20435184,
    "server": 183,
+   "guild": "LUNAR"
+  },
+  "18345489": {
+   "name": "1s",
+   "power": 8709948,
+   "server": 183,
+   "guildId": "1770016",
    "guild": "LUNAR"
   },
   "18365094": {
@@ -3323,6 +3561,13 @@
    "server": 186,
    "guild": "Lacoste"
   },
+  "18648519": {
+   "name": "Latam99",
+   "power": 9948692,
+   "server": 186,
+   "guildId": "1850011",
+   "guild": "Lacoste"
+  },
   "18789238": {
    "name": "TONAKI",
    "guildId": "1850011",
@@ -3335,6 +3580,13 @@
    "guildId": "1850011",
    "power": 8031365,
    "server": 189,
+   "guild": "Lacoste"
+  },
+  "19002341": {
+   "name": "LARVAE",
+   "power": 2044921,
+   "server": 190,
+   "guildId": "1850011",
    "guild": "Lacoste"
   },
   "19002853": {

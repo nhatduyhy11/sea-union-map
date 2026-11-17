@@ -1721,6 +1721,13 @@
    "server": 68,
    "guild": "TH.NO.1"
   },
+  "6931843": {
+   "name": "หนุ่ม",
+   "power": 3997256,
+   "server": 69,
+   "guildId": "720037",
+   "guild": "TH.NO.1"
+  },
   "6951536": {
    "name": "qwert",
    "guildId": "720037",
@@ -1733,6 +1740,13 @@
    "guildId": "720037",
    "power": 13996330,
    "server": 70,
+   "guild": "TH.NO.1"
+  },
+  "7042348": {
+   "name": "GibaEjos",
+   "power": 7259765,
+   "server": 70,
+   "guildId": "720037",
    "guild": "TH.NO.1"
   },
   "7082847": {
@@ -1763,6 +1777,13 @@
    "server": 72,
    "guild": "TH.NO.1"
   },
+  "7224164": {
+   "name": "Pinote",
+   "power": 14305110,
+   "server": 72,
+   "guildId": "720037",
+   "guild": "TH.NO.1"
+  },
   "7244576": {
    "name": "TH.JJNM",
    "guildId": "720037",
@@ -1775,6 +1796,13 @@
    "guildId": "720037",
    "power": 23190810,
    "server": 72,
+   "guild": "TH.NO.1"
+  },
+  "7254561": {
+   "name": "ฉันแหละ",
+   "power": 11020363,
+   "server": 72,
+   "guildId": "720037",
    "guild": "TH.NO.1"
   },
   "7274183": {
@@ -1903,6 +1931,13 @@
    "server": 76,
    "guild": "Legends"
   },
+  "7810329": {
+   "name": "AVROSS",
+   "power": 23850265,
+   "server": 78,
+   "guildId": "800011",
+   "guild": "Legends"
+  },
   "7870121": {
    "name": "LeXia",
    "guildId": "800011",
@@ -1916,6 +1951,13 @@
    "power": 12676591,
    "server": 78,
    "guild": "Legends"
+  },
+  "7971443": {
+   "name": "Prince",
+   "power": 8946262,
+   "server": 79,
+   "guildId": "780030",
+   "guild": "KYOFU"
   },
   "8032985": {
    "name": "LeVVIP",
@@ -1964,6 +2006,13 @@
    "guildId": "810011",
    "power": 5154533,
    "server": 81,
+   "guild": "鬼門"
+  },
+  "8113163": {
+   "name": "鬼門日堯",
+   "power": 25478403,
+   "server": 81,
+   "guildId": "810011",
    "guild": "鬼門"
   },
   "8113563": {
@@ -2027,6 +2076,13 @@
    "guildId": "810011",
    "power": 20488190,
    "server": 81,
+   "guild": "鬼門"
+  },
+  "8153453": {
+   "name": "鬼門Alfy姬",
+   "power": 15126195,
+   "server": 81,
+   "guildId": "810011",
    "guild": "鬼門"
   },
   "8153756": {
@@ -2171,6 +2227,13 @@
    "power": 13692115,
    "server": 84,
    "guild": "鬼門"
+  },
+  "8517926": {
+   "name": "Riekzea",
+   "power": 2492417,
+   "server": 85,
+   "guildId": "850036",
+   "guild": "IDK"
   },
   "8547812": {
    "name": "kontoly",
@@ -2375,6 +2438,20 @@
    "server": 101,
    "guild": "BDSM"
   },
+  "10193777": {
+   "name": "โก๊เก่ง",
+   "power": 2606722,
+   "server": 101,
+   "guildId": "1010012",
+   "guild": "Shadow"
+  },
+  "10204368": {
+   "name": "Roeh",
+   "power": 1551278,
+   "server": 102,
+   "guildId": "1020011",
+   "guild": "PHx"
+  },
   "10234661": {
    "name": "BDSCHU",
    "guildId": "980026",
@@ -2424,6 +2501,13 @@
    "server": 105,
    "guild": "Zeroes"
   },
+  "10567692": {
+   "name": "Zero同情",
+   "power": 10381306,
+   "server": 105,
+   "guildId": "1110017",
+   "guild": "Zeroes"
+  },
   "10577130": {
    "name": "Zero丨可",
    "guildId": "1110017",
@@ -2436,6 +2520,13 @@
    "guildId": "1110017",
    "power": 17094765,
    "server": 106,
+   "guild": "Zeroes"
+  },
+  "10729726": {
+   "name": "Zero丨DL",
+   "power": 5372941,
+   "server": 107,
+   "guildId": "1110017",
    "guild": "Zeroes"
   },
   "10779428": {
@@ -2487,6 +2578,13 @@
    "server": 109,
    "guild": "Zeroes"
   },
+  "11002563": {
+   "name": "Zero丨就",
+   "power": 9681293,
+   "server": 110,
+   "guildId": "1110017",
+   "guild": "Zeroes"
+  },
   "11002947": {
    "name": "august",
    "guildId": "1100008",
@@ -2515,6 +2613,13 @@
    "server": 110,
    "guild": "Zeroes"
   },
+  "11032748": {
+   "name": "Zero丨爷爷",
+   "power": 12429660,
+   "server": 110,
+   "guildId": "1110017",
+   "guild": "Zeroes"
+  },
   "11052585": {
    "name": "Zero丨很多",
    "guildId": "1110017",
@@ -2528,6 +2633,13 @@
    "power": 12900341,
    "server": 110,
    "guild": "Zeroes"
+  },
+  "11052950": {
+   "name": "xable",
+   "power": 1594639,
+   "server": 110,
+   "guildId": "1090010",
+   "guild": "TYRANT"
   },
   "11062462": {
    "name": "鬼门Freya",
@@ -2550,11 +2662,25 @@
    "server": 110,
    "guild": "Zeroes"
   },
+  "11092685": {
+   "name": "鬼门upin",
+   "power": 1876657,
+   "server": 110,
+   "guildId": "1110017",
+   "guild": "Zeroes"
+  },
   "11103454": {
    "name": "Zero丨壹",
    "guildId": "1110017",
    "power": 26220714,
    "server": 111,
+   "guild": "Zeroes"
+  },
+  "11103760": {
+   "name": "Zero丨零度",
+   "power": 14366429,
+   "server": 111,
+   "guildId": "1110017",
    "guild": "Zeroes"
   },
   "11113658": {
@@ -2676,6 +2802,13 @@
    "server": 113,
    "guild": "EXILE"
   },
+  "11375094": {
+   "name": "EXLLIN",
+   "power": 2619517,
+   "server": 113,
+   "guildId": "1200017",
+   "guild": "Witcher"
+  },
   "11375599": {
    "name": "EXLTMF",
    "guildId": "1130004",
@@ -2795,6 +2928,13 @@
    "server": 116,
    "guild": "EXILE"
   },
+  "11890048": {
+   "name": "จำลองราษฎร์ทิวา",
+   "power": 460933,
+   "server": 118,
+   "guildId": "1180016",
+   "guild": "Bsight"
+  },
   "11981648": {
    "name": "EXsold",
    "guildId": "1130004",
@@ -2816,6 +2956,13 @@
    "server": 121,
    "guild": "WOE"
   },
+  "12113286": {
+   "name": "WOExcol",
+   "power": 9503756,
+   "server": 121,
+   "guildId": "1260032",
+   "guild": "AiWe"
+  },
   "12123772": {
    "name": "WOExCUP",
    "guildId": "1260032",
@@ -2829,6 +2976,13 @@
    "power": 14092117,
    "server": 121,
    "guild": "AiWe"
+  },
+  "12193455": {
+   "name": "WOExRan",
+   "power": 18412227,
+   "server": 121,
+   "guildId": "1210014",
+   "guild": "WOE"
   },
   "12193681": {
    "name": "Akashi",

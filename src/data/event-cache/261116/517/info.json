@@ -3069,6 +3069,13 @@
    "server": 513,
    "guild": "OneKing"
   },
+  "51305175": {
+   "name": "Oneพ่อง",
+   "power": 11423573,
+   "server": 513,
+   "guildId": "5130004",
+   "guild": "OneKing"
+  },
   "51305278": {
    "name": "KarPook",
    "guildId": "5130006",
@@ -3143,6 +3150,13 @@
    "server": 514,
    "guild": "OLYMPUS"
   },
+  "51416119": {
+   "name": "OLbòòng",
+   "power": 8576086,
+   "server": 514,
+   "guildId": "5140005",
+   "guild": "OLYMPUS"
+  },
   "51416289": {
    "name": "OLNhím",
    "guildId": "5140005",
@@ -3162,6 +3176,13 @@
    "guildId": "5140005",
    "power": 26100565,
    "server": 514,
+   "guild": "OLYMPUS"
+  },
+  "51446004": {
+   "name": "OLSiren",
+   "power": 12632538,
+   "server": 514,
+   "guildId": "5140005",
    "guild": "OLYMPUS"
   },
   "51446598": {
@@ -3197,6 +3218,13 @@
    "guildId": "5140005",
    "power": 96200175,
    "server": 514,
+   "guild": "OLYMPUS"
+  },
+  "51486219": {
+   "name": "OLLOKI",
+   "power": 8733548,
+   "server": 514,
+   "guildId": "5140005",
    "guild": "OLYMPUS"
   },
   "51496319": {
@@ -3465,6 +3493,13 @@
    "server": 517,
    "guild": "HUNTERS"
   },
+  "51789639": {
+   "name": "COITUZ",
+   "power": 7656181,
+   "server": 517,
+   "guildId": "5170010",
+   "guild": "HUNTERS"
+  },
   "51810338": {
    "name": "HunCoCa",
    "guildId": "5170010",
@@ -3472,11 +3507,25 @@
    "server": 518,
    "guild": "HUNTERS"
   },
+  "51810433": {
+   "name": "TĐone",
+   "power": 7174919,
+   "server": 518,
+   "guildId": "5190011",
+   "guild": "FAMILY"
+  },
   "51820346": {
    "name": "FAhappy",
    "guildId": "5190011",
    "power": 10584263,
    "server": 518,
+   "guild": "FAMILY"
+  },
+  "51820427": {
+   "name": "FABumB",
+   "power": 9317405,
+   "server": 518,
+   "guildId": "5190011",
    "guild": "FAMILY"
   },
   "51820522": {
@@ -3612,6 +3661,13 @@
    "server": 521,
    "guild": "Chùm"
   },
+  "52113986": {
+   "name": "ChVova",
+   "power": 7687299,
+   "server": 521,
+   "guildId": "5210012",
+   "guild": "Chùm"
+  },
   "52133664": {
    "name": "ChBảo",
    "guildId": "5210012",
@@ -3738,6 +3794,13 @@
    "server": 527,
    "guild": "UnDead"
   },
+  "52729423": {
+   "name": "Unyu",
+   "power": 8708900,
+   "server": 527,
+   "guildId": "5280010",
+   "guild": "UnDead"
+  },
   "52739012": {
    "name": "Unwin",
    "guildId": "5280010",
@@ -3764,6 +3827,13 @@
    "guildId": "5280010",
    "power": 31840394,
    "server": 527,
+   "guild": "UnDead"
+  },
+  "52759218": {
+   "name": "Undead",
+   "power": 17427120,
+   "server": 527,
+   "guildId": "5280010",
    "guild": "UnDead"
   },
   "52769319": {
@@ -3807,6 +3877,20 @@
    "power": 11047176,
    "server": 528,
    "guild": "UnDead"
+  },
+  "52870633": {
+   "name": "SaOKiM",
+   "power": 2615566,
+   "server": 528,
+   "guildId": "5280010",
+   "guild": "UnDead"
+  },
+  "52961238": {
+   "name": "งามวงศ์ถุง",
+   "power": 7864653,
+   "server": 529,
+   "guildId": "5290011",
+   "guild": "AllStar"
   },
   "53002167": {
    "name": "LxFly",
@@ -3864,6 +3948,13 @@
    "server": 531,
    "guild": "LxRVN"
   },
+  "53133962": {
+   "name": "Lays",
+   "power": 30677943,
+   "server": 531,
+   "guildId": "5320011",
+   "guild": "LxRVN"
+  },
   "53143375": {
    "name": "Linh",
    "guildId": "5320011",
@@ -3904,6 +3995,13 @@
    "guildId": "5320011",
    "power": 10543376,
    "server": 532,
+   "guild": "LxRVN"
+  },
+  "53224797": {
+   "name": "Thảoá",
+   "power": 5527674,
+   "server": 532,
+   "guildId": "5320011",
    "guild": "LxRVN"
   },
   "53224897": {
@@ -3954,6 +4052,13 @@
    "power": 21119057,
    "server": 532,
    "guild": "LxRVN"
+  },
+  "53254885": {
+   "name": "DàiGiaHiếu",
+   "power": 5156365,
+   "server": 532,
+   "guildId": "5310007",
+   "guild": "VNs531"
   },
   "53264761": {
    "name": "LxĐức",
@@ -4186,6 +4291,13 @@
    "server": 540,
    "guild": "VN"
   },
+  "54092954": {
+   "name": "VNTuan",
+   "power": 10725911,
+   "server": 540,
+   "guildId": "5370011",
+   "guild": "VN"
+  },
   "54133954": {
    "name": "VGthana",
    "guildId": "5420012",
@@ -4375,6 +4487,13 @@
    "server": 545,
    "guild": "IMMOTAL"
   },
+  "54587211": {
+   "name": "ECxNa1",
+   "power": 15776855,
+   "server": 545,
+   "guildId": "5450012",
+   "guild": "ECLIPSE"
+  },
   "54587290": {
    "name": "ECxNa",
    "guildId": "5450012",
@@ -4387,6 +4506,13 @@
    "guildId": "5450012",
    "power": 19939075,
    "server": 545,
+   "guild": "ECLIPSE"
+  },
+  "54597893": {
+   "name": "ECxNON",
+   "power": 21159402,
+   "server": 545,
+   "guildId": "5450012",
    "guild": "ECLIPSE"
   },
   "54608817": {
@@ -4403,11 +4529,25 @@
    "server": 547,
    "guild": "ECLIPSE"
   },
+  "54789623": {
+   "name": "VươngThanhHoa",
+   "power": 1534991,
+   "server": 547,
+   "guildId": "5470014",
+   "guild": "Aetop1"
+  },
   "54810545": {
    "name": "Unter",
    "guildId": "5480017",
    "power": 10159738,
    "server": 548,
+   "guild": "VNS548"
+  },
+  "54850040": {
+   "name": "Tồyy",
+   "power": 7053882,
+   "server": 548,
+   "guildId": "5480017",
    "guild": "VNS548"
   },
   "54890420": {
@@ -4459,6 +4599,13 @@
    "server": 550,
    "guild": "MyGuild"
   },
+  "55103099": {
+   "name": "MyPin",
+   "power": 6654046,
+   "server": 551,
+   "guildId": "5510011",
+   "guild": "MyGuild"
+  },
   "55123783": {
    "name": "ube",
    "guildId": "5510011",
@@ -4492,6 +4639,13 @@
    "guildId": "5510011",
    "power": 8380602,
    "server": 552,
+   "guild": "MyGuild"
+  },
+  "55244078": {
+   "name": "Myhân",
+   "power": 7399697,
+   "server": 552,
+   "guildId": "5510011",
    "guild": "MyGuild"
   },
   "55244363": {
@@ -4562,6 +4716,13 @@
    "guildId": "5540013",
    "power": 12294057,
    "server": 554,
+   "guild": "GUCCI"
+  },
+  "55466503": {
+   "name": "GU18x69",
+   "power": 13291383,
+   "server": 554,
+   "guildId": "5540013",
    "guild": "GUCCI"
   },
   "55486587": {
@@ -5005,6 +5166,13 @@
    "server": 564,
    "guild": "VITAMIN"
   },
+  "56486605": {
+   "name": "VIRizZ",
+   "power": 10743810,
+   "server": 564,
+   "guildId": "5620012",
+   "guild": "VITAMIN"
+  },
   "56486697": {
    "name": "Quỷnh",
    "guildId": "5620012",
@@ -5046,6 +5214,13 @@
    "power": 9381189,
    "server": 566,
    "guild": "VÍP"
+  },
+  "56729235": {
+   "name": "LẻKiềuThu",
+   "power": 1010309,
+   "server": 567,
+   "guildId": "5670020",
+   "guild": "RDName"
   },
   "56729326": {
    "name": "Ashely",
@@ -5171,6 +5346,13 @@
    "guildId": "5710014",
    "power": 17352722,
    "server": 569,
+   "guild": "DARKSKY"
+  },
+  "56961048": {
+   "name": "DARKnYx",
+   "power": 6880931,
+   "server": 569,
+   "guildId": "5710014",
    "guild": "DARKSKY"
   },
   "56991434": {
@@ -5318,6 +5500,13 @@
    "guildId": "5710014",
    "power": 15143181,
    "server": 571,
+   "guild": "DARKSKY"
+  },
+  "57153358": {
+   "name": "DAIREX",
+   "power": 12680273,
+   "server": 571,
+   "guildId": "5710014",
    "guild": "DARKSKY"
   },
   "57153679": {

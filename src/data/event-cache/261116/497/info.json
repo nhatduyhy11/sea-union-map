@@ -3042,6 +3042,13 @@
    "server": 449,
    "guild": "ndFarm"
   },
+  "44991639": {
+   "name": "StPein",
+   "power": 27580013,
+   "server": 449,
+   "guildId": "4510010",
+   "guild": "ndFarm"
+  },
   "45012870": {
    "name": "Txcbul",
    "guildId": "4520010",
@@ -3056,12 +3063,26 @@
    "server": 450,
    "guild": "TOXIC"
   },
+  "45052255": {
+   "name": "Valryx",
+   "power": 15584147,
+   "server": 450,
+   "guildId": "4510010",
+   "guild": "ndFarm"
+  },
   "45062085": {
    "name": "TxcFlay",
    "guildId": "4520010",
    "power": 2093482,
    "server": 450,
    "guild": "TOXIC"
+  },
+  "45092253": {
+   "name": "Ndstar7",
+   "power": 9606004,
+   "server": 450,
+   "guildId": "4510010",
+   "guild": "ndFarm"
   },
   "45103667": {
    "name": "LiHảiQuỳnh",
@@ -3124,6 +3145,13 @@
    "guildId": "4510010",
    "power": 12838423,
    "server": 452,
+   "guild": "ndFarm"
+  },
+  "45214789": {
+   "name": "DungThếPhương",
+   "power": 13246996,
+   "server": 452,
+   "guildId": "4510010",
    "guild": "ndFarm"
   },
   "45284578": {
@@ -3294,6 +3322,13 @@
    "server": 456,
    "guild": "Hermes"
   },
+  "45698023": {
+   "name": "ChâuCẩmLoan",
+   "power": 2847192,
+   "server": 456,
+   "guildId": "4560022",
+   "guild": "MG"
+  },
   "45698126": {
    "name": "ĐứngHoàngSang",
    "guildId": "4560022",
@@ -3343,6 +3378,13 @@
    "server": 458,
    "guild": "KOW"
   },
+  "45820653": {
+   "name": "KOWxTLD",
+   "power": 9617484,
+   "server": 458,
+   "guildId": "4580011",
+   "guild": "KOW"
+  },
   "45820853": {
    "name": "HàNhân",
    "guildId": "4580011",
@@ -3383,6 +3425,13 @@
    "guildId": "4580011",
    "power": 16874848,
    "server": 458,
+   "guild": "KOW"
+  },
+  "45870824": {
+   "name": "KOWxLNN",
+   "power": 18324944,
+   "server": 458,
+   "guildId": "4580011",
    "guild": "KOW"
   },
   "45880538": {
@@ -3469,6 +3518,13 @@
    "server": 461,
    "guild": "GGWP"
   },
+  "46123879": {
+   "name": "Noondan",
+   "power": 4961248,
+   "server": 461,
+   "guildId": "4620011",
+   "guild": "NGẠO"
+  },
   "46153362": {
    "name": "GGOne",
    "guildId": "4610007",
@@ -3481,6 +3537,13 @@
    "guildId": "4610007",
    "power": 40003590,
    "server": 461,
+   "guild": "GGWP"
+  },
+  "46163550": {
+   "name": "GGxFake",
+   "power": 11040827,
+   "server": 461,
+   "guildId": "4610007",
    "guild": "GGWP"
   },
   "46163677": {
@@ -3539,6 +3602,13 @@
    "server": 462,
    "guild": "GGWP"
   },
+  "46264671": {
+   "name": "GGxNova",
+   "power": 10991263,
+   "server": 462,
+   "guildId": "4610007",
+   "guild": "GGWP"
+  },
   "46274261": {
    "name": "GGxTop",
    "guildId": "4610007",
@@ -3593,6 +3663,13 @@
    "guildId": "4610007",
    "power": 20570158,
    "server": 463,
+   "guild": "GGWP"
+  },
+  "46395973": {
+   "name": "GGx布布",
+   "power": 31635524,
+   "server": 463,
+   "guildId": "4610007",
    "guild": "GGWP"
   },
   "46406281": {
@@ -3714,6 +3791,13 @@
    "server": 468,
    "guild": "AnhEm"
   },
+  "46921030": {
+   "name": "Mr.Aek",
+   "power": 14177404,
+   "server": 469,
+   "guildId": "4720040",
+   "guild": "Sunbeam"
+  },
   "46921738": {
    "name": "SONE385",
    "guildId": "4720040",
@@ -3740,6 +3824,13 @@
    "guildId": "4720040",
    "power": 11181561,
    "server": 470,
+   "guild": "Sunbeam"
+  },
+  "47062461": {
+   "name": "XsoTri",
+   "power": 9864721,
+   "server": 470,
+   "guildId": "4720040",
    "guild": "Sunbeam"
   },
   "47113567": {
@@ -3770,6 +3861,13 @@
    "server": 472,
    "guild": "Sunbeam"
   },
+  "47234766": {
+   "name": "JP",
+   "power": 150052412,
+   "server": 472,
+   "guildId": "4720040",
+   "guild": "Sunbeam"
+  },
   "47254683": {
    "name": "EcDream",
    "guildId": "4720040",
@@ -3796,6 +3894,13 @@
    "guildId": "4720040",
    "power": 11526752,
    "server": 472,
+   "guild": "Sunbeam"
+  },
+  "47294683": {
+   "name": "yoichi",
+   "power": 2193672,
+   "server": 472,
+   "guildId": "4720040",
    "guild": "Sunbeam"
   },
   "47305793": {
@@ -3847,6 +3952,13 @@
    "server": 474,
    "guild": "MaTộc"
   },
+  "47456590": {
+   "name": "ChâuHữuLễ",
+   "power": 5150384,
+   "server": 474,
+   "guildId": "4740002",
+   "guild": "VNVN"
+  },
   "47456684": {
    "name": "99BG",
    "guildId": "4730012",
@@ -3859,6 +3971,13 @@
    "guildId": "4730012",
    "power": 11304308,
    "server": 474,
+   "guild": "MaTộc"
+  },
+  "47496219": {
+   "name": "ORM",
+   "power": 3584816,
+   "server": 474,
+   "guildId": "4730012",
    "guild": "MaTộc"
   },
   "47496894": {
@@ -3875,6 +3994,13 @@
    "server": 475,
    "guild": "NOBI"
   },
+  "47628516": {
+   "name": "Relax",
+   "power": 9818601,
+   "server": 476,
+   "guildId": "4730012",
+   "guild": "MaTộc"
+  },
   "47648806": {
    "name": "MòMaiNgân",
    "guildId": "4730012",
@@ -3889,11 +4015,25 @@
    "server": 476,
    "guild": "MaTộc"
   },
+  "47739338": {
+   "name": "OR.Irin",
+   "power": 9184357,
+   "server": 477,
+   "guildId": "4770013",
+   "guild": "ORIGIN"
+  },
   "47749425": {
    "name": "เห็บหมา",
    "guildId": "4770013",
    "power": 11333274,
    "server": 477,
+   "guild": "ORIGIN"
+  },
+  "47759811": {
+   "name": "แกงลิง",
+   "power": 20054766,
+   "server": 477,
+   "guildId": "4770013",
    "guild": "ORIGIN"
   },
   "47800736": {
@@ -3965,6 +4105,20 @@
    "power": 11902123,
    "server": 481,
    "guild": "ATHENA"
+  },
+  "48153352": {
+   "name": "AT×Shin",
+   "power": 13560940,
+   "server": 481,
+   "guildId": "4810017",
+   "guild": "ATHENA"
+  },
+  "48153670": {
+   "name": "NiềmAnhVũ",
+   "power": 6098718,
+   "server": 481,
+   "guildId": "4830012",
+   "guild": "HERA"
   },
   "48163560": {
    "name": "ATxJAME",
@@ -4043,6 +4197,13 @@
    "server": 482,
    "guild": "HERA"
   },
+  "48305471": {
+   "name": "VN1997",
+   "power": 5283322,
+   "server": 483,
+   "guildId": "4830012",
+   "guild": "HERA"
+  },
   "48315192": {
    "name": "XICUTÈ",
    "guildId": "4810017",
@@ -4083,6 +4244,13 @@
    "guildId": "4810017",
    "power": 17995850,
    "server": 483,
+   "guild": "ATHENA"
+  },
+  "48345082": {
+   "name": "AT×Béo",
+   "power": 18777988,
+   "server": 483,
+   "guildId": "4810017",
    "guild": "ATHENA"
   },
   "48345684": {
@@ -4126,6 +4294,20 @@
    "power": 14046714,
    "server": 484,
    "guild": "ATHENA"
+  },
+  "48507801": {
+   "name": "Blitz",
+   "power": 1185029,
+   "server": 485,
+   "guildId": "4850014",
+   "guild": "ARC"
+  },
+  "48517016": {
+   "name": "ChanhGiaThành",
+   "power": 981390,
+   "server": 485,
+   "guildId": "4880012",
+   "guild": "CâyKhế"
   },
   "48608510": {
    "name": "ThiênHạnhTrang",
@@ -4225,6 +4407,13 @@
    "server": 486,
    "guild": "CâyKhế"
   },
+  "48698332": {
+   "name": "6Feett",
+   "power": 14400966,
+   "server": 486,
+   "guildId": "4880012",
+   "guild": "CâyKhế"
+  },
   "48698425": {
    "name": "VNTLong",
    "guildId": "4880012",
@@ -4295,6 +4484,20 @@
    "server": 489,
    "guild": "DRAGON"
   },
+  "48931143": {
+   "name": "DRNgon",
+   "power": 14070398,
+   "server": 489,
+   "guildId": "4900001",
+   "guild": "DRAGON"
+  },
+  "48931352": {
+   "name": "Taco",
+   "power": 7867867,
+   "server": 489,
+   "guildId": "4900001",
+   "guild": "DRAGON"
+  },
   "48961458": {
    "name": "VôÂmĐạo",
    "guildId": "4900001",
@@ -4358,6 +4561,13 @@
    "server": 491,
    "guild": "DRAGON"
   },
+  "49123970": {
+   "name": "GDragon",
+   "power": 11971747,
+   "server": 491,
+   "guildId": "4900001",
+   "guild": "DRAGON"
+  },
   "49133762": {
    "name": "DRKID",
    "guildId": "4900001",
@@ -4393,11 +4603,25 @@
    "server": 492,
    "guild": "DRAGON"
   },
+  "49244865": {
+   "name": "Aerith",
+   "power": 6070088,
+   "server": 492,
+   "guildId": "4920004",
+   "guild": "Exotic"
+  },
   "49254375": {
    "name": "MONDAY",
    "guildId": "4900001",
    "power": 6730982,
    "server": 492,
+   "guild": "DRAGON"
+  },
+  "49254692": {
+   "name": "Serval",
+   "power": 9699983,
+   "server": 492,
+   "guildId": "4900001",
    "guild": "DRAGON"
   },
   "49274298": {
@@ -4412,6 +4636,13 @@
    "guildId": "4950009",
    "power": 15730000,
    "server": 493,
+   "guild": "VIETNAM"
+  },
+  "49436293": {
+   "name": "HằngHhh",
+   "power": 13342887,
+   "server": 494,
+   "guildId": "4950009",
    "guild": "VIETNAM"
   },
   "49456083": {
@@ -4448,6 +4679,13 @@
    "power": 673402,
    "server": 496,
    "guild": "AEVN"
+  },
+  "49648506": {
+   "name": "luccky",
+   "power": 6265617,
+   "server": 496,
+   "guildId": "4950009",
+   "guild": "VIETNAM"
   },
   "49648714": {
    "name": "VISoái",
@@ -4648,6 +4886,13 @@
    "server": 498,
    "guild": "Sunny"
   },
+  "49880849": {
+   "name": "Susano1",
+   "power": 2209413,
+   "server": 498,
+   "guildId": "4980009",
+   "guild": "HADES"
+  },
   "49880934": {
    "name": "DeaRZai",
    "guildId": "4980009",
@@ -4828,6 +5073,20 @@
    "server": 500,
    "guild": "Sunny"
   },
+  "50032342": {
+   "name": "Subeans",
+   "power": 17859050,
+   "server": 500,
+   "guildId": "4980009",
+   "guild": "HADES"
+  },
+  "50032655": {
+   "name": "Susmile",
+   "power": 8865675,
+   "server": 500,
+   "guildId": "4980009",
+   "guild": "HADES"
+  },
   "50042548": {
    "name": "SuMeow",
    "guildId": "4980009",
@@ -4917,6 +5176,20 @@
    "server": 502,
    "guild": "GOD"
   },
+  "50244581": {
+   "name": "GOOUT",
+   "power": 13369112,
+   "server": 502,
+   "guildId": "5010011",
+   "guild": "GOD"
+  },
+  "50244584": {
+   "name": "CácGiaThành",
+   "power": 3177628,
+   "server": 502,
+   "guildId": "5010011",
+   "guild": "GOD"
+  },
   "50264269": {
    "name": "GOLDEN",
    "guildId": "5010011",
@@ -4952,6 +5225,13 @@
    "server": 502,
    "guild": "1gucci"
   },
+  "50315075": {
+   "name": "GODMEN",
+   "power": 5977829,
+   "server": 503,
+   "guildId": "5010011",
+   "guild": "GOD"
+  },
   "50325270": {
    "name": "Andrii",
    "guildId": "5030008",
@@ -4973,6 +5253,13 @@
    "server": 504,
    "guild": "GOD"
   },
+  "50517201": {
+   "name": "exPired",
+   "power": 9579146,
+   "server": 505,
+   "guildId": "5070001",
+   "guild": "AllBros"
+  },
   "50537023": {
    "name": "Alpaca",
    "guildId": "5070001",
@@ -4985,6 +5272,27 @@
    "guildId": "5070001",
    "power": 12804071,
    "server": 505,
+   "guild": "AllBros"
+  },
+  "50557600": {
+   "name": "eximer",
+   "power": 7128945,
+   "server": 505,
+   "guildId": "5070001",
+   "guild": "AllBros"
+  },
+  "50557711": {
+   "name": "exTiand",
+   "power": 3838733,
+   "server": 505,
+   "guildId": "5050011",
+   "guild": "exSquad"
+  },
+  "50567208": {
+   "name": "Allala",
+   "power": 13693753,
+   "server": 505,
+   "guildId": "5070001",
    "guild": "AllBros"
   },
   "50567831": {
@@ -5078,12 +5386,26 @@
    "server": 508,
    "guild": "AllBros"
   },
+  "50890140": {
+   "name": "Aluyn",
+   "power": 9449686,
+   "server": 508,
+   "guildId": "5070001",
+   "guild": "AllBros"
+  },
   "51012047": {
    "name": "VUTony",
    "guildId": "5120010",
    "power": 7033519,
    "server": 510,
    "guild": "Impact"
+  },
+  "51032765": {
+   "name": "mio",
+   "power": 215004,
+   "server": 510,
+   "guildId": "5100011",
+   "guild": "No1"
   },
   "51042743": {
    "name": "VUHOANG",
@@ -5127,6 +5449,13 @@
    "server": 510,
    "guild": "Impact"
   },
+  "51103758": {
+   "name": "VUSNOW",
+   "power": 13210778,
+   "server": 511,
+   "guildId": "5120010",
+   "guild": "Impact"
+  },
   "51103773": {
    "name": "broke",
    "guildId": "5120010",
@@ -5153,6 +5482,13 @@
    "guildId": "5120010",
    "power": 19914850,
    "server": 511,
+   "guild": "Impact"
+  },
+  "51133068": {
+   "name": "MAMAMIA",
+   "power": 13002656,
+   "server": 511,
+   "guildId": "5120010",
    "guild": "Impact"
   },
   "51133257": {
@@ -5188,6 +5524,13 @@
    "guildId": "5120010",
    "power": 17144209,
    "server": 512,
+   "guild": "Impact"
+  },
+  "51204974": {
+   "name": "sooyaaa",
+   "power": 9082229,
+   "server": 512,
+   "guildId": "5120010",
    "guild": "Impact"
   },
   "51214073": {
@@ -5230,6 +5573,20 @@
    "guildId": "5120010",
    "power": 13444080,
    "server": 512,
+   "guild": "Impact"
+  },
+  "51244488": {
+   "name": "GượngHạTiên",
+   "power": 7135722,
+   "server": 512,
+   "guildId": "5120010",
+   "guild": "Impact"
+  },
+  "51254097": {
+   "name": "ĐãiKimCương",
+   "power": 589340,
+   "server": 512,
+   "guildId": "5120010",
    "guild": "Impact"
   },
   "51264386": {

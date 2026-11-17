@@ -2472,6 +2472,13 @@
    "server": 263,
    "guild": "Indo"
   },
+  "26325182": {
+   "name": "sCarl",
+   "power": 7672986,
+   "server": 263,
+   "guildId": "2620003",
+   "guild": "Indo"
+  },
   "26335571": {
    "name": "Infamou",
    "guildId": "2620003",
@@ -2547,6 +2554,13 @@
    "guildId": "2650007",
    "power": 15782081,
    "server": 266,
+   "guild": "WraithM"
+  },
+  "26648615": {
+   "name": "WrVanj",
+   "power": 16509443,
+   "server": 266,
+   "guildId": "2650007",
    "guild": "WraithM"
   },
   "26648641": {
@@ -2632,6 +2646,13 @@
    "power": 828610,
    "server": 272,
    "guild": "THUNDER"
+  },
+  "27264478": {
+   "name": "WrRene",
+   "power": 1888238,
+   "server": 272,
+   "guildId": "2650007",
+   "guild": "WraithM"
   },
   "27305402": {
    "name": "OLRilex",
@@ -2724,6 +2745,13 @@
    "server": 275,
    "guild": "Penoise"
   },
+  "27547116": {
+   "name": "Elderzo",
+   "power": 5492612,
+   "server": 275,
+   "guildId": "2750014",
+   "guild": "United"
+  },
   "27567693": {
    "name": "O'KeefeKarter",
    "guildId": "2750014",
@@ -2773,6 +2801,13 @@
    "server": 277,
    "guild": "OLympus"
   },
+  "27799340": {
+   "name": "CanG",
+   "power": 3098377,
+   "server": 277,
+   "guildId": "2770009",
+   "guild": "CASTLE"
+  },
   "27799919": {
    "name": "OLimin",
    "guildId": "2760011",
@@ -2786,6 +2821,20 @@
    "power": 4639353,
    "server": 279,
    "guild": "devil"
+  },
+  "27961455": {
+   "name": "ฟักแฟง",
+   "power": 2733006,
+   "server": 279,
+   "guildId": "2800011",
+   "guild": "ONE"
+  },
+  "28002366": {
+   "name": "CAmat",
+   "power": 1735137,
+   "server": 280,
+   "guildId": "2760011",
+   "guild": "OLympus"
   },
   "28022641": {
    "name": "OLVIN",
@@ -2927,6 +2976,13 @@
    "server": 287,
    "guild": "不朽神域"
   },
+  "28779220": {
+   "name": "不朽优秀",
+   "power": 12585141,
+   "server": 287,
+   "guildId": "2870009",
+   "guild": "不朽神域"
+  },
   "28779519": {
    "name": "不朽Kai",
    "guildId": "2870009",
@@ -2997,6 +3053,13 @@
    "server": 289,
    "guild": "Legends"
   },
+  "28991743": {
+   "name": "LeTANAW",
+   "power": 9875750,
+   "server": 289,
+   "guildId": "2900013",
+   "guild": "Legends"
+  },
   "29002363": {
    "name": "Leputri",
    "guildId": "2900013",
@@ -3023,6 +3086,13 @@
    "guildId": "2900013",
    "power": 16206000,
    "server": 290,
+   "guild": "Legends"
+  },
+  "29032756": {
+   "name": "LeDGRX",
+   "power": 12367054,
+   "server": 290,
+   "guildId": "2900013",
    "guild": "Legends"
   },
   "29042349": {
@@ -3095,6 +3165,13 @@
    "server": 291,
    "guild": "Legends"
   },
+  "29183760": {
+   "name": "giv7",
+   "power": 7748107,
+   "server": 291,
+   "guildId": "2900013",
+   "guild": "Legends"
+  },
   "29426502": {
    "name": "LeAlgeb",
    "guildId": "2900013",
@@ -3108,6 +3185,13 @@
    "power": 4138229,
    "server": 294,
    "guild": "SYNERGY"
+  },
+  "29456086": {
+   "name": "Legoex",
+   "power": 13142055,
+   "server": 294,
+   "guildId": "2900013",
+   "guild": "Legends"
   },
   "29527130": {
    "name": "Whyvern",
@@ -3137,11 +3221,25 @@
    "server": 297,
    "guild": "VENTUR."
   },
+  "29759133": {
+   "name": "MUKMIC",
+   "power": 21613359,
+   "server": 297,
+   "guildId": "2970014",
+   "guild": "VENTUR."
+  },
   "29789328": {
    "name": "薇辣奶茶",
    "guildId": "2970014",
    "power": 23686141,
    "server": 297,
+   "guild": "VENTUR."
+  },
+  "29789438": {
+   "name": "VERSACE",
+   "power": 8560525,
+   "server": 297,
+   "guildId": "2970014",
    "guild": "VENTUR."
   },
   "29800243": {
@@ -3184,6 +3282,13 @@
    "guildId": "3030011",
    "power": 5339163,
    "server": 298,
+   "guild": "THVoid"
+  },
+  "29820863": {
+   "name": "Fright",
+   "power": 1081480,
+   "server": 298,
+   "guildId": "3030011",
    "guild": "THVoid"
   },
   "29860950": {
@@ -3305,6 +3410,13 @@
    "server": 302,
    "guild": "VENTUR."
   },
+  "30274175": {
+   "name": "THDarkS",
+   "power": 1291085,
+   "server": 302,
+   "guildId": "3030011",
+   "guild": "THVoid"
+  },
   "30274993": {
    "name": "Belamy",
    "guildId": "2970014",
@@ -3326,6 +3438,13 @@
    "server": 303,
    "guild": "VENTUR."
   },
+  "30385788": {
+   "name": "THGoJo",
+   "power": 14721763,
+   "server": 303,
+   "guildId": "2970014",
+   "guild": "VENTUR."
+  },
   "30395186": {
    "name": "เลียล้ม",
    "guildId": "2970014",
@@ -3338,6 +3457,13 @@
    "guildId": "2970014",
    "power": 20266005,
    "server": 304,
+   "guild": "VENTUR."
+  },
+  "30426597": {
+   "name": "THduck",
+   "power": 19276531,
+   "server": 304,
+   "guildId": "2970014",
    "guild": "VENTUR."
   },
   "30436980": {
@@ -3473,12 +3599,33 @@
    "server": 309,
    "guild": "หมอกพิษ"
   },
+  "30991757": {
+   "name": "zTBoomz",
+   "power": 17310394,
+   "server": 309,
+   "guildId": "3070003",
+   "guild": "zTurf"
+  },
   "31002756": {
    "name": "RUotang",
    "guildId": "3100004",
    "power": 8764110,
    "server": 310,
    "guild": "RUSHER"
+  },
+  "31002870": {
+   "name": "zTxyn",
+   "power": 10423461,
+   "server": 310,
+   "guildId": "3070003",
+   "guild": "zTurf"
+  },
+  "31012864": {
+   "name": "zTxzoro",
+   "power": 13373275,
+   "server": 310,
+   "guildId": "3070003",
+   "guild": "zTurf"
   },
   "31022574": {
    "name": "elweiis",
@@ -3535,6 +3682,13 @@
    "power": 12654172,
    "server": 310,
    "guild": "zTurf"
+  },
+  "31133768": {
+   "name": "Skeepy",
+   "power": 3940422,
+   "server": 311,
+   "guildId": "3100004",
+   "guild": "RUSHER"
   },
   "31214464": {
    "name": "ง่ายๆ",
@@ -3616,6 +3770,13 @@
    "name": "ARES",
    "power": 24149,
    "server": 313
+  },
+  "31446102": {
+   "name": "永恆Onni",
+   "power": 11869613,
+   "server": 314,
+   "guildId": "3180010",
+   "guild": "永恆放逐"
   },
   "31456094": {
    "name": "永恆Shine",
@@ -3823,6 +3984,20 @@
    "guildId": "3180010",
    "power": 11001362,
    "server": 318,
+   "guild": "永恆放逐"
+  },
+  "31880123": {
+   "name": "永恆魔龙",
+   "power": 18742279,
+   "server": 318,
+   "guildId": "3180010",
+   "guild": "永恆放逐"
+  },
+  "31880543": {
+   "name": "永恆Rid",
+   "power": 1479191,
+   "server": 318,
+   "guildId": "3180010",
    "guild": "永恆放逐"
   },
   "31890531": {

@@ -7,8 +7,10 @@ import type { SeaSnapshot } from "./sea-live/dump";
 
 test("all migrated snapshots join their own event cache without losing server rows", async () => {
   const root = new URL("./snapshots/", import.meta.url);
-  for (const day of await readdir(root)) {
-    for (const file of await readdir(new URL(`${day}/`, root))) {
+  for (const day of (await readdir(root)).filter((day) => /^\d{6}$/.test(day))) {
+    for (const file of (await readdir(new URL(`${day}/`, root))).filter((file) =>
+      /^\d+\.json$/.test(file)
+    )) {
       const snapshot: SeaSnapshot = JSON.parse(
         await readFile(new URL(`${day}/${file}`, root), "utf8")
       );

@@ -2067,11 +2067,32 @@
    "server": 195,
    "guild": "SD夜间美梦"
   },
+  "19547208": {
+   "name": "SDRaIN雨",
+   "power": 10034832,
+   "server": 195,
+   "guildId": "1950011",
+   "guild": "SD夜间美梦"
+  },
   "19547701": {
    "name": "SDream龍",
    "guildId": "1950011",
    "power": 17802921,
    "server": 195,
+   "guild": "SD夜间美梦"
+  },
+  "19577108": {
+   "name": "SD上上签",
+   "power": 4338865,
+   "server": 195,
+   "guildId": "1950011",
+   "guild": "SD夜间美梦"
+  },
+  "19577692": {
+   "name": "SD天天摸鱼",
+   "power": 20020749,
+   "server": 195,
+   "guildId": "1950011",
    "guild": "SD夜间美梦"
   },
   "19577804": {
@@ -2200,6 +2221,20 @@
    "server": 200,
    "guild": "sKDoM"
   },
+  "20042655": {
+   "name": "sKZuumi",
+   "power": 11471360,
+   "server": 200,
+   "guildId": "1980037",
+   "guild": "sKDoM"
+  },
+  "20062551": {
+   "name": "LANCIK",
+   "power": 1904989,
+   "server": 200,
+   "guildId": "1980037",
+   "guild": "sKDoM"
+  },
   "20082385": {
    "name": "GrysLii",
    "guildId": "1950011",
@@ -2256,6 +2291,13 @@
    "server": 204,
    "guild": "Nocturn"
   },
+  "20587216": {
+   "name": "báov",
+   "power": 6287757,
+   "server": 205,
+   "guildId": "2060011",
+   "guild": "Nocturn"
+  },
   "20658009": {
    "name": "NoHoney",
    "guildId": "2060011",
@@ -2268,6 +2310,13 @@
    "guildId": "2060011",
    "power": 59705844,
    "server": 206,
+   "guild": "Nocturn"
+  },
+  "20658927": {
+   "name": "NoJustU",
+   "power": 3696143,
+   "server": 206,
+   "guildId": "2060011",
    "guild": "Nocturn"
   },
   "20678016": {
@@ -2284,6 +2333,13 @@
    "server": 206,
    "guild": "Nocturn"
   },
+  "20678127": {
+   "name": "NoSugar",
+   "power": 2327478,
+   "server": 206,
+   "guildId": "2060011",
+   "guild": "Nocturn"
+  },
   "20678906": {
    "name": "NoDmage",
    "guildId": "2060011",
@@ -2298,11 +2354,25 @@
    "server": 206,
    "guild": "Nocturn"
   },
+  "20800140": {
+   "name": "Noboys",
+   "power": 15244209,
+   "server": 208,
+   "guildId": "2060011",
+   "guild": "Nocturn"
+  },
   "20800351": {
    "name": "North",
    "guildId": "2060011",
    "power": 9538880,
    "server": 208,
+   "guild": "Nocturn"
+  },
+  "20820322": {
+   "name": "Noilong",
+   "power": 15100360,
+   "server": 208,
+   "guildId": "2060011",
    "guild": "Nocturn"
   },
   "20830433": {
@@ -2467,6 +2537,13 @@
    "power": 40841,
    "server": 212,
    "guild": "Ruins"
+  },
+  "21254983": {
+   "name": "Depths",
+   "power": 3155355,
+   "server": 212,
+   "guildId": "2120014",
+   "guild": "Demigod"
   },
   "21254988": {
    "name": "DeRon",
@@ -2660,6 +2737,13 @@
    "server": 216,
    "guild": "OnyX"
   },
+  "21769537": {
+   "name": "Mychild",
+   "power": 4831609,
+   "server": 217,
+   "guildId": "2190012",
+   "guild": "MysticS219"
+  },
   "21799231": {
    "name": "Myhncet",
    "guildId": "2190012",
@@ -2742,6 +2826,13 @@
    "guildId": "2190012",
    "power": 17018141,
    "server": 223,
+   "guild": "MysticS219"
+  },
+  "22375578": {
+   "name": "MyDanis",
+   "power": 12005611,
+   "server": 223,
+   "guildId": "2190012",
    "guild": "MysticS219"
   },
   "22395480": {
@@ -2891,6 +2982,13 @@
    "server": 228,
    "guild": "UnDead"
   },
+  "22820149": {
+   "name": "Unbasic",
+   "power": 11544181,
+   "server": 228,
+   "guildId": "2250014",
+   "guild": "UnDead"
+  },
   "22850730": {
    "name": "UnKuron",
    "guildId": "2250014",
@@ -2919,6 +3017,13 @@
    "server": 230,
    "guild": "UnDeaD"
   },
+  "23022774": {
+   "name": "UnBaraa",
+   "power": 8810109,
+   "server": 230,
+   "guildId": "2250014",
+   "guild": "UnDead"
+  },
   "23042769": {
    "name": "UnYusha",
    "guildId": "2250014",
@@ -2931,6 +3036,13 @@
    "guildId": "2250014",
    "power": 19652296,
    "server": 230,
+   "guild": "UnDead"
+  },
+  "23052652": {
+   "name": "Unaisa",
+   "power": 10464958,
+   "server": 230,
+   "guildId": "2250014",
    "guild": "UnDead"
   },
   "23062072": {
@@ -2954,6 +3066,13 @@
    "server": 230,
    "guild": "UnDead"
   },
+  "23234489": {
+   "name": "UnKenxx",
+   "power": 24355148,
+   "server": 232,
+   "guildId": "2250014",
+   "guild": "UnDead"
+  },
   "23244768": {
    "name": "Unf4zed",
    "guildId": "2250014",
@@ -2966,6 +3085,13 @@
    "guildId": "2400024",
    "power": 6956238,
    "server": 233,
+   "guild": "Welcome"
+  },
+  "23365186": {
+   "name": "Wegency",
+   "power": 13818353,
+   "server": 233,
+   "guildId": "2400024",
    "guild": "Welcome"
   },
   "23486402": {
@@ -3094,6 +3220,13 @@
    "server": 240,
    "guild": "Welcome"
   },
+  "24012865": {
+   "name": "Weap0nX",
+   "power": 5341775,
+   "server": 240,
+   "guildId": "2400024",
+   "guild": "Welcome"
+  },
   "24022354": {
    "name": "อั๋นไง",
    "guildId": "2400024",
@@ -3185,11 +3318,25 @@
    "server": 241,
    "guild": "Drunk"
   },
+  "24133974": {
+   "name": "NERVOUS",
+   "power": 1265136,
+   "server": 241,
+   "guildId": "2460039",
+   "guild": "NEKO"
+  },
   "24143273": {
    "name": "Flash",
    "guildId": "2410012",
    "power": 14743959,
    "server": 241,
+   "guild": "Drunk"
+  },
+  "24143460": {
+   "name": "DrMaple",
+   "power": 15172284,
+   "server": 241,
+   "guildId": "2410012",
    "guild": "Drunk"
   },
   "24153072": {
@@ -3234,6 +3381,13 @@
    "server": 241,
    "guild": "Drunk"
   },
+  "24173157": {
+   "name": "DrRed",
+   "power": 62967834,
+   "server": 241,
+   "guildId": "2410012",
+   "guild": "Drunk"
+  },
   "24183078": {
    "name": "GiffordLambert",
    "guildId": "2410017",
@@ -3262,12 +3416,26 @@
    "server": 241,
    "guild": "Drunk"
   },
+  "24193675": {
+   "name": "Gav",
+   "power": 2146097,
+   "server": 241,
+   "guildId": "2440034",
+   "guild": "MVP"
+  },
   "24214183": {
    "name": "ลีโอ",
    "guildId": "2440034",
    "power": 1979371,
    "server": 242,
    "guild": "MVP"
+  },
+  "24224569": {
+   "name": "MinterN",
+   "power": 18581521,
+   "server": 242,
+   "guildId": "2410012",
+   "guild": "Drunk"
   },
   "24325388": {
    "name": "DrOne",
@@ -3395,6 +3563,13 @@
    "server": 248,
    "guild": "Drunk"
   },
+  "24800548": {
+   "name": "BranchFinnian",
+   "power": 6468305,
+   "server": 248,
+   "guildId": "2460039",
+   "guild": "NEKO"
+  },
   "24810620": {
    "name": "DrJnJ",
    "guildId": "2410012",
@@ -3423,6 +3598,13 @@
    "server": 249,
    "guild": "dbwีไne"
   },
+  "24981730": {
+   "name": "dbswagy",
+   "power": 10063084,
+   "server": 249,
+   "guildId": "2490025",
+   "guild": "dbwีไne"
+  },
   "24981839": {
    "name": "dblubu",
    "guildId": "2490025",
@@ -3430,11 +3612,25 @@
    "server": 249,
    "guild": "dbwีไne"
   },
+  "25002653": {
+   "name": "CUEK",
+   "power": 5129288,
+   "server": 250,
+   "guildId": "2490025",
+   "guild": "dbwีไne"
+  },
   "25012271": {
    "name": "Ibliz66",
    "guildId": "2490025",
    "power": 19031377,
    "server": 250,
+   "guild": "dbwีไne"
+  },
+  "25052079": {
+   "name": "dbParle",
+   "power": 9718799,
+   "server": 250,
+   "guildId": "2490025",
    "guild": "dbwีไne"
   },
   "25062962": {
@@ -3451,6 +3647,13 @@
    "server": 250,
    "guild": "dbwีไne"
   },
+  "25092253": {
+   "name": "EciAziz",
+   "power": 212167,
+   "server": 250,
+   "guildId": "2490025",
+   "guild": "dbwีไne"
+  },
   "25092274": {
    "name": "Blubub",
    "guildId": "2490025",
@@ -3463,6 +3666,13 @@
    "guildId": "2490025",
    "power": 11140112,
    "server": 250,
+   "guild": "dbwีไne"
+  },
+  "25204675": {
+   "name": "dbee",
+   "power": 13567592,
+   "server": 252,
+   "guildId": "2490025",
    "guild": "dbwีไne"
   },
   "25305672": {
