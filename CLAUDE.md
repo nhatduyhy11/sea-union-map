@@ -1,5 +1,13 @@
 # CLAUDE.md
 
+## Commands
+
+- When the user asks which command to run (dev, test, build, crawl, fullcrawl…),
+  check `docs/TLDR_DOCS.md` first and answer from it; fall back to `README.BE.md` /
+  `README.md` only for what it doesn't cover. That file is a human-first cheat sheet
+  of the owner's most-used commands — keep it short, don't grow it into a full
+  reference.
+
 ## Map data
 
 - `src/data/map-coords.ts` is raw coordinate/route data traced from `specs/map-*.PNG`.
