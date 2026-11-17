@@ -5,15 +5,15 @@ import styles from "./SceneryBackdrop.module.css";
 const scenery = [
   // The bow points southeast, toward the center of the map.
   {
-    file: "corner-abot-left.png",
+    file: "corner-abot-left.webp",
     x: -1400,
     y: -1150,
     width: 600,
     rotation: 0,
   },
-  { file: "corner-top-right.png", x: 1400, y: -1150, width: 600, rotation: 0 },
-  { file: "corner-bot-left.png", x: -1400, y: 1150, width: 700, rotation: 0 },
-  { file: "corner-bot-right.png", x: 1400, y: 1150, width: 600, rotation: 0 },
+  { file: "corner-top-right.webp", x: 1400, y: -1150, width: 600, rotation: 0 },
+  { file: "corner-bot-left.webp", x: -1400, y: 1150, width: 700, rotation: 0 },
+  { file: "corner-bot-right.webp", x: 1400, y: 1150, width: 600, rotation: 0 },
 ] as const;
 
 export function SceneryBackdrop() {
