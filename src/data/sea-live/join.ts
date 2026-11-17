@@ -53,10 +53,9 @@ function indexCamps(dump: SeaLiveDump): CampIndex {
   return { gameIdByLayout, layoutIdByGame, factionDir };
 }
 
-// guildId: brief trước, fallback guildRoster — player không có brief vẫn đúng
-// guild.
+// Guild membership is the event roster, independent of current player brief.
 function guildIdOf(dump: SeaLiveDump, playerId: number | string) {
-  return dump.briefs[playerId]?.guildId ?? dump.guildRoster[playerId];
+  return dump.guildRoster[playerId] ?? dump.briefs[playerId]?.guildId;
 }
 
 // Field player chung của contribution và row BXH, ghép từ brief; player không
@@ -142,8 +141,7 @@ function buildPlayerBoard(
 }
 
 // guildId → lực chiến guild: ưu tiên guild brief server (dump guildPower);
-// dump cũ thiếu thì cộng power mọi player brief — chỉ phủ member đã được brief
-// nên thấp hơn thật.
+// Guild thiếu power thì cộng brief đã có trong event cache; có thể thấp hơn thật.
 function guildPowerOf(dump: SeaLiveDump): Map<string, number> {
   const guildPower = new Map<string, number>();
   for (const [playerId, brief] of Object.entries(dump.briefs)) {
@@ -151,7 +149,7 @@ function guildPowerOf(dump: SeaLiveDump): Map<string, number> {
     if (guildId && brief.power)
       guildPower.set(guildId, (guildPower.get(guildId) ?? 0) + brief.power);
   }
-  for (const [guildId, power] of Object.entries(dump.guildPower ?? {}))
+  for (const [guildId, power] of Object.entries(dump.guildPower))
     guildPower.set(guildId, power);
   return guildPower;
 }

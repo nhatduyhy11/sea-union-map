@@ -29,6 +29,8 @@ from sea_socket.crawl.router import (
     inject_retrying,
     state_throttled,
 )
+from sea_socket.event_cache import ROOT as CACHE_ROOT
+from sea_socket.event_cache import info_from_run, load_info, save_info, supplement_briefs
 from sea_socket.protocol import (
     BATTLEFIELD_CMD,
     FACTION_DETAIL_CMD,
@@ -182,7 +184,8 @@ async def fetch_guild_names(page: Page, router: CrawlRouter, out_dir: Path,
     """Guild brief for every guild in faction_details -> guild-names.json."""
     guild_ids = sorted({g["guild_id"]
                         for detail in faction_details.values()
-                        for g in detail["guilds"]})
+                        for g in detail["guilds"]} |
+                       {int(gid) for gid in (router.map_snapshot or {}).get("guild_roster", {})})
     write_json(out_dir / "guild-names.json",
                await fetch_guild_briefs(page, router, guild_ids))
 
@@ -195,10 +198,10 @@ async def decode_all_boards(page: Page, router: CrawlRouter, out_dir: Path) -> d
 
 
 async def fetch_players(page: Page, router: CrawlRouter, out_dir: Path,
-                        decoded_boards: dict) -> None:
-    """Player briefs for every rankId seen in any board -> players.jsonl."""
+                        roster_ids: set[str]) -> None:
+    """Build-time player briefs for the entire event roster -> players.jsonl."""
     await fetch_player_briefs(
-        page, router, sorted(player_ids_from_boards(decoded_boards), key=int))
+        page, router, sorted(roster_ids, key=int))
     with (out_dir / "players.jsonl").open("w", encoding="utf-8") as fh:
         for player_id in sorted(router.briefs):
             fh.write(json.dumps(router.briefs[player_id], ensure_ascii=False) + "\n")
@@ -230,21 +233,49 @@ async def run_boss_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict
     return summary
 
 
-async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path) -> dict:
+async def run_crawl(page: Page, router: CrawlRouter, out_dir: Path, *,
+                    server: str, event_start: str, cache_root: Path = CACHE_ROOT,
+                    rebuild_info: bool = False) -> dict:
     """Snapshot -> per-node pulls -> top boards -> guilds -> name briefs -> summary.json."""
+    cached = None if rebuild_info else load_info(event_start, server, cache_root)
     snapshot = await wait_snapshot(page, router, out_dir)
     node_ids = sorted(n["id"] for n in snapshot["nodes"])
     counts = await crawl_nodes(page, router, out_dir, node_ids)
     await fetch_global_boards(page, router)
     faction_details = await fetch_faction_details(page, router, out_dir)
-    await fetch_guild_names(page, router, out_dir, faction_details)
-    decoded_boards = await decode_all_boards(page, router, out_dir)
-    await fetch_players(page, router, out_dir, decoded_boards)
+    decoded = await decode_all_boards(page, router, out_dir)
+    # Bosses may need extending as locked nodes open, independently of identity cache.
+    from sea_socket.report import write_node_bosses
+    write_node_bosses(out_dir, server, event_start, cache_root)
+    if cached is None:
+        await fetch_guild_names(page, router, out_dir, faction_details)
+        roster_ids = {str(pid) for members in snapshot["guild_roster"].values() for pid in members}
+        await fetch_players(page, router, out_dir, roster_ids)
+        cached = info_from_run(out_dir, event_start, server)
+        save_info(cached, cache_root)
+        print(f"[cache] created {event_start}/{server}: {len(cached['briefs'])} briefs", flush=True)
+    else:
+        missing = player_ids_from_boards(decoded, contributed_only=True) - cached["briefs"].keys()
+        if missing:
+            await fetch_players(page, router, out_dir, missing)
+            updated = supplement_briefs(
+                cached, [router.briefs[pid] for pid in sorted(missing, key=int)
+                         if pid in router.briefs]
+            )
+            added = len(updated["briefs"]) - len(cached["briefs"])
+            if added:
+                save_info(updated, cache_root)
+                cached = updated
+            print(f"[cache] {len(missing)} missing contributors: added {added} briefs; "
+                  f"{len(missing) - added} still missing", flush=True)
+        else:
+            print(f"[cache] reused {event_start}/{server}; no missing contributor briefs", flush=True)
 
     summary = {
         "nodes": len(node_ids),
         **counts,
-        "briefs": len(router.briefs),
+        "briefs": len(cached["briefs"]),
+        "info_cache": f"{event_start}/{server}",
         "owner_counts": snapshot["owner_counts"],
         "per_faction_scores": rollup_factions(router.node_states),
     }

@@ -36,26 +36,26 @@ kia vẫn chạy bình thường; `config_extract.py` đứng top-level vì khô
 
 ### Dùng chung
 
-| File                       | Vai trò                                                                                                                                                                    |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `core/runner.py`           | Core runner: session Chrome persistent, hook WS (chuyển frame cho `NameService` + route event), các chế độ chạy (forever / `--duration` / `--snapshot`)            |
-| `core/names.py`            | `NameService`: resolve id → tên player/guild — inject `0x0d/0x001f` theo lô 60 id, sniff request brief của chính client, ghi reply `0x0020`/`0x0036` ra `player-briefs.jsonl` / `guild-briefs.jsonl` |
-| `core/sinks.py`            | `JsonlSink`: append row JSONL (kèm `logged_at`) — dùng chung cho runner và sink riêng của event logger |
-| `browser/ws_inject.py`     | JS hook `WS_SEND_HOOK_JS` (bắt instance WebSocket game) + `SEND_FRAME_JS` (inject frame) — dùng bởi `NameService`, crawler, brief_backfill |
-| `capture/frames.py`        | `FrameWriter` + `attach_capture`: dump payload WS nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl` — dùng chung cho capture CLI, walkthrough, crawler, brief_backfill |
-| `capture/capture.py`       | CLI bắt frame thô + chạy step DSL (`--step click:X,Y ...`) — tool research/debug protocol (POC decode flow mới), **không thuộc pipeline dump JSON cho FE**: "chạy capture" hàng ngày là `crawler.py` |
+| File                       | Vai trò                                                                                                                                                                                                        |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `core/runner.py`           | Core runner: session Chrome persistent, hook WS (chuyển frame cho `NameService` + route event), các chế độ chạy (forever / `--duration` / `--snapshot`)                                                        |
+| `core/names.py`            | `NameService`: resolve id → tên player/guild — inject `0x0d/0x001f` theo lô 60 id, sniff request brief của chính client, ghi reply `0x0020`/`0x0036` ra `player-briefs.jsonl` / `guild-briefs.jsonl`           |
+| `core/sinks.py`            | `JsonlSink`: append row JSONL (kèm `logged_at`) — dùng chung cho runner và sink riêng của event logger                                                                                                         |
+| `browser/ws_inject.py`     | JS hook `WS_SEND_HOOK_JS` (bắt instance WebSocket game) + `SEND_FRAME_JS` (inject frame) — dùng bởi `NameService`, crawler, brief_backfill                                                                     |
+| `capture/frames.py`        | `FrameWriter` + `attach_capture`: dump payload WS nguyên vẹn ra `frames/NNNNN-{S\|R}.bin` + `index.jsonl` — dùng chung cho capture CLI, walkthrough, crawler, brief_backfill                                   |
+| `capture/capture.py`       | CLI bắt frame thô + chạy step DSL (`--step click:X,Y ...`) — tool research/debug protocol (POC decode flow mới), **không thuộc pipeline dump JSON cho FE**: "chạy capture" hàng ngày là `crawler.py`           |
 | `gui/steps.py`             | Step DSL vision-action: `sleep/shot/click/scroll/expect/seek/popclose/mark` (dispatch table `STEPS`) — chỉ tool đi bằng click (capture CLI, walkthrough, crawler `--gui-entry` qua walkthrough) mới cần `gui/` |
-| `gui/vision.py`            | Template matching thang xám trên screenshot: `resolve_golden` (`gui/goldens/` rồi `docs/assets/sea-socket/`), `screen_similarity`, `best_crop_position` |
-| `gui/popclose.py`          | Verb `popclose`: đóng hàng đợi splash popup lúc login (checkbox "không nhắc lại" / nút X / click ngoài) + hằng calibration `POPUP_*` |
-| `core/decode.py`           | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                                      |
-| `core/protocol.py`         | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`, convention inject ssid `0xF0..0xFF`                |
-| `core/args.py`             | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                         |
-| `core/runtime_codec.py`    | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body |
-| `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                              |
-| `browser/auth.py`          | Đọc JSON localStorage SDK, chọn email, restore auth và xác minh acc cho SEA crawler fresh context |
-| `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                   |
-| `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                                         |
-| `browser/session.py`       | `launch_session` / `close_session`: mở persistent profile, gắn capture WS cho mọi page, cài page guards                                                                   |
+| `gui/vision.py`            | Template matching thang xám trên screenshot: `resolve_golden` (`gui/goldens/` rồi `docs/assets/sea-socket/`), `screen_similarity`, `best_crop_position`                                                        |
+| `gui/popclose.py`          | Verb `popclose`: đóng hàng đợi splash popup lúc login (checkbox "không nhắc lại" / nút X / click ngoài) + hằng calibration `POPUP_*`                                                                           |
+| `core/decode.py`           | Decoder wire-format generic (không cần schema `.proto`), annotate timestamp heuristic                                                                                                                          |
+| `core/protocol.py`         | Protocol tầng game dùng chung: broadcast bus (0x13), player/guild brief (0x0d/0x24), `frame_is`, `build_brief_request`, convention inject ssid `0xF0..0xFF`                                                    |
+| `core/args.py`             | CLI args dùng chung của logger (`--profile/--url/--dir/--snapshot/--duration/...`)                                                                                                                             |
+| `core/runtime_codec.py`    | Decode frame nén/không schema qua runtime game headless (`window.__require`): QuickLZ + BufferUtils; mode `rank` (0x0c/0x0003) / `briefs` (0x0d/0x0020), `--cut` tách body                                     |
+| `browser/process_guard.py` | Lock theo profile (chặn chạy 2 instance) + xử lý stop signals                                                                                                                                                  |
+| `browser/auth.py`          | Đọc JSON localStorage SDK, chọn email, restore auth và xác minh acc cho SEA crawler fresh context                                                                                                              |
+| `browser/page_guards.py`   | Chặn popup profile, ẩn iframe H5 SDK (inlined từ bot cũ)                                                                                                                                                       |
+| `browser/navigation.py`    | `navigate_to_game` có retry qua transient hang (inlined từ bot cũ)                                                                                                                                             |
+| `browser/session.py`       | `launch_session` / `close_session`: mở persistent profile, gắn capture WS cho mọi page, cài page guards                                                                                                        |
 
 ### Mode 1 — sea (`sea_socket/`)
 
@@ -68,15 +68,15 @@ Pipeline chuẩn 4 bước — **crawl → extract → transform → dump**:
 
 Luồng đầy đủ tới UI xem mục **Luồng crawl → UI** bên dưới.
 
-| File                        | Vai trò                                                                                                                                                                                   |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sea_socket/walkthrough.py` | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (proof protocol + fallback `--gui-entry` của crawler)                           |
-| `sea_socket/crawler.py`     | **Collector chính**: entry payload mặc định — wait-login `0x72/0x0002` + inject `0x000b`/`0x001b`, 0 click (request key xem [`docs/sea/SOCKET_PROTOCOL.md`](docs/sea/SOCKET_PROTOCOL.md) §4.2; `--gui-entry` replay stage cũ); vào map xong inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game; `--dump` (mặc định bật) tự transform + dump ngay sau crawl |
-| `sea_socket/crawl/`         | Engine online sau `crawler.py` + `brief_backfill.py`: `router.py` (inject theo ssid + retry throttle), `board_codec.py` (decode board bằng runtime game), `briefs.py` (player/guild brief), `phases.py` (các phase crawl, ghi file output) |
-| `sea_socket/protocol.py`    | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                        |
-| `sea_socket/report.py`      | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler |
-| `config_extract.py`         | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"             |
-| `sea_socket/per_event/boss_extract.py` | Chạy 1 lần mỗi đợt event để kiểm tra boss mới (asset boss cố định hơn cả boss node theo cụm). Catalog boss Sea headless **không cần login**: tải full config, mỗi row `CampGVGMonsterLO` ghi `info.json` (monster + `CreepLO` + skill/buff + hero gợi ý/tag/thuộc tính) và tải asset `ext-res` theo token ảnh (`shuzhi/head\|half\|Hero_IH`, spine `model/`); asset `CreepLO` trỏ tới nằm ở gốc folder, asset chỉ trùng token vào `others/` — `--out .tmp/boss-catalog` |
+| File                                   | Vai trò                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `sea_socket/walkthrough.py`            | Walkthrough GUI: stage DSL login → lobby → battle map → node detail/boss/board, chụp bằng chứng từng bước (proof protocol + fallback `--gui-entry` của crawler)                                                                                                                                                                                                                                                                                                                            |
+| `sea_socket/crawler.py`                | **Collector chính**: entry payload mặc định — wait-login `0x72/0x0002` + inject `0x000b`/`0x001b`, 0 click (request key xem [`docs/sea/SOCKET_PROTOCOL.md`](docs/sea/SOCKET_PROTOCOL.md) §4.2; `--gui-entry` replay stage cũ); vào map xong inject `0x72/0x0011` + board `0x0c/0x0002` theo id — không đụng UI; decode board bằng runtime game; `--dump` (mặc định bật) tự transform + dump ngay sau crawl                                                                                 |
+| `sea_socket/crawl/`                    | Engine online sau `crawler.py` + `brief_backfill.py`: `router.py` (inject theo ssid + retry throttle), `board_codec.py` (decode board bằng runtime game), `briefs.py` (player/guild brief), `phases.py` (các phase crawl, ghi file output)                                                                                                                                                                                                                                                 |
+| `sea_socket/protocol.py`               | Module 0x72 + rank 0x0c: frame builder, parse snapshot/node state (pure, testable)                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `sea_socket/report.py`                 | Transform + dump JSON thuần cho FE (mặc định `public/sea-live-dev.json` gitignored; `--out src/data/sea-live.json` để bake vào build; `--snapshot [--server N]` ghi snapshot lịch sử `src/data/snapshots/<YYMMDD>/<server>.json`) — CLI re-dump độc lập, dùng chung hàm `dump_run` với crawler                                                                                                                                                                                             |
+| `config_extract.py`                    | Bóc bảng config client (CampGVG…) headless **không cần login**: boot page game, dump `window.__require(<TABLE>).store` ra JSON — hiếm khi chạy, xem mục "Cache config CampGVG"                                                                                                                                                                                                                                                                                                             |
+| `sea_socket/per_event/boss_extract.py` | Chạy 1 lần mỗi đợt event để kiểm tra boss mới (asset boss cố định hơn cả boss node theo cụm). Catalog boss Sea headless **không cần login**: tải full config, mỗi row `CampGVGMonsterLO` ghi `info.json` (monster + `CreepLO` + skill/buff + hero gợi ý/tag/thuộc tính) và tải asset `ext-res` theo token ảnh (`shuzhi/head\|half\|Hero_IH`, spine `model/`); asset `CreepLO` trỏ tới nằm ở gốc folder, asset chỉ trùng token vào `others/` — `--out .tmp/boss-catalog`                    |
 | `sea_socket/per_event/boss_render.py`  | Chạy 1 lần mỗi đợt event, sau `boss_extract.py`. Render spine boss (output của `boss_extract.py`) ra PNG bằng spine-ts 3.8 WebGL headless: frame 0 của `daiji` (idle), ưu tiên atlas `_h`, crop theo alpha → thư mục phẳng `<monsterId>-<model>-<anim>.png` — `--dir .tmp/boss-catalog --out .tmp/boss-render`. Ảnh FE dùng nằm ở `public/boss/<folder catalog>/`: `render.webp` (render chọn ra), `half.webp`/`head.webp` (từ `shuzhi/half\|head` của catalog) convert sang webp lossless |
 
 ```bash
@@ -130,11 +130,51 @@ uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run>
 #    Bake snapshot chính thức vào build:
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
     --out src/data/sea-live.json
-#    Snapshot lịch sử theo ngày event × cụm (--server mặc định 517, tạm thời):
+#    Snapshot lịch sử theo ngày event × cụm (server/event_start đọc meta.json):
 uv run python tools/socket_log/sea_socket/report.py --crawl .tmp/sea-crawl/<run> \
     --snapshot [--server 590]
 #    → src/data/snapshots/<YYMMDD>/<server>.json — rule quy ngày ở
 #      docs/sea/SEA_LIVE_DATA.md
+```
+
+### Cache Sea theo đợt × cụm
+
+`src/data/event-cache/<event-start>/<server>/` chứa `info.json` (roster, tên/
+power guild, player brief) và `bosses.json`. Snapshot từng ngày chỉ giữ data
+biến động và identity `eventStart`/`server`; FE nạp info cache theo cụm/đợt khi
+cần. Không còn đọc info embedded hoặc đường dẫn `node-bosses` cũ. Mine có rule
+và cache riêng, không bị thay đổi.
+
+Crawler tự kiểm tra cache: lượt đầu chưa có thì lấy roster và brief toàn bộ
+member để tạo cache; lượt sau chỉ lấy thêm player brief còn thiếu cho ID có điểm
+contribution > 0 trên BXH node/player (kể cả self), rồi bổ sung vào cache.
+ID chưa đóng góp không được hỏi lại; ID chưa lấy được brief vẫn hiện `#id` và sẽ
+được thử lại ở lượt crawl sau nếu có contribution. Roster, guild info và brief
+đã có giữ nguyên; `--rebuild-info-cache` là cách chủ động lấy lại toàn bộ.
+Cache lỗi schema sẽ báo lỗi;
+file info chỉ được ghi atomically sau khi chuẩn hóa/validate xong.
+
+Đợt mặc định lấy từ `EVENT_ROUNDS` của FE theo ngày event hiện tại; có thể
+truyền `--event-start YYMMDD`. Cụm lấy từ nhân vật đăng nhập; `--expect-server`
+có thể chặn chạy nhầm cụm. `meta.json` ghi cả `server` và `event_start` để re-dump.
+Tool `brief_backfill.py` cũ đã retire; dùng crawler với `--rebuild-info-cache`.
+
+Migration một lần cho data đã lưu (đã chạy khi chuyển format, không cần dùng ở
+đợt mới):
+
+```bash
+uv run python scripts/migrate_sea_event_cache.py          # dry-run
+uv run python scripts/migrate_sea_event_cache.py --write  # apply, có thể chạy lại
+```
+
+Kiểm tra một cụm mà không ghi vào cache đã migrate:
+
+```bash
+uv run python tools/socket_log/sea_socket/crawler.py \
+  --profile /path/to/logged-in-profile --expect-server 517 \
+  --cache-root .tmp/sea-cache-check --dump-out .tmp/sea-cache-check/517.json
+# Chạy lại: dùng cache, chỉ hỏi brief còn thiếu cho player có contribution > 0.
+uv run python -m unittest discover -s tools/socket_log/tests -v
 ```
 
 ### Cache config CampGVG (`sea_socket/campgvg.json`) — BE nội bộ, hiếm khi đụng
@@ -229,7 +269,7 @@ Hai file JSON dump, cùng schema (chi tiết dev vs build, thuật ngữ dump/ba
   bundle lúc build. Chỉ cập nhật chủ động bằng `--out src/data/sea-live.json`.
 
 Ranh giới vai trò: **Python** (`tools/socket_log/sea_socket/report.py`) chỉ gom crawl outputs thành một
-JSON thuần — `camp`, `owner`, `nodeRows`, `briefs`, `baseDir`, `snapshotAt` —
+JSON thuần — `camp`, `owner`, `nodeRows`, `eventStart`, `server`, `baseDir`, `snapshotAt` —
 kèm cross-checks (base names, 4 owner base, node không map được layout) để bắt
 join hỏng trước khi data đến FE. **FE** (`src/data/sea-live.ts`) là code viết
 tay — `layoutIdOf` (prefix display id → layout id), `factionDir` (owner 4 base

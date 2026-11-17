@@ -54,7 +54,7 @@ const betweenRounds = () => !isEventDay(today()) && today() > EVENT_ROUNDS[0];
 // Live dump thuộc đợt hiện tại.
 const liveData = buildMapData(
   liveDump,
-  nodeBossesOf(LIVE_SERVER, currentRoundOf(today()))
+  nodeBossesOf(liveDump.server, liveDump.eventStart)
 );
 
 export const useDataset = create<DatasetState>()(() => ({

@@ -8,7 +8,8 @@
 // LIVE_SERVER cho ngày hiện tại; cụm khác ở ngày hiện tại chưa hỗ trợ → store
 // dataset fallback về snapshot gần nhất của cụm đó.
 
-import type { SeaLiveDump } from "./sea-live";
+import { loadEventSnapshot } from "./eventCache";
+import type { SeaLiveDump, SeaSnapshot } from "./sea-live";
 
 export const LIVE_SERVER = "517";
 
@@ -50,5 +51,7 @@ export async function loadSnapshot(
 ): Promise<SeaLiveDump> {
   const load = loaders.get(`${day}/${server}`);
   if (!load) throw new Error(`Không có snapshot ${day}/${server}`);
-  return (await load()).default as SeaLiveDump;
+  const snapshot = (await load()).default as SeaSnapshot;
+  if (snapshot.server !== server) throw new Error("Snapshot server mismatch");
+  return loadEventSnapshot(snapshot);
 }

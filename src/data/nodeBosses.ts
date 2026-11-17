@@ -1,10 +1,10 @@
 // Boss từng node theo đợt event × cụm server:
-// src/data/node-bosses/<ngày đầu đợt>/<server>.json — gameNodeId → monsterId
+// src/data/event-cache/<ngày đầu đợt>/<server>/bosses.json — gameNodeId → monsterId
 // (boss hiện ở kính lúp chi tiết cứ điểm). Boss cố định suốt đợt trong một cụm nên không nằm trong
 // snapshot từng ngày; cụm thiếu file → node không có boss.
 
 const modules = import.meta.glob<Record<string, number>>(
-  "./node-bosses/*/*.json",
+  "./event-cache/*/*/bosses.json",
   { eager: true, import: "default" }
 );
 
@@ -12,7 +12,7 @@ export function nodeBossesOf(
   server: string,
   round: string
 ): Record<string, number> {
-  return modules[`./node-bosses/${round}/${server}.json`] ?? {};
+  return modules[`./event-cache/${round}/${server}/bosses.json`] ?? {};
 }
 
 // Boss theo monsterId: tên (bỏ tiền tố "Tứ Hải-" của tên trong game) và model

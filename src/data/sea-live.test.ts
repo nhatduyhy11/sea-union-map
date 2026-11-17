@@ -103,7 +103,7 @@ test("Every valid board row becomes one contribution on a known island", () => {
     assert.match(entry.name, /^(#|\S)/);
   }
   // Player không brief hiển thị #id, không mất dòng.
-  const briefIds = new Set(Object.keys(raw.briefs));
+  const briefIds = new Set(Object.keys(liveDump.briefs));
   for (const entry of contributions) {
     if (!briefIds.has(entry.playerId))
       assert.equal(entry.name, `#${entry.playerId}`);
@@ -126,12 +126,12 @@ test("playerBoard keeps server top-200 order and joins brief names", () => {
   for (const row of playerBoard)
     if (row.name.startsWith("#")) assert.equal(row.name, `#${row.playerId}`);
   // guildId cùng rule contribution: brief trước, fallback guildRoster.
-  const roster = raw.guildRoster as Record<string, string>;
-  const briefs = raw.briefs as Record<string, { guildId?: string }>;
+  const roster = liveDump.guildRoster as Record<string, string>;
+  const briefs = liveDump.briefs as Record<string, { guildId?: string }>;
   for (const row of playerBoard)
     assert.equal(
       row.guildId,
-      briefs[row.playerId]?.guildId ?? roster[row.playerId]
+      roster[row.playerId] ?? briefs[row.playerId]?.guildId
     );
   assert.ok(
     playerBoard.some((row) => row.guildId),
@@ -160,6 +160,8 @@ test("factionGuilds keys map to directions; scores sum to a plausible total", ()
 test("fuel joins by direction; factions without base are dropped", () => {
   const dump: SeaLiveDump = {
     snapshotAt: "test",
+    eventStart: "261116",
+    server: "517",
     camp: {
       "1": { name: "Vịnh Thao Thiết", type: 1, pointRequire: 0 },
       "2": { name: "1-1Đảo Thử", type: 2, pointRequire: 1 },
@@ -169,6 +171,7 @@ test("fuel joins by direction; factions without base are dropped", () => {
     playerBoard: [],
     factionGuilds: {},
     guildNames: {},
+    guildPower: {},
     guildRoster: {},
     briefs: {},
     baseDir: { "Vịnh Thao Thiết": "north" },
