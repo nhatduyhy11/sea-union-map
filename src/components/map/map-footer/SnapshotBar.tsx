@@ -1,10 +1,22 @@
-import { EVENT_DAYS, dayLabel, dayOfMonth } from "../../../data/eventCalendar";
+import {
+  EVENT_ROUNDS,
+  dayLabel,
+  dayOfMonth,
+  roundDays,
+  roundLabel,
+} from "../../../data/eventCalendar";
 import { hasSnapshot, LIVE_SERVER } from "../../../data/snapshots";
-import { selectDay, today, useDataset } from "../../../stores/dataset";
+import {
+  selectDay,
+  selectRound,
+  today,
+  useDataset,
+} from "../../../stores/dataset";
 import styles from "./SnapshotBar.module.css";
 
-// Dãy nút 7 ngày event dưới legend canvas — xem lại diễn biến bản đồ theo
-// ngày (snapshot cuối ngày) của cụm đang chọn. Trạng thái nút:
+// Chọn đợt event + dãy nút các ngày của đợt dưới legend canvas — xem lại diễn
+// biến bản đồ theo ngày (snapshot cuối ngày) của cụm đang chọn. Đợt chưa tới
+// bị disable trong select. Trạng thái nút ngày:
 // - ngày chưa tới: xám, disable;
 // - ngày hiện tại: live (cụm LIVE_SERVER) — cụm khác click thì store fallback
 //   snapshot gần nhất;
@@ -13,6 +25,7 @@ import styles from "./SnapshotBar.module.css";
 //   thiếu", click → toast lỗi, không đổi màn hình.
 export function SnapshotBar() {
   const server = useDataset((state) => state.server);
+  const round = useDataset((state) => state.round);
   const activeDay = useDataset((state) => state.day);
   const loading = useDataset((state) => state.loading);
   const current = today();
@@ -20,7 +33,20 @@ export function SnapshotBar() {
   return (
     <div className={styles.bar}>
       <span className={styles.label}>Lịch sử</span>
-      {EVENT_DAYS.map((day) => {
+      <select
+        className={styles.round}
+        value={round}
+        aria-label="Đợt event"
+        title="Đợt event"
+        onChange={(event) => selectRound(event.target.value)}
+      >
+        {[...EVENT_ROUNDS].reverse().map((option) => (
+          <option key={option} value={option} disabled={option > current}>
+            {roundLabel(option)}
+          </option>
+        ))}
+      </select>
+      {roundDays(round).map((day) => {
         const future = day > current;
         const isToday = day === current;
         const missing = !future && !isToday && !hasSnapshot(day, server);

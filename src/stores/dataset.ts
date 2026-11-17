@@ -1,10 +1,14 @@
 import { create } from "zustand";
 import {
-  EVENT_DAYS,
-  LAST_EVENT_DAY,
+  EVENT_ROUNDS,
   battleCountdown,
+  currentRoundOf,
   dayLabel,
   eventDayOf,
+  isEventDay,
+  lastDayOf,
+  roundLabel,
+  roundOf,
 } from "../data/eventCalendar";
 import { nodeBossesOf } from "../data/nodeBosses";
 import { liveDump } from "../data/sea-live";
@@ -18,7 +22,7 @@ import { buildMapData, type MapData } from "../domain/mapData";
 import { resetRankingView } from "./commands";
 import { showToast } from "./toast";
 
-// Bộ dữ liệu đang xem: cụm server × ngày event. Mọi tab (canvas, BXH phe /
+// Bộ dữ liệu đang xem: cụm server × đợt × ngày event. Mọi tab (canvas, BXH phe /
 // cá nhân / cứ điểm, chi tiết node) đọc data qua useMapData() nên đổi cụm /
 // ngày là cả UI render lại theo bộ mới.
 //
@@ -27,33 +31,40 @@ import { showToast } from "./toast";
 // bản đầy đủ nhất, live dump có thể bake giữa war → ưu tiên snapshot, không
 // có mới dùng live; còn lại → snapshot
 // src/data/snapshots/<day>/<server>.json. Cụm khác LIVE_SERVER ở ngày hiện
-// tại chưa hỗ trợ live → fallback snapshot gần nhất của cụm đó. Đã qua hết
-// ngày event → mặc định snapshot cuối cùng của event (bản chốt).
+// tại chưa hỗ trợ live → fallback snapshot gần nhất của cụm đó. Hôm nay không
+// phải ngày event (giữa hai đợt / sau đợt cuối) → mặc định snapshot cuối cùng
+// của đợt gần nhất (bản chốt).
 export type DataSource = "live" | "snapshot";
 
 interface DatasetState {
   server: string;
-  // null = đang xem live ngoài lịch event (trước/sau 7 ngày event).
+  // Ngày đầu đợt đang xem (xem EVENT_ROUNDS).
+  round: string;
+  // null = đang xem live ngoài lịch event (trước đợt đầu tiên / giữa các đợt).
   day: string | null;
   source: DataSource;
   data: MapData;
   loading: boolean;
 }
 
-const liveData = buildMapData(liveDump, nodeBossesOf(LIVE_SERVER));
-
 export const today = () => eventDayOf(new Date());
-const inEvent = (day: string) =>
-  (EVENT_DAYS as readonly string[]).includes(day);
-const eventOver = () => today() > LAST_EVENT_DAY;
+// Ngoài ngày event mà đợt đầu đã bắt đầu → xem bản chốt của đợt gần nhất.
+const betweenRounds = () => !isEventDay(today()) && today() > EVENT_ROUNDS[0];
+
+// Live dump thuộc đợt hiện tại.
+const liveData = buildMapData(
+  liveDump,
+  nodeBossesOf(LIVE_SERVER, currentRoundOf(today()))
+);
 
 export const useDataset = create<DatasetState>()(() => ({
   server: LIVE_SERVER,
-  day: inEvent(today()) ? today() : null,
+  round: currentRoundOf(today()),
+  day: isEventDay(today()) ? today() : null,
   source: "live",
   data: liveData,
-  // Event đã qua: syncSourceWithClock lúc mount sẽ nạp snapshot cuối.
-  loading: eventOver(),
+  // Ngoài ngày event: syncSourceWithClock lúc mount sẽ nạp snapshot cuối.
+  loading: betweenRounds(),
 }));
 
 export const useMapData = () => useDataset((state) => state.data);
@@ -66,12 +77,13 @@ export const currentMapData = () => useDataset.getState().data;
 // khi đang xem đúng ngày hiện tại mà nguồn đang hiển thị khác nguồn resolve
 // yêu cầu — mở trang lúc 22:05 hay vừa qua mốc 22:00/10:00 đều tự chỉnh; đang
 // xem ngày cũ thì bỏ qua, không giật người dùng khỏi lịch sử. Đang xem live
-// ngoài lịch mà event đã qua hết → chuyển sang snapshot cuối cùng của event.
+// ngoài lịch mà đã qua đợt đầu → chuyển sang snapshot cuối cùng của đợt gần
+// nhất.
 export function syncSourceWithClock() {
   const { server, day, source } = useDataset.getState();
   if (day === null) {
-    if (!eventOver()) return;
-    const last = latestSnapshotDay(server, LAST_EVENT_DAY);
+    if (!betweenRounds()) return;
+    const last = latestSnapshotDay(server, today());
     if (last) void apply(server, last, "snapshot");
     else useDataset.setState({ loading: false });
     return;
@@ -101,9 +113,11 @@ let requestId = 0;
 
 async function apply(server: string, day: string, source: DataSource) {
   const id = ++requestId;
+  const round = roundOf(day) ?? currentRoundOf(day);
   if (source === "live") {
     useDataset.setState({
       server,
+      round,
       day,
       source,
       data: liveData,
@@ -115,10 +129,10 @@ async function apply(server: string, day: string, source: DataSource) {
   try {
     const data = buildMapData(
       await loadSnapshot(day, server),
-      nodeBossesOf(server)
+      nodeBossesOf(server, round)
     );
     if (id !== requestId) return;
-    useDataset.setState({ server, day, source, data, loading: false });
+    useDataset.setState({ server, round, day, source, data, loading: false });
   } catch (error) {
     if (id !== requestId) return;
     useDataset.setState({ loading: false });
@@ -130,9 +144,10 @@ async function apply(server: string, day: string, source: DataSource) {
   }
 }
 
-// Fallback khi (cụm, ngày) không có data: snapshot gần nhất tới hôm nay.
-function applyLatest(server: string, reason: string) {
-  const fallback = latestSnapshotDay(server, today());
+// Fallback khi (cụm, ngày) không có data: snapshot gần nhất tới `upTo` (mặc
+// định hôm nay) — có thể rơi về đợt trước nếu đợt này cụm chưa có snapshot.
+function applyLatest(server: string, reason: string, upTo = today()) {
+  const fallback = latestSnapshotDay(server, upTo);
   if (!fallback) {
     showToast("error", `Cụm ${server} chưa có snapshot nào`);
     return false;
@@ -171,11 +186,33 @@ export function selectServer(server: string) {
   const day = state.day ?? today();
   const source = resolve(server, day);
   if (source) void apply(server, day, source);
-  else if (server === LIVE_SERVER && inEvent(today()))
+  else if (server === LIVE_SERVER && isEventDay(today()))
     void apply(server, today(), "live");
   else if (
     !applyLatest(server, `Cụm ${server} chưa có data ngày ${dayLabel(day)}`)
   )
     return;
   resetRankingView();
+}
+
+// Chọn đợt (thanh lịch sử dưới canvas): đợt đang diễn ra → mở ngày hiện tại
+// như bấm nút ngày hôm nay; đợt đã qua → snapshot cuối cùng của cụm trong đợt
+// đó (bản chốt). Đợt chưa tới bị disable ở UI; cụm không có snapshot nào
+// trong đợt → toast lỗi, giữ nguyên màn hình.
+export function selectRound(round: string) {
+  const { server, round: active } = useDataset.getState();
+  if (round === active || round > today()) return;
+  if (roundOf(today()) === round) {
+    selectDay(today());
+    return;
+  }
+  const last = latestSnapshotDay(server, lastDayOf(round));
+  if (last && last >= round) {
+    void apply(server, last, "snapshot");
+    return;
+  }
+  showToast(
+    "error",
+    `Cụm ${server} chưa có snapshot nào của đợt ${roundLabel(round)}`
+  );
 }

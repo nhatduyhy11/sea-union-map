@@ -1,11 +1,15 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  addDays,
   battleCountdown,
+  currentRoundOf,
   dayLabel,
   dayOfMonth,
   eventDayOf,
-  eventRangeLabel,
+  roundDays,
+  roundLabel,
+  roundOf,
 } from "./eventCalendar";
 
 // Rule quy ngày snapshot: 22:00 → trước 10:00 hôm sau tính là ngày trước;
@@ -25,7 +29,30 @@ test("eventDayOf maps VN time onto event days via the 10:00 cutoff", () => {
 test("day labels", () => {
   assert.equal(dayOfMonth("261101"), "01");
   assert.equal(dayLabel("261028"), "28/10");
-  assert.equal(eventRangeLabel(), "26/10 – 01/11");
+  assert.equal(roundLabel("261026"), "26/10 – 01/11");
+  assert.equal(roundLabel("261116"), "16/11 – 22/11");
+});
+
+test("rounds span 7 days from their first day", () => {
+  assert.equal(addDays("261031", 1), "261101");
+  assert.equal(addDays("261231", 1), "270101");
+  assert.deepEqual(roundDays("261026"), [
+    "261026",
+    "261027",
+    "261028",
+    "261029",
+    "261030",
+    "261031",
+    "261101",
+  ]);
+  assert.equal(roundOf("261101"), "261026");
+  assert.equal(roundOf("261102"), null);
+  assert.equal(roundOf("261116"), "261116");
+  assert.equal(roundOf("261122"), "261116");
+  assert.equal(currentRoundOf("261020"), "261026");
+  assert.equal(currentRoundOf("261110"), "261026");
+  assert.equal(currentRoundOf("261118"), "261116");
+  assert.equal(currentRoundOf("261130"), "261116");
 });
 
 // Trong khung 10:00~22:00 → đếm tới 22:00; ngoài khung → 10:00 kế tiếp nếu
@@ -57,6 +84,25 @@ test("battleCountdown targets close, next open, or ended", () => {
     phase: "open",
     target: target("2026-11-01T22:00:00+07:00"),
   });
-  assert.deepEqual(at("2026-11-01T22:00:00+07:00"), { phase: "ended" });
-  assert.deepEqual(at("2026-11-02T09:00:00+07:00"), { phase: "ended" });
+  assert.deepEqual(at("2026-11-01T22:00:00+07:00"), {
+    phase: "ended",
+    round: "261026",
+  });
+  assert.deepEqual(at("2026-11-02T09:00:00+07:00"), {
+    phase: "ended",
+    round: "261026",
+  });
+  // Đợt kế tiếp còn trong vòng 7 ngày → đếm tới 10:00 ngày đầu đợt.
+  assert.deepEqual(at("2026-11-12T15:00:00+07:00"), {
+    phase: "closed",
+    target: target("2026-11-16T10:00:00+07:00"),
+  });
+  assert.deepEqual(at("2026-11-16T10:30:00+07:00"), {
+    phase: "open",
+    target: target("2026-11-16T22:00:00+07:00"),
+  });
+  assert.deepEqual(at("2026-11-22T22:00:00+07:00"), {
+    phase: "ended",
+    round: "261116",
+  });
 });

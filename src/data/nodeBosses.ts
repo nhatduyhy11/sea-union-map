@@ -3,15 +3,16 @@
 // (boss hiện ở kính lúp chi tiết cứ điểm). Boss cố định suốt đợt trong một cụm nên không nằm trong
 // snapshot từng ngày; cụm thiếu file → node không có boss.
 
-import { EVENT_DAYS } from "./eventCalendar";
-
 const modules = import.meta.glob<Record<string, number>>(
   "./node-bosses/*/*.json",
   { eager: true, import: "default" }
 );
 
-export function nodeBossesOf(server: string): Record<string, number> {
-  return modules[`./node-bosses/${EVENT_DAYS[0]}/${server}.json`] ?? {};
+export function nodeBossesOf(
+  server: string,
+  round: string
+): Record<string, number> {
+  return modules[`./node-bosses/${round}/${server}.json`] ?? {};
 }
 
 // Boss theo monsterId: tên (bỏ tiền tố "Tứ Hải-" của tên trong game) và model
