@@ -10,6 +10,13 @@
   background: #fefdfa;
 }
 
+/* React Flow chỉ đặt touch-action: none trên pane; node đảo (pointer-events
+   auto) để mặc định auto nên trên máy thật vuốt bắt đầu từ một đảo bị trình
+   duyệt giành làm cuộn trang, map không pan/pinch. Khóa cho cả canvas. */
+.mapCanvas :global(.react-flow) {
+  touch-action: none;
+}
+
 .zoomLabel {
   position: absolute;
   left: 55px;
