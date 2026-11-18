@@ -2007,12 +2007,26 @@
    "server": 1,
    "guild": "血夜回廊"
   },
+  "153388": {
+   "name": "ÁCMA",
+   "power": 1489877,
+   "server": 1,
+   "guildId": "40012",
+   "guild": "TH"
+  },
   "153775": {
    "name": "Regent",
    "power": 2204676,
    "server": 1,
    "guildId": "20008",
    "guild": "BLACK"
+  },
+  "163758": {
+   "name": "鬼",
+   "power": 2776115,
+   "server": 1,
+   "guildId": "10001",
+   "guild": "怪人研究所"
   },
   "173789": {
    "name": "XinChào",
@@ -2063,6 +2077,13 @@
    "guildId": "10043",
    "guild": "至尊星耀"
   },
+  "335173": {
+   "name": "birdie",
+   "power": 5405940,
+   "server": 3,
+   "guildId": "10010",
+   "guild": "血夜回廊"
+  },
   "345085": {
    "name": "血夜戰",
    "guildId": "10010",
@@ -2104,6 +2125,13 @@
    "power": 7380505,
    "server": 4,
    "guild": "血夜回廊"
+  },
+  "416719": {
+   "name": "血夜iFerr",
+   "power": 5444011,
+   "server": 4,
+   "guildId": "40012",
+   "guild": "TH"
   },
   "466297": {
    "name": "Hello",
@@ -2438,6 +2466,13 @@
    "server": 14,
    "guild": "神族"
   },
+  "1466501": {
+   "name": "神族Meepo",
+   "power": 915115,
+   "server": 14,
+   "guildId": "140008",
+   "guild": "神族"
+  },
   "1466581": {
    "name": "神妃",
    "guildId": "140008",
@@ -2648,6 +2683,13 @@
    "server": 19,
    "guild": "SUPREME"
   },
+  "1981375": {
+   "name": "SuEnjel",
+   "power": 2167494,
+   "server": 19,
+   "guildId": "170016",
+   "guild": "SUPREME"
+  },
   "2173672": {
    "name": "Sulyoon",
    "guildId": "170016",
@@ -2788,6 +2830,13 @@
    "server": 25,
    "guild": "WOLVES"
   },
+  "2628127": {
+   "name": "WOxNic",
+   "power": 7886109,
+   "server": 26,
+   "guildId": "300003",
+   "guild": "WOLVES"
+  },
   "2628214": {
    "name": "WOxLovE",
    "guildId": "300003",
@@ -2807,6 +2856,13 @@
    "guildId": "300003",
    "power": 2923331,
    "server": 26,
+   "guild": "WOLVES"
+  },
+  "2698923": {
+   "name": "WOxcony",
+   "power": 11085936,
+   "server": 26,
+   "guildId": "300003",
    "guild": "WOLVES"
   },
   "2709026": {
@@ -2984,6 +3040,13 @@
    "server": 40,
    "guild": "หักวาง"
   },
+  "4062665": {
+   "name": "DaHTD",
+   "power": 6170876,
+   "server": 40,
+   "guildId": "350011",
+   "guild": "หักวาง"
+  },
   "4183672": {
    "name": "Vinalin",
    "guildId": "410013",
@@ -3024,6 +3087,20 @@
    "guildId": "490022",
    "power": 85381179,
    "server": 49,
+   "guild": "RDFall"
+  },
+  "4931154": {
+   "name": "RDkenze",
+   "power": 4688322,
+   "server": 49,
+   "guildId": "490022",
+   "guild": "RDFall"
+  },
+  "4971857": {
+   "name": "RDnosi",
+   "power": 561484,
+   "server": 49,
+   "guildId": "490022",
    "guild": "RDFall"
   },
   "4991430": {
@@ -3103,6 +3180,13 @@
    "server": 52,
    "guild": "RDFall"
   },
+  "5355784": {
+   "name": "potatob",
+   "power": 11398987,
+   "server": 53,
+   "guildId": "490022",
+   "guild": "RDFall"
+  },
   "5365678": {
    "name": "RDLxyoz",
    "guildId": "490022",
@@ -3138,12 +3222,26 @@
    "server": 56,
    "guild": "RDFall"
   },
+  "5688223": {
+   "name": "RDFlash",
+   "power": 10160775,
+   "server": 56,
+   "guildId": "490022",
+   "guild": "RDFall"
+  },
   "5941255": {
    "name": "REiGUN",
    "guildId": "620013",
    "power": 14830882,
    "server": 59,
    "guild": "หักว่าง"
+  },
+  "5971448": {
+   "name": "FoglemanBrooklynn",
+   "power": 638651,
+   "server": 59,
+   "guildId": "590011",
+   "guild": "คนไทยS59"
   },
   "6113667": {
    "name": "หักKitt",
@@ -3172,6 +3270,13 @@
    "power": 13811108,
    "server": 62,
    "guild": "หักว่าง"
+  },
+  "6294898": {
+   "name": "กุลพัฒน์รุ่ง",
+   "power": 277079,
+   "server": 62,
+   "guildId": "610044",
+   "guild": "Solo"
   },
   "6305379": {
    "name": "หักสาสส",

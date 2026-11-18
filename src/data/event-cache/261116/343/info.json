@@ -2927,6 +2927,13 @@
    "server": 323,
    "guild": "4M"
   },
+  "32365177": {
+   "name": "Amara25",
+   "power": 4794308,
+   "server": 323,
+   "guildId": "3230012",
+   "guild": "4M"
+  },
   "32406686": {
    "name": "FiyaDegi",
    "guildId": "3240012",
@@ -2997,11 +3004,25 @@
    "server": 326,
    "guild": "EXILE"
   },
+  "32719815": {
+   "name": "EXsmthz",
+   "power": 15358223,
+   "server": 327,
+   "guildId": "3260003",
+   "guild": "EXILE"
+  },
   "32739449": {
    "name": "EXarlov",
    "guildId": "3260003",
    "power": 2567581,
    "server": 327,
+   "guild": "EXILE"
+  },
+  "32759413": {
+   "name": "EXreng",
+   "power": 14022974,
+   "server": 327,
+   "guildId": "3260003",
    "guild": "EXILE"
   },
   "32789743": {
@@ -3200,6 +3221,13 @@
    "guildId": "3340004",
    "guild": "Synergy"
   },
+  "33456796": {
+   "name": "Hello",
+   "power": 7637978,
+   "server": 334,
+   "guildId": "3340004",
+   "guild": "Synergy"
+  },
   "33466119": {
    "name": "NAMลื่น",
    "guildId": "3340004",
@@ -3345,6 +3373,20 @@
    "guildId": "3370038",
    "power": 18282346,
    "server": 337,
+   "guild": "DRAG๏N"
+  },
+  "33719813": {
+   "name": "เจริญจิตคามิน",
+   "power": 9908379,
+   "server": 337,
+   "guildId": "3400009",
+   "guild": "Drag๏nX"
+  },
+  "33729129": {
+   "name": "DR๏TeeH",
+   "power": 23399668,
+   "server": 337,
+   "guildId": "3370038",
    "guild": "DRAG๏N"
   },
   "33729438": {
@@ -3625,6 +3667,13 @@
    "server": 342,
    "guild": "THEBOSS"
   },
+  "34244865": {
+   "name": "หนูจิ้บ",
+   "power": 8917318,
+   "server": 342,
+   "guildId": "3440002",
+   "guild": "THEBOSS"
+  },
   "34305076": {
    "name": "Dejavu",
    "guildId": "3440002",
@@ -3748,6 +3797,13 @@
    "power": 8457192,
    "server": 344,
    "guild": "THEBOSS"
+  },
+  "34446908": {
+   "name": "Necroon",
+   "power": 3997300,
+   "server": 344,
+   "guildId": "3430080",
+   "guild": "25Hours"
   },
   "34456005": {
    "name": "THmax",
@@ -3903,6 +3959,13 @@
    "server": 351,
    "guild": "CoVID"
   },
+  "35123282": {
+   "name": "Qais16",
+   "power": 8622350,
+   "server": 351,
+   "guildId": "3490017",
+   "guild": "Piggy"
+  },
   "35133587": {
    "name": "PugaCino",
    "guildId": "3510020",
@@ -3937,6 +4000,13 @@
    "server": 351,
    "guildId": "3500010",
    "guild": "CoVID"
+  },
+  "35173364": {
+   "name": "Mahesa",
+   "power": 4304034,
+   "server": 351,
+   "guildId": "3490017",
+   "guild": "Piggy"
   },
   "35193075": {
    "name": "RociCad",
@@ -4027,6 +4097,13 @@
    "guildId": "3540019",
    "power": 35175893,
    "server": 353,
+   "guild": "MaThiên"
+  },
+  "35335208": {
+   "name": "ChiếcLanNhã",
+   "power": 4242271,
+   "server": 353,
+   "guildId": "3540019",
    "guild": "MaThiên"
   },
   "35345108": {
@@ -4169,6 +4246,13 @@
    "server": 354,
    "guild": "MaThiên"
   },
+  "35456384": {
+   "name": "Maju",
+   "power": 10980700,
+   "server": 354,
+   "guildId": "3540019",
+   "guild": "MaThiên"
+  },
   "35456704": {
    "name": "Mashu",
    "guildId": "3540019",
@@ -4225,6 +4309,13 @@
    "guildId": "3540019",
    "guild": "MaThiên"
   },
+  "35678607": {
+   "name": "Chit229",
+   "power": 6887717,
+   "server": 356,
+   "guildId": "3530013",
+   "guild": "CáiBang"
+  },
   "35709014": {
    "name": "HugoBae",
    "guildId": "3580012",
@@ -4245,6 +4336,13 @@
    "power": 1087557,
    "server": 357,
    "guild": "VôCực"
+  },
+  "35739120": {
+   "name": "VNKhoa",
+   "power": 11152569,
+   "server": 357,
+   "guildId": "3580012",
+   "guild": "VNNO1"
   },
   "35739139": {
    "name": "VNTuty",
@@ -4673,6 +4771,13 @@
    "server": 369,
    "guild": "Fusion"
   },
+  "36951633": {
+   "name": "CútGiaÂn",
+   "power": 27639532,
+   "server": 369,
+   "guildId": "3690011",
+   "guild": "Fusion"
+  },
   "36961467": {
    "name": "FuNight",
    "guildId": "3690011",
@@ -4685,6 +4790,13 @@
    "guildId": "3690011",
    "power": 9956830,
    "server": 369,
+   "guild": "Fusion"
+  },
+  "36991344": {
+   "name": "FuJAV",
+   "power": 13110532,
+   "server": 369,
+   "guildId": "3690011",
    "guild": "Fusion"
   },
   "36991832": {
@@ -4757,6 +4869,13 @@
    "server": 371,
    "guild": "FAKEONE"
   },
+  "37183472": {
+   "name": "NgôMinhLợi",
+   "power": 9129722,
+   "server": 371,
+   "guildId": "3700010",
+   "guild": "FAKEONE"
+  },
   "37193151": {
    "name": "LeHàThanh",
    "guildId": "3690011",
@@ -4769,6 +4888,13 @@
    "guildId": "3690011",
    "power": 14436570,
    "server": 371,
+   "guild": "Fusion"
+  },
+  "37204668": {
+   "name": "Fu×Yeon",
+   "power": 9343346,
+   "server": 372,
+   "guildId": "3690011",
    "guild": "Fusion"
   },
   "37214180": {
@@ -4784,6 +4910,13 @@
    "power": 27528191,
    "server": 372,
    "guild": "Fusion"
+  },
+  "37234076": {
+   "name": "Devil",
+   "power": 10047573,
+   "server": 372,
+   "guildId": "3700010",
+   "guild": "FAKEONE"
   },
   "37234264": {
    "name": "MàLiênPhương",
@@ -4804,6 +4937,13 @@
    "guildId": "3690011",
    "power": 3731722,
    "server": 372,
+   "guild": "Fusion"
+  },
+  "37294367": {
+   "name": "Banhbao",
+   "power": 5468151,
+   "server": 372,
+   "guildId": "3690011",
    "guild": "Fusion"
   },
   "37305593": {
@@ -4848,6 +4988,13 @@
    "server": 374,
    "guild": "ThiênFủ"
   },
+  "37456205": {
+   "name": "Th×Neol",
+   "power": 14300790,
+   "server": 374,
+   "guildId": "3760008",
+   "guild": "ThiênFủ"
+  },
   "37496091": {
    "name": "ThxDanh",
    "guildId": "3760008",
@@ -4869,6 +5016,13 @@
    "server": 376,
    "guild": "ThiênFủ"
   },
+  "37618222": {
+   "name": "Soul",
+   "power": 8434359,
+   "server": 376,
+   "guildId": "3760008",
+   "guild": "ThiênFủ"
+  },
   "37648929": {
    "name": "ThxMei",
    "guildId": "3760008",
@@ -4881,6 +5035,13 @@
    "guildId": "3760008",
    "power": 20559313,
    "server": 376,
+   "guild": "ThiênFủ"
+  },
+  "37688019": {
+   "name": "MangHoàngPhượng",
+   "power": 9412673,
+   "server": 376,
+   "guildId": "3760008",
    "guild": "ThiênFủ"
   },
   "37698012": {
@@ -4911,6 +5072,13 @@
    "server": 377,
    "guild": "VAF"
   },
+  "37759833": {
+   "name": "BeiMe",
+   "power": 11149448,
+   "server": 377,
+   "guildId": "3790017",
+   "guild": "VAF"
+  },
   "37779920": {
    "name": "MrCường",
    "guildId": "3790017",
@@ -4937,6 +5105,13 @@
    "guildId": "3790017",
    "power": 11906047,
    "server": 379,
+   "guild": "VAF"
+  },
+  "37941138": {
+   "name": "VAFFuDo",
+   "power": 5665459,
+   "server": 379,
+   "guildId": "3790017",
    "guild": "VAF"
   },
   "37951558": {

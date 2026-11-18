@@ -2,7 +2,7 @@
 
 Cheat sheet **cho người** (human-first, quick action): chỉ ghi các lệnh chủ dự án hay dùng
 nhất, copy-paste là chạy. Không phải tài liệu đầy đủ — chi tiết flag và luồng dữ liệu xem
-[README.BE.md](../README.BE.md) (crawler) và [README.md](../README.md) (Web UI).
+[README.BE.md](../../README.BE.md) (crawler) và [README.md](../../README.md) (Web UI).
 
 Khi được hỏi "chạy X bằng lệnh gì", tra file này **trước**, không đủ mới xuống README.
 
@@ -41,11 +41,15 @@ uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545
 
 # Crawl thẳng vào snapshot theo ngày, tự đặt tên <server>.json
 uv run python tools/socket_log/sea_socket/crawler.py \
-  --dump-out src/data/snapshots/<YYMMDD>/ --profile .tmp/pjen
+  --dump-out src/data/snapshots/<YYMMDD>/ \
+  --profile .tmp/pjen
 
 # Fresh auth từ JSON localStorage SDK (không cần profile)
 uv run python tools/socket_log/sea_socket/crawler.py \
-  --dump-out src/data/snapshots/<YYMMDD>/ --auth-json /path/to/auth.json --acc 'email@example.com'
+  --dump-out src/data/snapshots/<YYMMDD>/ \
+  --auth-json /path/to/auth.json \
+  --acc 'email@example.com' --headless
+
 
 # Chỉ lấy raw run, không dump
 uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --no-dump
@@ -56,13 +60,15 @@ uv run python tools/socket_log/sea_socket/crawler.py --profile .tmp/p545 --no-du
 ```sh
 uv run python scripts/fullcrawl.py /path/to/auth.json --dry-run          # list acc + validate, chưa chạy
 uv run python scripts/fullcrawl.py /path/to/auth.json                    # crawl tuần tự, dump vào src/data/snapshots/<event-day>/
-uv run python scripts/fullcrawl.py /path/to/auth.json --headless --timeout-min 10
+uv run python scripts/fullcrawl.py /path/to/auth.json \
+ --headless --timeout-min 10
 uv run python scripts/fullcrawl.py /path/to/auth.json --only 'a@x.com,b@x.com'
 uv run python scripts/fullcrawl.py /path/to/auth.json --fail-fast        # dừng cả loạt khi 1 acc FAIL
 ```
 
 Log mỗi lần chạy: `.tmp/fullcrawl.<yymmdd_HHMMSS>.log`.
 
+===============================
 ## Crawl mine (Khai Thác Guild)
 
 ```sh

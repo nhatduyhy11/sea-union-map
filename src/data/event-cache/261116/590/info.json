@@ -3300,6 +3300,13 @@
   "6400008": 1557804
  },
  "briefs": {
+  "57749612": {
+   "name": "GaThành",
+   "power": 10386866,
+   "server": 577,
+   "guildId": "5780012",
+   "guild": "Gamble"
+  },
   "57769524": {
    "name": "GaCải",
    "guildId": "5780012",
@@ -3312,6 +3319,13 @@
    "guildId": "5780012",
    "power": 13748733,
    "server": 578,
+   "guild": "Gamble"
+  },
+  "57840527": {
+   "name": "Gahồn",
+   "power": 12114968,
+   "server": 578,
+   "guildId": "5780012",
    "guild": "Gamble"
   },
   "57840929": {
@@ -3347,6 +3361,13 @@
    "guildId": "5780012",
    "power": 14817004,
    "server": 578,
+   "guild": "Gamble"
+  },
+  "57890738": {
+   "name": "ĐếAnet",
+   "power": 13550217,
+   "server": 578,
+   "guildId": "5780012",
    "guild": "Gamble"
   },
   "57971856": {
@@ -3468,6 +3489,13 @@
    "server": 582,
    "guild": "Mythic"
   },
+  "58365501": {
+   "name": "MorganT",
+   "power": 8167250,
+   "server": 583,
+   "guildId": "5830017",
+   "guild": "PHO"
+  },
   "58385084": {
    "name": "MyYuta",
    "guildId": "5820011",
@@ -3552,6 +3580,13 @@
    "guildId": "5870038",
    "guild": "ST"
   },
+  "58719816": {
+   "name": "STxKT2",
+   "power": 8809119,
+   "server": 587,
+   "guildId": "5870038",
+   "guild": "ST"
+  },
   "58719921": {
    "name": "COVID",
    "guildId": "5870038",
@@ -3564,6 +3599,20 @@
    "guildId": "5870038",
    "power": 10953168,
    "server": 587,
+   "guild": "ST"
+  },
+  "58759614": {
+   "name": "STxVeld",
+   "power": 5651141,
+   "server": 587,
+   "guildId": "5870038",
+   "guild": "ST"
+  },
+  "58769017": {
+   "name": "STsPhuc",
+   "power": 32327162,
+   "server": 587,
+   "guildId": "5870038",
    "guild": "ST"
   },
   "58789812": {
@@ -4120,6 +4169,13 @@
    "guildId": "5950011",
    "guild": "Asgard"
   },
+  "59537420": {
+   "name": "AsgBéo",
+   "power": 9461240,
+   "server": 595,
+   "guildId": "5950011",
+   "guild": "Asgard"
+  },
   "59537690": {
    "name": "Ashera",
    "guildId": "5950011",
@@ -4358,6 +4414,13 @@
    "guildId": "5990004",
    "guild": "Gao"
   },
+  "60002146": {
+   "name": "NghịkL",
+   "power": 4367006,
+   "server": 600,
+   "guildId": "5980004",
+   "guild": "ไทยสู้"
+  },
   "60032375": {
    "name": "GaoXipo",
    "guildId": "5990004",
@@ -4412,6 +4475,13 @@
    "guildId": "6040057",
    "power": 12900258,
    "server": 602,
+   "guild": "NGHIỆN"
+  },
+  "60244567": {
+   "name": "NG×Koro",
+   "power": 19238894,
+   "server": 602,
+   "guildId": "6040057",
    "guild": "NGHIỆN"
   },
   "60274082": {
@@ -4603,6 +4673,13 @@
    "server": 605,
    "guild": "JUSTICE"
   },
+  "60648002": {
+   "name": "NoName",
+   "power": 10122863,
+   "server": 606,
+   "guildId": "6060007",
+   "guild": "ไทจ้า"
+  },
   "60668604": {
    "name": "ฮ่องเต้",
    "guildId": "6060007",
@@ -4683,6 +4760,13 @@
   "60779210": {
    "name": "Juhehe",
    "power": 12820795,
+   "server": 607,
+   "guildId": "6070010",
+   "guild": "JUSTICE"
+  },
+  "60789539": {
+   "name": "ChuTieu",
+   "power": 9364231,
    "server": 607,
    "guildId": "6070010",
    "guild": "JUSTICE"
@@ -4825,6 +4909,13 @@
    "guildId": "6100003",
    "power": 402497,
    "server": 610,
+   "guild": "Døminus"
+  },
+  "61072360": {
+   "name": "DOxBEN",
+   "power": 15537850,
+   "server": 610,
+   "guildId": "6100003",
    "guild": "Døminus"
   },
   "61082846": {
@@ -5009,6 +5100,13 @@
    "guildId": "6140006",
    "guild": "Hades"
   },
+  "61406182": {
+   "name": "CHMJ",
+   "power": 10713477,
+   "server": 614,
+   "guildId": "6150007",
+   "guild": "CHẢNH"
+  },
   "61507010": {
    "name": "TíKiểng",
    "power": 10208326,
@@ -5170,6 +5268,13 @@
    "guildId": "6180049",
    "guild": "Sunnhỏ"
   },
+  "61830147": {
+   "name": "NGoyhoy",
+   "power": 8223250,
+   "server": 618,
+   "guildId": "6180047",
+   "guild": "love"
+  },
   "61840349": {
    "name": "GExGió",
    "guildId": "6190011",
@@ -5190,6 +5295,13 @@
    "power": 8173991,
    "server": 618,
    "guild": "love"
+  },
+  "61901258": {
+   "name": "GExNam",
+   "power": 8824339,
+   "server": 619,
+   "guildId": "6190011",
+   "guild": "GENESIS"
   },
   "61901732": {
    "name": "GExBEO",
@@ -5294,6 +5406,13 @@
    "guildId": "6230012",
    "power": 10788311,
    "server": 621,
+   "guild": "DEATH"
+  },
+  "62204060": {
+   "name": "DExLeo",
+   "power": 7802018,
+   "server": 622,
+   "guildId": "6230012",
    "guild": "DEATH"
   },
   "62234891": {
@@ -5471,6 +5590,13 @@
    "guildId": "6280003",
    "guild": "VICTORY"
   },
+  "62901350": {
+   "name": "shenzi",
+   "power": 505960,
+   "server": 629,
+   "guildId": "6310009",
+   "guild": "isLOSER"
+  },
   "62921941": {
    "name": "SandersCayden",
    "guildId": "6310009",
@@ -5576,6 +5702,13 @@
    "server": 630,
    "guild": "SReign"
   },
+  "63082775": {
+   "name": "SRluann",
+   "power": 14452162,
+   "server": 630,
+   "guildId": "6300008",
+   "guild": "SReign"
+  },
   "63082975": {
    "name": "SRD02",
    "power": 3018815,
@@ -5665,6 +5798,13 @@
    "guildId": "6300008",
    "power": 12633811,
    "server": 632,
+   "guild": "SReign"
+  },
+  "63244997": {
+   "name": "SRxSun",
+   "power": 8422696,
+   "server": 632,
+   "guildId": "6300008",
    "guild": "SReign"
   },
   "63254968": {
@@ -5800,6 +5940,13 @@
    "server": 634,
    "guild": "VIE"
   },
+  "63476884": {
+   "name": "Sang",
+   "power": 5523601,
+   "server": 634,
+   "guildId": "6330009",
+   "guild": "เสี่ยว"
+  },
   "63496490": {
    "name": "ALZang",
    "guildId": "6350013",
@@ -5866,6 +6013,13 @@
   "63567509": {
    "name": "VItamin",
    "power": 5221037,
+   "server": 635,
+   "guildId": "6350013",
+   "guild": "VIE"
+  },
+  "63567796": {
+   "name": "VIolet",
+   "power": 6185476,
    "server": 635,
    "guildId": "6350013",
    "guild": "VIE"

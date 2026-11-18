@@ -1904,6 +1904,13 @@
   "1920021": 5760998
  },
  "briefs": {
+  "12901744": {
+   "name": "มายๆ",
+   "power": 5447703,
+   "server": 129,
+   "guildId": "1310008",
+   "guild": "24Hours"
+  },
   "13123551": {
    "name": "Alex",
    "guildId": "1330005",
@@ -1931,6 +1938,13 @@
    "power": 6007091,
    "server": 132,
    "guild": "Lurker"
+  },
+  "13294464": {
+   "name": "WangLin",
+   "power": 1940183,
+   "server": 132,
+   "guildId": "1310008",
+   "guild": "24Hours"
   },
   "13315174": {
    "name": "Jared",
@@ -2079,6 +2093,13 @@
    "guildId": "1380005",
    "guild": "NOCTURN"
   },
+  "13911642": {
+   "name": "Ph债主",
+   "power": 4294416,
+   "server": 139,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
   "13931642": {
    "name": "PhxZero",
    "guildId": "1390004",
@@ -2226,11 +2247,25 @@
    "server": 143,
    "guild": "ShadowS143"
   },
+  "14365894": {
+   "name": "ShWhist",
+   "power": 20305557,
+   "server": 143,
+   "guildId": "1430003",
+   "guild": "ShadowS143"
+  },
   "14375785": {
    "name": "Wolfx",
    "guildId": "1430003",
    "power": 22624369,
    "server": 143,
+   "guild": "ShadowS143"
+  },
+  "14375994": {
+   "name": "ShAegyo",
+   "power": 17306020,
+   "server": 143,
+   "guildId": "1430003",
    "guild": "ShadowS143"
   },
   "14385094": {
@@ -2499,6 +2534,13 @@
    "server": 149,
    "guild": "Xenoria"
   },
+  "14921474": {
+   "name": "Xeboo",
+   "power": 7498419,
+   "server": 149,
+   "guildId": "1470011",
+   "guild": "Xenoria"
+  },
   "14971164": {
    "name": "UNRyzen",
    "guildId": "1470011",
@@ -2625,6 +2667,13 @@
    "power": 638105,
    "server": 153
   },
+  "15406103": {
+   "name": "soLords",
+   "power": 10662631,
+   "server": 154,
+   "guildId": "1550015",
+   "guild": "soul"
+  },
   "15406382": {
    "name": "soLoNG",
    "guildId": "1550015",
@@ -2715,6 +2764,13 @@
    "server": 155,
    "guildId": "1550015",
    "guild": "soul"
+  },
+  "15567715": {
+   "name": "drak",
+   "power": 4031885,
+   "server": 155,
+   "guildId": "1540014",
+   "guild": "No.One"
   },
   "15567790": {
    "name": "soS",
@@ -2840,6 +2896,13 @@
    "server": 162,
    "guild": "KDKMP"
   },
+  "16426682": {
+   "name": "night",
+   "power": 3476997,
+   "server": 164,
+   "guildId": "1670011",
+   "guild": "JoKer"
+  },
   "16456702": {
    "name": "nana",
    "guildId": "1670011",
@@ -2951,6 +3014,13 @@
    "power": 797413,
    "server": 170,
    "guild": "HOT2"
+  },
+  "17002659": {
+   "name": "HOTlee",
+   "power": 14296317,
+   "server": 170,
+   "guildId": "1720033",
+   "guild": "HOT"
   },
   "17012941": {
    "name": "HOTBie",
@@ -3225,6 +3295,13 @@
    "server": 175,
    "guild": "TH.Xeno"
   },
+  "17517500": {
+   "name": "THDEVIL",
+   "power": 6493523,
+   "server": 175,
+   "guildId": "1740040",
+   "guild": "TH.Xeno"
+  },
   "17537216": {
    "name": "TH.NY",
    "guildId": "1740040",
@@ -3274,11 +3351,32 @@
    "server": 176,
    "guild": "TH.Xeno"
   },
+  "17628411": {
+   "name": "THSawit",
+   "power": 10744567,
+   "server": 176,
+   "guildId": "1740040",
+   "guild": "TH.Xeno"
+  },
+  "17628616": {
+   "name": "THLucky",
+   "power": 15883486,
+   "server": 176,
+   "guildId": "1740040",
+   "guild": "TH.Xeno"
+  },
   "17658414": {
    "name": "THSetsu",
    "guildId": "1740040",
    "power": 13443275,
    "server": 176,
+   "guild": "TH.Xeno"
+  },
+  "17678913": {
+   "name": "THMyth",
+   "power": 11733373,
+   "server": 176,
+   "guildId": "1740040",
    "guild": "TH.Xeno"
   },
   "17698141": {

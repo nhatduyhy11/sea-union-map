@@ -2304,6 +2304,13 @@
    "server": 257,
    "guild": "猛鬼抽象派"
   },
+  "25769425": {
+   "name": "猛鬼梅川内酷",
+   "power": 22450158,
+   "server": 257,
+   "guildId": "2570014",
+   "guild": "猛鬼抽象派"
+  },
   "25779915": {
    "name": "猛鬼哇",
    "guildId": "2570014",
@@ -2458,6 +2465,13 @@
    "server": 262,
    "guild": "猛鬼抽象派"
   },
+  "26274895": {
+   "name": "猛鬼Amba",
+   "power": 3934875,
+   "server": 262,
+   "guildId": "2570014",
+   "guild": "猛鬼抽象派"
+  },
   "26284398": {
    "name": "InlecA",
    "power": 8140972,
@@ -2570,6 +2584,13 @@
    "server": 266,
    "guild": "WraithM"
   },
+  "26658902": {
+   "name": "WrMBG",
+   "power": 773220,
+   "server": 266,
+   "guildId": "2650007",
+   "guild": "WraithM"
+  },
   "26668424": {
    "name": "WrMrx",
    "guildId": "2650007",
@@ -2633,6 +2654,13 @@
    "server": 271,
    "guild": "WraithM"
   },
+  "27133866": {
+   "name": "WrxNeko",
+   "power": 13614406,
+   "server": 271,
+   "guildId": "2650007",
+   "guild": "WraithM"
+  },
   "27193750": {
    "name": "WrBxby",
    "guildId": "2650007",
@@ -2687,6 +2715,13 @@
    "guildId": "2760011",
    "power": 21955136,
    "server": 273,
+   "guild": "OLympus"
+  },
+  "27355687": {
+   "name": "OLKayzR",
+   "power": 14490702,
+   "server": 273,
+   "guildId": "2760011",
    "guild": "OLympus"
   },
   "27355900": {
@@ -2772,6 +2807,13 @@
    "power": 10441605,
    "server": 277,
    "guild": "OLympus"
+  },
+  "27749016": {
+   "name": "Malin",
+   "power": 2137701,
+   "server": 277,
+   "guildId": "2770009",
+   "guild": "CASTLE"
   },
   "27759452": {
    "name": "GRAY",
@@ -2934,6 +2976,13 @@
    "server": 287,
    "guild": "不朽神域"
   },
+  "28719715": {
+   "name": "不朽老木",
+   "power": 25850760,
+   "server": 287,
+   "guildId": "2870009",
+   "guild": "不朽神域"
+  },
   "28729518": {
    "name": "不朽小湿弟",
    "guildId": "2870009",
@@ -2960,6 +3009,13 @@
    "guildId": "2870009",
    "power": 14771998,
    "server": 287,
+   "guild": "不朽神域"
+  },
+  "28769220": {
+   "name": "不朽璃鸢",
+   "power": 12968686,
+   "server": 287,
+   "guildId": "2870009",
    "guild": "不朽神域"
   },
   "28769528": {
@@ -3037,6 +3093,13 @@
    "guildId": "2900013",
    "power": 2119072,
    "server": 289,
+   "guild": "Legends"
+  },
+  "28941450": {
+   "name": "DukoCija",
+   "power": 165204,
+   "server": 289,
+   "guildId": "2900013",
    "guild": "Legends"
   },
   "28961730": {
@@ -3347,6 +3410,13 @@
    "server": 300,
    "guild": "VENTUR."
   },
+  "30042061": {
+   "name": "Vampire",
+   "power": 1117414,
+   "server": 300,
+   "guildId": "2970014",
+   "guild": "VENTUR."
+  },
   "30092940": {
    "name": "แฉล้มพงศ์เอกชัย",
    "guildId": "3000018",
@@ -3486,6 +3556,13 @@
    "power": 14947110,
    "server": 304,
    "guild": "VENTUR."
+  },
+  "30527228": {
+   "name": "zTKoy",
+   "power": 17816299,
+   "server": 305,
+   "guildId": "3070003",
+   "guild": "zTurf"
   },
   "30537229": {
    "name": "zTali",
@@ -3648,6 +3725,13 @@
    "server": 310,
    "guild": "zTurf"
   },
+  "31032164": {
+   "name": "RUmble",
+   "power": 12139428,
+   "server": 310,
+   "guildId": "3070003",
+   "guild": "zTurf"
+  },
   "31032242": {
    "name": "RUxGiyu",
    "guildId": "3070003",
@@ -3727,6 +3811,13 @@
    "power": 16134077,
    "server": 313,
    "guild": "永恆放逐"
+  },
+  "31325388": {
+   "name": "PasaHimo",
+   "power": 1599111,
+   "server": 313,
+   "guildId": "3160016",
+   "guild": "XDChoco"
   },
   "31325604": {
    "name": "Xdabd",
@@ -4005,6 +4096,13 @@
    "guildId": "3180010",
    "power": 9922730,
    "server": 318,
+   "guild": "永恆放逐"
+  },
+  "31890628": {
+   "name": "丝袜小姐",
+   "power": 13764319,
+   "server": 318,
+   "guildId": "3180010",
    "guild": "永恆放逐"
   },
   "31981457": {

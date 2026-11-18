@@ -2004,6 +2004,13 @@
    "server": 194,
    "guild": "SD夜间美梦"
   },
+  "19456100": {
+   "name": "SDตั๋วE",
+   "power": 14996818,
+   "server": 194,
+   "guildId": "1950011",
+   "guild": "SD夜间美梦"
+  },
   "19507106": {
    "name": "SD天空子",
    "guildId": "1950011",
@@ -2674,11 +2681,25 @@
    "server": 213,
    "guild": "OnyX"
   },
+  "21385397": {
+   "name": "Rakyatk",
+   "power": 6865855,
+   "server": 213,
+   "guildId": "2130003",
+   "guild": "OnyX"
+  },
   "21395018": {
    "name": "LloVeE",
    "guildId": "2130003",
    "power": 5835561,
    "server": 213,
+   "guild": "OnyX"
+  },
+  "21395299": {
+   "name": "FlyOggy",
+   "power": 12619104,
+   "server": 213,
+   "guildId": "2130003",
    "guild": "OnyX"
   },
   "21496703": {
@@ -2715,6 +2736,13 @@
    "power": 12378799,
    "server": 215,
    "guild": "Demigod"
+  },
+  "21567302": {
+   "name": "jokowi",
+   "power": 1337005,
+   "server": 215,
+   "guildId": "2150012",
+   "guild": "Ruins"
   },
   "21567594": {
    "name": "ReYuevy",
@@ -2798,6 +2826,13 @@
    "guildId": "2190012",
    "power": 10703543,
    "server": 221,
+   "guild": "MysticS219"
+  },
+  "22143977": {
+   "name": "Mypeach",
+   "power": 6414213,
+   "server": 221,
+   "guildId": "2190012",
    "guild": "MysticS219"
   },
   "22224990": {
@@ -2919,6 +2954,13 @@
    "server": 225,
    "guild": "UnDead"
   },
+  "22587010": {
+   "name": "UnDying",
+   "power": 15559528,
+   "server": 225,
+   "guildId": "2250014",
+   "guild": "UnDead"
+  },
   "22597499": {
    "name": "UnJuls",
    "guildId": "2250014",
@@ -2952,6 +2994,13 @@
    "guildId": "2250014",
    "power": 12419208,
    "server": 226,
+   "guild": "UnDead"
+  },
+  "22668435": {
+   "name": "UnFes",
+   "power": 16492115,
+   "server": 226,
+   "guildId": "2250014",
    "guild": "UnDead"
   },
   "22688808": {
@@ -3079,6 +3128,13 @@
    "power": 18579546,
    "server": 232,
    "guild": "UnDead"
+  },
+  "23345783": {
+   "name": "RE.ZERO",
+   "power": 11969112,
+   "server": 233,
+   "guildId": "2350036",
+   "guild": "Rewatch"
   },
   "23345887": {
    "name": "REdemon",
@@ -3381,6 +3437,13 @@
    "server": 241,
    "guild": "Drunk"
   },
+  "24173052": {
+   "name": "MVQuitE",
+   "power": 762297,
+   "server": 241,
+   "guildId": "2440034",
+   "guild": "MVP"
+  },
   "24173157": {
    "name": "DrRed",
    "power": 62967834,
@@ -3479,6 +3542,13 @@
    "server": 243,
    "guild": "Drunk"
   },
+  "24385682": {
+   "name": "SinGui",
+   "power": 9573810,
+   "server": 243,
+   "guildId": "2440034",
+   "guild": "MVP"
+  },
   "24416390": {
    "name": "IMmot",
    "guildId": "2410012",
@@ -3513,6 +3583,13 @@
    "power": 20796655,
    "server": 246,
    "guild": "Drunk"
+  },
+  "24618418": {
+   "name": "ขันธสิทธิ์ปาน",
+   "power": 7162332,
+   "server": 246,
+   "guildId": "2450001",
+   "guild": "PrimeXx"
   },
   "24648903": {
    "name": "NEaloha",
@@ -3590,6 +3667,13 @@
    "power": 16282838,
    "server": 248,
    "guild": "Drunk"
+  },
+  "24870524": {
+   "name": "lowkeyy",
+   "power": 7272545,
+   "server": 248,
+   "guildId": "2460039",
+   "guild": "NEKO"
   },
   "24961642": {
    "name": "dbcuper",

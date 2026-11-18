@@ -3206,6 +3206,13 @@
    "server": 514,
    "guild": "OLYMPUS"
   },
+  "51466010": {
+   "name": "OnCute",
+   "power": 5511459,
+   "server": 514,
+   "guildId": "5130004",
+   "guild": "OneKing"
+  },
   "51466198": {
    "name": "OLàLa",
    "guildId": "5140005",
@@ -3409,6 +3416,13 @@
    "server": 517,
    "guild": "HUNTERS"
   },
+  "51749338": {
+   "name": "HUOREX",
+   "power": 7000939,
+   "server": 517,
+   "guildId": "5170010",
+   "guild": "HUNTERS"
+  },
   "51749638": {
    "name": "Bewok",
    "guildId": "5170010",
@@ -3554,6 +3568,13 @@
    "guildId": "5190011",
    "power": 10351068,
    "server": 518,
+   "guild": "FAMILY"
+  },
+  "51901764": {
+   "name": "FAMINH8",
+   "power": 8678950,
+   "server": 519,
+   "guildId": "5190011",
    "guild": "FAMILY"
   },
   "51921435": {
@@ -3899,6 +3920,13 @@
    "server": 530,
    "guild": "LxRVN"
   },
+  "53022849": {
+   "name": "KhỏiHữuKhanh",
+   "power": 5632443,
+   "server": 530,
+   "guildId": "5310007",
+   "guild": "VNs531"
+  },
   "53092141": {
    "name": "LxKenPi",
    "guildId": "5320011",
@@ -3975,6 +4003,13 @@
    "power": 26920568,
    "server": 532,
    "guild": "LxRVN"
+  },
+  "53204874": {
+   "name": "CanDuyTrường",
+   "power": 1017461,
+   "server": 532,
+   "guildId": "5310007",
+   "guild": "VNs531"
   },
   "53204879": {
    "name": "LxRbeel",
@@ -4101,6 +4136,13 @@
    "power": 7357360,
    "server": 532,
    "guild": "LxRVN"
+  },
+  "53416980": {
+   "name": "AECoCo",
+   "power": 10449525,
+   "server": 534,
+   "guildId": "5360011",
+   "guild": "AE536"
   },
   "53436217": {
    "name": "EASpike",
@@ -4354,6 +4396,13 @@
    "server": 542,
    "guild": "VGang"
   },
+  "54234376": {
+   "name": "VGHau",
+   "power": 7405988,
+   "server": 542,
+   "guildId": "5420012",
+   "guild": "VGang"
+  },
   "54264489": {
    "name": "BụMinhThư",
    "guildId": "5420001",
@@ -4431,6 +4480,13 @@
    "server": 544,
    "guild": "VGang"
   },
+  "54486706": {
+   "name": "VGNabi",
+   "power": 6715598,
+   "server": 544,
+   "guildId": "5420012",
+   "guild": "VGang"
+  },
   "54486781": {
    "name": "VGEmyrs",
    "guildId": "5420012",
@@ -4478,6 +4534,13 @@
    "guildId": "5450012",
    "power": 11454135,
    "server": 545,
+   "guild": "ECLIPSE"
+  },
+  "54557901": {
+   "name": "ECxBoo",
+   "power": 13484471,
+   "server": 545,
+   "guildId": "5450012",
    "guild": "ECLIPSE"
   },
   "54567906": {
@@ -4675,6 +4738,13 @@
    "power": 11822760,
    "server": 552,
    "guild": "MyGuild"
+  },
+  "55375889": {
+   "name": "OPแน้ม",
+   "power": 8377239,
+   "server": 553,
+   "guildId": "5530015",
+   "guild": "OP"
   },
   "55416709": {
    "name": "GUMMỳ",
@@ -4921,6 +4991,13 @@
    "server": 559,
    "guild": "VARYON"
   },
+  "55951550": {
+   "name": "VAxJOY",
+   "power": 12988701,
+   "server": 559,
+   "guildId": "5590035",
+   "guild": "VARYON"
+  },
   "55951850": {
    "name": "VAข้าว",
    "guildId": "5590035",
@@ -4955,6 +5032,13 @@
    "power": 14182405,
    "server": 560,
    "guild": "VARYON"
+  },
+  "56052847": {
+   "name": "YumnaZv",
+   "power": 4171827,
+   "server": 560,
+   "guildId": "5600013",
+   "guild": "Matcha"
   },
   "56062085": {
    "name": "VApota",
@@ -5094,6 +5178,13 @@
    "guildId": "5620012",
    "power": 31681402,
    "server": 562,
+   "guild": "VITAMIN"
+  },
+  "56274670": {
+   "name": "VISon",
+   "power": 8978703,
+   "server": 562,
+   "guildId": "5620012",
    "guild": "VITAMIN"
   },
   "56284289": {
@@ -5516,6 +5607,13 @@
    "server": 571,
    "guild": "DARKSKY"
   },
+  "57193686": {
+   "name": "Daxtink",
+   "power": 3474896,
+   "server": 571,
+   "guildId": "5710014",
+   "guild": "DARKSKY"
+  },
   "57214082": {
    "name": "VNLight",
    "guildId": "5700014",
@@ -5572,6 +5670,13 @@
    "server": 572,
    "guild": "VNs1st"
   },
+  "57294365": {
+   "name": "DAnghia",
+   "power": 11954564,
+   "server": 572,
+   "guildId": "5710014",
+   "guild": "DARKSKY"
+  },
   "57355287": {
    "name": "HoánHoàngGiang",
    "guildId": "5750003",
@@ -5599,6 +5704,13 @@
    "power": 2050758,
    "server": 574,
    "guild": "ไฟนิทาน"
+  },
+  "57456493": {
+   "name": "ทาชิมาา",
+   "power": 4865334,
+   "server": 574,
+   "guildId": "5740012",
+   "guild": "AngleTH"
   },
   "57507914": {
    "name": "NH",

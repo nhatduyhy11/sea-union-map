@@ -1700,6 +1700,13 @@
    "server": 66,
    "guild": "TH.NO.1"
   },
+  "6799027": {
+   "name": "Dockery",
+   "power": 9134825,
+   "server": 67,
+   "guildId": "720037",
+   "guild": "TH.NO.1"
+  },
   "6800526": {
    "name": "ElcoCoho",
    "guildId": "720037",
@@ -1733,6 +1740,13 @@
    "guildId": "720037",
    "power": 11129497,
    "server": 69,
+   "guild": "TH.NO.1"
+  },
+  "6991747": {
+   "name": "Boy.TK.",
+   "power": 14169253,
+   "server": 69,
+   "guildId": "720037",
    "guild": "TH.NO.1"
   },
   "7032253": {
@@ -1801,6 +1815,13 @@
   "7254561": {
    "name": "ฉันแหละ",
    "power": 11020363,
+   "server": 72,
+   "guildId": "720037",
+   "guild": "TH.NO.1"
+  },
+  "7264767": {
+   "name": "กุลรัตน์วันเพ็ญ",
+   "power": 8762772,
    "server": 72,
    "guildId": "720037",
    "guild": "TH.NO.1"
@@ -2228,6 +2249,13 @@
    "server": 84,
    "guild": "鬼門"
   },
+  "8496105": {
+   "name": "ชัชพลชัย",
+   "power": 2915305,
+   "server": 84,
+   "guildId": "810013",
+   "guild": "六道輪回"
+  },
   "8517926": {
    "name": "Riekzea",
    "power": 2492417,
@@ -2254,6 +2282,13 @@
    "guildId": "810011",
    "power": 13302764,
    "server": 85,
+   "guild": "鬼門"
+  },
+  "8597506": {
+   "name": "鬼門Liaa",
+   "power": 4219833,
+   "server": 85,
+   "guildId": "810011",
    "guild": "鬼門"
   },
   "8608210": {
@@ -2297,6 +2332,13 @@
    "power": 16573018,
    "server": 88,
    "guild": "鬼門"
+  },
+  "8941240": {
+   "name": "GAkior",
+   "power": 5089267,
+   "server": 89,
+   "guildId": "910010",
+   "guild": "GARUDA"
   },
   "9103168": {
    "name": "GAnteng",
@@ -2457,6 +2499,13 @@
    "guildId": "980026",
    "power": 4584627,
    "server": 102,
+   "guild": "BDSM"
+  },
+  "10244867": {
+   "name": "BDjhira",
+   "power": 14060079,
+   "server": 102,
+   "guildId": "980026",
    "guild": "BDSM"
   },
   "10355093": {
@@ -2914,6 +2963,13 @@
    "server": 115,
    "guild": "EXILE"
   },
+  "11668228": {
+   "name": "EXDKery",
+   "power": 4649003,
+   "server": 116,
+   "guildId": "1130004",
+   "guild": "EXILE"
+  },
   "11688305": {
    "name": "EXmJ",
    "guildId": "1130004",
@@ -2935,12 +2991,26 @@
    "guildId": "1180016",
    "guild": "Bsight"
   },
+  "11901842": {
+   "name": "BeersPeyton",
+   "power": 8031484,
+   "server": 119,
+   "guildId": "1130004",
+   "guild": "EXILE"
+  },
   "11981648": {
    "name": "EXsold",
    "guildId": "1130004",
    "power": 13002451,
    "server": 119,
    "guild": "EXILE"
+  },
+  "12062052": {
+   "name": "อุไรวรรณ",
+   "power": 4487988,
+   "server": 120,
+   "guildId": "1200017",
+   "guild": "Witcher"
   },
   "12062561": {
    "name": "EXHuggy",

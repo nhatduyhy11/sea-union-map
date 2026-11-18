@@ -2774,11 +2774,25 @@
    "server": 386,
    "guild": "Vn"
   },
+  "38688815": {
+   "name": "Kanh",
+   "power": 4285639,
+   "server": 386,
+   "guildId": "3860019",
+   "guild": "Kakao"
+  },
   "38688924": {
    "name": "VnThuy",
    "guildId": "3870011",
    "power": 14713392,
    "server": 386,
+   "guild": "Vn"
+  },
+  "38709212": {
+   "name": "Satlong",
+   "power": 13600611,
+   "server": 387,
+   "guildId": "3870011",
    "guild": "Vn"
   },
   "38709717": {
@@ -3026,6 +3040,13 @@
    "server": 392,
    "guild": "VNVC"
   },
+  "39294184": {
+   "name": "NohaRin",
+   "power": 3054633,
+   "server": 392,
+   "guildId": "3900011",
+   "guild": "VNVC"
+  },
   "39325294": {
    "name": "AEBon",
    "power": 17974620,
@@ -3194,6 +3215,13 @@
    "server": 400,
    "guild": "Icelore"
   },
+  "40092548": {
+   "name": "Romyari",
+   "power": 9582427,
+   "server": 400,
+   "guildId": "3970011",
+   "guild": "Icelore"
+  },
   "40123070": {
    "name": "PTTH",
    "guildId": "4010019",
@@ -3255,6 +3283,13 @@
    "guildId": "4080011",
    "power": 8100831,
    "server": 405,
+   "guild": "MAFIA"
+  },
+  "40517994": {
+   "name": "MAxTobi",
+   "power": 8838036,
+   "server": 405,
+   "guildId": "4080011",
    "guild": "MAFIA"
   },
   "40537920": {
@@ -3383,6 +3418,13 @@
    "server": 409,
    "guild": "Vonghồn"
   },
+  "40921874": {
+   "name": "INDoger",
+   "power": 5102005,
+   "server": 409,
+   "guildId": "4090017",
+   "guild": "RAMPAGE"
+  },
   "40941741": {
    "name": "ElpoDifi",
    "guildId": "4090017",
@@ -3432,6 +3474,13 @@
    "server": 410,
    "guild": "Vonghồn"
   },
+  "41022959": {
+   "name": "Mango",
+   "power": 11342452,
+   "server": 410,
+   "guildId": "4120013",
+   "guild": "Vonghồn"
+  },
   "41032852": {
    "name": "VănQuý",
    "guildId": "4090017",
@@ -3470,6 +3519,13 @@
   "41113670": {
    "name": "VongLod",
    "power": 10443317,
+   "server": 411,
+   "guildId": "4120013",
+   "guild": "Vonghồn"
+  },
+  "41143570": {
+   "name": "Dinggg",
+   "power": 9433293,
    "server": 411,
    "guildId": "4120013",
    "guild": "Vonghồn"
@@ -3577,6 +3633,13 @@
    "server": 413,
    "guild": "TheSea"
   },
+  "41345896": {
+   "name": "SEACow",
+   "power": 10138046,
+   "server": 413,
+   "guildId": "4130011",
+   "guild": "TheSea"
+  },
   "41355479": {
    "name": "ĐítHuyềnNgọc",
    "guildId": "4130052",
@@ -3610,6 +3673,13 @@
    "guildId": "4130011",
    "power": 21765607,
    "server": 413,
+   "guild": "TheSea"
+  },
+  "41395075": {
+   "name": "TopĐức",
+   "power": 11430979,
+   "server": 413,
+   "guildId": "4130011",
    "guild": "TheSea"
   },
   "41395481": {
@@ -3695,6 +3765,13 @@
    "guildId": "4130011",
    "power": 15196368,
    "server": 415,
+   "guild": "TheSea"
+  },
+  "41608012": {
+   "name": "HoiNV24",
+   "power": 4354297,
+   "server": 416,
+   "guildId": "4130011",
    "guild": "TheSea"
   },
   "41628107": {
@@ -3942,9 +4019,23 @@
    "server": 422,
    "guild": "Icon"
   },
+  "42254070": {
+   "name": "Doranie",
+   "power": 9251462,
+   "server": 422,
+   "guildId": "4240004",
+   "guild": "Icon"
+  },
   "42264575": {
    "name": "CửuCửu",
    "power": 4705295,
+   "server": 422,
+   "guildId": "4240004",
+   "guild": "Icon"
+  },
+  "42274278": {
+   "name": "Icsociu",
+   "power": 5014400,
    "server": 422,
    "guildId": "4240004",
    "guild": "Icon"
@@ -4257,6 +4348,13 @@
    "server": 428,
    "guild": "STORM"
   },
+  "42800330": {
+   "name": "GuaGiaTuấn",
+   "power": 2299526,
+   "server": 428,
+   "guildId": "4250037",
+   "guild": "LegendS425"
+  },
   "42810853": {
    "name": "MưngAnhKhoa",
    "power": 450718,
@@ -4390,6 +4488,13 @@
    "server": 430,
    "guild": "VNSO1"
   },
+  "43092661": {
+   "name": "มีแกน",
+   "power": 8872350,
+   "server": 430,
+   "guildId": "4290006",
+   "guild": "VNSO1"
+  },
   "43123651": {
    "name": "VNSmile",
    "guildId": "4290006",
@@ -4409,6 +4514,13 @@
    "guildId": "4290006",
    "power": 13189079,
    "server": 431,
+   "guild": "VNSO1"
+  },
+  "43153672": {
+   "name": "MaMị",
+   "power": 8844559,
+   "server": 431,
+   "guildId": "4290006",
    "guild": "VNSO1"
   },
   "43173953": {
@@ -4586,6 +4698,13 @@
    "server": 434,
    "guild": "offgame"
   },
+  "43537199": {
+   "name": "Vision",
+   "power": 7275715,
+   "server": 435,
+   "guildId": "4350008",
+   "guild": "LEGAL"
+  },
   "43577507": {
    "name": "ĐuốngKiềuNhi",
    "power": 2703228,
@@ -4677,6 +4796,13 @@
    "server": 437,
    "guild": "1Shot"
   },
+  "43820532": {
+   "name": "NO.CM",
+   "power": 5811254,
+   "server": 438,
+   "guildId": "4400012",
+   "guild": "1Shot"
+  },
   "43840726": {
    "name": "1Spp",
    "power": 9413555,
@@ -4703,6 +4829,13 @@
    "guildId": "4400012",
    "power": 5855562,
    "server": 439,
+   "guild": "1Shot"
+  },
+  "43951652": {
+   "name": "1SAloha",
+   "power": 10900280,
+   "server": 439,
+   "guildId": "4400012",
    "guild": "1Shot"
   },
   "43971556": {
@@ -4942,6 +5075,13 @@
    "power": 13159601,
    "server": 447,
    "guild": "VGang"
+  },
+  "44830553": {
+   "name": "Bảoiu",
+   "power": 1183607,
+   "server": 448,
+   "guildId": "4450007",
+   "guild": "CryptLo"
   },
   "44850349": {
    "name": "VGxToan",
