@@ -3083,6 +3083,13 @@
    "power": 49291,
    "server": 513
   },
+  "51305377": {
+   "name": "Melonja",
+   "power": 10756620,
+   "server": 513,
+   "guildId": "5130046",
+   "guild": "TWICE"
+  },
   "51315070": {
    "name": "สักกำบ่",
    "guildId": "5130004",
@@ -3164,12 +3171,26 @@
    "server": 514,
    "guild": "OLYMPUS"
   },
+  "51426019": {
+   "name": "OLZem",
+   "power": 8766370,
+   "server": 514,
+   "guildId": "5140005",
+   "guild": "OLYMPUS"
+  },
   "51426619": {
    "name": "Mèooooo",
    "guildId": "5140005",
    "power": 7989636,
    "server": 514,
    "guild": "OLYMPUS"
+  },
+  "51436510": {
+   "name": "LãoĐứcThiện",
+   "power": 2069299,
+   "server": 514,
+   "guildId": "5130004",
+   "guild": "OneKing"
   },
   "51436684": {
    "name": "OLAdam",
@@ -3225,6 +3246,13 @@
    "guildId": "5140005",
    "power": 96200175,
    "server": 514,
+   "guild": "OLYMPUS"
+  },
+  "51486119": {
+   "name": "OLGenZ",
+   "power": 7358548,
+   "server": 514,
+   "guildId": "5140005",
    "guild": "OLYMPUS"
   },
   "51486219": {
@@ -3450,6 +3478,13 @@
    "power": 69407257,
    "server": 517,
    "guild": "HUNTERS"
+  },
+  "51759318": {
+   "name": "nora",
+   "power": 17529829,
+   "server": 517,
+   "guildId": "5190011",
+   "guild": "FAMILY"
   },
   "51759339": {
    "name": "HUnRose",
@@ -3864,6 +3899,13 @@
    "server": 527,
    "guild": "UnDead"
   },
+  "52810042": {
+   "name": "UncleTi",
+   "power": 8512505,
+   "server": 528,
+   "guildId": "5280010",
+   "guild": "UnDead"
+  },
   "52820331": {
    "name": "Vichee",
    "guildId": "5280010",
@@ -3906,6 +3948,13 @@
    "guildId": "5280010",
    "guild": "UnDead"
   },
+  "52880232": {
+   "name": "Uncle",
+   "power": 13250363,
+   "server": 528,
+   "guildId": "5280010",
+   "guild": "UnDead"
+  },
   "52961238": {
    "name": "งามวงศ์ถุง",
    "power": 7864653,
@@ -3926,6 +3975,13 @@
    "server": 530,
    "guildId": "5310007",
    "guild": "VNs531"
+  },
+  "53022851": {
+   "name": "LxMoon",
+   "power": 13282599,
+   "server": 530,
+   "guildId": "5320011",
+   "guild": "LxRVN"
   },
   "53092141": {
    "name": "LxKenPi",
@@ -4333,6 +4389,13 @@
    "server": 540,
    "guild": "VN"
   },
+  "54092363": {
+   "name": "VNTiger",
+   "power": 10872017,
+   "server": 540,
+   "guildId": "5370011",
+   "guild": "VN"
+  },
   "54092954": {
    "name": "VNTuan",
    "power": 10725911,
@@ -4648,6 +4711,13 @@
    "server": 550,
    "guild": "Destiny"
   },
+  "55042058": {
+   "name": "nkok",
+   "power": 4800829,
+   "server": 550,
+   "guildId": "5510011",
+   "guild": "MyGuild"
+  },
   "55062550": {
    "name": "BaCơBắp",
    "guildId": "5500043",
@@ -4665,6 +4735,13 @@
   "55103099": {
    "name": "MyPin",
    "power": 6654046,
+   "server": 551,
+   "guildId": "5510011",
+   "guild": "MyGuild"
+  },
+  "55123581": {
+   "name": "MyCrix",
+   "power": 4472002,
    "server": 551,
    "guildId": "5510011",
    "guild": "MyGuild"
@@ -4746,6 +4823,13 @@
    "guildId": "5530015",
    "guild": "OP"
   },
+  "55406004": {
+   "name": "GUnBiTa",
+   "power": 10187056,
+   "server": 554,
+   "guildId": "5540013",
+   "guild": "GUCCI"
+  },
   "55416709": {
    "name": "GUMMỳ",
    "guildId": "5540013",
@@ -4791,6 +4875,13 @@
   "55466503": {
    "name": "GU18x69",
    "power": 13291383,
+   "server": 554,
+   "guildId": "5540013",
+   "guild": "GUCCI"
+  },
+  "55466886": {
+   "name": "GUEHer",
+   "power": 10456059,
    "server": 554,
    "guildId": "5540013",
    "guild": "GUCCI"
@@ -4989,6 +5080,13 @@
    "guildId": "5590035",
    "power": 12586848,
    "server": 559,
+   "guild": "VARYON"
+  },
+  "55941150": {
+   "name": "Luneth",
+   "power": 5889159,
+   "server": 559,
+   "guildId": "5590035",
    "guild": "VARYON"
   },
   "55951550": {
@@ -5409,6 +5507,13 @@
    "guildId": "5680011",
    "power": 9827889,
    "server": 568,
+   "guild": "VÍP"
+  },
+  "56880448": {
+   "name": "VÍPuhrs",
+   "power": 6369690,
+   "server": 568,
+   "guildId": "5680011",
    "guild": "VÍP"
   },
   "56901046": {

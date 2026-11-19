@@ -2830,6 +2830,13 @@
    "server": 25,
    "guild": "WOLVES"
   },
+  "2587808": {
+   "name": "WOxRain",
+   "power": 9127587,
+   "server": 25,
+   "guildId": "300003",
+   "guild": "WOLVES"
+  },
   "2628127": {
    "name": "WOxNic",
    "power": 7886109,
@@ -2998,6 +3005,13 @@
    "server": 37,
    "guild": "หักวาง"
   },
+  "3779138": {
+   "name": "หัZngli",
+   "power": 5437333,
+   "server": 37,
+   "guildId": "350011",
+   "guild": "หักวาง"
+  },
   "3779333": {
    "name": "Agaboo",
    "guildId": "350011",
@@ -3066,6 +3080,20 @@
    "guildId": "410013",
    "power": 19013515,
    "server": 44,
+   "guild": "Vip0"
+  },
+  "4426690": {
+   "name": "BowersAfonso",
+   "power": 4039271,
+   "server": 44,
+   "guildId": "440003",
+   "guild": "CryptLock"
+  },
+  "4466781": {
+   "name": "OmRungT",
+   "power": 3325108,
+   "server": 44,
+   "guildId": "410013",
    "guild": "Vip0"
   },
   "4537693": {
@@ -3228,6 +3256,13 @@
    "server": 56,
    "guildId": "490022",
    "guild": "RDFall"
+  },
+  "5840024": {
+   "name": "Patrick",
+   "power": 10299923,
+   "server": 58,
+   "guildId": "620013",
+   "guild": "หักว่าง"
   },
   "5941255": {
    "name": "REiGUN",

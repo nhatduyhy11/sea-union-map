@@ -2823,6 +2823,13 @@
    "server": 387,
    "guild": "Vn"
   },
+  "38749027": {
+   "name": "HIBIKI",
+   "power": 4582121,
+   "server": 387,
+   "guildId": "3860011",
+   "guild": "VNA"
+  },
   "38799237": {
    "name": "VnMinhA",
    "power": 5120193,
@@ -3159,6 +3166,13 @@
    "server": 394,
    "guild": "AEVN"
   },
+  "39608713": {
+   "name": "AEKin",
+   "power": 12719361,
+   "server": 396,
+   "guildId": "3940003",
+   "guild": "AEVN"
+  },
   "39709217": {
    "name": "Malik",
    "guildId": "3970011",
@@ -3298,6 +3312,13 @@
    "power": 13888344,
    "server": 405,
    "guild": "MAFIA"
+  },
+  "40557408": {
+   "name": "CảmHoàngRapper",
+   "power": 3574811,
+   "server": 405,
+   "guildId": "4050013",
+   "guild": "KingWar"
   },
   "40557594": {
    "name": "HoaHuyHùng",
@@ -3830,6 +3851,13 @@
    "server": 417,
    "guild": "TamQuốc"
   },
+  "41729329": {
+   "name": "XiaoMei",
+   "power": 16667013,
+   "server": 417,
+   "guildId": "4170004",
+   "guild": "TamQuốc"
+  },
   "41729637": {
    "name": "XiaoYue",
    "power": 9781423,
@@ -4095,6 +4123,13 @@
    "power": 1693033,
    "server": 424,
    "guild": "Viking"
+  },
+  "42486011": {
+   "name": "LiniEkuh",
+   "power": 6670017,
+   "server": 424,
+   "guildId": "4240004",
+   "guild": "Icon"
   },
   "42496419": {
    "name": "Ssan",
@@ -4451,6 +4486,13 @@
    "guildId": "4290006",
    "power": 10698828,
    "server": 429,
+   "guild": "VNSO1"
+  },
+  "42961244": {
+   "name": "VNxNPC",
+   "power": 11340901,
+   "server": 429,
+   "guildId": "4290006",
    "guild": "VNSO1"
   },
   "42961256": {

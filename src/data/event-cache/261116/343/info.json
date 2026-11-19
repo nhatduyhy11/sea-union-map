@@ -2997,6 +2997,13 @@
    "guildId": "3260003",
    "guild": "EXILE"
   },
+  "32648410": {
+   "name": "EXWii",
+   "power": 3435603,
+   "server": 326,
+   "guildId": "3260003",
+   "guild": "EXILE"
+  },
   "32688209": {
    "name": "ExWife",
    "guildId": "3260003",
@@ -3030,6 +3037,13 @@
    "guildId": "3260003",
    "power": 8052660,
    "server": 327,
+   "guild": "EXILE"
+  },
+  "32799452": {
+   "name": "EXBeer",
+   "power": 8608243,
+   "server": 327,
+   "guildId": "3260003",
    "guild": "EXILE"
   },
   "32840221": {
@@ -3312,6 +3326,13 @@
    "server": 336,
    "guild": "Synergy"
   },
+  "33658814": {
+   "name": "Momon",
+   "power": 3166266,
+   "server": 336,
+   "guildId": "3330027",
+   "guild": "SKYWAR"
+  },
   "33668238": {
    "name": "Admans",
    "guildId": "3330027",
@@ -3464,6 +3485,13 @@
    "guildId": "3370038",
    "power": 17642899,
    "server": 337,
+   "guild": "DRAG๏N"
+  },
+  "33789032": {
+   "name": "YHAAA",
+   "power": 12599890,
+   "server": 337,
+   "guildId": "3370038",
    "guild": "DRAG๏N"
   },
   "33789438": {
@@ -3674,6 +3702,13 @@
    "guildId": "3440002",
    "guild": "THEBOSS"
   },
+  "34284764": {
+   "name": "TH.21",
+   "power": 11056950,
+   "server": 342,
+   "guildId": "3440002",
+   "guild": "THEBOSS"
+  },
   "34305076": {
    "name": "Dejavu",
    "guildId": "3440002",
@@ -3873,6 +3908,13 @@
    "guildId": "3490017",
    "power": 16102616,
    "server": 349,
+   "guild": "Piggy"
+  },
+  "34991535": {
+   "name": "PiKERE",
+   "power": 5012864,
+   "server": 349,
+   "guildId": "3490017",
    "guild": "Piggy"
   },
   "35022458": {
@@ -4211,6 +4253,13 @@
    "server": 354,
    "guild": "MaThiên"
   },
+  "35426286": {
+   "name": "Matrix",
+   "power": 9333230,
+   "server": 354,
+   "guildId": "3540019",
+   "guild": "MaThiên"
+  },
   "35426492": {
    "name": "LLNLLN",
    "guildId": "3540019",
@@ -4351,6 +4400,13 @@
    "server": 357,
    "guild": "VNNO1"
   },
+  "35749839": {
+   "name": "Vegeta",
+   "power": 5282167,
+   "server": 357,
+   "guildId": "3580012",
+   "guild": "VNNO1"
+  },
   "35749911": {
    "name": "VNThành",
    "guildId": "3570010",
@@ -4370,6 +4426,13 @@
    "guildId": "3580012",
    "power": 23385874,
    "server": 357,
+   "guild": "VNNO1"
+  },
+  "35789642": {
+   "name": "VNsp",
+   "power": 4728912,
+   "server": 357,
+   "guildId": "3580012",
    "guild": "VNNO1"
   },
   "35810029": {
@@ -4459,6 +4522,13 @@
   "36022041": {
    "name": "Zzi",
    "power": 10437676,
+   "server": 360,
+   "guildId": "3580012",
+   "guild": "VNNO1"
+  },
+  "36092055": {
+   "name": "VnExpre",
+   "power": 2080775,
    "server": 360,
    "guildId": "3580012",
    "guild": "VNNO1"
@@ -4748,6 +4818,13 @@
    "guildId": "3690011",
    "power": 47716740,
    "server": 369,
+   "guild": "Fusion"
+  },
+  "36931046": {
+   "name": "FuxAlu",
+   "power": 15372612,
+   "server": 369,
+   "guildId": "3690011",
    "guild": "Fusion"
   },
   "36931964": {
@@ -5170,6 +5247,13 @@
    "server": 381,
    "guild": "Lenetus"
   },
+  "38133965": {
+   "name": "LeCAMIE",
+   "power": 17077961,
+   "server": 381,
+   "guildId": "3810011",
+   "guild": "Lenetus"
+  },
   "38153966": {
    "name": "Tadano",
    "guildId": "3810011",
@@ -5217,6 +5301,13 @@
    "guildId": "3810011",
    "power": 22345434,
    "server": 383,
+   "guild": "Lenetus"
+  },
+  "38305986": {
+   "name": "LeLynn",
+   "power": 13629590,
+   "server": 383,
+   "guildId": "3810011",
    "guild": "Lenetus"
   },
   "38325008": {

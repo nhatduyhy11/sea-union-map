@@ -3364,6 +3364,20 @@
    "server": 457,
    "guild": "VGang"
   },
+  "45729913": {
+   "name": "นิตโด",
+   "power": 1962995,
+   "server": 457,
+   "guildId": "4570030",
+   "guild": "ชาโดว์"
+  },
+  "45789037": {
+   "name": "Ynoy",
+   "power": 6698788,
+   "server": 457,
+   "guildId": "4600011",
+   "guild": "VGang"
+  },
   "45789527": {
    "name": "KANDA",
    "power": 2172293,
@@ -3404,6 +3418,13 @@
    "guildId": "4580011",
    "power": 52126140,
    "server": 458,
+   "guild": "KOW"
+  },
+  "45820348": {
+   "name": "KOWxCp1",
+   "power": 14536231,
+   "server": 458,
+   "guildId": "4580011",
    "guild": "KOW"
   },
   "45820653": {
@@ -3755,6 +3776,13 @@
    "power": 5455337,
    "server": 464,
    "guild": "NGẠO"
+  },
+  "46507394": {
+   "name": "byuliii",
+   "power": 258032,
+   "server": 465,
+   "guildId": "4670011",
+   "guild": "King"
   },
   "46527815": {
    "name": "AnH008",
@@ -4239,6 +4267,13 @@
    "server": 482,
    "guild": "HERA"
   },
+  "48284862": {
+   "name": "XIVP",
+   "power": 15339415,
+   "server": 482,
+   "guildId": "4810017",
+   "guild": "ATHENA"
+  },
   "48305471": {
    "name": "VN1997",
    "power": 5283322,
@@ -4645,6 +4680,13 @@
    "server": 491,
    "guild": "DRAGON"
   },
+  "49153970": {
+   "name": "HeoHeoH",
+   "power": 10647149,
+   "server": 491,
+   "guildId": "4900001",
+   "guild": "DRAGON"
+  },
   "49204373": {
    "name": "Favier",
    "guildId": "4920004",
@@ -4854,6 +4896,13 @@
    "power": 209742,
    "server": 498,
    "guild": "Sunny"
+  },
+  "49810949": {
+   "name": "นางพญา",
+   "power": 3589331,
+   "server": 498,
+   "guildId": "4980009",
+   "guild": "HADES"
   },
   "49820048": {
    "name": "Meio",
@@ -5190,6 +5239,13 @@
    "server": 500,
    "guild": "ChiềuẢo"
   },
+  "50082858": {
+   "name": "GieoĐứcLương",
+   "power": 1777049,
+   "server": 500,
+   "guildId": "4980009",
+   "guild": "HADES"
+  },
   "50092568": {
    "name": "GiaiDuyHùng",
    "power": 6673422,
@@ -5455,6 +5511,13 @@
    "power": 7138360,
    "server": 508,
    "guild": "AllBros"
+  },
+  "50840528": {
+   "name": "Hoằnke",
+   "power": 1920948,
+   "server": 508,
+   "guildId": "5050011",
+   "guild": "exSquad"
   },
   "50870142": {
    "name": "AlJinx",

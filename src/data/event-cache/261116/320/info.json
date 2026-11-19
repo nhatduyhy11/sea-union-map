@@ -2381,6 +2381,13 @@
    "server": 259,
    "guild": "猛鬼抽象派"
   },
+  "26002561": {
+   "name": "BHahlil",
+   "power": 7948842,
+   "server": 260,
+   "guildId": "2590017",
+   "guild": "BH.Clan"
+  },
   "26012048": {
    "name": "猛鬼YOLO",
    "guildId": "2570014",
@@ -2498,6 +2505,13 @@
    "guildId": "2620003",
    "power": 10234961,
    "server": 263,
+   "guild": "Indo"
+  },
+  "26406285": {
+   "name": "GuGuGa2",
+   "power": 6235509,
+   "server": 264,
+   "guildId": "2620003",
    "guild": "Indo"
   },
   "26426600": {
@@ -2759,6 +2773,13 @@
    "server": 274,
    "guild": "OLympus"
   },
+  "27507216": {
+   "name": "OLLIVER",
+   "power": 2823885,
+   "server": 275,
+   "guildId": "2760011",
+   "guild": "OLympus"
+  },
   "27507698": {
    "name": "OLWRT27",
    "guildId": "2760011",
@@ -2878,6 +2899,13 @@
    "guildId": "2760011",
    "guild": "OLympus"
   },
+  "28012168": {
+   "name": "KisiBovo",
+   "power": 1385562,
+   "server": 280,
+   "guildId": "2800011",
+   "guild": "ONE"
+  },
   "28022641": {
    "name": "OLVIN",
    "guildId": "2760011",
@@ -2948,6 +2976,13 @@
    "server": 284,
    "guild": "不朽神域"
   },
+  "28507196": {
+   "name": "hunter",
+   "power": 3605094,
+   "server": 285,
+   "guildId": "2870009",
+   "guild": "不朽神域"
+  },
   "28587512": {
    "name": "不朽choco",
    "guildId": "2870009",
@@ -2961,6 +2996,13 @@
    "power": 19822201,
    "server": 286,
    "guild": "不朽神域"
+  },
+  "28678916": {
+   "name": "มิ้น",
+   "power": 1689241,
+   "server": 286,
+   "guildId": "2860016",
+   "guild": "เอ้าา"
   },
   "28688706": {
    "name": "chi015",
@@ -3578,6 +3620,13 @@
    "server": 305,
    "guild": "zTurf"
   },
+  "30547624": {
+   "name": "Alena",
+   "power": 3285550,
+   "server": 305,
+   "guildId": "3080005",
+   "guild": "BOSS"
+  },
   "30577015": {
    "name": "Rara",
    "guildId": "3070003",
@@ -4035,6 +4084,13 @@
    "server": 318,
    "guild": "永恆放逐"
   },
+  "31850727": {
+   "name": "永恒恶魔",
+   "power": 15371130,
+   "server": 318,
+   "guildId": "3180010",
+   "guild": "永恆放逐"
+  },
   "31850931": {
    "name": "TEMPEKK",
    "guildId": "3180010",
@@ -4105,11 +4161,25 @@
    "guildId": "3180010",
    "guild": "永恆放逐"
   },
+  "31890831": {
+   "name": "永恆kaizo",
+   "power": 11520242,
+   "server": 318,
+   "guildId": "3180010",
+   "guild": "永恆放逐"
+  },
   "31981457": {
    "name": "onie",
    "guildId": "3190013",
    "power": 10218629,
    "server": 319,
+   "guild": "Im.Thai"
+  },
+  "32002669": {
+   "name": "hakim12",
+   "power": 2797816,
+   "server": 320,
+   "guildId": "3190013",
    "guild": "Im.Thai"
   },
   "32042085": {

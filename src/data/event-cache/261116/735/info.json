@@ -4773,6 +4773,13 @@
    "server": 705,
    "guild": "VNGear"
   },
+  "70517799": {
+   "name": "Hà",
+   "power": 1833096,
+   "server": 705,
+   "guildId": "7050014",
+   "guild": "TLPH"
+  },
   "70527904": {
    "name": "BLINKU",
    "guildId": "7050008",
@@ -5028,6 +5035,13 @@
   "71385481": {
    "name": "CryMile",
    "power": 6244630,
+   "server": 713,
+   "guildId": "7130011",
+   "guild": "VN"
+  },
+  "71395292": {
+   "name": "Dylan",
+   "power": 8908166,
    "server": 713,
    "guildId": "7130011",
    "guild": "VN"
@@ -5333,6 +5347,13 @@
    "server": 721,
    "guild": "VNStars"
   },
+  "72133260": {
+   "name": "Jenny",
+   "power": 5694616,
+   "server": 721,
+   "guildId": "7210011",
+   "guild": "VNStars"
+  },
   "72133950": {
    "name": "HảiĐăng",
    "guildId": "7210011",
@@ -5609,6 +5630,13 @@
   "72820829": {
    "name": "Sú2",
    "power": 6376775,
+   "server": 728,
+   "guildId": "7280028",
+   "guild": "VND"
+  },
+  "72820830": {
+   "name": "疯熊宝宝爱来乱",
+   "power": 3741794,
    "server": 728,
    "guildId": "7280028",
    "guild": "VND"
@@ -6120,6 +6148,13 @@
    "server": 735,
    "guild": "NiceZzz"
   },
+  "73688627": {
+   "name": "KHOI91",
+   "power": 940603,
+   "server": 736,
+   "guildId": "7360009",
+   "guild": "VN"
+  },
   "73719216": {
    "name": "Janie",
    "power": 5010970,
@@ -6224,6 +6259,13 @@
    "server": 738,
    "guildId": "7380007",
    "guild": "VNGame"
+  },
+  "73901156": {
+   "name": "EwingJaxson",
+   "power": 1187965,
+   "server": 739,
+   "guildId": "7390014",
+   "guild": "VietNam"
   },
   "73941642": {
    "name": "VI",
@@ -6603,6 +6645,13 @@
    "server": 745,
    "guild": "VIETNAM"
   },
+  "74587613": {
+   "name": "NgocAnh",
+   "power": 7602020,
+   "server": 745,
+   "guildId": "7450011",
+   "guild": "VIETNAM"
+  },
   "74597513": {
    "name": "Yurik0",
    "guildId": "7450011",
@@ -6809,6 +6858,13 @@
   "74810249": {
    "name": "ĐìnPhán",
    "power": 3324247,
+   "server": 748,
+   "guildId": "7480008",
+   "guild": "S748"
+  },
+  "74820435": {
+   "name": "VNbkn",
+   "power": 12493258,
    "server": 748,
    "guildId": "7480008",
    "guild": "S748"
@@ -7254,6 +7310,13 @@
    "server": 756,
    "guild": "Yametee"
   },
+  "75698509": {
+   "name": "GaudetNora",
+   "power": 3355493,
+   "server": 756,
+   "guildId": "7560011",
+   "guild": "Yametee"
+  },
   "75698801": {
    "name": "MặtTrời",
    "guildId": "7560011",
@@ -7463,6 +7526,13 @@
    "server": 758,
    "guildId": "7580011",
    "guild": "LỬNGMẬT"
+  },
+  "75901742": {
+   "name": "Cy",
+   "power": 2012227,
+   "server": 759,
+   "guildId": "7590023",
+   "guild": "GuildVN"
   },
   "75911737": {
    "name": "benak",

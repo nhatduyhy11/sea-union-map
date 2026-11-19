@@ -1997,6 +1997,13 @@
    "server": 193,
    "guild": "SD夜间美梦"
   },
+  "19305273": {
+   "name": "yerg",
+   "power": 2418558,
+   "server": 193,
+   "guildId": "1940012",
+   "guild": "GOD"
+  },
   "19416702": {
    "name": "นรสิงห์",
    "guildId": "1950011",
@@ -2242,12 +2249,26 @@
    "guildId": "1980037",
    "guild": "sKDoM"
   },
+  "20072379": {
+   "name": "sKLord",
+   "power": 12070883,
+   "server": 200,
+   "guildId": "1980037",
+   "guild": "sKDoM"
+  },
   "20082385": {
    "name": "GrysLii",
    "guildId": "1950011",
    "power": 14918880,
    "server": 200,
    "guild": "SD夜间美梦"
+  },
+  "20092277": {
+   "name": "sK8ter",
+   "power": 5895438,
+   "server": 200,
+   "guildId": "1980037",
+   "guild": "sKDoM"
   },
   "20092764": {
    "name": "sKresaH",
@@ -3206,6 +3227,13 @@
    "server": 235,
    "guild": "Welcome"
   },
+  "23597927": {
+   "name": "popyy",
+   "power": 850271,
+   "server": 235,
+   "guildId": "2330014",
+   "guild": "Cat"
+  },
   "23618208": {
    "name": "We55678",
    "guildId": "2400024",
@@ -3675,6 +3703,13 @@
    "guildId": "2460039",
    "guild": "NEKO"
   },
+  "24941637": {
+   "name": "BENZTY",
+   "power": 4614439,
+   "server": 249,
+   "guildId": "2490025",
+   "guild": "dbwีไne"
+  },
   "24961642": {
    "name": "dbcuper",
    "guildId": "2490025",
@@ -3813,6 +3848,13 @@
    "guildId": "2490025",
    "power": 12466890,
    "server": 256,
+   "guild": "dbwีไne"
+  },
+  "25678315": {
+   "name": "dbndt",
+   "power": 6232902,
+   "server": 256,
+   "guildId": "2490025",
    "guild": "dbwีไne"
   }
  }

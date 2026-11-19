@@ -2057,6 +2057,13 @@
    "server": 81,
    "guild": "鬼門"
   },
+  "8133562": {
+   "name": "鬼門大開",
+   "power": 20035868,
+   "server": 81,
+   "guildId": "810011",
+   "guild": "鬼門"
+  },
   "8133865": {
    "name": "鬼門Eris",
    "guildId": "810011",
@@ -2359,6 +2366,13 @@
    "guildId": "910010",
    "power": 12682373,
    "server": 91,
+   "guild": "GARUDA"
+  },
+  "9214074": {
+   "name": "GAsanne",
+   "power": 8826338,
+   "server": 92,
+   "guildId": "910010",
    "guild": "GARUDA"
   },
   "9224479": {
@@ -2788,6 +2802,13 @@
    "server": 111,
    "guild": "Zeroes"
   },
+  "11315183": {
+   "name": "EXNuggs",
+   "power": 12338297,
+   "server": 113,
+   "guildId": "1130004",
+   "guild": "EXILE"
+  },
   "11315190": {
    "name": "Exactly",
    "guildId": "1130004",
@@ -3060,6 +3081,13 @@
    "power": 17249358,
    "server": 121,
    "guild": "AiWe"
+  },
+  "12204460": {
+   "name": "Vodevil",
+   "power": 427460,
+   "server": 122,
+   "guildId": "1210014",
+   "guild": "WOE"
   },
   "12345093": {
    "name": "Chompoo",

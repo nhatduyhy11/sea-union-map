@@ -3101,6 +3101,13 @@
    "server": 642,
    "guild": "Alpha"
   },
+  "64244699": {
+   "name": "CưGiaUy",
+   "power": 481408,
+   "server": 642,
+   "guildId": "6440017",
+   "guild": "Delta"
+  },
   "64254067": {
    "name": "ABOxCá",
    "guildId": "6430012",
@@ -3350,6 +3357,13 @@
    "power": 22991809,
    "server": 644,
    "guild": "Alpha"
+  },
+  "64416995": {
+   "name": "LeMlem",
+   "power": 8093306,
+   "server": 644,
+   "guildId": "6440017",
+   "guild": "Delta"
   },
   "64426919": {
    "name": "ABOxDel",
@@ -3624,6 +3638,13 @@
    "server": 651,
    "guild": "Dragon"
   },
+  "65214087": {
+   "name": "GioÁiNhi",
+   "power": 1168314,
+   "server": 652,
+   "guildId": "6490011",
+   "guild": "HNxVN"
+  },
   "65224084": {
    "name": "DrSw33t",
    "guildId": "6520021",
@@ -3644,6 +3665,13 @@
    "power": 16509228,
    "server": 652,
    "guild": "NAxNLH"
+  },
+  "65234560": {
+   "name": "VanhBơm",
+   "power": 7497366,
+   "server": 652,
+   "guildId": "6520021",
+   "guild": "Dragon"
   },
   "65234770": {
    "name": "MrĐạt",
@@ -3764,6 +3792,13 @@
    "server": 657,
    "guild": "Omega"
   },
+  "65739128": {
+   "name": "Ktz",
+   "power": 1061602,
+   "server": 657,
+   "guildId": "6570011",
+   "guild": "THxS657"
+  },
   "65759325": {
    "name": "LGxJJJ",
    "guildId": "6600011",
@@ -3799,11 +3834,25 @@
    "server": 660,
    "guild": "Omega"
   },
+  "66012143": {
+   "name": "ABOxMực",
+   "power": 8257778,
+   "server": 660,
+   "guildId": "6600011",
+   "guild": "Omega"
+  },
   "66022868": {
    "name": "ABOxCám",
    "guildId": "6600011",
    "power": 18772080,
    "server": 660,
+   "guild": "Omega"
+  },
+  "66032447": {
+   "name": "AOBxMía",
+   "power": 12578254,
+   "server": 660,
+   "guildId": "6600011",
    "guild": "Omega"
   },
   "66032945": {
@@ -4079,6 +4128,13 @@
    "server": 665,
    "guild": "AeVN"
   },
+  "66587205": {
+   "name": "Rabeggg",
+   "power": 5296799,
+   "server": 665,
+   "guildId": "6660013",
+   "guild": "NEXUS"
+  },
   "66597992": {
    "name": "AeMira",
    "guildId": "6670010",
@@ -4268,6 +4324,13 @@
    "guildId": "6660013",
    "guild": "NEXUS"
   },
+  "66729020": {
+   "name": "TheHero",
+   "power": 7229556,
+   "server": 667,
+   "guildId": "6660013",
+   "guild": "NEXUS"
+  },
   "66729337": {
    "name": "ChungMinhLâm",
    "power": 4670568,
@@ -4343,6 +4406,13 @@
    "guildId": "6670010",
    "power": 5887436,
    "server": 668,
+   "guild": "AeVN"
+  },
+  "66860536": {
+   "name": "Hype",
+   "power": 8858674,
+   "server": 668,
+   "guildId": "6670010",
    "guild": "AeVN"
   },
   "66860726": {
@@ -4617,6 +4687,13 @@
    "power": 3236082,
    "server": 676,
    "guild": "VNx"
+  },
+  "67709127": {
+   "name": "VNxPii",
+   "power": 9598392,
+   "server": 677,
+   "guildId": "6770011",
+   "guild": "VN"
   },
   "67719124": {
    "name": "VNBa0",
@@ -5059,6 +5136,13 @@
    "server": 688,
    "guild": "BBoyz"
   },
+  "68890144": {
+   "name": "Auza",
+   "power": 9205656,
+   "server": 688,
+   "guildId": "6880028",
+   "guild": "Fury"
+  },
   "68941739": {
    "name": "VNWhatT",
    "guildId": "6900012",
@@ -5289,6 +5373,13 @@
    "power": 8992428,
    "server": 693,
    "guild": "ACE"
+  },
+  "69315982": {
+   "name": "IU",
+   "power": 1257844,
+   "server": 693,
+   "guildId": "6940008",
+   "guild": "FAMILY"
   },
   "69335708": {
    "name": "ACWICKY",
@@ -5862,6 +5953,13 @@
    "guildId": "7010002",
    "power": 25383046,
    "server": 704,
+   "guild": "EmPIRE"
+  },
+  "70446201": {
+   "name": "EmYumi",
+   "power": 5117642,
+   "server": 704,
+   "guildId": "7010002",
    "guild": "EmPIRE"
   },
   "70446310": {

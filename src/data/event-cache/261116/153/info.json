@@ -2121,6 +2121,13 @@
    "server": 139,
    "guild": "Phoenix"
   },
+  "14002561": {
+   "name": "Phx神杀枪",
+   "power": 2912658,
+   "server": 140,
+   "guildId": "1390004",
+   "guild": "Phoenix"
+  },
   "14022456": {
    "name": "Buff",
    "guildId": "1390004",
@@ -2693,6 +2700,13 @@
    "guildId": "1550015",
    "power": 15312024,
    "server": 155,
+   "guild": "soul"
+  },
+  "15527723": {
+   "name": "soRise",
+   "power": 12193858,
+   "server": 155,
+   "guildId": "1550015",
    "guild": "soul"
   },
   "15527822": {
@@ -3372,6 +3386,13 @@
    "server": 176,
    "guild": "TH.Xeno"
   },
+  "17658624": {
+   "name": "ANOMALI",
+   "power": 1976919,
+   "server": 176,
+   "guildId": "1700010",
+   "guild": "HOT2"
+  },
   "17678913": {
    "name": "THMyth",
    "power": 11733373,
@@ -3602,6 +3623,13 @@
    "power": 768950,
    "server": 184,
    "guild": "LUNAR"
+  },
+  "18507030": {
+   "name": "LaxYui",
+   "power": 17635280,
+   "server": 185,
+   "guildId": "1850011",
+   "guild": "Lacoste"
   },
   "18517307": {
    "name": "LaTansa",
