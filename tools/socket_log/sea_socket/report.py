@@ -289,7 +289,8 @@ def dump_run(crawl: Path, config: Path = CONFIG_BASELINE,
     board_rows = player_board(boards)
     guilds_by_faction = faction_guilds(crawl)
     known = {pid for _g, pid, _s, _c in rows}
-    unnamed = sorted(known - set(briefs))
+    # briefs key là str (JSON), pid là int — trừ khác kiểu thì unnamed luôn bằng cả tập
+    unnamed = sorted(known - {int(k) for k in briefs})
     payload = {
         "snapshotAt": snapshot.get("logged_at") or meta["started_at"],
         "camp": {str(g): c for g, c in camp.items()},
