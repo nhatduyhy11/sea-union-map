@@ -11,9 +11,24 @@
   background:
     linear-gradient(
       to bottom,
-      rgb(248 250 250 / 0.35) 0,
-      rgb(248 250 250 / 0.75) 260px,
-      rgb(248 250 250 / 0.92) 420px
+      color-mix(
+          in srgb,
+          var(--surface-panel, #f8fafa) calc(0.35 * 100%),
+          transparent
+        )
+        0,
+      color-mix(
+          in srgb,
+          var(--surface-panel, #f8fafa) calc(0.75 * 100%),
+          transparent
+        )
+        260px,
+      color-mix(
+          in srgb,
+          var(--surface-panel, #f8fafa) calc(0.92 * 100%),
+          transparent
+        )
+        420px
     ),
     var(--boss-bg) right -40px top 20px / 115% auto no-repeat;
 }
@@ -27,12 +42,12 @@
 .eyebrow {
   font-size: 9px;
   letter-spacing: 1.8px;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
   font-weight: 600;
 }
 
 .detailTop button {
-  color: #7d8f9a;
+  color: var(--text-muted, #7d8f9a);
 }
 
 .detailIcon {
@@ -41,8 +56,8 @@
   height: 66px;
   display: grid;
   place-items: center;
-  background: #eef2f4;
-  border: 1px solid #dce3e6;
+  background: var(--surface-subtle, #eef2f4);
+  border: 1px solid var(--border, #dce3e6);
   border-radius: 16px;
 }
 
@@ -60,23 +75,23 @@
 }
 
 .detailTags span {
-  background: #eef2f4;
-  border: 1px solid #dfe4e8;
+  background: var(--surface-subtle, #eef2f4);
+  border: 1px solid var(--border, #dfe4e8);
   border-radius: 4px;
   padding: 4px 7px;
-  color: #667884;
+  color: var(--text-secondary, #667884);
 }
 
 .claim {
   display: flex;
   gap: 10px;
   align-items: center;
-  background: #f1f4f5;
-  border: 1px solid #e0e6e9;
+  background: var(--surface-subtle, #f1f4f5);
+  border: 1px solid var(--border, #e0e6e9);
   border-radius: 6px;
   margin: 23px 0;
   padding: 13px 10px;
-  color: #667884;
+  color: var(--text-secondary, #667884);
 }
 
 .claim small {
@@ -88,7 +103,7 @@
 
 .claim b {
   font-size: 11px;
-  color: #33424c;
+  color: var(--text-primary, #33424c);
   font-weight: 500;
 }
 
@@ -103,13 +118,13 @@
 .sectionTitle > span {
   font-size: 9px;
   font-weight: 400;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
 }
 
 .pinDetail {
   margin-top: 23px;
   width: 100%;
-  border: 1px solid #d5dcdf;
+  border: 1px solid var(--border, #d5dcdf);
   border-radius: 6px;
   padding: 10px;
   display: flex;
@@ -117,13 +132,13 @@
   gap: 8px;
   align-items: center;
   font-size: 10px;
-  color: #5d707b;
+  color: var(--text-secondary, #5d707b);
 }
 
 .pinDetail.isPinned {
-  color: #0c8a63;
-  background: #e0f2ea;
-  border-color: #b7e0d0;
+  color: var(--accent, #0c8a63);
+  background: var(--accent-subtle, #e0f2ea);
+  border-color: var(--accent-border, #b7e0d0);
 }
 
 @media (min-width: 1600px) {

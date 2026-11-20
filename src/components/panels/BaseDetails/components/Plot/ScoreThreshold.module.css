@@ -6,7 +6,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 4px;
-  color: #5d6e78;
+  color: var(--text-secondary, #5d6e78);
   font-size: 9px;
 }
 
@@ -27,7 +27,7 @@
   margin-left: auto;
   font-size: 10px;
   font-weight: 600;
-  color: #33424c;
+  color: var(--text-primary, #33424c);
 }
 
 .thresholdBar button {
@@ -45,7 +45,7 @@
 }
 
 .hatchPattern line {
-  stroke: #8496a1;
+  stroke: var(--text-muted, #8496a1);
   stroke-width: 1;
   opacity: 0.4;
 }
@@ -56,7 +56,7 @@
 }
 
 .threshold line {
-  stroke: #8496a1;
+  stroke: var(--text-muted, #8496a1);
   stroke-width: 1.5;
 }
 
@@ -66,8 +66,8 @@
 }
 
 .thresholdKnob {
-  fill: #ffffff;
-  stroke: #8496a1;
+  fill: var(--surface, #ffffff);
+  stroke: var(--text-muted, #8496a1);
   stroke-width: 1.5;
 }
 
@@ -81,10 +81,10 @@
   display: inline-block;
   max-width: 100%;
   padding: 1px 5px;
-  border: 1px solid #c3ccd1;
+  border: 1px solid var(--border, #c3ccd1);
   border-radius: 9px;
-  background: #ffffff;
-  color: #5d6e78;
+  background: var(--surface, #ffffff);
+  color: var(--text-secondary, #5d6e78);
   font-size: 10px;
   font-weight: 600;
   line-height: 14px;

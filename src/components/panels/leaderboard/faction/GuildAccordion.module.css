@@ -6,7 +6,7 @@
   width: 100%;
   padding: 7px 4px;
   font-size: 10px;
-  color: #5d707b;
+  color: var(--text-secondary, #5d707b);
   border-radius: 4px;
   text-align: left;
 }
@@ -21,7 +21,7 @@ summary.guildToggle::-webkit-details-marker {
 }
 
 button.guildToggle:hover {
-  color: #0d8a65;
+  color: var(--accent, #0d8a65);
 }
 
 .guildToggle b {
@@ -36,7 +36,7 @@ button.guildToggle:hover {
 }
 
 .guildActive {
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
 }
 
 .guildActive b {
@@ -68,7 +68,7 @@ button.guildToggle:hover {
 
 .guildLabel small {
   font-size: 9px;
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
   white-space: nowrap;
 }
 
@@ -83,7 +83,7 @@ button.guildToggle:hover {
 .memberList {
   margin: 3px 0 6px;
   padding: 4px 6px;
-  background: #ffffff;
+  background: var(--surface, #ffffff);
   border-radius: 4px;
 }
 
@@ -95,7 +95,7 @@ button.guildToggle:hover {
   width: 100%;
   padding: 5px 4px;
   font-size: 10px;
-  color: #5d707b;
+  color: var(--text-secondary, #5d707b);
   border-radius: 4px;
   text-align: left;
 }
@@ -106,11 +106,11 @@ button.guildToggle:hover {
 }
 
 button.memberRow:hover {
-  color: #0d8a65;
+  color: var(--accent, #0d8a65);
 }
 
 .memberSelected {
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
 }
 
 .memberSelected b {

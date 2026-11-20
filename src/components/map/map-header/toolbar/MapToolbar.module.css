@@ -10,11 +10,11 @@
   display: flex;
   align-items: center;
   gap: 9px;
-  background: #ffffff;
-  border: 1px solid #d8dfe3;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 6px;
   padding: 10px 12px;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
   max-width: 320px;
   flex: 1;
 }
@@ -23,13 +23,13 @@
   background: none;
   border: 0;
   outline: none;
-  color: #2a3740;
+  color: var(--text-primary, #2a3740);
   width: 100%;
   font-size: 11px;
 }
 
 .search input::placeholder {
-  color: #93a3ad;
+  color: var(--text-muted, #93a3ad);
 }
 
 .searchResults {
@@ -37,8 +37,8 @@
   top: 42px;
   left: 0;
   right: 0;
-  background: #ffffff;
-  border: 1px solid #d8dfe3;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 6px;
   z-index: 30;
   box-shadow: 0 8px 25px rgba(25, 42, 52, 0.12);
@@ -51,16 +51,16 @@
   width: 100%;
   padding: 10px;
   text-align: left;
-  color: #0d8a65;
+  color: var(--accent, #0d8a65);
 }
 
 .searchResults button:hover,
 .searchResults button.active {
-  background: #eff4f5;
+  background: var(--surface-subtle, #eff4f5);
 }
 
 .searchResults span {
-  color: #4e616c;
+  color: var(--text-secondary, #4e616c);
   font-size: 11px;
 }
 
@@ -82,7 +82,7 @@
 .reset {
   display: flex;
   align-items: center;
-  border: 1px solid #d5dcdf;
+  border: 1px solid var(--border, #d5dcdf);
   padding: 9px;
   border-radius: 6px;
 }
@@ -92,7 +92,7 @@
   gap: 8px;
   align-items: center;
   font-size: 11px;
-  color: #5d707b;
+  color: var(--text-secondary, #5d707b);
   cursor: pointer;
   white-space: nowrap;
 }
@@ -108,7 +108,7 @@
   width: 30px;
   height: 17px;
   border-radius: 12px;
-  background: #ccd6dc;
+  background: var(--border, #ccd6dc);
   position: relative;
 }
 
@@ -119,29 +119,29 @@
   left: 3px;
   width: 11px;
   height: 11px;
-  background: #ffffff;
+  background: var(--surface, #ffffff);
   border-radius: 50%;
   transition: 0.2s;
 }
 
 .showAll input:checked + .switch {
-  background: #17a67c;
+  background: var(--accent, #17a67c);
 }
 
 .showAll input:checked + .switch:after {
   left: 16px;
-  background: #ffffff;
+  background: var(--surface, #ffffff);
 }
 
 .showAll input:focus-visible + .switch {
-  outline: 2px solid #0f9d76;
+  outline: 2px solid var(--accent, #0f9d76);
 }
 
 .fit {
   display: flex;
   align-items: center;
   gap: 7px;
-  border: 1px solid #d5dcdf;
+  border: 1px solid var(--border, #d5dcdf);
   padding: 9px 12px;
   border-radius: 6px;
   font-size: 11px;

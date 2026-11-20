@@ -11,22 +11,22 @@
 }
 
 .tick line {
-  stroke: #eaeef0;
+  stroke: var(--border, #eaeef0);
 }
 
 .tick text {
-  fill: #8496a1;
+  fill: var(--text-muted, #8496a1);
   text-anchor: end;
   dominant-baseline: middle;
 }
 
 .ref line {
-  stroke: #33424c;
+  stroke: var(--text-primary, #33424c);
   stroke-dasharray: 3 3;
 }
 
 .ref text {
-  fill: #33424c;
+  fill: var(--text-primary, #33424c);
   dominant-baseline: middle;
 }
 
@@ -53,7 +53,7 @@
   flex-wrap: wrap;
   gap: 4px 12px;
   margin-top: 8px;
-  color: #5d6e78;
+  color: var(--text-secondary, #5d6e78);
 }
 
 .legend span {
@@ -70,5 +70,5 @@
 }
 
 .legendRef {
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
 }

@@ -9,15 +9,15 @@
   border-left-width: 3px;
   border-radius: 6px;
   font-size: 11px;
-  background: #ffffff;
+  background: var(--surface, #ffffff);
 }
 
 /* Phe hạng 1 theo điểm phe: cả card nền màu phe nhạt. */
 .card.leading {
-  background: color-mix(in srgb, var(--tint) 10%, #ffffff);
+  background: color-mix(in srgb, var(--tint) 10%, var(--surface, #ffffff));
 }
 
 .rank {
   font-size: 10px;
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
 }

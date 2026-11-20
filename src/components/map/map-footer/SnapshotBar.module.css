@@ -8,7 +8,7 @@
   font-size: 9px;
   letter-spacing: 1.2px;
   font-weight: 600;
-  color: #8b9aa4;
+  color: var(--text-muted, #8b9aa4);
   text-transform: uppercase;
   margin-right: 2px;
 }
@@ -20,9 +20,9 @@
   font: inherit;
   font-size: 11px;
   font-weight: 600;
-  color: #33424c;
-  background: #ffffff;
-  border: 1px solid #d8dfe3;
+  color: var(--text-primary, #33424c);
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 5px;
   box-shadow: 0 1px 2px rgba(20, 35, 44, 0.12);
   cursor: pointer;
@@ -30,7 +30,7 @@
 }
 
 .round:hover {
-  border-color: #b9c5cc;
+  border-color: var(--border, #b9c5cc);
 }
 
 /* Ngày có snapshot / hôm nay: nút nổi. */
@@ -44,9 +44,9 @@
   padding: 3px 7px;
   font-size: 11px;
   font-weight: 600;
-  color: #33424c;
-  background: #ffffff;
-  border: 1px solid #d8dfe3;
+  color: var(--text-primary, #33424c);
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 5px;
   box-shadow: 0 1px 2px rgba(20, 35, 44, 0.12);
   transition:
@@ -55,15 +55,15 @@
 }
 
 .day:hover {
-  border-color: #b9c5cc;
+  border-color: var(--border, #b9c5cc);
   box-shadow: 0 2px 5px rgba(20, 35, 44, 0.16);
   transform: translateY(-1px);
 }
 
 .day.active,
 .day.active:hover {
-  color: #0d8a65;
-  background: #e0f2ea;
+  color: var(--accent, #0d8a65);
+  background: var(--accent-subtle, #e0f2ea);
   border-color: #7ccaae;
 }
 
@@ -78,9 +78,9 @@
 
 /* Chưa tới: xám, không bấm được. */
 .day.future {
-  color: #b5c1c8;
-  background: #f1f4f5;
-  border-color: #e3e8eb;
+  color: var(--border, #b5c1c8);
+  background: var(--surface-subtle, #f1f4f5);
+  border-color: var(--border, #e3e8eb);
   box-shadow: none;
   cursor: not-allowed;
 }
@@ -105,8 +105,8 @@
   white-space: nowrap;
   font-size: 10px;
   font-weight: 500;
-  color: #ffffff;
-  background: #2a3740;
+  color: var(--surface, #ffffff);
+  background: var(--text-primary, #2a3740);
   padding: 4px 7px;
   border-radius: 4px;
   pointer-events: none;
@@ -115,7 +115,7 @@
 
 .loading {
   font-size: 10px;
-  color: #8b9aa4;
+  color: var(--text-muted, #8b9aa4);
 }
 
 @media (max-width: 760px) {

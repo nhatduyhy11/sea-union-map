@@ -7,12 +7,12 @@
   align-items: center;
   gap: 6px;
   padding: 5px 8px;
-  border: 1px solid #d3dde1;
+  border: 1px solid var(--border, #d3dde1);
   border-radius: 6px;
-  background: #ffffff;
+  background: var(--surface, #ffffff);
   box-shadow: 0 1px 4px rgb(31 45 52 / 0.12);
   font-size: 11px;
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
   pointer-events: auto;
 }
 
@@ -23,10 +23,10 @@
   width: 16px;
   height: 16px;
   border-radius: 4px;
-  color: #7d8f9a;
+  color: var(--text-muted, #7d8f9a);
 }
 
 .chip button:hover {
-  background: #e8eef0;
-  color: #2c3941;
+  background: var(--surface-subtle, #e8eef0);
+  color: var(--text-primary, #2c3941);
 }

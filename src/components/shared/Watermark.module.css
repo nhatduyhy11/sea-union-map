@@ -3,11 +3,11 @@
   user-select: none;
   letter-spacing: 1.5px;
   font-weight: 500;
-  color: #8b9aa4;
+  color: var(--text-muted, #8b9aa4);
 }
 
 .watermark strong {
-  color: #0f9d76;
+  color: var(--accent, #0f9d76);
   font-weight: 700;
 }
 
@@ -16,8 +16,8 @@
   margin-top: 5px;
   width: fit-content;
   font-size: 8px;
-  background: #e0f2ea;
-  border: 1px solid #bde3d4;
+  background: var(--accent-subtle, #e0f2ea);
+  border: 1px solid var(--accent-border, #bde3d4);
   border-radius: 5px;
   padding: 3px 7px;
   pointer-events: none;

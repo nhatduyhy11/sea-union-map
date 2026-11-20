@@ -9,13 +9,13 @@
   display: flex;
   align-items: center;
   border-radius: 20px;
-  background: #eff2f4;
-  color: #7d8f9a;
+  background: var(--surface-subtle, #eff2f4);
+  color: var(--text-muted, #7d8f9a);
 }
 
 .trigger.active {
-  background: #0d8a65;
-  color: #fff;
+  background: var(--accent, #0d8a65);
+  color: var(--surface, #fff);
 }
 
 .trigger button {
@@ -53,8 +53,8 @@
   position: fixed;
   z-index: 1000;
   padding: 8px;
-  background: #fff;
-  border: 1px solid #e3eaee;
+  background: var(--surface, #fff);
+  border: 1px solid var(--border, #e3eaee);
   border-radius: 8px;
   box-shadow: 0 6px 18px rgba(30, 50, 60, 0.14);
 }
@@ -66,16 +66,16 @@
   margin-bottom: 6px;
   font-size: 10px;
   font-weight: 500;
-  color: #5d707b;
+  color: var(--text-secondary, #5d707b);
 }
 
 .header button {
   font-size: 9px;
-  color: #0d8a65;
+  color: var(--accent, #0d8a65);
 }
 
 .header button:disabled {
-  color: #b5c1c8;
+  color: var(--border, #b5c1c8);
   cursor: default;
 }
 
@@ -92,10 +92,10 @@
   height: 36px;
   padding: 0;
   border-radius: 6px;
-  background: #eff2f4;
-  box-shadow: inset 0 0 0 1px #e3eaee;
+  background: var(--surface-subtle, #eff2f4);
+  box-shadow: inset 0 0 0 1px var(--border, #e3eaee);
   font-size: 9px;
-  color: #7d8f9a;
+  color: var(--text-muted, #7d8f9a);
 }
 
 .grid img {
@@ -123,7 +123,7 @@
 }
 
 .grid button.on {
-  box-shadow: 0 0 0 2px #0d8a65;
+  box-shadow: 0 0 0 2px var(--accent, #0d8a65);
 }
 
 .grid button.on img {
@@ -143,9 +143,9 @@
   min-width: 15px;
   padding: 0 4px;
   border-radius: 8px;
-  background: #5d707b;
-  box-shadow: 0 0 0 1.5px #fff;
-  color: #fff;
+  background: var(--text-secondary, #5d707b);
+  box-shadow: 0 0 0 1.5px var(--surface, #fff);
+  color: var(--surface, #fff);
   font-size: 9px;
   font-weight: 600;
   line-height: 15px;
@@ -155,7 +155,7 @@
 }
 
 .grid button.on .count {
-  background: #0d8a65;
+  background: var(--accent, #0d8a65);
 }
 
 /* Boss không có trên map: khoá, mờ hẳn, nền gạch chéo. */
@@ -163,8 +163,8 @@
   cursor: not-allowed;
   background: repeating-linear-gradient(
     -45deg,
-    #f4f6f7 0 4px,
-    #eaeef0 4px 8px
+    var(--surface-subtle, #f4f6f7) 0 4px,
+    var(--border, #eaeef0) 4px 8px
   );
 }
 

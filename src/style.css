@@ -1,12 +1,13 @@
 :root {
+  color-scheme: light;
   font-family: "Be Vietnam Pro", sans-serif;
-  color: #2a3740;
-  background: #eef1f3;
+  color: var(--text-primary, #2a3740);
+  background: var(--surface-page, #eef1f3);
   font-synthesis: none;
   font-size: 13px;
 
   /* Xanh accent chung cho trạng thái nổi bật: ghim đảo, glow khi filter theo player. */
-  --highlight-green: #0d9a6f;
+  --highlight-green: var(--accent, #0d9a6f);
 }
 
 * {
@@ -31,12 +32,12 @@ button {
 
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid #0f9d76;
+  outline: 2px solid var(--accent, #0f9d76);
   outline-offset: 3px;
 }
 
 button:hover {
-  color: #14232c;
+  color: var(--text-primary, #14232c);
 }
 
 i {
@@ -51,22 +52,22 @@ i {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c9d2d8;
+  background: var(--border, #c9d2d8);
   border-radius: 5px;
 }
 
 /* Global React Flow customization */
 .react-flow {
   --xy-background-color: transparent;
-  --xy-controls-button-background-color: #ffffff;
-  --xy-controls-button-background-color-hover: #eff3f4;
-  --xy-controls-button-color: #4e616c;
-  --xy-controls-button-border-color: #d8dfe3;
+  --xy-controls-button-background-color: var(--surface, #ffffff);
+  --xy-controls-button-background-color-hover: var(--surface-subtle, #eff3f4);
+  --xy-controls-button-color: var(--text-secondary, #4e616c);
+  --xy-controls-button-border-color: var(--border, #d8dfe3);
 }
 
 .react-flow__controls {
   box-shadow: 0 4px 14px rgba(25, 42, 52, 0.08);
-  border: 1px solid #d8dfe3;
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 5px;
   overflow: hidden;
   bottom: 14px;

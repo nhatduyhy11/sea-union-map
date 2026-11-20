@@ -10,14 +10,14 @@
 .subTabs button {
   padding: 4px 9px;
   border-radius: 20px;
-  background: #eff2f4;
-  color: #7d8f9a;
+  background: var(--surface-subtle, #eff2f4);
+  color: var(--text-muted, #7d8f9a);
   font-size: 10px;
 }
 
 .subTabs button.selected {
-  background: #0d8a65;
-  color: #fff;
+  background: var(--accent, #0d8a65);
+  color: var(--surface, #fff);
 }
 
 /* Hàng pill trạng thái node (BXH Cứ điểm, chi tiết căn cứ): một dòng, cuộn

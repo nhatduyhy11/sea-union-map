@@ -3,8 +3,8 @@
   display: flex;
   align-items: center;
   padding: 0 27px;
-  border-bottom: 1px solid #dfe4e8;
-  background: #f8fafa;
+  border-bottom: 1px solid var(--border, #dfe4e8);
+  background: var(--surface-panel, #f8fafa);
   gap: 28px;
 }
 
@@ -18,9 +18,9 @@
 }
 
 .brandIcon {
-  color: #0f9d76;
-  background: #e0f2ea;
-  border: 1px solid #bde3d4;
+  color: var(--accent, #0f9d76);
+  background: var(--accent-subtle, #e0f2ea);
+  border: 1px solid var(--accent-border, #bde3d4);
   width: 43px;
   height: 43px;
   display: grid;
@@ -31,12 +31,12 @@
 .divider {
   height: 29px;
   width: 1px;
-  background: #dde3e7;
+  background: var(--border, #dde3e7);
 }
 
 .title {
   font-size: 13px;
-  color: #647783;
+  color: var(--text-secondary, #647783);
 }
 
 @media (max-width: 760px) {
