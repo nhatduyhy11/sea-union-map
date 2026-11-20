@@ -1,27 +1,44 @@
 # Agent Instructions
 
-This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
+## Project rules
 
-> **Architecture in one line:** Issues live in a local Dolt database
-> (`.beads/dolt/`); cross-machine sync uses `bd dolt push/pull` (a
-> git-compatible protocol), stored under `refs/dolt/data` on your git
-> remote — separate from `refs/heads/*` where your code lives.
-> `.beads/issues.jsonl` is a passive export, not the wire protocol.
->
-> See [sync-concepts](https://github.com/gastownhall/beads/blob/main/docs/core-concepts/sync-concepts.md)
-> for the one-screen overview and anti-patterns (don't treat JSONL as the
-> source of truth; don't `bd import` during normal operation; don't
-> reach for third-party Dolt hosting before trying the default).
+Keep this section in sync with `CLAUDE.md`.
 
-## Quick Reference
+### Commands
 
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work atomically
-bd close <id>         # Complete work
-bd dolt push          # Push beads data to remote
-```
+- When the user asks which command to run (dev, test, build, crawl, fullcrawl…),
+  check `docs/sea/TLDR_DOCS.md` first and answer from it; fall back to `README.BE.md` /
+  `README.md` only for what it doesn't cover. That file is a human-first cheat sheet
+  of the owner's most-used commands — keep it short, don't grow it into a full
+  reference.
+
+### Map data
+
+- `src/data/map-coords.ts` is raw coordinate/route data traced from `specs/map-*.PNG`.
+  Only open it when the task is about island positions or routes; never edit it
+  without re-tracing from the specs. Positions are locked by `src/domain/data.test.ts`.
+- `src/data/map-layout.ts` holds the logic (`layoutNodes`, `layoutRoutes`, `mapBounds`)
+  built on top of that data — start there for anything else map-related.
+
+### FE/BE boundary
+
+- FE code and comments describe the FE data contract only (`src/types.ts`,
+  `SeaLiveDump` fields and their UI meaning). Don't cite BE internals info. That
+  knowledge belongs in `docs/sea/SEA_STRUCTURE.md`; FE comments reference the
+  dump field name and the in-game UI column it mirrors instead.
+
+### Writing docs, commit messages and code comments
+
+- Never cite gitignored data as evidence or reference: crawl run dirs (`.tmp/...`,
+  e.g. `sea-crawl-20261030-122836`), `public/sea-live-dev.json`, local profiles,
+  frame dumps. Readers of the repo cannot open them. State the finding itself
+  (what was checked, the numbers, a date if useful) instead.
+- Avoid commit hashes, quoting commit messages, or "previously / earlier version"
+  history narration. Docs and comments describe the current state; history lives
+  in git.
+- Docs point down to code, never the reverse: code comments state the fact itself
+  and never cite docs files or sections (`*.md`, `§x.y`). Source assets the code
+  is derived from (`specs/map-*.PNG`, golden screenshots) may still be named.
 
 ## Non-Interactive Shell Commands
 
@@ -29,78 +46,33 @@ bd dolt push          # Push beads data to remote
 
 Shell commands like `cp`, `mv`, and `rm` may be aliased to include `-i` (interactive) mode on some systems, causing the agent to hang indefinitely waiting for y/n input.
 
-**Use these forms instead:**
 ```bash
-# Force overwrite without prompting
 cp -f source dest           # NOT: cp source dest
 mv -f source dest           # NOT: mv source dest
 rm -f file                  # NOT: rm file
-
-# For recursive operations
 rm -rf directory            # NOT: rm -r directory
 cp -rf source dest          # NOT: cp -r source dest
 ```
 
-**Other commands that may prompt:**
-- `scp` - use `-o BatchMode=yes` for non-interactive
-- `ssh` - use `-o BatchMode=yes` to fail instead of prompting
-- `apt-get` - use `-y` flag
-- `brew` - use `HOMEBREW_NO_AUTO_UPDATE=1` env var
+Other commands that may prompt: `scp`/`ssh` → `-o BatchMode=yes`; `apt-get` → `-y`;
+`brew` → `HOMEBREW_NO_AUTO_UPDATE=1`.
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:46cd31e7 -->
-## Beads Issue Tracker
+## Beads: git policy and session close
 
-This project uses **bd (beads)** for issue tracking. Run `bd prime` to see full workflow context and commands.
-
-### Quick Reference
-
-```bash
-bd ready              # Find available work
-bd show <id>          # View issue details
-bd update <id> --claim  # Claim work
-bd close <id>         # Complete work
-```
-
-### Rules
-
-- Use `bd` for ALL task tracking — do NOT use TodoWrite, TaskCreate, or markdown TODO lists
-- Run `bd prime` for detailed command reference and session close protocol
-- Use `bd remember` for persistent knowledge — do NOT use MEMORY.md files
-
-**Architecture in one line:** issues live in a local Dolt DB; sync uses `refs/dolt/data` on your git remote; `.beads/issues.jsonl` is a passive export. See https://github.com/gastownhall/beads/blob/main/docs/core-concepts/sync-concepts.md for details and anti-patterns.
-
-## Agent Context Profiles
-
-The managed Beads block is task-tracking guidance, not permission to override repository, user, or orchestrator instructions.
+Quick reference, task-tracking rules and the Dolt sync model are in the Codex block
+below and in `bd prime`.
 
 - **Conservative (default)**: Use `bd` for task tracking. Do not run git commits, git pushes, or Dolt remote sync unless explicitly asked. At handoff, report changed files, validation, and suggested next commands.
-- **Minimal**: Keep tool instruction files as pointers to `bd prime`; use the same conservative git policy unless active instructions say otherwise.
 - **Team-maintainer**: Only when the repository explicitly opts in, agents may close beads, run quality gates, commit, and push as part of session close. A current "do not commit" or "do not push" instruction still wins.
 
-## Session Completion
-
-This protocol applies when ending a Beads implementation workflow. It is subordinate to explicit user, repository, and orchestrator instructions.
+Session close:
 
 1. **File issues for remaining work** - Create beads for anything that needs follow-up
 2. **Run quality gates** (if code changed) - Tests, linters, builds
 3. **Update issue status** - Close finished work, update in-progress items
-4. **Handle git/sync by active profile**:
-   ```bash
-   # Conservative/minimal/default: report status and proposed commands; wait for approval.
-   git status
-
-   # Team-maintainer opt-in only, unless current instructions forbid it:
-   git pull --rebase
-   bd dolt push
-   git push
-   git status
-   ```
+4. **Git/sync** - Conservative: run `git status`, report, wait for approval. If a required sync or push is blocked, report the exact command and error.
 5. **Hand off** - Summarize changes, validation, issue status, and any blocked sync/commit/push step
-
-**Critical rules:**
-- Explicit user or orchestrator instructions override this Beads block.
-- Do not commit or push without clear authority from the active profile or the current user request.
-- If a required sync or push is blocked, stop and report the exact command and error.
 <!-- END BEADS INTEGRATION -->
 
 <!-- BEGIN BEADS CODEX SETUP: generated by bd setup codex -->
@@ -129,124 +101,25 @@ bd prime                # Refresh Beads context
 
 <!-- bv-agent-instructions-v7 -->
 
----
+## bv triage sidecar
 
-## Beads Workflow Integration
-
-This project uses a Beads tracker—either the Go `bd` CLI or the Rust `br` CLI—for issue tracking, plus [beads_viewer](https://github.com/Dicklesworthstone/beads_viewer) (`bv`) for graph-aware triage. Issues are stored in `.beads/`. `bv` auto-discovers supported JSONL exports, including `.beads/issues.jsonl` and legacy `.beads/beads.jsonl`.
-
-**Choose the tracker CLI from this repository's instructions and configuration.** Use `bd` commands in a Go Beads workspace and `br` commands in a beads_rust workspace. Do not run both trackers against the same workspace or infer the tracker solely from the JSONL filename.
-
-### Using bv as an AI sidecar
-
-bv is a graph-aware triage engine for Beads projects. Instead of parsing .beads/issues.jsonl / .beads/beads.jsonl directly or hallucinating graph traversal, use robot flags for deterministic, dependency-aware outputs with precomputed metrics (PageRank, betweenness, critical path, cycles, HITS, eigenvector, k-core).
-
-**Scope boundary:** bv handles *what to work on* (triage, priority, planning). The selected tracker CLI (`bd` or `br`) handles creating, claiming, modifying, and closing beads.
+This repo uses the Go `bd` CLI (not `br`). [beads_viewer](https://github.com/Dicklesworthstone/beads_viewer) (`bv`) gives graph-aware triage over `.beads/issues.jsonl`; `bv` decides *what to work on*, `bd` creates/claims/closes.
 
 **CRITICAL: Use ONLY --robot-* flags. Bare bv launches an interactive TUI that blocks your session.**
 
-#### The Workflow: Start With Triage
-
-**`bv --robot-triage` is your single entry point.** Its `triage` object contains:
-- `quick_ref`: at-a-glance counts + top 3 picks
-- `recommendations`: ranked actionable items with scores, reasons, unblock info
-- `quick_wins`: low-effort high-impact items
-- `blockers_to_clear`: items that unblock the most downstream work
-- `project_health`: status/type/priority distributions, graph metrics
-- `commands`: copy-paste shell commands for next steps
-
 ```bash
-bv --robot-triage        # THE MEGA-COMMAND: start here
-bv --robot-next          # Minimal: just the single top pick + claim command
-
-# TOON output (--format toon): a compact tabular encoding. Measured on this
-# repository it is 7% smaller than JSON for --robot-graph but 9-15% LARGER for
-# nested payloads (--robot-triage, --robot-plan, --robot-insights,
-# --robot-label-health); use --stats to see both sizes before adopting it.
-# TOON encoding shells out to the tru binary. With no encoder installed,
-# --format toon prints a fallback warning, emits JSON with output_format "json",
-# and --stats prints no sizes at all.
-bv --robot-graph --format toon
-bv --robot-triage --format toon --stats
+bv --robot-triage        # Start here: top picks, quick wins, blockers, health, next commands
+bv --robot-next          # Just the single top pick + claim command
+bv --robot-plan          # Parallel execution tracks with unblocks lists
+bv --robot-insights      # PageRank, betweenness, critical path, cycles…
+bv --robot-alerts        # Stale issues, blocking cascades, priority mismatches
+bv --robot-suggest       # Duplicates, missing deps, label suggestions, cycle breaks
+bv --robot-diff --diff-since <ref>   # New/closed/modified issues since ref
+bv --robot-graph [--graph-format=json|dot|mermaid]
+bv --recipe actionable --robot-plan  # Scope: only unblocked work (also --label <x>, --as-of <ref>)
 ```
 
-Recommendations can include blocked or assigned work; `triage.quick_ref.top_picks` reflects snapshot readiness. A suggested action records its original local ID, working directory, and tracker route. Use that route rather than a namespaced display ID or an unrelated current directory. Inspect current tracker state before execution: analysis does not reserve work or guarantee that a later claim succeeds.
-
-#### Other bv Commands
-
-| Command | Returns |
-|---------|---------|
-| `--robot-plan` | Parallel execution tracks with unblocks lists |
-| `--robot-priority` | Priority misalignment detection with confidence |
-| `--robot-insights` | Full metrics: PageRank, betweenness, HITS, eigenvector, critical path, cycles, k-core |
-| `--robot-alerts` | Stale issues, blocking cascades, priority mismatches |
-| `--robot-suggest` | Hygiene: duplicates, missing deps, label suggestions, cycle breaks |
-| `--robot-diff --diff-since <ref>` | Changes since ref: new/closed/modified issues |
-| `--robot-graph [--graph-format=json\|dot\|mermaid]` | Dependency graph export |
-
-Robot analysis commands default to JSON; `--format toon` selects TOON, and `--robot-help` defaults to text. In JSON mode, `--graph-format=dot` or `mermaid` puts diagram text in the `graph` field (`bv --robot-graph --graph-format=dot | jq -r .graph`).
-
-#### Scoping & Filtering
-
-```bash
-bv --robot-plan --label backend              # Scope to label's subgraph
-bv --robot-insights --as-of HEAD~30          # Historical point-in-time
-bv --recipe actionable --robot-plan          # Pre-filter: ready to work (no blockers)
-bv --recipe high-impact --robot-triage       # Pre-filter: top PageRank scores
-```
-
-### Tracker Commands for Issue Management
-
-Use exactly one command family, matching the tracker configured for the repository.
-
-#### Rust beads_rust (`br`)
-
-Use `br` 0.6.0 or newer when executing saved claim commands. It rechecks
-deferred status and future `defer_until` values when the claim runs, so a
-recommendation captured before a deferral cannot bypass it. This requirement
-applies to executing tracker claims.
-
-```bash
-br ready --json                       # Show issues ready to work (no blockers)
-br list --status=open --json          # All open issues
-br show <id> --json                   # Full issue details with dependencies
-br create --title="..." --type=task --priority=2 --json
-br update <id> --claim --json         # Claim for the current actor and start work
-br close <id> --reason="Completed" --json
-br close <id1> <id2> --reason="Completed" --json
-br sync --flush-only                  # Export DB to JSONL after Beads mutations
-```
-
-#### Go Beads (`bd`)
-
-```bash
-bd ready --json                       # Show issues ready to work
-bd show <id> --json                   # Full issue details
-bd create "..." -t task -p 2 --json
-bd update <id> --claim --json         # Atomically claim work
-bd close <id> --json
-bd dep add <issue> <depends-on>
-bd export -o .beads/issues.jsonl        # Refresh the compatibility export read by bv
-```
-
-### Workflow Pattern
-
-1. **Triage**: Run `bv --robot-triage` to find the highest-impact actionable work
-2. **Verify**: Check the selected tracker's `show`/`ready` output before claiming
-3. **Claim**: Use `br update <id> --claim --json` or `bd update <id> --claim --json`
-4. **Work**: Implement the task
-5. **Complete**: Use the selected tracker's `close` command
-6. **Refresh for bv**: Run `br sync --flush-only` or the `bd export` command above so the JSONL export is current
-
-### Key Concepts
-
-- **Dependencies**: Issues can block other issues. `br ready --json` and `bd ready --json` show unblocked work.
-- **Priority**: P0=critical, P1=high, P2=medium, P3=low, P4=backlog (use numbers 0-4, not words)
-- **Types**: task, bug, feature, epic, chore, docs, question
-- **Blocking**: Use `br dep add <issue> <depends-on>` or `bd dep add <issue> <depends-on>` to add dependencies
-
-### Git Policy
-
-Tracker commands do not grant permission to commit or push application code. Follow this repository's own git and tracker instructions before staging, committing, syncing, or pushing. If the repository says "commit only when asked," that rule overrides any generic workflow advice.
+Recommendations are a snapshot: check `bd show <id>` before claiming. After Beads
+mutations, refresh the export bv reads: `bd export -o .beads/issues.jsonl`.
 
 <!-- end-bv-agent-instructions -->
