@@ -146,3 +146,34 @@ export function canvasIcons(
 
   return new Map(islands.map((node) => [node.id, classify(node)]));
 }
+
+// Phe đang đe dọa từng node "defend"/"frontline": trong các phe own láng
+// giềng (khác owner), lấy phe điểm cao nhất tại node. Đe dọa chỉ tới qua
+// đường nối lãnh thổ phe đó; với "frontline" đây chính là phe nhì. Node khác
+// không có entry.
+export function nodeAttackers(
+  islands: Island[],
+  routes: Route[],
+  scoresByNode: ReadonlyMap<string, FactionScore[]>,
+  canvasIconByNode: ReadonlyMap<string, CanvasIcon>
+): Map<string, string> {
+  const byId = new Map(islands.map((node) => [node.id, node]));
+  const result = new Map<string, string>();
+  for (const node of islands) {
+    const icon = canvasIconByNode.get(node.id);
+    if (icon !== "defend" && icon !== "frontline") continue;
+    const scores = scoresByNode.get(node.id) ?? [];
+    const scoreOf = (id: string) =>
+      scores.find((entry) => entry.id === id)?.score ?? 0;
+    let attacker: string | undefined;
+    for (const { source, target } of routes) {
+      const other =
+        source === node.id ? target : target === node.id ? source : null;
+      const owner = other ? byId.get(other)?.owner : null;
+      if (!owner || owner === node.owner) continue;
+      if (!attacker || scoreOf(owner) > scoreOf(attacker)) attacker = owner;
+    }
+    if (attacker) result.set(node.id, attacker);
+  }
+  return result;
+}

@@ -209,3 +209,48 @@ test("Edges style by ownership and dim under filter", () => {
   assert.equal(dimmed[3]?.style?.strokeWidth, 8);
   assert.equal(dimmed[2]?.style?.strokeDasharray, "16 16");
 });
+
+test("Routes from the threatening faction draw dashes in its color", () => {
+  const routes = [
+    { source: "1-1", target: "1-1" },
+    { source: "1-1", target: "2-1" },
+    { source: "2-1", target: "2-1" },
+  ];
+  // Chỉ 1-1 bị b đe dọa: route từ lãnh thổ b vẽ dash màu b, khoảng trống
+  // gấp 3 đoạn màu; route nội phe a giữ style cũ.
+  const one = buildMapEdges(
+    routes,
+    islands,
+    factions,
+    false,
+    "#999999",
+    0.5,
+    new Map([["1-1", "b"]])
+  );
+  assert.equal(one[0]?.data, undefined);
+  assert.equal(one[0]?.style?.stroke, "#123456");
+  assert.deepEqual(one[1]?.data?.dashColors, ["#abcdef"]);
+  assert.equal(one[1]?.style?.strokeDasharray, "16 48");
+  // Route không chạm node bị tấn công giữ nguyên style cũ.
+  assert.equal(one[2]?.data, undefined);
+  assert.equal(one[2]?.style?.strokeDasharray, undefined);
+  assert.equal(one[2]?.style?.stroke, "#abcdef");
+  // Hai đầu bị tấn công: màu phe tấn công mỗi đầu.
+  const both = buildMapEdges(
+    routes,
+    islands,
+    factions,
+    true,
+    "#999999",
+    0.5,
+    new Map([
+      ["1-1", "b"],
+      ["2-1", "a"],
+    ])
+  );
+  // Hai phe đe dọa lẫn nhau: màu b – trống – màu a – trống.
+  assert.deepEqual(both[1]?.data?.dashColors, ["#abcdef", "#123456"]);
+  assert.equal(both[1]?.style?.strokeDasharray, "16 112");
+  // Filter vẫn dim.
+  assert.equal(both[1]?.style?.opacity, 0.1);
+});

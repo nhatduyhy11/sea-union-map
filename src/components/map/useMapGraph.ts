@@ -32,6 +32,7 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
     frontlineByNode,
     defendNodeIds,
     canvasIconByNode,
+    attackerByNode,
     contributions,
     players,
     leaderboard,
@@ -103,9 +104,17 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
         matched !== null,
         neutralColor,
         // Edge neutral đậm hơn node: opacity mặc định 0.55 → 0.6875.
-        Math.min(1, neutralOpacity * 1.25)
+        Math.min(1, neutralOpacity * 1.25),
+        attackerByNode
       ),
-    [routes, ownedIslands, matched, neutralColor, neutralOpacity]
+    [
+      routes,
+      ownedIslands,
+      matched,
+      neutralColor,
+      neutralOpacity,
+      attackerByNode,
+    ]
   );
   return { nodes, edges };
 }

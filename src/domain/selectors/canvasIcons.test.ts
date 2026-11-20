@@ -1,6 +1,11 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { canvasIcons, factionEfforts, type FactionEffort } from "./canvasIcons";
+import {
+  canvasIcons,
+  factionEfforts,
+  nodeAttackers,
+  type FactionEffort,
+} from "./canvasIcons";
 import { frontlineNodes } from "./frontline";
 import { scoresForNode } from "./nodeScores";
 import { factions } from "../testFixtures";
@@ -162,5 +167,24 @@ test("Unknown effort skips biceps and shield; bases always retain faction icons"
       "a-base"
     ),
     "base"
+  );
+});
+
+test("Attacker is the top-scoring faction among foreign neighbor owners", () => {
+  const all = [...bases, node("x", "a", { a: 19, b: 5 }), enemy];
+  const scores = scoreMap(all);
+  const icons = new Map([
+    ["x", "defend" as const],
+    ["enemy", "plain" as const],
+  ]);
+  assert.deepEqual(
+    [...nodeAttackers(all, toEnemy, scores, icons)],
+    [["x", "b"]]
+  );
+  // Không ai bỏ điểm: vẫn lấy phe own láng giềng.
+  const bare = [...bases, node("x", "a", { a: 19 }), enemy];
+  assert.equal(
+    nodeAttackers(bare, toEnemy, scoreMap(bare), icons).get("x"),
+    "b"
   );
 });

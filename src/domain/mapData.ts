@@ -1,5 +1,9 @@
 import { buildLiveData, type SeaLiveDump } from "../data/sea-live";
-import { canvasIcons, factionEfforts } from "./selectors/canvasIcons";
+import {
+  canvasIcons,
+  factionEfforts,
+  nodeAttackers,
+} from "./selectors/canvasIcons";
 import { factions } from "../data/factions";
 import {
   buildFactionBoard,
@@ -78,6 +82,14 @@ export function buildMapData(
       .filter(([, icon]) => icon === "defend")
       .map(([id]) => id)
   );
+  // Phe tấn công node cần thủ / tranh chấp — route chạm node đó vẽ dash màu
+  // phe này.
+  const attackerByNode = nodeAttackers(
+    islands,
+    routes,
+    scoresByNode,
+    canvasIconByNode
+  );
 
   // Chi tiết căn cứ: thống kê + tập đảo từng filter của mỗi phe, tính một lần
   // theo bộ dữ liệu (vuốt carousel đổi phe chỉ tra map).
@@ -119,6 +131,7 @@ export function buildMapData(
     frontlineByNode,
     defendNodeIds,
     canvasIconByNode,
+    attackerByNode,
     effortByFaction,
     islandStatsByFaction,
     ownedIslands: islands,
