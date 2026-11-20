@@ -1,7 +1,11 @@
 import { useState, type PointerEvent } from "react";
-import { compact } from "../../../../utils/format";
 import styles from "./ScoreThreshold.module.css";
 import { HEIGHT, PAD, type ScoreDotLayout } from "./scoreDotLayout";
+import {
+  clampThreshold,
+  formatThreshold,
+  parseThreshold,
+} from "./thresholdValue";
 import type { ScoreThreshold } from "../useBaseFilter";
 
 const HATCH_ID = "score-dot-plot-hatch";
@@ -30,7 +34,7 @@ export function ThresholdBar({
         Lấy nhỏ hơn
       </label>
       <span className={styles.thresholdValue}>
-        Ngưỡng {threshold.below ? "≤" : "≥"} {compact(threshold.value)}
+        Ngưỡng {threshold.below ? "≤" : "≥"} {formatThreshold(threshold.value)}
       </span>
       {active && (
         <button
@@ -89,7 +93,8 @@ export function ThresholdHatch({
 }
 
 // Vạch ngưỡng kéo dọc trục (nút tròn ở mép phải, vùng bắt chuột rộng hơn nét
-// vẽ); vẽ trên các chấm.
+// vẽ), nhãn giá trị ở lề phải đè lên nhãn avg / median khi trùng; vẽ trên các
+// chấm. Double-click vạch / nhãn mở ô nhập để gõ ngưỡng chính xác.
 export function ThresholdLine({
   threshold,
   active,
@@ -104,6 +109,7 @@ export function ThresholdLine({
   onChange: (next: ScoreThreshold) => void;
 }) {
   const [dragging, setDragging] = useState(false);
+  const [editing, setEditing] = useState(false);
   const lineY = plot.y(threshold.value);
   const drag = (event: PointerEvent<SVGGElement>) => {
     const svg = event.currentTarget.ownerSVGElement;
@@ -111,33 +117,107 @@ export function ThresholdLine({
     const value = plot.value(event.clientY - svg.getBoundingClientRect().top);
     if (value !== threshold.value) onChange({ ...threshold, value });
   };
+  const label = {
+    x: right + 3,
+    y: lineY - LABEL_HEIGHT / 2,
+    width: PAD.right - 3,
+    height: LABEL_HEIGHT,
+  };
   return (
-    <g
-      className={`${styles.threshold} ${active || dragging ? styles.active : ""}`}
-      onPointerDown={(event) => {
-        event.currentTarget.setPointerCapture(event.pointerId);
-        setDragging(true);
+    <>
+      <g
+        className={`${styles.threshold} ${active || dragging ? styles.active : ""}`}
+        onPointerDown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId);
+          setDragging(true);
+        }}
+        onPointerMove={(event) => dragging && drag(event)}
+        onPointerUp={() => setDragging(false)}
+        onPointerCancel={() => setDragging(false)}
+        onDoubleClick={() => setEditing(true)}
+      >
+        <title>Kéo để đổi ngưỡng, double-click để nhập</title>
+        <line
+          className={styles.thresholdHit}
+          x1={PAD.left - 30}
+          x2={right}
+          y1={lineY}
+          y2={lineY}
+        />
+        <line x1={PAD.left} x2={right} y1={lineY} y2={lineY} />
+        <rect
+          className={styles.thresholdKnob}
+          x={right - 16}
+          y={lineY - 4}
+          width={16}
+          height={8}
+          rx={4}
+        />
+        {!editing && (
+          <foreignObject {...label}>
+            <span className={styles.thresholdLabel}>
+              {threshold.below ? "≤" : "≥"} {formatThreshold(threshold.value)}
+            </span>
+          </foreignObject>
+        )}
+      </g>
+      {editing && (
+        <foreignObject {...label}>
+          <ThresholdInput
+            value={threshold.value}
+            onDone={(value) => {
+              setEditing(false);
+              if (value !== null)
+                onChange({
+                  ...threshold,
+                  value: clampThreshold(value, plot.range),
+                });
+            }}
+          />
+        </foreignObject>
+      )}
+    </>
+  );
+}
+
+const LABEL_HEIGHT = 18;
+
+// Ô nhập ngưỡng (cú pháp ở parseThreshold). Enter: hợp lệ thì áp, không thì
+// viền đỏ và giữ ô để sửa. Rời ô: hợp lệ thì áp, không thì huỷ. Esc: huỷ
+// (chặn lan ra phím Esc bỏ chọn đảo).
+function ThresholdInput({
+  value,
+  onDone,
+}: {
+  value: number;
+  onDone: (value: number | null) => void;
+}) {
+  const [text, setText] = useState(formatThreshold(value));
+  const [invalid, setInvalid] = useState(false);
+  return (
+    <input
+      className={`${styles.thresholdInput} ${invalid ? styles.invalid : ""}`}
+      autoFocus
+      value={text}
+      placeholder="34 = 34M"
+      title="Đơn vị k / m (tr) / b (tỷ); số trần < 1000 hiểu là M"
+      aria-invalid={invalid}
+      onFocus={(event) => event.currentTarget.select()}
+      onChange={(event) => {
+        setText(event.target.value);
+        setInvalid(false);
       }}
-      onPointerMove={(event) => dragging && drag(event)}
-      onPointerUp={() => setDragging(false)}
-      onPointerCancel={() => setDragging(false)}
-    >
-      <line
-        className={styles.thresholdHit}
-        x1={PAD.left - 30}
-        x2={right}
-        y1={lineY}
-        y2={lineY}
-      />
-      <line x1={PAD.left} x2={right} y1={lineY} y2={lineY} />
-      <rect
-        className={styles.thresholdKnob}
-        x={right - 16}
-        y={lineY - 4}
-        width={16}
-        height={8}
-        rx={4}
-      />
-    </g>
+      onBlur={() => onDone(parseThreshold(text))}
+      onKeyDown={(event) => {
+        if (event.key === "Enter") {
+          if (parseThreshold(text) === null) setInvalid(true);
+          else event.currentTarget.blur();
+        }
+        if (event.key === "Escape") {
+          event.stopPropagation();
+          onDone(null);
+        }
+      }}
+    />
   );
 }

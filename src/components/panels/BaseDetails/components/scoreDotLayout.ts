@@ -1,3 +1,4 @@
+import { snapThreshold } from "./thresholdValue";
 import type {
   IslandBucketStats,
   IslandPoints,
@@ -26,17 +27,20 @@ export function layoutScoreDots(
   const max = positive.length ? positive[positive.length - 1].points : 10;
   const lo = Math.floor(Math.log10(min));
   const hi = Math.max(Math.ceil(Math.log10(max)), lo + 1);
+  // Giá trị ngoài trục (ngưỡng gõ tay) kẹp ở mép trên.
   const y = (value: number) =>
     value <= 0
       ? zeroY
-      : bottom - ((Math.log10(value) - lo) / (hi - lo)) * (bottom - PAD.top);
-  // Toạ độ dọc → giá trị ngưỡng, kẹp trong trục, làm tròn 2 chữ số có nghĩa;
-  // kéo xuống quá nửa khe giữa trục log và dải 0 = 0.
+      : Math.max(
+          PAD.top,
+          bottom - ((Math.log10(value) - lo) / (hi - lo)) * (bottom - PAD.top)
+        );
+  // Toạ độ dọc → giá trị ngưỡng, kẹp trong trục, snap về số gọn; kéo xuống quá nửa khe giữa trục log và dải 0 = 0.
   const value = (py: number) => {
     if (py >= (bottom + zeroY) / 2) return 0;
     const clamped = Math.max(PAD.top, Math.min(bottom, py));
     const t = (bottom - clamped) / (bottom - PAD.top);
-    return round2(10 ** (lo + t * (hi - lo)));
+    return snapThreshold(10 ** (lo + t * (hi - lo)));
   };
 
   const steps = hi - lo > 3 ? [1] : [1, 2, 5];
@@ -81,13 +85,9 @@ export function layoutScoreDots(
     upper.labelY -= overlap / 2;
     lower.labelY += overlap / 2;
   }
-  return { ticks, dots, refs, y, value };
-}
-
-// Làm tròn 2 chữ số có nghĩa để ngưỡng khi kéo ra số gọn (12k, 3.4M).
-function round2(value: number) {
-  const unit = 10 ** (Math.floor(Math.log10(value)) - 1);
-  return Math.round(value / unit) * unit;
+  // Khoảng hợp lệ của ngưỡng gõ tay: mốc thấp nhất → mốc cao nhất trục log.
+  const range = { min: 10 ** lo, max: 10 ** hi };
+  return { ticks, dots, refs, y, value, range };
 }
 
 function tickLabel(value: number) {

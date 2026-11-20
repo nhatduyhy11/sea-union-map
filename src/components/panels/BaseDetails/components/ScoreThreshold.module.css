@@ -72,3 +72,45 @@
 .threshold.active .thresholdKnob {
   stroke: #d0742c;
 }
+
+/* Nhãn giá trị ngưỡng ở lề phải, nền đặc để đè nhãn avg / median khi trùng. */
+.thresholdLabel {
+  display: inline-block;
+  max-width: 100%;
+  padding: 1px 5px;
+  border: 1px solid #c3ccd1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #5d6e78;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+.threshold.active .thresholdLabel {
+  border-color: #d0742c;
+  color: #d0742c;
+}
+
+.thresholdInput {
+  box-sizing: border-box;
+  width: 100%;
+  height: 18px;
+  padding: 0 5px;
+  border: 1px solid #d0742c;
+  border-radius: 9px;
+  outline: none;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  color: #33424c;
+}
+
+.thresholdInput.invalid {
+  border-color: #d64545;
+  background: #fdeeee;
+}
