@@ -1,4 +1,5 @@
 import { Fuel, HandFist } from "lucide-react";
+import { factionFlagUrl } from "../../../data/factionFlags";
 import { compact } from "../../../utils/format";
 import { getFactionIcon } from "./factionIcons";
 import styles from "./FactionSummary.module.css";
@@ -7,7 +8,25 @@ import type { FactionBoardEntry } from "../../../domain/selectors/board/types";
 // Khối tóm tắt phe của BXH Phe (cờ / tên + ba tập đảo / cột điểm) — dùng lại
 // ở popover căn cứ trên canvas và header chi tiết căn cứ.
 
-export function FactionFlag({ entry }: { entry: FactionBoardEntry }) {
+// `image`: dùng ảnh cờ phe thay icon cung hoàng đạo (popover căn cứ), cỡ ô
+// do `imageClassName` quyết định; phe không có ảnh cờ vẫn rơi về icon.
+export function FactionFlag({
+  entry,
+  image,
+  imageClassName,
+}: {
+  entry: FactionBoardEntry;
+  image?: boolean;
+  imageClassName?: string;
+}) {
+  const flagUrl = image ? factionFlagUrl(entry.id) : undefined;
+  if (flagUrl) {
+    return (
+      <span className={`${styles.flag} ${imageClassName ?? ""}`}>
+        <img className={styles.flagImage} src={flagUrl} alt={entry.name} />
+      </span>
+    );
+  }
   const Icon = getFactionIcon(entry.id);
   return (
     <span

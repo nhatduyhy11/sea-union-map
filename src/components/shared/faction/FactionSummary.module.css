@@ -48,6 +48,13 @@
   flex-shrink: 0;
 }
 
+/* Ảnh cờ phe lọt khung ô cờ, giữ tỉ lệ ảnh. */
+.flagImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 /* Tổng LC sau "X guild |": icon nắm đấm + số, canh giữa với chữ 9px. */
 .power {
   display: inline-flex;

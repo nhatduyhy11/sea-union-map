@@ -27,7 +27,11 @@ export function BaseStats({
       style={{ "--tint": entry.color } as React.CSSProperties}
     >
       <span className={styles.rank}>{rankById.get(entry.id)}</span>
-      <FactionFlag entry={entry} />
+      <FactionFlag
+        entry={entry}
+        image
+        imageClassName={styles.flag}
+      />
       <FactionLines entry={entry} />
       <ScoreCol entry={entry} />
     </div>
