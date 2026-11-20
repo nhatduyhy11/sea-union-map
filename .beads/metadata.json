@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "sea_union_map",
+  "project_id": "6713230c-d834-44d8-8fed-4eb4d36554d0"
+}
