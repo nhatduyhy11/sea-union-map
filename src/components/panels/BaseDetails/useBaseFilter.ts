@@ -6,15 +6,23 @@ import {
 import { useMapView } from "../../../stores/mapView";
 import { useDebouncedValue } from "../../../hooks/useDebouncedValue";
 import type { FactionIslandStats } from "../../../domain/selectors/board/types";
+import { keepsPoints } from "./components/Plot/thresholdValue";
 
 // Ngưỡng điểm phe trên dot plot: giữ đảo đủ điểm có điểm >= value, hoặc
-// <= value khi below. Mặc định 0 / không below = không lọc.
+// <= value khi below. upper khác null = kẹp cạnh bằng vạch thứ hai: giữ đoạn
+// giữa hai vạch, hoặc hai phía ngoài khi below. Mặc định 0 / không below /
+// không kẹp = không lọc.
 export interface ScoreThreshold {
   value: number;
   below: boolean;
+  upper: number | null;
 }
 
-const NO_THRESHOLD: ScoreThreshold = { value: 0, below: false };
+export const NO_THRESHOLD: ScoreThreshold = {
+  value: 0,
+  below: false,
+  upper: null,
+};
 const THRESHOLD_DEBOUNCE = 400;
 
 // Filter tập đảo của chi tiết căn cứ: filter trạng thái (dòng bảng / pill) và
@@ -43,8 +51,11 @@ export function useBaseFilter(factionId: string, stats: FactionIslandStats) {
   const below = threshold.below;
   const settled = useDebouncedValue(threshold.value, THRESHOLD_DEBOUNCE);
   const value = threshold.value === 0 ? 0 : settled;
-  const thresholdActive = threshold.value > 0 || below;
-  const applied = value > 0 || below;
+  const settledUpper = useDebouncedValue(threshold.upper, THRESHOLD_DEBOUNCE);
+  const upper = threshold.upper === null ? null : settledUpper;
+  const thresholdActive =
+    threshold.value > 0 || below || threshold.upper !== null;
+  const applied = value > 0 || below || upper !== null;
   const highlight = useMemo(() => {
     const byFilter = activeFilter
       ? factionFilterIds(stats, activeFilter)
@@ -52,14 +63,12 @@ export function useBaseFilter(factionId: string, stats: FactionIslandStats) {
     if (!applied) return byFilter;
     const kept = new Set(
       stats.enoughIslands
-        .filter((island) =>
-          below ? island.points <= value : island.points >= value
-        )
+        .filter((island) => keepsPoints(island.points, value, below, upper))
         .map((island) => island.id)
     );
     if (!byFilter) return kept;
     return new Set([...byFilter].filter((id) => kept.has(id)));
-  }, [stats, activeFilter, applied, value, below]);
+  }, [stats, activeFilter, applied, value, below, upper]);
 
   useEffect(() => {
     const { setNodeHighlight } = useMapView.getState();

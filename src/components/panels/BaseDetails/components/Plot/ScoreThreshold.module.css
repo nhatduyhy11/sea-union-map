@@ -7,22 +7,25 @@
   gap: 8px;
   margin-bottom: 4px;
   color: #5d6e78;
-  font-size: 11px;
+  font-size: 9px;
 }
 
 .thresholdBar label {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
   cursor: pointer;
 }
 
 .thresholdBar input {
+  width: 11px;
+  height: 11px;
   margin: 0;
 }
 
 .thresholdValue {
   margin-left: auto;
+  font-size: 10px;
   font-weight: 600;
   color: #33424c;
 }

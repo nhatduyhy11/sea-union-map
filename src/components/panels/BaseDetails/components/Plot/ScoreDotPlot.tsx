@@ -8,6 +8,7 @@ import {
   ThresholdBar,
   ThresholdHatch,
   ThresholdLine,
+  lineSigns,
 } from "./ScoreThreshold";
 import type { ScoreThreshold } from "../../useBaseFilter";
 import type {
@@ -21,7 +22,8 @@ import type {
 // dưới đáy. highlight (filter đang bật) làm nổi chấm thuộc tập, mờ phần còn
 // lại. Hover chấm hiện id đảo (như nhãn trên map) kèm điểm và bật viền hover
 // của node đó trên canvas; click chấm gọi onSelect (focus đảo đó). Vạch ngưỡng
-// kéo dọc trục lọc đảo theo điểm; vùng bị loại phủ gạch chéo.
+// kéo dọc trục lọc đảo theo điểm (kẹp cạnh thêm vạch thứ hai); vùng bị loại
+// phủ gạch chéo.
 export function ScoreDotPlot({
   islands,
   stats,
@@ -62,12 +64,14 @@ export function ScoreDotPlot({
     [islands, stats, width]
   );
   const right = width - PAD.right;
+  const signs = lineSigns(threshold);
 
   return (
     <div ref={box} className={styles.plot}>
       <ThresholdBar
         threshold={threshold}
         active={thresholdActive}
+        top={plot.range.max}
         onChange={onThreshold}
       />
       <svg width={width} height={HEIGHT} role="img">
@@ -113,12 +117,23 @@ export function ScoreDotPlot({
           );
         })}
         <ThresholdLine
-          threshold={threshold}
+          value={threshold.value}
+          sign={signs.value}
           active={thresholdActive}
           plot={plot}
           right={right}
-          onChange={onThreshold}
+          onChange={(value) => onThreshold({ ...threshold, value })}
         />
+        {threshold.upper !== null && (
+          <ThresholdLine
+            value={threshold.upper}
+            sign={signs.upper}
+            active={thresholdActive}
+            plot={plot}
+            right={right}
+            onChange={(upper) => onThreshold({ ...threshold, upper })}
+          />
+        )}
       </svg>
       <div className={styles.legend}>
         <span>

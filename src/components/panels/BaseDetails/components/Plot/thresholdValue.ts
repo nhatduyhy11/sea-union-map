@@ -75,3 +75,18 @@ export function clampThreshold(
   if (value < min) return 0;
   return Math.min(value, max);
 }
+
+// Đảo có điểm `points` có được giữ bởi ngưỡng không. Không kẹp cạnh (upper
+// null): >= value, hoặc <= value khi below. Kẹp cạnh: giữ đoạn giữa hai vạch,
+// hoặc khi below giữ hai phía ngoài (đoạn giữa bị loại); hai mép tính là giữ.
+export function keepsPoints(
+  points: number,
+  value: number,
+  below: boolean,
+  upper: number | null
+): boolean {
+  if (upper === null) return below ? points <= value : points >= value;
+  const lo = Math.min(value, upper);
+  const hi = Math.max(value, upper);
+  return below ? points <= lo || points >= hi : points >= lo && points <= hi;
+}

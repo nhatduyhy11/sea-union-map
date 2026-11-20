@@ -3,19 +3,22 @@ import styles from "./ScoreThreshold.module.css";
 import { HEIGHT, PAD, type ScoreDotLayout } from "./scoreDotLayout";
 import { ThresholdInput } from "./ThresholdInput";
 import { formatThreshold } from "./thresholdValue";
-import type { ScoreThreshold } from "../../useBaseFilter";
+import { NO_THRESHOLD, type ScoreThreshold } from "../../useBaseFilter";
 
 const HATCH_ID = "score-dot-plot-hatch";
 
 // Hàng điều khiển ngưỡng phía trên plot: chiều lọc (>= / <= khi tick "Lấy
-// nhỏ hơn"), giá trị ngưỡng, nút bỏ lọc.
+// nhỏ hơn"), kẹp cạnh (thêm vạch thứ hai đặt ở đỉnh trục `top`), giá trị
+// ngưỡng, nút bỏ lọc.
 export function ThresholdBar({
   threshold,
   active,
+  top,
   onChange,
 }: {
   threshold: ScoreThreshold;
   active: boolean;
+  top: number;
   onChange: (next: ScoreThreshold) => void;
 }) {
   return (
@@ -30,19 +33,47 @@ export function ThresholdBar({
         />
         Lấy nhỏ hơn
       </label>
+      <label>
+        <input
+          type="checkbox"
+          checked={threshold.upper !== null}
+          onChange={(event) =>
+            onChange({
+              ...threshold,
+              upper: event.target.checked ? top : null,
+            })
+          }
+        />
+        Kẹp cạnh
+      </label>
       <span className={styles.thresholdValue}>
-        Ngưỡng {threshold.below ? "≤" : "≥"} {formatThreshold(threshold.value)}
+        Ngưỡng {thresholdSummary(threshold)}
       </span>
       {active && (
-        <button
-          type="button"
-          onClick={() => onChange({ value: 0, below: false })}
-        >
+        <button type="button" onClick={() => onChange(NO_THRESHOLD)}>
           Bỏ lọc
         </button>
       )}
     </div>
   );
+}
+
+function thresholdSummary({ value, below, upper }: ScoreThreshold) {
+  if (upper === null) return `${below ? "≤" : "≥"} ${formatThreshold(value)}`;
+  const lo = formatThreshold(Math.min(value, upper));
+  const hi = formatThreshold(Math.max(value, upper));
+  return below ? `≤ ${lo}, ≥ ${hi}` : `${lo} – ${hi}`;
+}
+
+// Dấu trên nhãn từng vạch: không kẹp cạnh theo chiều lọc; kẹp cạnh thì vạch
+// dưới / vạch trên mang hai dấu ngược nhau (giữ đoạn giữa hoặc hai phía ngoài).
+export function lineSigns({ value, below, upper }: ScoreThreshold) {
+  const ge = below ? "≤" : "≥";
+  const le = below ? "≥" : "≤";
+  if (upper === null) return { value: ge, upper: le };
+  return value <= upper
+    ? { value: ge, upper: le }
+    : { value: le, upper: ge };
 }
 
 // Pattern gạch chéo cho vùng bị loại; đặt trong <defs> của plot.
@@ -61,8 +92,9 @@ export function HatchPattern() {
   );
 }
 
-// Vùng bị loại bởi ngưỡng (dưới vạch khi lấy >=, trên vạch khi lấy <=), phủ
-// gạch chéo; vẽ dưới các chấm.
+// Vùng bị loại bởi ngưỡng, phủ gạch chéo; vẽ dưới các chấm. Một vạch: dưới
+// vạch khi lấy >=, trên vạch khi lấy <=. Kẹp cạnh: hai phía ngoài hai vạch,
+// hoặc đoạn giữa khi lấy nhỏ hơn.
 export function ThresholdHatch({
   threshold,
   plot,
@@ -72,20 +104,39 @@ export function ThresholdHatch({
   plot: ScoreDotLayout;
   right: number;
 }) {
-  const lineY = plot.y(threshold.value);
-  const { y, height } = threshold.below
-    ? { y: PAD.top, height: lineY - PAD.top }
-    : { y: lineY, height: HEIGHT - PAD.bottom - lineY };
-  if (height <= 0) return null;
+  const top = PAD.top;
+  const bottom = HEIGHT - PAD.bottom;
+  const valueY = plot.y(threshold.value);
+  let bands: [number, number][];
+  if (threshold.upper === null) {
+    bands = [threshold.below ? [top, valueY] : [valueY, bottom]];
+  } else {
+    const upperY = plot.y(threshold.upper);
+    const hiY = Math.min(valueY, upperY);
+    const loY = Math.max(valueY, upperY);
+    bands = threshold.below
+      ? [[hiY, loY]]
+      : [
+          [top, hiY],
+          [loY, bottom],
+        ];
+  }
   return (
-    <rect
-      className={styles.hatch}
-      x={PAD.left}
-      width={right - PAD.left}
-      y={y}
-      height={height}
-      fill={`url(#${HATCH_ID})`}
-    />
+    <>
+      {bands
+        .filter(([from, to]) => to > from)
+        .map(([from, to]) => (
+          <rect
+            key={from}
+            className={styles.hatch}
+            x={PAD.left}
+            width={right - PAD.left}
+            y={from}
+            height={to - from}
+            fill={`url(#${HATCH_ID})`}
+          />
+        ))}
+    </>
   );
 }
 
@@ -93,26 +144,28 @@ export function ThresholdHatch({
 // vẽ), nhãn giá trị ở lề phải đè lên nhãn avg / median khi trùng; vẽ trên các
 // chấm. Double-click vạch / nhãn mở ô nhập để gõ ngưỡng chính xác.
 export function ThresholdLine({
-  threshold,
+  value: current,
+  sign,
   active,
   plot,
   right,
   onChange,
 }: {
-  threshold: ScoreThreshold;
+  value: number;
+  sign: string;
   active: boolean;
   plot: ScoreDotLayout;
   right: number;
-  onChange: (next: ScoreThreshold) => void;
+  onChange: (value: number) => void;
 }) {
   const [dragging, setDragging] = useState(false);
   const [editing, setEditing] = useState(false);
-  const lineY = plot.y(threshold.value);
+  const lineY = plot.y(current);
   const drag = (event: PointerEvent<SVGGElement>) => {
     const svg = event.currentTarget.ownerSVGElement;
     if (!svg) return;
     const value = plot.value(event.clientY - svg.getBoundingClientRect().top);
-    if (value !== threshold.value) onChange({ ...threshold, value });
+    if (value !== current) onChange(value);
   };
   const label = {
     x: right + 3,
@@ -153,7 +206,7 @@ export function ThresholdLine({
         {!editing && (
           <foreignObject {...label}>
             <span className={styles.thresholdLabel}>
-              {threshold.below ? "≤" : "≥"} {formatThreshold(threshold.value)}
+              {sign} {formatThreshold(current)}
             </span>
           </foreignObject>
         )}
@@ -161,11 +214,11 @@ export function ThresholdLine({
       {editing && (
         <foreignObject {...label}>
           <ThresholdInput
-            value={threshold.value}
+            value={current}
             range={plot.range}
             onDone={(value) => {
               setEditing(false);
-              if (value !== null) onChange({ ...threshold, value });
+              if (value !== null) onChange(value);
             }}
           />
         </foreignObject>

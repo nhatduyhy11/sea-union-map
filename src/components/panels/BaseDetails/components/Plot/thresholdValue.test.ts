@@ -5,6 +5,7 @@ import {
   formatThreshold,
   parseThreshold,
   snapThreshold,
+  keepsPoints,
 } from "./thresholdValue";
 
 test("snapThreshold: integer per display unit, step 10 from 100 units", () => {
@@ -67,4 +68,20 @@ test("clampThreshold: cap at axis top, below axis → 0", () => {
   assert.equal(clampThreshold(500, range), 0);
   assert.equal(clampThreshold(0, range), 0);
   assert.equal(clampThreshold(34_000_000, range), 34_000_000);
+});
+
+test("keepsPoints: single line >= / <=, range keeps inside or outside", () => {
+  assert.equal(keepsPoints(5, 5, false, null), true);
+  assert.equal(keepsPoints(4, 5, false, null), false);
+  assert.equal(keepsPoints(4, 5, true, null), true);
+  // Kẹp cạnh, thứ tự hai vạch không quan trọng.
+  for (const [value, upper] of [[10, 100], [100, 10]]) {
+    assert.equal(keepsPoints(50, value, false, upper), true);
+    assert.equal(keepsPoints(10, value, false, upper), true);
+    assert.equal(keepsPoints(5, value, false, upper), false);
+    assert.equal(keepsPoints(500, value, false, upper), false);
+    assert.equal(keepsPoints(50, value, true, upper), false);
+    assert.equal(keepsPoints(5, value, true, upper), true);
+    assert.equal(keepsPoints(100, value, true, upper), true);
+  }
 });
