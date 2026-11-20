@@ -72,6 +72,21 @@
   color: var(--text-secondary, #4e616c);
 }
 
+.themeToggle select {
+  min-height: 42px;
+  min-width: 0;
+  font: inherit;
+  color: inherit;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.themeToggle:focus-within {
+  outline: 2px solid var(--accent, #0f9d76);
+  outline-offset: 3px;
+}
+
 .themeToggle:hover {
   background: var(--surface-subtle, #eff3f4);
 }
@@ -87,7 +102,13 @@
     padding: 0 10px;
   }
 
-  .themeToggle span {
+  .themeToggle {
+    gap: 4px;
+    padding: 0 6px;
+    font-size: 11px;
+  }
+
+  .themeToggle svg {
     display: none;
   }
 }

@@ -1,11 +1,13 @@
-import { Anchor, Moon, Sun } from "lucide-react";
+import { Anchor, Monitor, Moon, Sun } from "lucide-react";
 import { Watermark } from "../shared/Watermark";
 import { EASTER_EGG_PLAYER_ID } from "../../stores/debug";
-import { useTheme } from "../../stores/theme";
+import { useTheme, type ThemePreference } from "../../stores/theme";
 import styles from "./AppHeader.module.css";
 
 export function AppHeader() {
-  const { theme, toggleTheme } = useTheme();
+  const { preference, setPreference } = useTheme();
+  const ThemeIcon =
+    preference === "system" ? Monitor : preference === "dark" ? Moon : Sun;
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
@@ -20,25 +22,20 @@ export function AppHeader() {
       </div>
       <div className={styles.divider} />
       <span className={styles.title}>Bản đồ chiến thuật</span>
-      <button
-        type="button"
-        className={styles.themeToggle}
-        onClick={toggleTheme}
-        aria-label="Chế độ tối"
-        aria-pressed={theme === "dark"}
-        title={
-          theme === "dark"
-            ? "Chuyển sang chế độ sáng"
-            : "Chuyển sang chế độ tối"
-        }
-      >
-        {theme === "dark" ? (
-          <Sun size={18} aria-hidden="true" />
-        ) : (
-          <Moon size={18} aria-hidden="true" />
-        )}
-        <span>{theme === "dark" ? "Sáng" : "Tối"}</span>
-      </button>
+      <label className={styles.themeToggle} title="Chọn giao diện">
+        <ThemeIcon size={18} aria-hidden="true" />
+        <select
+          aria-label="Giao diện"
+          value={preference}
+          onChange={(event) =>
+            setPreference(event.target.value as ThemePreference)
+          }
+        >
+          <option value="system">Hệ thống</option>
+          <option value="light">Sáng</option>
+          <option value="dark">Tối</option>
+        </select>
+      </label>
     </header>
   );
 }
