@@ -4,7 +4,7 @@
   min-height: 55px;
   padding: 10px 0;
   font-size: 10px;
-  color: #667884;
+  color: var(--text-secondary, #667884);
   flex-shrink: 0;
 }
 
@@ -19,7 +19,7 @@
 .legendHelp {
   margin-left: auto;
   font-size: 9px;
-  color: #8b9aa4;
+  color: var(--text-muted, #8b9aa4);
   white-space: nowrap;
 }
 

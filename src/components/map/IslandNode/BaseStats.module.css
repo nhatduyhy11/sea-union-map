@@ -10,14 +10,14 @@
   gap: 9px;
   width: max-content;
   padding: 9px 11px;
-  background: color-mix(in srgb, var(--tint) 12%, #ffffff);
-  border: 1px solid #d8dfe3;
+  background: color-mix(in srgb, var(--tint) 12%, var(--surface, #ffffff));
+  border: 1px solid var(--border, #d8dfe3);
   border-left: 3px solid var(--tint);
   border-radius: 7px;
   box-shadow: 0 8px 20px rgba(25, 42, 52, 0.12);
   z-index: 20;
   font-size: 11px;
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
 }
 
 .baseStats.pinned {
@@ -27,7 +27,7 @@
 
 .rank {
   font-size: 10px;
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
 }
 
 /* Cờ phe cỡ lớn bên trái: lấn vào padding trên/dưới của popover (9px) để

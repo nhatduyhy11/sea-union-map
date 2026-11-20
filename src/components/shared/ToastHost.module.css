@@ -22,14 +22,14 @@
 }
 
 .info {
-  color: #2a3740;
-  background: #ffffff;
-  border-color: #d8dfe3;
+  color: var(--text-primary, #2a3740);
+  background: var(--surface, #ffffff);
+  border-color: var(--border, #d8dfe3);
 }
 
 .error,
 .error:hover {
-  color: #b42318;
-  background: #fdf1f1;
-  border-color: #f2b8b5;
+  color: var(--danger, #b42318);
+  background: var(--danger-subtle, #fdf1f1);
+  border-color: var(--danger-border, #f2b8b5);
 }

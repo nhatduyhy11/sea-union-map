@@ -8,6 +8,7 @@ import {
 } from "../../hooks/useFitMap";
 import { useEscUnselect } from "../../hooks/useEscUnselect";
 import { useMapGraph } from "./useMapGraph";
+import { useTheme } from "../../stores/theme";
 import { useDebug } from "../../stores/debug";
 import { useSelection } from "../../stores/selection";
 import { canHover } from "../../utils/hover";
@@ -31,19 +32,23 @@ function ZoomLabel() {
 }
 
 export function MapCanvas() {
+  const theme = useTheme((state) => state.theme);
   const { nodes, edges } = useMapGraph();
   // Node đang hover — rê chuột trực tiếp trên canvas hoặc trỏ từ panel
   // (BXH cứ điểm / dot plot / ô tìm đảo); lớp boss giữ cửa đậm lên theo node đó.
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
   const linkedNode = useSelection((state) => state.hovered);
   const debug = useDebug((state) => state.debug);
-  // Màu nền chỉnh từ picker debug (DEV) — prod luôn giá trị mặc định.
+  // Nền mặc định theo theme; màu tùy chỉnh từ picker debug ghi đè theme.
   const canvasBg = useDebug((state) => state.canvasBg);
   const fitZoom = useFitZoom();
   const { autoFit, maxZoom } = useInitialFraming(fitZoom);
   useEscUnselect();
   return (
-    <div className={styles.mapCanvas} style={{ background: canvasBg }}>
+    <div
+      className={styles.mapCanvas}
+      style={{ background: canvasBg === "#fefdfa" ? undefined : canvasBg }}
+    >
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -64,11 +69,15 @@ export function MapCanvas() {
         edgesReconnectable={false}
         elementsSelectable={false}
         deleteKeyCode={null}
-        colorMode="light"
+        colorMode={theme}
         proOptions={{ hideAttribution: true }}
       >
         <MapBackdrop nodes={nodes} hoveredId={hoveredNode ?? linkedNode} />
-        <Background color="#ece7d7" gap={40} size={1} />
+        <Background
+          color={theme === "dark" ? "#354552" : "#ece7d7"}
+          gap={40}
+          size={1}
+        />
         <Controls showInteractive={false} fitViewOptions={FIT_VIEW_OPTIONS} />
         {debug && <CanvasDebugGrid />}
         <ZoomLabel />

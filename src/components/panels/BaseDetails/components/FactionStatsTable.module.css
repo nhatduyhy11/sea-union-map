@@ -3,13 +3,13 @@
   border-collapse: collapse;
   font-size: 10px;
   font-variant-numeric: tabular-nums;
-  color: #33424c;
+  color: var(--text-primary, #33424c);
 }
 
 .stats th,
 .stats td {
   padding: 7px 4px;
-  border-bottom: 1px solid #eaeef0;
+  border-bottom: 1px solid var(--border, #eaeef0);
   text-align: right;
   white-space: nowrap;
 }
@@ -17,7 +17,7 @@
 .stats thead th {
   font-size: 9px;
   font-weight: 400;
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
 }
 
 .stats tbody th {
@@ -30,12 +30,12 @@
    cả" (tổng hai tập đó) cùng màu phe nhưng đậm hơn một bậc. */
 .tinted th,
 .tinted td {
-  background: color-mix(in srgb, var(--tint) 8%, #ffffff);
+  background: color-mix(in srgb, var(--tint) 8%, var(--surface, #ffffff));
 }
 
 .total th,
 .total td {
-  background: color-mix(in srgb, var(--tint) 18%, #ffffff);
+  background: color-mix(in srgb, var(--tint) 18%, var(--surface, #ffffff));
   font-weight: 600;
 }
 
@@ -43,7 +43,7 @@
    chưa đủ điểm) — vạch đậm phía trên như dòng cộng dồn. */
 .sum th,
 .sum td {
-  border-top: 2px solid #b9c4ca;
+  border-top: 2px solid var(--border, #b9c4ca);
 }
 
 /* Dòng bảng là filter: click cả dòng hoặc radio cột đầu (radio ở header =

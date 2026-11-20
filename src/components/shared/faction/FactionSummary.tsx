@@ -1,3 +1,4 @@
+import { factionTextColor } from "../../../utils/theme";
 import { Fuel, HandFist } from "lucide-react";
 import { factionFlagUrl } from "../../../data/factionFlags";
 import { compact } from "../../../utils/format";
@@ -32,7 +33,7 @@ export function FactionFlag({
     <span
       className={styles.flag}
       style={{
-        color: entry.labelColor,
+        color: factionTextColor(entry.labelColor),
         background: `${entry.labelColor}18`,
       }}
     >
@@ -44,7 +45,10 @@ export function FactionFlag({
 // Tên phe, guild/LC và ba tập đảo: owned / claimable / touched.
 export function FactionLines({ entry }: { entry: FactionBoardEntry }) {
   return (
-    <div className={styles.name} style={{ color: entry.labelColor }}>
+    <div
+      className={styles.name}
+      style={{ color: factionTextColor(entry.labelColor) }}
+    >
       {entry.name}
       <small>
         {entry.guilds.length} guild |{" "}

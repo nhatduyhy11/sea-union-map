@@ -11,7 +11,7 @@
   align-items: center;
   gap: 9px;
   padding: 11px 0;
-  border-bottom: 1px solid #eaeef0;
+  border-bottom: 1px solid var(--border, #eaeef0);
   font-size: 11px;
   cursor: pointer;
   list-style: none;
@@ -31,7 +31,7 @@
 
 .rank {
   font-size: 10px;
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
   min-width: 17px;
 }
 
@@ -48,7 +48,7 @@
 
 .allocation {
   padding: 8px 10px;
-  background: #eff2f4;
+  background: var(--surface-subtle, #eff2f4);
   border-radius: 5px;
   max-height: 225px;
   overflow: auto;
@@ -60,11 +60,11 @@
   width: 100%;
   padding: 7px 2px;
   font-size: 10px;
-  color: #5d707b;
+  color: var(--text-secondary, #5d707b);
 }
 
 .allocation button:hover {
-  color: #0d8a65;
+  color: var(--accent, #0d8a65);
 }
 
 .allocation b {
@@ -84,12 +84,12 @@
   align-items: center;
   gap: 5px;
   font-size: 9px;
-  color: #8b9aa4;
+  color: var(--text-muted, #8b9aa4);
   cursor: pointer;
   user-select: none;
 }
 
 .sortOption input {
   margin: 0;
-  accent-color: #0d8a65;
+  accent-color: var(--accent, #0d8a65);
 }

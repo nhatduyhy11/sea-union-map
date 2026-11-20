@@ -10,10 +10,10 @@
   font: inherit;
   font-size: 10px;
   font-weight: 600;
-  color: #33424c;
+  color: var(--text-primary, #33424c);
 }
 
 .input.invalid {
   border-color: #d64545;
-  background: #fdeeee;
+  background: var(--danger-subtle, #fdeeee);
 }

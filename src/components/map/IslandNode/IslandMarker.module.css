@@ -11,7 +11,7 @@
   margin: auto;
   width: var(--icon-box, 55px);
   height: var(--icon-box, 55px);
-  background: #ffffff;
+  background: var(--surface, #ffffff);
   border: 2px solid var(--faction);
   color: var(--faction);
   border-radius: 18px;
@@ -44,7 +44,7 @@
 .islandIcon:hover,
 .islandIcon.linked,
 .islandIcon.active {
-  background: color-mix(in srgb, var(--faction) 12%, #ffffff);
+  background: color-mix(in srgb, var(--faction) 12%, var(--surface, #ffffff));
 }
 
 .islandIcon.frontline {
@@ -52,7 +52,7 @@
 }
 
 .islandIcon.defend {
-  background: color-mix(in srgb, var(--faction) 50%, #ffffff);
+  background: color-mix(in srgb, var(--faction) 50%, var(--surface, #ffffff));
 }
 
 /* Quầng trắng giữ icon màu phe dễ đọc trên nền giao tranh tối. */
@@ -114,7 +114,7 @@
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  color: #33424c;
+  color: var(--text-primary, #33424c);
   white-space: nowrap;
   font-weight: 600;
 }
@@ -128,7 +128,7 @@
 }
 
 .islandLabel span {
-  background: rgba(255, 255, 255, 0.85);
+  background: color-mix(in srgb, var(--surface, #ffffff) 85%, transparent);
   padding: 2px 5px;
   border-radius: 4px;
 }
@@ -142,7 +142,7 @@
   display: grid;
   place-items: center;
   padding: 3px;
-  color: #8a9aa5;
+  color: var(--text-muted, #8a9aa5);
 }
 
 .pin.pinned {
@@ -150,7 +150,7 @@
 }
 
 .islandLabel.base {
-  color: var(--faction);
+  color: color-mix(in srgb, var(--faction), white var(--faction-text-lift, 0%));
   /* Tên căn cứ lớn gấp đôi nhãn đảo thường. */
   font-size: 28px;
 }

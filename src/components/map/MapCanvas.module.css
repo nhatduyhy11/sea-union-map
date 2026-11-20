@@ -3,11 +3,10 @@
   flex: 1;
   min-height: 320px;
   overflow: hidden;
-  border: 1px solid #f0ebdd;
+  border: 1px solid var(--border-canvas, #f0ebdd);
   border-radius: 9px;
-  /* Trắng nhạt — mặc định khớp canvasBg trong stores/debug (picker debug
-     ở DEV ghi đè bằng inline style). */
-  background: #fefdfa;
+  /* Nền theo theme; màu tùy chỉnh từ picker debug ghi đè bằng inline style. */
+  background: var(--surface-canvas, #fefdfa);
 }
 
 /* React Flow chỉ đặt touch-action: none trên pane; node đảo (pointer-events
@@ -21,7 +20,7 @@
   position: absolute;
   left: 55px;
   bottom: 21px;
-  color: #7d8f9a;
+  color: var(--text-muted, #7d8f9a);
   font-size: 10px;
   pointer-events: none;
 }
@@ -36,7 +35,7 @@
   font-size: 30px;
   font-weight: 700;
   letter-spacing: 3.5px;
-  color: rgba(45, 62, 75, 0.1);
+  color: var(--map-watermark, rgba(45, 62, 75, 0.1));
   pointer-events: none;
   user-select: none;
 }

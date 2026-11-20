@@ -4,8 +4,8 @@
   top: var(--stats-top, 101px);
   left: 0;
   width: 170px;
-  background: rgba(255, 255, 255, 0.97);
-  border: 1px solid #d8dfe3;
+  background: color-mix(in srgb, var(--surface, #ffffff) 97%, transparent);
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 7px;
   box-shadow: 0 8px 20px rgba(25, 42, 52, 0.12);
   padding: 9px 11px;
@@ -20,7 +20,7 @@
 /* Nền popup pha nhạt màu phe đại diện (--tint): phe đang giữ đảo. Bar điểm
    nền đục riêng nên tint chỉ lộ quanh viền/padding — chữ vẫn đọc được. */
 .nodeStats.tinted {
-  background: color-mix(in srgb, var(--tint) 45%, #ffffff);
+  background: color-mix(in srgb, var(--tint) 45%, var(--surface, #ffffff));
 }
 
 /* Đảo chưa chủ có candidate đủ ngưỡng claim: sọc chéo 45deg màu candidate thay
@@ -31,8 +31,8 @@
 .nodeStats.claimable {
   background: repeating-linear-gradient(
     45deg,
-    #ffffff 0 7px,
-    color-mix(in srgb, var(--tint) 35%, #ffffff) 20px 30px
+    var(--surface, #ffffff) 0 7px,
+    color-mix(in srgb, var(--tint) 35%, var(--surface, #ffffff)) 20px 30px
   );
 }
 
@@ -58,21 +58,21 @@
   align-items: center;
   gap: 4px;
   font-size: 10px;
-  border-bottom: 1px solid #e4e9eb;
+  border-bottom: 1px solid var(--border, #e4e9eb);
   padding-bottom: 7px;
   margin-bottom: 6px;
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
 }
 
 .statScore {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
 }
 
 .statName {
   overflow: hidden;
-  color: #2c3941;
+  color: var(--text-primary, #2c3941);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -80,7 +80,7 @@
 .statNote {
   flex-shrink: 0;
   font-size: 9px;
-  color: #8a9aa5;
+  color: var(--text-muted, #8a9aa5);
   white-space: nowrap;
 }
 
@@ -91,12 +91,12 @@
   margin-left: auto;
   padding: 2px;
   border-radius: 4px;
-  color: #8a9aa5;
+  color: var(--text-muted, #8a9aa5);
 }
 
 .pinToggle:hover {
-  background: #eff3f4;
-  color: #33424c;
+  background: var(--surface-subtle, #eff3f4);
+  color: var(--text-primary, #33424c);
 }
 
 .pinToggle.pinActive {

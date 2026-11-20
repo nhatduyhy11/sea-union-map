@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: space-between;
   padding: 10px 27px;
-  border-top: 1px solid #dfe4e8;
-  background: #f8fafa;
+  border-top: 1px solid var(--border, #dfe4e8);
+  background: var(--surface-panel, #f8fafa);
   gap: 16px;
 }
 
@@ -12,7 +12,7 @@
   font-size: 11px;
   font-style: italic;
   letter-spacing: 0.3px;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
   cursor: pointer;
   user-select: none;
   transition:
@@ -24,11 +24,11 @@
 }
 
 .quote:hover {
-  color: #2a3740;
+  color: var(--text-primary, #2a3740);
 }
 
 .quote:focus-visible {
-  outline: 2px solid #0f9d76;
+  outline: 2px solid var(--accent, #0f9d76);
   outline-offset: 2px;
   border-radius: 3px;
 }

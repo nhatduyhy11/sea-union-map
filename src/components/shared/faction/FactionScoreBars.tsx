@@ -85,7 +85,7 @@ export function FactionScoreBars({
                 // Khi filter player: nền thanh phe pha nhạt 20% để dải đóng góp
                 // của player (100% màu phe đặc) nổi bật rõ bên trong.
                 background: isPlayerFaction
-                  ? `color-mix(in srgb, ${faction.color} 20%, #e4e9ec)`
+                  ? `color-mix(in srgb, ${faction.color} 20%, var(--surface-track, #e4e9ec))`
                   : faction.color,
               }}
             >

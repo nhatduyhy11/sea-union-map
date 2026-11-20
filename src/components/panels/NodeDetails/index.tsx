@@ -1,3 +1,4 @@
+import { factionTextColor } from "../../../utils/theme";
 import { useState, type CSSProperties } from "react";
 import { Anchor, Pin, Shield, X } from "lucide-react";
 import { bossImageUrl, bossName } from "../../../data/nodeBosses";
@@ -83,7 +84,7 @@ export function NodeDetails({
         <Shield size={19} />
         <div>
           <small>ĐIỂM CẦN / ĐIỂM PHE CHIẾM</small>
-          <b style={{ color: ownerScore?.labelColor }}>
+          <b style={{ color: factionTextColor(ownerScore?.labelColor) }}>
             {number(island.claimThreshold)}
             {ownerScore && ` / ${number(ownerScore.score)}`}
           </b>

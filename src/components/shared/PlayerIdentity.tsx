@@ -1,3 +1,4 @@
+import { factionTextColor } from "../../utils/theme";
 import { HandFist } from "lucide-react";
 import { compact } from "../../utils/format";
 import { getFactionIcon } from "./faction/factionIcons";
@@ -36,7 +37,7 @@ export function PlayerIdentity({
       <>
         <span
           className={styles.avatar}
-          style={{ color, background: `${color}18` }}
+          style={{ color: factionTextColor(color), background: `${color}18` }}
         >
           {FactionIcon ? <FactionIcon size={15} /> : name[0]}
         </span>
@@ -51,7 +52,9 @@ export function PlayerIdentity({
               </span>
             </>
           ) : null}
-          <small style={{ color }}>{meta.join(" · ")}</small>
+          <small style={{ color: factionTextColor(color) }}>
+            {meta.join(" · ")}
+          </small>
         </div>
       </>
     );
@@ -67,13 +70,15 @@ export function PlayerIdentity({
     <>
       <span
         className={styles.avatar}
-        style={{ color, background: `${color}18` }}
+        style={{ color: factionTextColor(color), background: `${color}18` }}
       >
         {FactionIcon ? <FactionIcon size={15} /> : name[0]}
       </span>
       <div className={styles.playerName}>
         {name}
-        <small style={{ color }}>{meta.join(" · ")}</small>
+        <small style={{ color: factionTextColor(color) }}>
+          {meta.join(" · ")}
+        </small>
       </div>
     </>
   );

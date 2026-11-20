@@ -33,7 +33,7 @@
 .interactive:hover,
 .interactive:focus-visible,
 .interactive.selected {
-  outline: 2px solid #607985;
+  outline: 2px solid var(--text-secondary, #607985);
   outline-offset: 1px;
 }
 

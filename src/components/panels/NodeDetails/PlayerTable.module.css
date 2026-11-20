@@ -7,10 +7,10 @@
   display: flex;
   justify-content: space-between;
   font-size: 8px;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
   letter-spacing: 0.7px;
   padding: 10px 0;
-  border-bottom: 1px solid #e4e8ea;
+  border-bottom: 1px solid var(--border, #e4e8ea);
 }
 
 .playerHeading {
@@ -25,21 +25,21 @@
   justify-content: center;
   padding: 3px;
   border-radius: 3px;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
 }
 
 .sortButton:hover,
 .sortButton.sortActive {
-  color: #33424c;
-  background: #e4e9ec;
+  color: var(--text-primary, #33424c);
+  background: var(--surface-track, #e4e9ec);
 }
 
 .sortButton:focus-visible {
-  outline: 2px solid #607985;
+  outline: 2px solid var(--text-secondary, #607985);
 }
 
 .empty {
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
   font-size: 11px;
   padding: 12px 0;
 }
@@ -49,13 +49,13 @@
   align-items: center;
   gap: 9px;
   padding: 11px 0;
-  border-bottom: 1px solid #eaeef0;
+  border-bottom: 1px solid var(--border, #eaeef0);
   font-size: 11px;
 }
 
 .rank {
   font-size: 10px;
-  color: #8496a1;
+  color: var(--text-muted, #8496a1);
   min-width: 17px;
 }
 

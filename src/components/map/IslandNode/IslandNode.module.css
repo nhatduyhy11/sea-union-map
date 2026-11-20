@@ -54,7 +54,7 @@
   margin: -3.5px;
   border-radius: 50%;
   background: #e5484d;
-  box-shadow: 0 0 0 1.5px #ffffff;
+  box-shadow: 0 0 0 1.5px var(--surface, #ffffff);
   z-index: 40;
   pointer-events: none;
 }

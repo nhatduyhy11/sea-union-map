@@ -7,7 +7,7 @@
 .eyebrow {
   font-size: 9px;
   letter-spacing: 1.8px;
-  color: #7b8d98;
+  color: var(--text-muted, #7b8d98);
   font-weight: 600;
 }
 
@@ -32,33 +32,33 @@
   align-items: center;
   gap: 5px;
   font-size: 9px;
-  color: #8b9aa4;
+  color: var(--text-muted, #8b9aa4);
   cursor: pointer;
   user-select: none;
 }
 
 .filterMode input {
   margin: 0;
-  accent-color: #0d8a65;
+  accent-color: var(--accent, #0d8a65);
 }
 
 .boardTabs {
   display: flex;
   gap: 21px;
   margin-bottom: 18px;
-  border-bottom: 1px solid #e4e8ea;
+  border-bottom: 1px solid var(--border, #e4e8ea);
 }
 
 .boardTabs button {
   padding: 9px 0;
-  color: #7d8f9a;
+  color: var(--text-muted, #7d8f9a);
   font-size: 11px;
   border-bottom: 2px solid transparent;
 }
 
 .boardTabs button.selected {
-  color: #0d8a65;
-  border-color: #0f9d76;
+  color: var(--accent, #0d8a65);
+  border-color: var(--accent, #0f9d76);
 }
 
 @media (min-width: 1600px) {

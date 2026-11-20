@@ -67,12 +67,12 @@ div.nodeAllocation {
 /* Khối BXH player trong expand — tách khỏi bảng điểm 4 phe. */
 .playerBlock {
   margin-top: 8px;
-  border-top: 1px solid #dfe5e8;
+  border-top: 1px solid var(--border, #dfe5e8);
 }
 
 /* Nút sort 3 trạng thái: đang sort thì tô màu nhấn. */
 button.sortActive {
-  color: #0d8a65;
+  color: var(--accent, #0d8a65);
   font-weight: 500;
 }
 

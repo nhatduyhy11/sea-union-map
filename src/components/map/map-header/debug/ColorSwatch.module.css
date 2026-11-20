@@ -8,9 +8,9 @@
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  color: #8a9aa5;
-  border: 1px solid #e3eaee;
-  background: #ffffff;
+  color: var(--text-muted, #8a9aa5);
+  border: 1px solid var(--border, #e3eaee);
+  background: var(--surface, #ffffff);
   padding: 4px 8px;
   border-radius: 5px;
   cursor: pointer;
@@ -39,7 +39,7 @@
 .swatch {
   width: 24px;
   height: 18px;
-  border: 1px solid #c9d4da;
+  border: 1px solid var(--border, #c9d4da);
   border-radius: 4px;
   padding: 0;
   cursor: pointer;
@@ -51,8 +51,8 @@
   top: calc(100% + 8px);
   right: 0;
   z-index: 60;
-  background: #ffffff;
-  border: 1px solid #d8dfe3;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 8px;
   padding: 12px;
   box-shadow: 0 8px 24px rgba(45, 62, 75, 0.16);
@@ -86,13 +86,13 @@
   height: auto;
   margin-top: 10px;
   padding: 4px 6px;
-  border: 1px solid #d8dfe3;
+  border: 1px solid var(--border, #d8dfe3);
   border-radius: 4px;
-  background: #f6f9fa;
+  background: var(--surface-subtle, #f6f9fa);
   font-family: ui-monospace, Consolas, monospace;
   font-size: 12px;
   letter-spacing: normal;
-  color: #2d3e4b;
+  color: var(--text-primary, #2d3e4b);
   text-align: center;
   cursor: text;
 }
