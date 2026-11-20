@@ -88,6 +88,8 @@ i {
 
 :root[data-theme="dark"] {
   color-scheme: dark;
+  --map-watermark: rgba(210, 225, 235, 0.1);
+  --faction-text-lift: 30%;
   --text-primary: #e0e8ed;
   --text-secondary: #becbd4;
   --text-muted: #9bafbd;

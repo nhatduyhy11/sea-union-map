@@ -43,13 +43,13 @@
 
 /* Pill phe: text + tint theo labelColor (inline var), selected = viền đậm. */
 .subTabs button.factionPill {
-  color: var(--label);
+  color: color-mix(in srgb, var(--label), white var(--faction-text-lift, 0%));
   background: color-mix(in srgb, var(--label) 9%, transparent);
   font-weight: 500;
 }
 
 .subTabs button.factionPill.selected {
-  color: var(--label);
+  color: color-mix(in srgb, var(--label), white var(--faction-text-lift, 0%));
   background: color-mix(in srgb, var(--label) 18%, transparent);
   box-shadow: inset 0 0 0 1px var(--label);
 }

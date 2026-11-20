@@ -150,7 +150,7 @@
 }
 
 .islandLabel.base {
-  color: var(--faction);
+  color: color-mix(in srgb, var(--faction), white var(--faction-text-lift, 0%));
   /* Tên căn cứ lớn gấp đôi nhãn đảo thường. */
   font-size: 28px;
 }

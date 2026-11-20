@@ -1,3 +1,4 @@
+import { factionTextColor } from "../../../../utils/theme";
 import { useEffect, useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import { compact } from "../../../../utils/format";
@@ -133,7 +134,10 @@ function TopShare({ entry }: { entry: NodeBoardEntry }) {
   return (
     <>
       {" · "}
-      <span className={styles.topShare} style={{ color: top.labelColor }}>
+      <span
+        className={styles.topShare}
+        style={{ color: factionTextColor(top.labelColor) }}
+      >
         {compact(top.score)} ({Math.floor((top.score / entry.total) * 100)}%)
       </span>
     </>

@@ -1,3 +1,4 @@
+import { factionTextColor } from "../../../utils/theme";
 import { factionRing } from "../../../data/factions";
 import { getFactionIcon } from "../../shared/faction/factionIcons";
 import styles from "./FactionLegend.module.css";
@@ -13,7 +14,7 @@ export function FactionLegend() {
           <span
             key={faction.id}
             className={styles.entry}
-            style={{ color: faction.labelColor }}
+            style={{ color: factionTextColor(faction.labelColor) }}
           >
             {Icon ? (
               <Icon size={14} className={styles.icon} />
