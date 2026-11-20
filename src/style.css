@@ -85,3 +85,24 @@ i {
   min-width: 0;
   min-height: 0;
 }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --text-primary: #e0e8ed;
+  --text-secondary: #becbd4;
+  --text-muted: #9bafbd;
+  --border: #3b4b58;
+  --surface: #23313d;
+  --surface-panel: #1c2934;
+  --surface-subtle: #2b3b48;
+  --surface-page: #141e27;
+  --surface-canvas: #17232d;
+  --border-canvas: #3b4b58;
+  --surface-track: #3b4b58;
+  --accent: #55d6ab;
+  --accent-subtle: #1d4039;
+  --accent-border: #3d7867;
+  --danger: #ffaaa5;
+  --danger-subtle: #482c32;
+  --danger-border: #92535a;
+}
