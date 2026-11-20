@@ -17,7 +17,7 @@ import { InfoHint } from "../../shared/InfoHint";
 import { BaseCarousel } from "./components/BaseCarousel";
 import { FactionStatsTable } from "./components/FactionStatsTable";
 import { NodeFilterChips } from "./components/NodeFilterChips";
-import { ScoreDotPlot } from "./components/ScoreDotPlot";
+import { ScoreDotPlot } from "./components/Plot/ScoreDotPlot";
 import { useBaseFilter } from "./useBaseFilter";
 import type { Island } from "../../../types";
 
@@ -54,8 +54,15 @@ export function BaseDetails({
   );
   const stats = islandStatsByFaction.get(factionId) ?? NO_STATS;
   const focusIsland = useFocusIsland();
-  const { activeFilter, setActiveFilter, toggleFilter, highlight } =
-    useBaseFilter(factionId, stats);
+  const {
+    activeFilter,
+    setActiveFilter,
+    toggleFilter,
+    threshold,
+    thresholdActive,
+    setThreshold,
+    highlight,
+  } = useBaseFilter(factionId, stats);
   return (
     <div className={detail.detail}>
       <div className={detail.detailTop}>
@@ -131,6 +138,9 @@ export function BaseDetails({
               stats={stats.enough}
               color={entry?.color || "#5b7a8c"}
               highlight={highlight}
+              threshold={threshold}
+              thresholdActive={thresholdActive}
+              onThreshold={setThreshold}
               onSelect={focusIsland}
             />
           </>

@@ -1,0 +1,100 @@
+/* Vạch ngưỡng điểm của dot plot: hàng điều khiển, vùng loại gạch chéo, vạch kéo. */
+
+/* Hàng điều khiển ngưỡng: checkbox chiều lọc + giá trị ngưỡng. */
+.thresholdBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: #5d6e78;
+  font-size: 9px;
+}
+
+.thresholdBar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+}
+
+.thresholdBar input {
+  width: 11px;
+  height: 11px;
+  margin: 0;
+}
+
+.thresholdValue {
+  margin-left: auto;
+  font-size: 10px;
+  font-weight: 600;
+  color: #33424c;
+}
+
+.thresholdBar button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #2f7fb5;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Vùng bị loại bởi ngưỡng: gạch chéo nhẹ. */
+.hatch {
+  pointer-events: none;
+}
+
+.hatchPattern line {
+  stroke: #8496a1;
+  stroke-width: 1;
+  opacity: 0.4;
+}
+
+.threshold {
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.threshold line {
+  stroke: #8496a1;
+  stroke-width: 1.5;
+}
+
+.threshold .thresholdHit {
+  stroke: transparent;
+  stroke-width: 12;
+}
+
+.thresholdKnob {
+  fill: #ffffff;
+  stroke: #8496a1;
+  stroke-width: 1.5;
+}
+
+.threshold.active line:not(.thresholdHit),
+.threshold.active .thresholdKnob {
+  stroke: #d0742c;
+}
+
+/* Nhãn giá trị ngưỡng ở lề phải, nền đặc để đè nhãn avg / median khi trùng. */
+.thresholdLabel {
+  display: inline-block;
+  max-width: 100%;
+  padding: 1px 5px;
+  border: 1px solid #c3ccd1;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #5d6e78;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+}
+
+.threshold.active .thresholdLabel {
+  border-color: #d0742c;
+  color: #d0742c;
+}
