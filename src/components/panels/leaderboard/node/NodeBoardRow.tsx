@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { ChevronRight } from "lucide-react";
 import { compact } from "../../../../utils/format";
 import { bossImageUrl } from "../../../../data/nodeBosses";
@@ -14,7 +14,8 @@ import type { NodeBoardEntry } from "../../../../domain/selectors/board/types";
 
 // Mở expand = focus đảo trên map (camera pan + selected), panel giữ nguyên ở
 // bảng; đa mở được — camera theo lần expand cuối. Đóng expand thì fit toàn
-// map, đồng thời gỡ selection nếu đảo đó đang được chọn.
+// map, đồng thời gỡ selection nếu đảo đó đang được chọn. Ngược lại, selection
+// bị gỡ từ nơi khác (Esc, reset) thì mọi row đang mở tự thu gọn.
 // Row có trạng thái icon canvas hiện icon đó trước tổng điểm.
 export function NodeBoardRow({
   entry,
@@ -31,6 +32,17 @@ export function NodeBoardRow({
 }) {
   const { island, owner } = entry;
   const hover = useSelection((state) => state.hover);
+  const detailsRef = useRef<HTMLDetailsElement>(null);
+  useEffect(
+    () =>
+      useSelection.subscribe((state, prev) => {
+        if (state.selected === null && prev.selected !== null) {
+          const details = detailsRef.current;
+          if (details?.open) details.open = false;
+        }
+      }),
+    []
+  );
   // Lọc danh sách hoặc đổi tab có thể gỡ row trước khi mouseleave chạy.
   useEffect(
     () => () => {
@@ -55,6 +67,7 @@ export function NodeBoardRow({
     .join(" ");
   return (
     <details
+      ref={detailsRef}
       className={shared.item}
       onMouseEnter={() => hover(island.id)}
       onMouseLeave={() => hover(null)}

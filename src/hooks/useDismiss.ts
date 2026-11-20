@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, type RefObject } from "react";
+import { markEscHandled } from "./useEscUnselect";
 
 // Đóng popover / note đang mở khi pointerdown ra ngoài mọi phần tử trong
 // `inside` (nút mở, popover — kể cả popover portal ra ngoài nút) hoặc bấm Esc.
@@ -22,7 +23,10 @@ export function useDismiss(
       if (!inside.some((ref) => ref.current?.contains(target))) onClose();
     };
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") latest.current.onClose();
+      if (event.key !== "Escape") return;
+      // Esc này chỉ đóng popover, không bỏ chọn đảo.
+      markEscHandled(event);
+      latest.current.onClose();
     };
     document.addEventListener("pointerdown", onPointerDown, true);
     document.addEventListener("keydown", onKeyDown);

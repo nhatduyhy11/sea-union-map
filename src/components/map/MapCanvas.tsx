@@ -6,6 +6,7 @@ import {
   useFitZoom,
   useInitialFraming,
 } from "../../hooks/useFitMap";
+import { useEscUnselect } from "../../hooks/useEscUnselect";
 import { useMapGraph } from "./useMapGraph";
 import { useDebug } from "../../stores/debug";
 import { useSelection } from "../../stores/selection";
@@ -40,6 +41,7 @@ export function MapCanvas() {
   const canvasBg = useDebug((state) => state.canvasBg);
   const fitZoom = useFitZoom();
   const { autoFit, maxZoom } = useInitialFraming(fitZoom);
+  useEscUnselect();
   return (
     <div className={styles.mapCanvas} style={{ background: canvasBg }}>
       <ReactFlow

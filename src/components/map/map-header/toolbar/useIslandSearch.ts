@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { searchIslands } from "../../../../domain/selectors";
+import { markEscHandled } from "../../../../hooks/useEscUnselect";
 import { useFocusIsland } from "../../../../hooks/useFocusIsland";
 import { useMapData } from "../../../../stores/dataset";
 import { usePanel } from "../../../../stores/panel";
 import { useSelection } from "../../../../stores/selection";
 
 // Ô tìm đảo trên toolbar: query, danh sách kết quả và chọn kết quả bằng
-// bàn phím (↑/↓ xoay vòng, Enter mở đảo, Esc xoá ô).
+// bàn phím (↑/↓ xoay vòng, Enter mở đảo, Esc xoá ô — ô trống thì Esc bỏ chọn đảo).
 export function useIslandSearch() {
   const query = usePanel((state) => state.query);
   const setQuery = usePanel((state) => state.setQuery);
@@ -45,7 +46,12 @@ export function useIslandSearch() {
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Escape") {
-      changeQuery("");
+      // Ô có chữ: Esc chỉ xoá ô. Ô trống: để Esc đi tiếp xuống lệnh bỏ chọn
+      // đảo + zoom ra.
+      if (query) {
+        markEscHandled(event.nativeEvent);
+        changeQuery("");
+      }
       return;
     }
     if (!matches.length) return;
