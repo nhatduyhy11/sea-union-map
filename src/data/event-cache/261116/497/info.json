@@ -3567,6 +3567,13 @@
    "server": 461,
    "guild": "GGWP"
   },
+  "46113361": {
+   "name": "GGxOncE",
+   "power": 5781821,
+   "server": 461,
+   "guildId": "4620011",
+   "guild": "NGẠO"
+  },
   "46113672": {
    "name": "GGxMax",
    "guildId": "4610007",
@@ -3593,6 +3600,13 @@
    "guildId": "4610007",
    "power": 40003590,
    "server": 461,
+   "guild": "GGWP"
+  },
+  "46153978": {
+   "name": "GGxlong",
+   "power": 13908305,
+   "server": 461,
+   "guildId": "4610007",
    "guild": "GGWP"
   },
   "46163550": {
@@ -3797,6 +3811,13 @@
    "power": 1830520,
    "server": 465,
    "guild": "aLone"
+  },
+  "46557690": {
+   "name": "k1",
+   "power": 11413190,
+   "server": 465,
+   "guildId": "4680009",
+   "guild": "AnhEm"
   },
   "46608209": {
    "name": "AnDao",
@@ -4085,6 +4106,13 @@
    "server": 476,
    "guild": "MaTộc"
   },
+  "47658409": {
+   "name": "anhthom",
+   "power": 5640356,
+   "server": 476,
+   "guildId": "4740002",
+   "guild": "VNVN"
+  },
   "47739338": {
    "name": "OR.Irin",
    "power": 9184357,
@@ -4102,6 +4130,13 @@
   "47759811": {
    "name": "แกงลิง",
    "power": 20054766,
+   "server": 477,
+   "guildId": "4770013",
+   "guild": "ORIGIN"
+  },
+  "47779824": {
+   "name": "filxm6",
+   "power": 3682411,
    "server": 477,
    "guildId": "4770013",
    "guild": "ORIGIN"
@@ -4371,6 +4406,13 @@
    "power": 7862014,
    "server": 484,
    "guild": "ATHENA"
+  },
+  "48466614": {
+   "name": "mèokute",
+   "power": 561798,
+   "server": 484,
+   "guildId": "4830012",
+   "guild": "HERA"
   },
   "48476980": {
    "name": "AT×NDG",
@@ -5061,6 +5103,13 @@
    "server": 499,
    "guild": "Sunny"
   },
+  "49921940": {
+   "name": "ĐÔNG",
+   "power": 185153,
+   "server": 499,
+   "guildId": "4980009",
+   "guild": "HADES"
+  },
   "49921948": {
    "name": "MiaoMi",
    "guildId": "4990013",
@@ -5225,6 +5274,13 @@
    "power": 1868011,
    "server": 500
   },
+  "50062569": {
+   "name": "MuộnĐìnhCường",
+   "power": 3289356,
+   "server": 500,
+   "guildId": "4980009",
+   "guild": "HADES"
+  },
   "50072768": {
    "name": "HướngĐanLê",
    "guildId": "4990013",
@@ -5252,6 +5308,13 @@
    "server": 500,
    "guildId": "4980009",
    "guild": "HADES"
+  },
+  "50133852": {
+   "name": "MỏiHoàngOanh",
+   "power": 1577494,
+   "server": 501,
+   "guildId": "5040009",
+   "guild": "1gucci"
   },
   "50143161": {
    "name": "GOGUCCI",

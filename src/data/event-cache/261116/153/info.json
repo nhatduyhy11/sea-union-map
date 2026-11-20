@@ -2359,6 +2359,13 @@
    "server": 144,
    "guild": "Exdark"
   },
+  "14496780": {
+   "name": "RadiAtun",
+   "power": 2975906,
+   "server": 144,
+   "guildId": "1420013",
+   "guild": "Exdark"
+  },
   "14537605": {
    "name": "never",
    "guildId": "1520050",
@@ -2853,6 +2860,13 @@
    "guild": "SSssSs",
    "power": 5216220,
    "server": 156
+  },
+  "15678921": {
+   "name": "soNic",
+   "power": 17475698,
+   "server": 156,
+   "guildId": "1550015",
+   "guild": "soul"
   },
   "15820521": {
    "name": "SOMOTO",
@@ -3442,6 +3456,13 @@
    "guildId": "1770016",
    "guild": "LUNAR"
   },
+  "17739338": {
+   "name": "LUNA",
+   "power": 11076882,
+   "server": 177,
+   "guildId": "1770016",
+   "guild": "LUNAR"
+  },
   "17749338": {
    "name": "LUNATIC",
    "power": 7746786,
@@ -3482,6 +3503,13 @@
    "guildId": "1770016",
    "power": 28090211,
    "server": 177,
+   "guild": "LUNAR"
+  },
+  "17789438": {
+   "name": "LUtung",
+   "power": 10646725,
+   "server": 177,
+   "guildId": "1770016",
    "guild": "LUNAR"
   },
   "17799929": {
@@ -3708,6 +3736,13 @@
    "server": 189,
    "guild": "Lacoste"
   },
+  "19002145": {
+   "name": "LaTrump",
+   "power": 4733335,
+   "server": 190,
+   "guildId": "1850011",
+   "guild": "Lacoste"
+  },
   "19002341": {
    "name": "LARVAE",
    "power": 2044921,
@@ -3784,6 +3819,13 @@
    "power": 15298521,
    "server": 191,
    "guild": "Lacoste"
+  },
+  "19254163": {
+   "name": "GNxking",
+   "power": 6731154,
+   "server": 192,
+   "guildId": "1920011",
+   "guild": "GNx"
   },
   "19254572": {
    "name": "Earth",

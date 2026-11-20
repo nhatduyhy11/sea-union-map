@@ -2063,6 +2063,13 @@
    "server": 2,
    "guild": "至尊星耀"
   },
+  "244381": {
+   "name": "MATHAN",
+   "power": 8546439,
+   "server": 2,
+   "guildId": "10010",
+   "guild": "血夜回廊"
+  },
   "315790": {
    "name": "血夜天运",
    "guildId": "10010",
@@ -2445,6 +2452,13 @@
    "server": 12,
    "guild": "SOULSFX"
   },
+  "1385283": {
+   "name": "earth",
+   "power": 9303197,
+   "server": 13,
+   "guildId": "100012",
+   "guild": "SOULSFX"
+  },
   "1406586": {
    "name": "神krig",
    "guildId": "140008",
@@ -2640,6 +2654,13 @@
    "power": 12933067,
    "server": 19,
    "guild": "SUPREME"
+  },
+  "1921558": {
+   "name": "BigaAkas",
+   "power": 4129569,
+   "server": 19,
+   "guildId": "180013",
+   "guild": "67TH"
   },
   "1931147": {
    "name": "SuCelin",
@@ -3047,6 +3068,13 @@
    "server": 39,
    "guild": "หักวาง"
   },
+  "3981932": {
+   "name": "หักหssม",
+   "power": 8057506,
+   "server": 39,
+   "guildId": "350011",
+   "guild": "หักวาง"
+  },
   "4032667": {
    "name": "Takol",
    "guildId": "350011",
@@ -3199,6 +3227,13 @@
    "guildId": "490022",
    "power": 12063063,
    "server": 52,
+   "guild": "RDFall"
+  },
+  "5234469": {
+   "name": "RDWAVE",
+   "power": 5906252,
+   "server": 52,
+   "guildId": "490022",
    "guild": "RDFall"
   },
   "5284765": {

@@ -2130,6 +2130,13 @@
    "server": 195,
    "guild": "SD夜间美梦"
   },
+  "19587408": {
+   "name": "SDhydra",
+   "power": 8936968,
+   "server": 195,
+   "guildId": "1950011",
+   "guild": "SD夜间美梦"
+  },
   "19597008": {
    "name": "SD吃柠檬的猫",
    "guildId": "1950011",
@@ -3094,6 +3101,13 @@
    "guildId": "2250014",
    "guild": "UnDead"
   },
+  "23042241": {
+   "name": "UnShawn",
+   "power": 13475016,
+   "server": 230,
+   "guildId": "2250014",
+   "guild": "UnDead"
+  },
   "23042769": {
    "name": "UnYusha",
    "guildId": "2250014",
@@ -3170,6 +3184,13 @@
    "server": 233,
    "guildId": "2400024",
    "guild": "Welcome"
+  },
+  "23365978": {
+   "name": "สิริวงศ์ศล",
+   "power": 13423379,
+   "server": 233,
+   "guildId": "2350036",
+   "guild": "Rewatch"
   },
   "23486402": {
    "name": "GAMER",
@@ -3584,6 +3605,13 @@
    "server": 244,
    "guild": "Drunk"
   },
+  "24416799": {
+   "name": "shadowx",
+   "power": 8613287,
+   "server": 244,
+   "guildId": "2440034",
+   "guild": "MVP"
+  },
   "24547292": {
    "name": "DrDITT",
    "guildId": "2410012",
@@ -3618,6 +3646,13 @@
    "server": 246,
    "guildId": "2450001",
    "guild": "PrimeXx"
+  },
+  "24628731": {
+   "name": "SushiQ",
+   "power": 876157,
+   "server": 246,
+   "guildId": "2460039",
+   "guild": "NEKO"
   },
   "24648903": {
    "name": "NEaloha",

@@ -3379,6 +3379,13 @@
    "guildId": "6440017",
    "guild": "Delta"
   },
+  "64446393": {
+   "name": "Vuasợma",
+   "power": 192282,
+   "server": 644,
+   "guildId": "6420011",
+   "guild": "OwlNiteS642"
+  },
   "64446407": {
    "name": "OWxMèow",
    "power": 12206757,
@@ -3736,6 +3743,13 @@
    "server": 652,
    "guild": "Dragon"
   },
+  "65294268": {
+   "name": "DrLaw",
+   "power": 12087198,
+   "server": 652,
+   "guildId": "6520021",
+   "guild": "Dragon"
+  },
   "65294389": {
    "name": "DrCTH",
    "guildId": "6520021",
@@ -3874,6 +3888,13 @@
    "guildId": "6600011",
    "power": 15058181,
    "server": 660,
+   "guild": "Omega"
+  },
+  "66052245": {
+   "name": "LGkey",
+   "power": 10035493,
+   "server": 660,
+   "guildId": "6600011",
    "guild": "Omega"
   },
   "66072049": {
@@ -4513,6 +4534,13 @@
    "server": 670,
    "guild": "Marvel"
   },
+  "67092266": {
+   "name": "Deadpol",
+   "power": 10402204,
+   "server": 670,
+   "guildId": "6700010",
+   "guild": "Marvel"
+  },
   "67103066": {
    "name": "Tsuki",
    "guildId": "6700010",
@@ -4765,6 +4793,13 @@
    "server": 679,
    "guild": "VN"
   },
+  "67921543": {
+   "name": "VNMoOn",
+   "power": 7269303,
+   "server": 679,
+   "guildId": "6770011",
+   "guild": "VN"
+  },
   "67921647": {
    "name": "VNxRed",
    "guildId": "6770011",
@@ -5003,6 +5038,13 @@
    "server": 684,
    "guild": "Apex"
   },
+  "68547315": {
+   "name": "Duby",
+   "power": 1055249,
+   "server": 685,
+   "guildId": "6850018",
+   "guild": "DRAGON"
+  },
   "68648226": {
    "name": "GấuMèo",
    "guildId": "6870011",
@@ -5143,6 +5185,20 @@
    "guildId": "6880028",
    "guild": "Fury"
   },
+  "68901639": {
+   "name": "he",
+   "power": 1888465,
+   "server": 689,
+   "guildId": "6890011",
+   "guild": "HGB"
+  },
+  "68931350": {
+   "name": "ĐứcRu",
+   "power": 3716136,
+   "server": 689,
+   "guildId": "6890011",
+   "guild": "HGB"
+  },
   "68941739": {
    "name": "VNWhatT",
    "guildId": "6900012",
@@ -5211,6 +5267,13 @@
    "guildId": "6900012",
    "power": 8212314,
    "server": 690,
+   "guild": "VNSt1"
+  },
+  "69022257": {
+   "name": "VNSiren",
+   "power": 12385887,
+   "server": 690,
+   "guildId": "6900012",
    "guild": "VNSt1"
   },
   "69022275": {
@@ -5331,6 +5394,13 @@
    "power": 6535793,
    "server": 691,
    "guild": "VNSt1"
+  },
+  "69214481": {
+   "name": "Kosao",
+   "power": 2050117,
+   "server": 692,
+   "guildId": "6890011",
+   "guild": "HGB"
   },
   "69264461": {
    "name": "LinhNhi",
@@ -5500,6 +5570,13 @@
    "server": 695,
    "guild": "ACE"
   },
+  "69517293": {
+   "name": "BadBoy1",
+   "power": 6778157,
+   "server": 695,
+   "guildId": "6950007",
+   "guild": "VNeID"
+  },
   "69517505": {
    "name": "VNBụnMỡ",
    "guildId": "6930011",
@@ -5619,6 +5696,13 @@
    "server": 696,
    "guild": "ACE"
   },
+  "69729818": {
+   "name": "Hairara",
+   "power": 593660,
+   "server": 697,
+   "guildId": "6970011",
+   "guild": "VNcat"
+  },
   "69739038": {
    "name": "WestHansel",
    "guildId": "6970011",
@@ -5629,6 +5713,13 @@
   "69779622": {
    "name": "SsNo1",
    "power": 7272633,
+   "server": 697,
+   "guildId": "6970011",
+   "guild": "VNcat"
+  },
+  "69799926": {
+   "name": "SummersSydney",
+   "power": 1479186,
    "server": 697,
    "guildId": "6970011",
    "guild": "VNcat"
@@ -6003,6 +6094,13 @@
    "server": 704,
    "guildId": "7020008",
    "guild": "VNASS25"
+  },
+  "70476612": {
+   "name": "Lavie",
+   "power": 11847866,
+   "server": 704,
+   "guildId": "7040004",
+   "guild": "LaThiên"
   },
   "70486014": {
    "name": "LaPaul",

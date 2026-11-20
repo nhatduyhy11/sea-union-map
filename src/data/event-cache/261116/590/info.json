@@ -3377,6 +3377,13 @@
    "guildId": "5780012",
    "guild": "Gamble"
   },
+  "57901155": {
+   "name": "Vương",
+   "power": 3812351,
+   "server": 579,
+   "guildId": "5780012",
+   "guild": "Gamble"
+  },
   "57971856": {
    "name": "NuNu",
    "guildId": "5780012",
@@ -3431,6 +3438,20 @@
    "guildId": "5820011",
    "power": 12793789,
    "server": 582,
+   "guild": "Mythic"
+  },
+  "58224962": {
+   "name": "Adibeo",
+   "power": 2125392,
+   "server": 582,
+   "guildId": "5820011",
+   "guild": "Mythic"
+  },
+  "58234590": {
+   "name": "MyKhánh",
+   "power": 9911294,
+   "server": 582,
+   "guildId": "5820011",
    "guild": "Mythic"
   },
   "58234681": {
@@ -3566,6 +3587,13 @@
    "guildId": "5870038",
    "guild": "ST"
   },
+  "58557511": {
+   "name": "Botzam",
+   "power": 4062989,
+   "server": 585,
+   "guildId": "5880005",
+   "guild": "ToP1994"
+  },
   "58557703": {
    "name": "STGIANG",
    "guildId": "5870038",
@@ -3578,6 +3606,13 @@
    "guildId": "5870038",
    "power": 11784716,
    "server": 586,
+   "guild": "ST"
+  },
+  "58688905": {
+   "name": "stkakay",
+   "power": 4592737,
+   "server": 586,
+   "guildId": "5870038",
    "guild": "ST"
   },
   "58719026": {
@@ -3674,6 +3709,13 @@
   "58870538": {
    "name": "ญาณวรปอนด์",
    "power": 2898739,
+   "server": 588,
+   "guildId": "5880005",
+   "guild": "ToP1994"
+  },
+  "58890721": {
+   "name": "จันทร์อินทร์แฟรงค์",
+   "power": 5087670,
    "server": 588,
    "guildId": "5880005",
    "guild": "ToP1994"
@@ -4106,6 +4148,13 @@
    "server": 591,
    "guild": "Vesper"
   },
+  "59193574": {
+   "name": "KIZURO",
+   "power": 9583563,
+   "server": 591,
+   "guildId": "5910010",
+   "guild": "Vesper"
+  },
   "59234482": {
    "name": "PHIgNe",
    "guildId": "5890012",
@@ -4496,6 +4545,13 @@
    "guildId": "6040057",
    "power": 8179901,
    "server": 601,
+   "guild": "NGHIỆN"
+  },
+  "60163955": {
+   "name": "NGdanil",
+   "power": 11343373,
+   "server": 601,
+   "guildId": "6040057",
    "guild": "NGHIỆN"
   },
   "60193665": {
@@ -5436,6 +5492,13 @@
    "guildId": "6190011",
    "guild": "GENESIS"
   },
+  "61961548": {
+   "name": "Ge×Shin",
+   "power": 2957902,
+   "server": 619,
+   "guildId": "6190011",
+   "guild": "GENESIS"
+  },
   "61971430": {
    "name": "GExHn02",
    "guildId": "6190011",
@@ -6220,6 +6283,13 @@
    "server": 636,
    "guild": "VietNam"
   },
+  "63688008": {
+   "name": "Minhanh",
+   "power": 580891,
+   "server": 636,
+   "guildId": "6360014",
+   "guild": "VietNam"
+  },
   "63688431": {
    "name": "VIEHiếu",
    "power": 1666581,
@@ -6329,6 +6399,13 @@
    "name": "AECông",
    "power": 13357940,
    "server": 639,
+   "guildId": "6380008",
+   "guild": "AE638"
+  },
+  "64082151": {
+   "name": "AExNaka",
+   "power": 6990771,
+   "server": 640,
    "guildId": "6380008",
    "guild": "AE638"
   }

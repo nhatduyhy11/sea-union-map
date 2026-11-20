@@ -3011,6 +3011,13 @@
    "server": 326,
    "guild": "EXILE"
   },
+  "32709018": {
+   "name": "EXShana",
+   "power": 526615,
+   "server": 327,
+   "guildId": "3260003",
+   "guild": "EXILE"
+  },
   "32719815": {
    "name": "EXsmthz",
    "power": 15358223,
@@ -3826,6 +3833,13 @@
    "server": 344,
    "guild": "THEBOSS"
   },
+  "34446189": {
+   "name": "AEIOU",
+   "power": 3264766,
+   "server": 344,
+   "guildId": "3440027",
+   "guild": "ไอสอง"
+  },
   "34446505": {
    "name": "Chns",
    "guildId": "3440002",
@@ -3894,6 +3908,13 @@
    "guildId": "3480005",
    "power": 12439184,
    "server": 346,
+   "guild": "Knox"
+  },
+  "34800823": {
+   "name": "KnNomi",
+   "power": 4529847,
+   "server": 348,
+   "guildId": "3480005",
    "guild": "Knox"
   },
   "34911939": {
@@ -4463,6 +4484,13 @@
    "server": 358,
    "guild": "VNNO1"
   },
+  "35870553": {
+   "name": "VNLemon",
+   "power": 11012461,
+   "server": 358,
+   "guildId": "3580012",
+   "guild": "VNNO1"
+  },
   "35880141": {
    "name": "VNdui",
    "power": 15473372,
@@ -4694,6 +4722,13 @@
    "server": 364,
    "guild": "KeeTeam"
   },
+  "36466512": {
+   "name": "zemawa",
+   "power": 1098398,
+   "server": 364,
+   "guildId": "3620013",
+   "guild": "KeeTeam"
+  },
   "36486316": {
    "name": "KeNyang",
    "guildId": "3620013",
@@ -4900,6 +4935,13 @@
   "37032575": {
    "name": "Fudong",
    "power": 12490520,
+   "server": 370,
+   "guildId": "3690011",
+   "guild": "Fusion"
+  },
+  "37062375": {
+   "name": "BướmDũngNghĩa",
+   "power": 8867863,
    "server": 370,
    "guildId": "3690011",
    "guild": "Fusion"
@@ -5162,6 +5204,20 @@
    "power": 25443996,
    "server": 377,
    "guild": "VAF"
+  },
+  "37810822": {
+   "name": "Joker",
+   "power": 2475961,
+   "server": 378,
+   "guildId": "3790017",
+   "guild": "VAF"
+  },
+  "37840525": {
+   "name": "Chok",
+   "power": 635730,
+   "server": 378,
+   "guildId": "3780006",
+   "guild": "Jackdaw"
   },
   "37880621": {
    "name": "CezarB",

@@ -2760,6 +2760,13 @@
    "guildId": "3870011",
    "guild": "Vn"
   },
+  "38668625": {
+   "name": "VnHunte",
+   "power": 8086709,
+   "server": 386,
+   "guildId": "3870011",
+   "guild": "Vn"
+  },
   "38678604": {
    "name": "VnMode",
    "guildId": "3870011",
@@ -3453,11 +3460,25 @@
    "server": 409,
    "guild": "RAMPAGE"
   },
+  "40951235": {
+   "name": "Aerox",
+   "power": 13264337,
+   "server": 409,
+   "guildId": "4120013",
+   "guild": "Vonghồn"
+  },
   "40961238": {
    "name": "BubaColu",
    "guildId": "4120013",
    "power": 14255340,
    "server": 409,
+   "guild": "Vonghồn"
+  },
+  "40961546": {
+   "name": "Hikari",
+   "power": 9755971,
+   "server": 409,
+   "guildId": "4120013",
    "guild": "Vonghồn"
   },
   "40961548": {
@@ -3540,6 +3561,13 @@
   "41113670": {
    "name": "VongLod",
    "power": 10443317,
+   "server": 411,
+   "guildId": "4120013",
+   "guild": "Vonghồn"
+  },
+  "41113757": {
+   "name": "Shy",
+   "power": 18670378,
    "server": 411,
    "guildId": "4120013",
    "guild": "Vonghồn"
@@ -3886,6 +3914,13 @@
    "server": 417,
    "guild": "TamQuốc"
   },
+  "41789811": {
+   "name": "Olive",
+   "power": 6001854,
+   "server": 417,
+   "guildId": "4170004",
+   "guild": "TamQuốc"
+  },
   "41799231": {
    "name": "Gabonbo",
    "guildId": "4170004",
@@ -3919,6 +3954,13 @@
    "guildId": "4170004",
    "power": 13969460,
    "server": 419,
+   "guild": "TamQuốc"
+  },
+  "41901639": {
+   "name": "ChuDu",
+   "power": 8862437,
+   "server": 419,
+   "guildId": "4170004",
    "guild": "TamQuốc"
   },
   "41911864": {
@@ -4586,6 +4628,13 @@
    "server": 432,
    "guild": "VNSO1"
   },
+  "43234072": {
+   "name": "H3N",
+   "power": 6974879,
+   "server": 432,
+   "guildId": "4290006",
+   "guild": "VNSO1"
+  },
   "43294478": {
    "name": "BerryArtie",
    "power": 4594686,
@@ -4885,6 +4934,13 @@
    "guildId": "4400012",
    "power": 26999925,
    "server": 439,
+   "guild": "1Shot"
+  },
+  "43981041": {
+   "name": "bvthinh",
+   "power": 7938067,
+   "server": 439,
+   "guildId": "4400012",
    "guild": "1Shot"
   },
   "44012445": {

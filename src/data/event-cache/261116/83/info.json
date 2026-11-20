@@ -2179,6 +2179,13 @@
    "server": 81,
    "guild": "鬼門"
   },
+  "8193478": {
+   "name": "DAxDAS",
+   "power": 3369877,
+   "server": 81,
+   "guildId": "860003",
+   "guild": "DARK"
+  },
   "8214578": {
    "name": "PanZ",
    "guildId": "810011",
@@ -2828,6 +2835,13 @@
    "guildId": "1130004",
    "power": 18762310,
    "server": 113,
+   "guild": "EXILE"
+  },
+  "11335794": {
+   "name": "EXLkuki",
+   "power": 12058495,
+   "server": 113,
+   "guildId": "1130004",
    "guild": "EXILE"
   },
   "11335975": {

@@ -5996,6 +5996,13 @@
    "power": 12096,
    "server": 735
   },
+  "73527825": {
+   "name": "Lezzbb",
+   "power": 2730338,
+   "server": 735,
+   "guildId": "7350011",
+   "guild": "NiceZzz"
+  },
   "73537394": {
    "name": "Trinn",
    "guildId": "7350010",
@@ -6279,6 +6286,13 @@
    "guildId": "7390010",
    "power": 8010368,
    "server": 739,
+   "guild": "VN"
+  },
+  "73951355": {
+   "name": "Lagger",
+   "power": 2670682,
+   "server": 739,
+   "guildId": "7390010",
    "guild": "VN"
   },
   "73951959": {
@@ -6848,6 +6862,13 @@
    "server": 748,
    "guild": "S748"
   },
+  "74800323": {
+   "name": "VNxAn",
+   "power": 10628409,
+   "server": 748,
+   "guildId": "7480008",
+   "guild": "S748"
+  },
   "74800849": {
    "name": "cchay2",
    "power": 214159,
@@ -7000,6 +7021,13 @@
    "guildId": "7520011",
    "power": 10991796,
    "server": 752,
+   "guild": "ViệtNam"
+  },
+  "75284888": {
+   "name": "AstaDo",
+   "power": 3539977,
+   "server": 752,
+   "guildId": "7520011",
    "guild": "ViệtNam"
   },
   "75365381": {
@@ -7506,6 +7534,13 @@
    "server": 758,
    "guild": "LỬNGMẬT"
   },
+  "75860147": {
+   "name": "Khanhdy",
+   "power": 3682362,
+   "server": 758,
+   "guildId": "7580011",
+   "guild": "LỬNGMẬT"
+  },
   "75870223": {
    "name": "VNThư",
    "power": 3747482,
@@ -7565,6 +7600,13 @@
   "75941543": {
    "name": "ForehandBarnaby",
    "power": 5531976,
+   "server": 759,
+   "guildId": "7590023",
+   "guild": "GuildVN"
+  },
+  "75991836": {
+   "name": "Nianaaa",
+   "power": 3369821,
    "server": 759,
    "guildId": "7590023",
    "guild": "GuildVN"

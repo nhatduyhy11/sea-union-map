@@ -7127,6 +7127,13 @@
    "guildId": "7760011",
    "guild": "VN776"
   },
+  "77678923": {
+   "name": "Aldi",
+   "power": 1561511,
+   "server": 776,
+   "guildId": "7760011",
+   "guild": "VN776"
+  },
   "77688215": {
    "name": "GameBùi",
    "guildId": "7760011",
@@ -7323,6 +7330,13 @@
    "name": "OffGame",
    "power": 3604020,
    "server": 777
+  },
+  "77799939": {
+   "name": "Psh",
+   "power": 5571895,
+   "server": 777,
+   "guildId": "7770016",
+   "guild": "KingTop"
   },
   "77820521": {
    "name": "bb",
@@ -7828,6 +7842,13 @@
    "server": 789,
    "guild": "VieTFc"
   },
+  "78971347": {
+   "name": "McDowellWilder",
+   "power": 4359440,
+   "server": 789,
+   "guildId": "7890005",
+   "guild": "VieTFc"
+  },
   "78991432": {
    "name": "Victory",
    "guildId": "7890005",
@@ -7889,6 +7910,13 @@
    "guildId": "7900011",
    "power": 57414754,
    "server": 790,
+   "guild": "SS790VN"
+  },
+  "79022443": {
+   "name": "Kokomi",
+   "power": 3078511,
+   "server": 790,
+   "guildId": "7900011",
    "guild": "SS790VN"
   },
   "79022445": {
@@ -8038,6 +8066,13 @@
    "server": 791,
    "guild": "VNDream"
   },
+  "79153753": {
+   "name": "VNVoi",
+   "power": 6711550,
+   "server": 791,
+   "guildId": "7910011",
+   "guild": "VNDream"
+  },
   "79163959": {
    "name": "T",
    "guildId": "7910011",
@@ -8118,6 +8153,13 @@
   "79345498": {
    "name": "AuHanyi",
    "power": 1628367,
+   "server": 793,
+   "guildId": "7930006",
+   "guild": "AuraForm"
+  },
+  "79365785": {
+   "name": "ToiletG",
+   "power": 751378,
    "server": 793,
    "guildId": "7930006",
    "guild": "AuraForm"
@@ -8310,6 +8352,13 @@
    "power": 9151526,
    "server": 797,
    "guild": "VN"
+  },
+  "79850734": {
+   "name": "GraffEsther",
+   "power": 2023588,
+   "server": 798,
+   "guildId": "7980001",
+   "guild": "BOSS"
   },
   "79880825": {
    "name": "DOMIXI",
@@ -8750,6 +8799,13 @@
    "guildId": "8040011",
    "power": 10851080,
    "server": 804,
+   "guild": "VietNam"
+  },
+  "80426089": {
+   "name": "Lỏ",
+   "power": 8802845,
+   "server": 804,
+   "guildId": "8040011",
    "guild": "VietNam"
   },
   "80476692": {
@@ -9214,6 +9270,13 @@
    "guildId": "8150013",
    "guild": "DRAGON"
   },
+  "81547393": {
+   "name": "Shark",
+   "power": 3886318,
+   "server": 815,
+   "guildId": "8150013",
+   "guild": "DRAGON"
+  },
   "81557312": {
    "name": "Buni",
    "power": 2521952,
@@ -9289,6 +9352,13 @@
    "guildId": "8170011",
    "power": 3760115,
    "server": 817,
+   "guild": "FMoVN"
+  },
+  "81719220": {
+   "name": "jokes",
+   "power": 3413335,
+   "server": 817,
+   "guildId": "8170011",
    "guild": "FMoVN"
   },
   "81739110": {
@@ -9585,6 +9655,13 @@
    "server": 822,
    "guild": "KingVN"
   },
+  "82284471": {
+   "name": "HaugenWilliam",
+   "power": 371281,
+   "server": 822,
+   "guildId": "8220012",
+   "guild": "WagyuTH"
+  },
   "82325099": {
    "name": "FraserSophronia",
    "power": 3326785,
@@ -9641,9 +9718,23 @@
    "guildId": "8230002",
    "guild": "VNKings"
   },
+  "82416099": {
+   "name": "HoangTh",
+   "power": 1330589,
+   "server": 824,
+   "guildId": "8240011",
+   "guild": "VnKing"
+  },
   "82436383": {
    "name": "VnZalll",
    "power": 700122,
+   "server": 824,
+   "guildId": "8240011",
+   "guild": "VnKing"
+  },
+  "82446597": {
+   "name": "BarlowIzora",
+   "power": 2216554,
    "server": 824,
    "guildId": "8240011",
    "guild": "VnKing"
@@ -9942,6 +10033,13 @@
    "guildId": "8290001",
    "guild": "Abyss"
   },
+  "82991349": {
+   "name": "PowellAnnie",
+   "power": 570977,
+   "server": 829,
+   "guildId": "8290016",
+   "guild": "VNS1"
+  },
   "83012757": {
    "name": "Imu",
    "guildId": "8300011",
@@ -10122,6 +10220,20 @@
    "guildId": "8340015",
    "power": 3339633,
    "server": 834,
+   "guild": "VNxBoss"
+  },
+  "83416612": {
+   "name": "xVNCoca",
+   "power": 566830,
+   "server": 834,
+   "guildId": "8340015",
+   "guild": "VNxBoss"
+  },
+  "83416807": {
+   "name": "Vitamin",
+   "power": 4742083,
+   "server": 834,
+   "guildId": "8340015",
    "guild": "VNxBoss"
   },
   "83416907": {
@@ -10579,6 +10691,13 @@
    "guildId": "8410020",
    "guild": "一戰義堂一"
   },
+  "84113254": {
+   "name": "chill",
+   "power": 1670413,
+   "server": 841,
+   "guildId": "8410020",
+   "guild": "一戰義堂一"
+  },
   "84113258": {
    "name": "hanhmeo",
    "power": 740919,
@@ -10596,6 +10715,13 @@
   "84133854": {
    "name": "Boss94",
    "power": 1336090,
+   "server": 841,
+   "guildId": "8410020",
+   "guild": "一戰義堂一"
+  },
+  "84143556": {
+   "name": "เจ",
+   "power": 684441,
    "server": 841,
    "guildId": "8410020",
    "guild": "一戰義堂一"
