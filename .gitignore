@@ -35,3 +35,6 @@ scripts/loc-report.md
 .beads/proxieddb/
 *.gate.lock*
 .beads/issues.jsonl
+
+# bv (beads viewer) local config and caches
+.bv/

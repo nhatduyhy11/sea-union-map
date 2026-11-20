@@ -36,6 +36,49 @@
   and never cite docs files or sections (`*.md`, `§x.y`). Source assets the code
   is derived from (`specs/map-*.PNG`, golden screenshots) may still be named.
 
+## Beads setup and conventions
+
+Repo-specific notes kept outside the managed Beads block so `bd` updates don't
+overwrite them. Keep this section in sync with `AGENTS.md`.
+
+### Setup (per clone)
+
+- Fresh clone / new machine: `bd bootstrap`, then `bd hooks install --beads`. The
+  hooks in `.beads/hooks/` are committed, but `core.hooksPath` is per-clone git
+  config and `bd bootstrap` does not set it — without this step no beads hook runs.
+- Check hooks with `bd hooks list` (expect 5/5 installed). `bd doctor` is not
+  supported in embedded mode, so it will not catch missing hooks.
+- `.gitattributes` forces LF for every text file (`* text=auto eol=lf`); keep it that
+  way, CRLF breaks the sh hooks in `.beads/hooks/`.
+- Hide Dolt's marker branch from `git fetch`:
+  `git config --add remote.origin.fetch "^refs/heads/__dolt_remote_info__"` (git 2.29+),
+  then `git update-ref -d refs/remotes/origin/__dolt_remote_info__` if it was already
+  fetched. Dolt's git remote force-pushes this branch (one `DOLT_REMOTE.md`) on every
+  `bd dolt push`; nothing reads it, so deleting it on GitHub is harmless but it comes
+  back. Never delete `refs/dolt/data` — it holds the issue database.
+
+### Issue sizing
+
+The managed block says to track ALL work in `bd`; in this repo that is scoped as follows:
+
+- Small standalone fix (one commit, nothing left over, no other agent could pick it
+  up): no issue needed; the commit message is the record.
+- Follow-up to an existing issue (even if already closed): no new issue. Add
+  `bd update <id> --append-notes "..."` (reopen only if the work is genuinely
+  unfinished) and reference the ID in the commit.
+- Multi-session, has dependencies, may be interrupted, or runs in parallel with other
+  agents/sessions: create the issue before writing code and `--claim` it.
+
+Run `bd search <keywords>` before `bd create` to avoid duplicates.
+
+### Linking issues and commits
+
+- Put the bead ID at the end of the commit subject, e.g. `feat(map): ... (sea-union-map-zd9)`.
+- Close a bead only after the commit carrying its ID exists; uncommitted work stays
+  `in_progress` and the handoff proposes the commit.
+- Don't write commit SHAs into bead notes/descriptions — history gets rebased, so SHAs
+  go stale. Describe the change instead.
+
 
 <!-- BEGIN BEADS INTEGRATION v:1 profile:minimal hash:1105d646 -->
 ## Beads Issue Tracker
