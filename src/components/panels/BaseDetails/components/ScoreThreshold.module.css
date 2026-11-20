@@ -1,0 +1,74 @@
+/* Vạch ngưỡng điểm của dot plot: hàng điều khiển, vùng loại gạch chéo, vạch kéo. */
+
+/* Hàng điều khiển ngưỡng: checkbox chiều lọc + giá trị ngưỡng. */
+.thresholdBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  color: #5d6e78;
+  font-size: 11px;
+}
+
+.thresholdBar label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.thresholdBar input {
+  margin: 0;
+}
+
+.thresholdValue {
+  margin-left: auto;
+  font-weight: 600;
+  color: #33424c;
+}
+
+.thresholdBar button {
+  border: 0;
+  background: none;
+  padding: 0;
+  color: #2f7fb5;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* Vùng bị loại bởi ngưỡng: gạch chéo nhẹ. */
+.hatch {
+  pointer-events: none;
+}
+
+.hatchPattern line {
+  stroke: #8496a1;
+  stroke-width: 1;
+  opacity: 0.4;
+}
+
+.threshold {
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.threshold line {
+  stroke: #8496a1;
+  stroke-width: 1.5;
+}
+
+.threshold .thresholdHit {
+  stroke: transparent;
+  stroke-width: 12;
+}
+
+.thresholdKnob {
+  fill: #ffffff;
+  stroke: #8496a1;
+  stroke-width: 1.5;
+}
+
+.threshold.active line:not(.thresholdHit),
+.threshold.active .thresholdKnob {
+  stroke: #d0742c;
+}
