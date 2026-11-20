@@ -95,22 +95,3 @@
   border-color: #d0742c;
   color: #d0742c;
 }
-
-.thresholdInput {
-  box-sizing: border-box;
-  width: 100%;
-  height: 18px;
-  padding: 0 5px;
-  border: 1px solid #d0742c;
-  border-radius: 9px;
-  outline: none;
-  font: inherit;
-  font-size: 10px;
-  font-weight: 600;
-  color: #33424c;
-}
-
-.thresholdInput.invalid {
-  border-color: #d64545;
-  background: #fdeeee;
-}

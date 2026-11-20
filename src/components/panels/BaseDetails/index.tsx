@@ -17,7 +17,7 @@ import { InfoHint } from "../../shared/InfoHint";
 import { BaseCarousel } from "./components/BaseCarousel";
 import { FactionStatsTable } from "./components/FactionStatsTable";
 import { NodeFilterChips } from "./components/NodeFilterChips";
-import { ScoreDotPlot } from "./components/ScoreDotPlot";
+import { ScoreDotPlot } from "./components/Plot/ScoreDotPlot";
 import { useBaseFilter } from "./useBaseFilter";
 import type { Island } from "../../../types";
 

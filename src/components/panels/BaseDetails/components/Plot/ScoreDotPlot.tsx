@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { useSelection } from "../../../../stores/selection";
-import { compact } from "../../../../utils/format";
+import { useSelection } from "../../../../../stores/selection";
+import { compact } from "../../../../../utils/format";
 import styles from "./ScoreDotPlot.module.css";
 import { HEIGHT, PAD, R, layoutScoreDots } from "./scoreDotLayout";
 import {
@@ -9,11 +9,11 @@ import {
   ThresholdHatch,
   ThresholdLine,
 } from "./ScoreThreshold";
-import type { ScoreThreshold } from "../useBaseFilter";
+import type { ScoreThreshold } from "../../useBaseFilter";
 import type {
   IslandBucketStats,
   IslandPoints,
-} from "../../../../domain/selectors/board/types";
+} from "../../../../../domain/selectors/board/types";
 
 // Dot plot dọc phân bố điểm phe trên các đảo đủ điểm: mỗi chấm một đảo (đặc =
 // đang chiếm, rỗng = mất: đủ điểm chưa chiếm), trục log lớn ở trên, vạch avg /

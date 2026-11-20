@@ -1,12 +1,9 @@
 import { useState, type PointerEvent } from "react";
 import styles from "./ScoreThreshold.module.css";
 import { HEIGHT, PAD, type ScoreDotLayout } from "./scoreDotLayout";
-import {
-  clampThreshold,
-  formatThreshold,
-  parseThreshold,
-} from "./thresholdValue";
-import type { ScoreThreshold } from "../useBaseFilter";
+import { ThresholdInput } from "./ThresholdInput";
+import { formatThreshold } from "./thresholdValue";
+import type { ScoreThreshold } from "../../useBaseFilter";
 
 const HATCH_ID = "score-dot-plot-hatch";
 
@@ -165,13 +162,10 @@ export function ThresholdLine({
         <foreignObject {...label}>
           <ThresholdInput
             value={threshold.value}
+            range={plot.range}
             onDone={(value) => {
               setEditing(false);
-              if (value !== null)
-                onChange({
-                  ...threshold,
-                  value: clampThreshold(value, plot.range),
-                });
+              if (value !== null) onChange({ ...threshold, value });
             }}
           />
         </foreignObject>
@@ -181,43 +175,3 @@ export function ThresholdLine({
 }
 
 const LABEL_HEIGHT = 18;
-
-// Ô nhập ngưỡng (cú pháp ở parseThreshold). Enter: hợp lệ thì áp, không thì
-// viền đỏ và giữ ô để sửa. Rời ô: hợp lệ thì áp, không thì huỷ. Esc: huỷ
-// (chặn lan ra phím Esc bỏ chọn đảo).
-function ThresholdInput({
-  value,
-  onDone,
-}: {
-  value: number;
-  onDone: (value: number | null) => void;
-}) {
-  const [text, setText] = useState(formatThreshold(value));
-  const [invalid, setInvalid] = useState(false);
-  return (
-    <input
-      className={`${styles.thresholdInput} ${invalid ? styles.invalid : ""}`}
-      autoFocus
-      value={text}
-      placeholder="34 = 34M"
-      title="Đơn vị k / m (tr) / b (tỷ); số trần < 1000 hiểu là M"
-      aria-invalid={invalid}
-      onFocus={(event) => event.currentTarget.select()}
-      onChange={(event) => {
-        setText(event.target.value);
-        setInvalid(false);
-      }}
-      onBlur={() => onDone(parseThreshold(text))}
-      onKeyDown={(event) => {
-        if (event.key === "Enter") {
-          if (parseThreshold(text) === null) setInvalid(true);
-          else event.currentTarget.blur();
-        }
-        if (event.key === "Escape") {
-          event.stopPropagation();
-          onDone(null);
-        }
-      }}
-    />
-  );
-}

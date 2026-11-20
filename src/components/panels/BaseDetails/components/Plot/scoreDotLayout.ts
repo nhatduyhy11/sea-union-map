@@ -2,7 +2,7 @@ import { snapThreshold } from "./thresholdValue";
 import type {
   IslandBucketStats,
   IslandPoints,
-} from "../../../../domain/selectors/board/types";
+} from "../../../../../domain/selectors/board/types";
 
 export const HEIGHT = 240;
 export const PAD = { top: 8, right: 74, bottom: 8, left: 34 };
