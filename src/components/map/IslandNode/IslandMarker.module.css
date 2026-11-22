@@ -51,3 +51,30 @@
 .islandLabel.center {
   margin-top: calc(42.5px - var(--icon-box) / 2 + 4px);
 }
+
+.historyMarker {
+  position: relative;
+}
+
+.ownerChange {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10px;
+}
+.ownerChange i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1px solid var(--text-muted, #8b9aa4);
+}
+.historyOld {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.historyNew,
+.historyOld {
+  /* Includes the center artwork extending beyond the node box. */
+  overflow: visible;
+}

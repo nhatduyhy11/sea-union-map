@@ -25,6 +25,11 @@ export function IslandMarker({
   };
   const open = () => data.open(data.id);
   const ariaLabel = `Xem ${data.id} ${data.name}`;
+  const previousOwner = data.historyFrom?.factionInfo;
+  const ownershipChange =
+    previousOwner &&
+    data.historyFrom?.owner !== data.owner &&
+    (data.historySlot ?? 0) > 0;
 
   const labelClass = [
     styles.islandLabel,
@@ -36,12 +41,50 @@ export function IslandMarker({
 
   return (
     <>
-      <MarkerGlyph
-        data={data}
-        state={state}
-        open={open}
-        ariaLabel={ariaLabel}
-      />
+      {data.historyFrom ? (
+        <div className={styles.historyMarker}>
+          <div
+            className={styles.historyOld}
+            data-history-effect={data.historyRetreat ? "retreat" : "exit"}
+            data-history-delay={data.historyRetreat?.delay}
+            data-history-duration={data.historyRetreat?.duration}
+            data-history-slot={data.historySlot}
+            aria-hidden
+            inert
+          >
+            <MarkerGlyph
+              data={data.historyFrom}
+              layer
+              state={state}
+              open={open}
+              ariaLabel={ariaLabel}
+            />
+          </div>
+          <div
+            className={styles.historyNew}
+            data-history-effect="enter"
+            data-history-delay={data.historyDelay}
+            data-history-duration={data.historyDuration}
+            data-history-slot={data.historySlot}
+            style={{ clipPath: "circle(0px at 70px 42.5px)", opacity: 0 }}
+          >
+            <MarkerGlyph
+              data={data}
+              layer
+              state={state}
+              open={open}
+              ariaLabel={ariaLabel}
+            />
+          </div>
+        </div>
+      ) : (
+        <MarkerGlyph
+          data={data}
+          state={state}
+          open={open}
+          ariaLabel={ariaLabel}
+        />
+      )}
       <div className={labelClass}>
         <div className={styles.labelWrapper}>
           {data.base ? (
@@ -51,6 +94,18 @@ export function IslandMarker({
             <>
               <span>{data.id}</span> {isCenter ? "TRUNG TÂM" : ""}
             </>
+          )}
+          {ownershipChange && (
+            <small
+              className={styles.ownerChange}
+              aria-label={`${previousOwner.name} → ${data.factionInfo?.name ?? "không có phe giữ"}`}
+              title={`${previousOwner.name} → ${data.factionInfo?.name ?? "không có phe giữ"}`}
+            >
+              <i style={{ background: previousOwner.color }} />→
+              <i
+                style={{ background: data.factionInfo?.color ?? "transparent" }}
+              />
+            </small>
           )}
           <button
             className={`${styles.pin} nodrag ${data.pinned ? styles.pinned : ""}`}

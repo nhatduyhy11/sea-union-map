@@ -10,6 +10,7 @@ import {
   Swords,
   type LucideIcon,
 } from "lucide-react";
+import type { CSSProperties } from "react";
 import type { CanvasIcon } from "../../../domain/selectors/canvasIcons";
 import type { IslandNodeData } from "../../../types";
 import { getFactionIcon } from "../../shared/faction/factionIcons";
@@ -36,12 +37,19 @@ export function MarkerGlyph({
   state,
   open,
   ariaLabel,
+  layer = false,
 }: {
   data: IslandNodeData;
   state: MarkerState;
   open: () => void;
   ariaLabel: string;
+  layer?: boolean;
 }) {
+  state = {
+    ...state,
+    frontline: Boolean(data.frontline),
+    defend: Boolean(data.defend),
+  };
   const isCenter = data.tier === 4;
   const FactionIcon = data.base
     ? getFactionIcon(data.factionInfo?.id ?? data.owner ?? data.id)
@@ -65,11 +73,23 @@ export function MarkerGlyph({
     .filter(Boolean)
     .join(" ");
 
-  return isCenter ? (
-    <CenterIcon state={state} onClick={open} ariaLabel={ariaLabel} />
-  ) : (
-    <button className={iconClass} onClick={open} aria-label={ariaLabel}>
-      {Icon && <Icon size={data.base ? 31 : 24} />}
-    </button>
+  return (
+    <div
+      style={
+        {
+          "--faction":
+            data.factionInfo?.color ?? "var(--history-neutral, #9caeb9)",
+          opacity: layer && !data.owner ? "var(--neutral-opacity, 0.4)" : 1,
+        } as CSSProperties
+      }
+    >
+      {isCenter ? (
+        <CenterIcon state={state} onClick={open} ariaLabel={ariaLabel} />
+      ) : (
+        <button className={iconClass} onClick={open} aria-label={ariaLabel}>
+          {Icon && <Icon size={data.base ? 31 : 24} />}
+        </button>
+      )}
+    </div>
   );
 }

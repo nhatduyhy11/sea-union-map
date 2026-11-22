@@ -33,7 +33,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   const className = [
     styles.island,
     isCenter && styles.center,
-    !data.owner && styles.neutral,
+    !data.owner && !data.historyFrom && styles.neutral,
     linked && styles.linked,
     data.active && styles.active,
     data.matched && styles.hot,
@@ -45,10 +45,15 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
   // mở chi tiết vừa hiện popup, tap node khác thì popup chuyển theo.
   const touchSelected = Boolean(data.active) && !canHover();
   const showStats =
-    !data.base && (data.showAll || data.pinned || hovered || touchSelected);
+    !data.historyActive &&
+    !data.base &&
+    (data.showAll || data.pinned || hovered || touchSelected);
   // Căn cứ: popover tóm tắt phe — chỉ hover/ghim, "Điểm toàn map" không bật
   // (4 khối phe phủ kín góc map).
-  const showBaseStats = data.base && (data.pinned || hovered || touchSelected);
+  const showBaseStats =
+    !data.historyActive &&
+    data.base &&
+    (data.pinned || hovered || touchSelected);
   // Phe đại diện cho màu nền popup: phe đang giữ đảo, hoặc với đảo chưa chủ
   // là phe đủ ngưỡng claim đứng đầu (undefined → nền trắng như cũ).
   const statTint = data.factionInfo?.color ?? claimLeader?.color;
@@ -59,6 +64,7 @@ export function IslandNode({ data }: NodeProps<AppNode>) {
       style={
         {
           "--faction": data.factionInfo?.color || neutralColor,
+          "--history-neutral": neutralColor,
           "--neutral-opacity": neutralOpacity,
           "--icon-box": `${iconBoxSize(data)}px`,
         } as React.CSSProperties
