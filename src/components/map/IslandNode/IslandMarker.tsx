@@ -1,36 +1,8 @@
-import {
-  Anchor,
-  BicepsFlexed,
-  Castle,
-  Flag,
-  Gift,
-  Pin,
-  Scissors,
-  ShieldAlert,
-  Sword,
-  Swords,
-  type LucideIcon,
-} from "lucide-react";
-import type { CanvasIcon } from "../../../domain/selectors/canvasIcons";
-import { getFactionIcon } from "../../shared/faction/factionIcons";
-import { CenterIcon } from "./CenterIcon";
-import { stateClasses, type MarkerState } from "./markerState";
-import styles from "./IslandMarker.module.css";
+import { Pin } from "lucide-react";
 import type { IslandNodeData } from "../../../types";
-
-const STATUS_ICONS: Record<CanvasIcon, LucideIcon | null> = {
-  base: null,
-  anchor: Anchor,
-  castle: Castle,
-  belowClaim: Sword,
-  frozen: Scissors,
-  frontline: Swords,
-  defend: ShieldAlert,
-  gifted: Gift,
-  aftermath: Flag,
-  overbuilt: BicepsFlexed,
-  plain: null,
-};
+import type { MarkerState } from "./markerState";
+import { MarkerGlyph } from "./MarkerGlyph";
+import styles from "./IslandMarker.module.css";
 
 // Icon (ô kim cương, hoặc ảnh đảo với trung tâm 4) + nhãn tên và nút ghim.
 export function IslandMarker({
@@ -54,27 +26,6 @@ export function IslandMarker({
   const open = () => data.open(data.id);
   const ariaLabel = `Xem ${data.id} ${data.name}`;
 
-  const FactionIcon = data.base
-    ? getFactionIcon(data.factionInfo?.id ?? data.owner ?? data.id)
-    : null;
-  const Icon =
-    FactionIcon ??
-    (data.canvasIcon
-      ? STATUS_ICONS[data.canvasIcon]
-      : data.owner
-        ? null
-        : data.central
-          ? Castle
-          : Anchor);
-
-  const iconClass = [
-    styles.islandIcon,
-    "nodrag",
-    data.base && styles.base,
-    ...stateClasses(styles, state),
-  ]
-    .filter(Boolean)
-    .join(" ");
   const labelClass = [
     styles.islandLabel,
     data.base && styles.base,
@@ -85,13 +36,12 @@ export function IslandMarker({
 
   return (
     <>
-      {isCenter ? (
-        <CenterIcon state={state} onClick={open} ariaLabel={ariaLabel} />
-      ) : (
-        <button className={iconClass} onClick={open} aria-label={ariaLabel}>
-          {Icon && <Icon size={data.base ? 31 : 24} />}
-        </button>
-      )}
+      <MarkerGlyph
+        data={data}
+        state={state}
+        open={open}
+        ariaLabel={ariaLabel}
+      />
       <div className={labelClass}>
         <div className={styles.labelWrapper}>
           {data.base ? (
