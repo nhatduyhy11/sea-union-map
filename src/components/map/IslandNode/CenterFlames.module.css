@@ -1,0 +1,119 @@
+/* Cụm lửa tranh chấp của node trung tâm — render trong nút của CenterIcon,
+   chỉ khi node frontline (CenterIcon mount/unmount theo state). */
+
+/* Phủ kín hộp 240px, đặt dưới ảnh đảo (.centerArt z-index 1): lửa chỉ lộ
+   phần vượt lên trên mái vòm — đảo "cháy" mà không che chi tiết.
+
+   Mask khoét phần chồng lấn: ảnh đảo opacity 0.5 không che được lửa nằm sau
+   nó (alpha compositing cho lửa hở xuyên thân đảo). Lớp mask 1 là chính ảnh
+   đảo — contain + center trùng đúng geometry object-fit contain của
+   .centerArt; XOR với nền đặc (lớp 2) → lửa tắt trong vùng pixel của đảo,
+   thân đảo che khuất hoàn toàn, art canvas sau đảo không bị đụng tới. */
+.flames {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mask-image: var(--center-art), linear-gradient(#000 0 0);
+  mask-size:
+    contain,
+    100% 100%;
+  mask-position:
+    center,
+    0 0;
+  mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+
+/* Vòm lửa mờ gốc — nối màu lửa vào mái, không để ngọn lửa "lơ lửng". */
+.flames::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50px;
+  width: 176px;
+  height: 64px;
+  translate: -50% -50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, #e8762c 55%, transparent),
+    transparent
+  );
+}
+
+/* Ngọn lửa: hình trứng, đuôi trên loang mờ dần. Vị trí theo đỉnh vòm trong
+   hộp (ảnh 360×299 contain vào hộp 240px, đỉnh mái ~y27px). Cụm rộng ngang
+   vòm (~±60px), 3 thùy đè nhẹ lên nhau thành khối lửa liền. Thuộc tính
+   translate tách khỏi animation transform nên flicker không mất căn giữa. */
+.flame {
+  position: absolute;
+  translate: -50% 0;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: linear-gradient(
+    to top,
+    #93260f 0%,
+    #d85a24 40%,
+    #f2a13d 72%,
+    transparent 100%
+  );
+  filter: blur(1px);
+  transform-origin: 50% 100%;
+  animation: flame-flicker 0.8s ease-in-out infinite alternate;
+}
+
+.flame:nth-child(1) {
+  left: calc(50% - 45px);
+  top: 16px;
+  width: 38px;
+  height: 74px;
+  animation-delay: -0.35s;
+}
+
+.flame:nth-child(2) {
+  left: calc(50% - 3px);
+  top: 0;
+  width: 46px;
+  height: 96px;
+  animation-delay: -0.7s;
+}
+
+.flame:nth-child(3) {
+  left: calc(50% + 40px);
+  top: 20px;
+  width: 34px;
+  height: 64px;
+  animation-delay: -0.15s;
+}
+
+@keyframes flame-flicker {
+  0% {
+    transform: scale(0.92, 0.82) rotate(-3deg);
+    opacity: 0.7;
+  }
+
+  45% {
+    transform: scale(1.02, 1.06) rotate(2deg);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: scale(0.95, 1.14) rotate(-1deg);
+    opacity: 0.82;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flame {
+    animation: none;
+  }
+}
+
+/* Lửa tĩnh trên cảm ứng: flicker tạo layer động liên tục trên WebKit cảm ứng
+   — giữ hình ngọn lửa, bỏ animation (CenterIcon cũng bỏ shadow blur cùng lý
+   do ở media hover:none của nó). */
+@media (hover: none) {
+  .flame {
+    animation: none;
+  }
+}
