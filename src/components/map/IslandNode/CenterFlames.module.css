@@ -2,12 +2,28 @@
    chỉ khi node frontline (CenterIcon mount/unmount theo state). */
 
 /* Phủ kín hộp 240px, đặt dưới ảnh đảo (.centerArt z-index 1): lửa chỉ lộ
-   phần vượt lên trên mái vòm — đảo "cháy" mà không che chi tiết. */
+   phần vượt lên trên mái vòm — đảo "cháy" mà không che chi tiết.
+
+   Mask khoét phần chồng lấn: ảnh đảo opacity 0.5 không che được lửa nằm sau
+   nó (alpha compositing cho lửa hở xuyên thân đảo). Lớp mask 1 là chính ảnh
+   đảo — contain + center trùng đúng geometry object-fit contain của
+   .centerArt; XOR với nền đặc (lớp 2) → lửa tắt trong vùng pixel của đảo,
+   thân đảo che khuất hoàn toàn, art canvas sau đảo không bị đụng tới. */
 .flames {
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  mask-image: var(--center-art), linear-gradient(#000 0 0);
+  mask-size:
+    contain,
+    100% 100%;
+  mask-position:
+    center,
+    0 0;
+  mask-repeat: no-repeat, no-repeat;
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
 }
 
 /* Vòm lửa mờ gốc — nối màu lửa vào mái, không để ngọn lửa "lơ lửng". */
