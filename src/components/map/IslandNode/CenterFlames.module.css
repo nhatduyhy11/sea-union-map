@@ -31,9 +31,9 @@
   content: "";
   position: absolute;
   left: 50%;
-  top: 46px;
-  width: 132px;
-  height: 52px;
+  top: 50px;
+  width: 176px;
+  height: 64px;
   translate: -50% -50%;
   background: radial-gradient(
     closest-side,
@@ -43,7 +43,8 @@
 }
 
 /* Ngọn lửa: hình trứng, đuôi trên loang mờ dần. Vị trí theo đỉnh vòm trong
-   hộp (ảnh 360×299 contain vào hộp 240px, đỉnh mái ~y27px). Thuộc tính
+   hộp (ảnh 360×299 contain vào hộp 240px, đỉnh mái ~y27px). Cụm rộng ngang
+   vòm (~±60px), 3 thùy đè nhẹ lên nhau thành khối lửa liền. Thuộc tính
    translate tách khỏi animation transform nên flicker không mất căn giữa. */
 .flame {
   position: absolute;
@@ -56,32 +57,32 @@
     #f2a13d 72%,
     transparent 100%
   );
-  filter: blur(0.6px);
+  filter: blur(1px);
   transform-origin: 50% 100%;
   animation: flame-flicker 0.8s ease-in-out infinite alternate;
 }
 
 .flame:nth-child(1) {
-  left: calc(50% - 28px);
-  top: 12px;
-  width: 24px;
-  height: 56px;
+  left: calc(50% - 45px);
+  top: 16px;
+  width: 38px;
+  height: 74px;
   animation-delay: -0.35s;
 }
 
 .flame:nth-child(2) {
   left: calc(50% - 3px);
   top: 0;
-  width: 30px;
-  height: 74px;
+  width: 46px;
+  height: 96px;
   animation-delay: -0.7s;
 }
 
 .flame:nth-child(3) {
-  left: calc(50% + 19px);
-  top: 14px;
-  width: 21px;
-  height: 50px;
+  left: calc(50% + 40px);
+  top: 20px;
+  width: 34px;
+  height: 64px;
   animation-delay: -0.15s;
 }
 
