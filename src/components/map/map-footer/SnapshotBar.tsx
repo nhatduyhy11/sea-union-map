@@ -13,6 +13,7 @@ import {
   useDataset,
 } from "../../../stores/dataset";
 import styles from "./SnapshotBar.module.css";
+import { HistoryPlayButton } from "./HistoryControls";
 
 // Chọn đợt event + dãy nút các ngày của đợt dưới legend canvas — xem lại diễn
 // biến bản đồ theo ngày (snapshot cuối ngày) của cụm đang chọn. Đợt chưa tới
@@ -82,6 +83,7 @@ export function SnapshotBar() {
           </button>
         );
       })}
+      <HistoryPlayButton />
       {loading && <span className={styles.loading}>Đang tải…</span>}
     </div>
   );

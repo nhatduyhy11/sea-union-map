@@ -23,6 +23,13 @@
   white-space: nowrap;
 }
 
+.legendRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
 @media (max-width: 1100px) {
   .legendHelp {
     display: none;
