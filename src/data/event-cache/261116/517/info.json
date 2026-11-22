@@ -3752,6 +3752,13 @@
    "server": 521,
    "guild": "Chùm"
   },
+  "52173350": {
+   "name": "Charlie",
+   "power": 9496514,
+   "server": 521,
+   "guildId": "5210012",
+   "guild": "Chùm"
+  },
   "52183152": {
    "name": "Cherri",
    "guildId": "5210012",
@@ -4781,6 +4788,13 @@
    "server": 551,
    "guild": "MyGuild"
   },
+  "55193854": {
+   "name": "GOOGLE",
+   "power": 3841428,
+   "server": 551,
+   "guildId": "5510011",
+   "guild": "MyGuild"
+  },
   "55224282": {
    "name": "Mychen",
    "guildId": "5510011",
@@ -4842,6 +4856,13 @@
    "guildId": "5540013",
    "power": 20331374,
    "server": 554,
+   "guild": "GUCCI"
+  },
+  "55436687": {
+   "name": "GuDevil",
+   "power": 11067866,
+   "server": 554,
+   "guildId": "5540013",
    "guild": "GUCCI"
   },
   "55446285": {
@@ -5690,6 +5711,13 @@
    "power": 18349691,
    "server": 570,
    "guild": "VNs1st"
+  },
+  "57123365": {
+   "name": "Diparus",
+   "power": 5944678,
+   "server": 571,
+   "guildId": "5710014",
+   "guild": "DARKSKY"
   },
   "57123779": {
    "name": "Sigurdd",

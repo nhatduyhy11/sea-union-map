@@ -3553,6 +3553,13 @@
    "server": 460,
    "guild": "KOW"
   },
+  "46092962": {
+   "name": "Dexter",
+   "power": 2164063,
+   "server": 460,
+   "guildId": "4600014",
+   "guild": "AE1Nhà"
+  },
   "46103550": {
    "name": "KimNgan",
    "power": 1398319,
@@ -3805,6 +3812,13 @@
    "server": 465,
    "guild": "AnhEm"
   },
+  "46537414": {
+   "name": "gachi",
+   "power": 802594,
+   "server": 465,
+   "guildId": "4650062",
+   "guild": "KodeInt"
+  },
   "46547405": {
    "name": "XXL",
    "guildId": "4650024",
@@ -4029,6 +4043,13 @@
    "server": 473,
    "guild": "MaTộc"
   },
+  "47426584": {
+   "name": "ManTe",
+   "power": 11858441,
+   "server": 474,
+   "guildId": "4730012",
+   "guild": "MaTộc"
+  },
   "47436493": {
    "name": "CháoQuỳnhGiao",
    "power": 11600806,
@@ -4084,6 +4105,13 @@
    "power": 578367,
    "server": 475,
    "guild": "NOBI"
+  },
+  "47557395": {
+   "name": "Macaron",
+   "power": 7862707,
+   "server": 475,
+   "guildId": "4730012",
+   "guild": "MaTộc"
   },
   "47628516": {
    "name": "Relax",

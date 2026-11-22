@@ -2746,6 +2746,13 @@
    "guildId": "3850029",
    "guild": "สู้ผี"
   },
+  "38587190": {
+   "name": "Lucifer",
+   "power": 15085615,
+   "server": 385,
+   "guildId": "3870011",
+   "guild": "Vn"
+  },
   "38618521": {
    "name": "ChủKiềuMai",
    "guildId": "3860011",
@@ -3012,6 +3019,13 @@
    "server": 390,
    "guild": "VNVC"
   },
+  "39113666": {
+   "name": "NYKIE",
+   "power": 4456928,
+   "server": 391,
+   "guildId": "3900011",
+   "guild": "VNVC"
+  },
   "39163578": {
    "name": "VNSoul",
    "guildId": "3900011",
@@ -3038,6 +3052,13 @@
    "guildId": "3900011",
    "power": 16809075,
    "server": 392,
+   "guild": "VNVC"
+  },
+  "39264797": {
+   "name": "PéPun",
+   "power": 8840827,
+   "server": 392,
+   "guildId": "3900011",
    "guild": "VNVC"
   },
   "39274972": {
@@ -3172,6 +3193,13 @@
    "power": 12306066,
    "server": 394,
    "guild": "AEVN"
+  },
+  "39577308": {
+   "name": "ชาติทองนนท์",
+   "power": 11049258,
+   "server": 395,
+   "guildId": "3950017",
+   "guild": "Thaiแลน"
   },
   "39608713": {
    "name": "AEKin",
@@ -4439,6 +4467,13 @@
    "guildId": "4250037",
    "guild": "LegendS425"
   },
+  "42810930": {
+   "name": "Juhoon",
+   "power": 1201613,
+   "server": 428,
+   "guildId": "4270014",
+   "guild": "TSUNAMI"
+  },
   "42830325": {
    "name": "STxTIN",
    "guildId": "4260011",
@@ -4578,6 +4613,13 @@
    "server": 430,
    "guildId": "4290006",
    "guild": "VNSO1"
+  },
+  "43123361": {
+   "name": "Phogn41",
+   "power": 334087,
+   "server": 431,
+   "guildId": "4310004",
+   "guild": "chillgu"
   },
   "43123651": {
    "name": "VNSmile",
@@ -4838,6 +4880,13 @@
    "server": 436,
    "guild": "Olympia"
   },
+  "43618515": {
+   "name": "OLAHOK",
+   "power": 12351876,
+   "server": 436,
+   "guildId": "4330012",
+   "guild": "Olympia"
+  },
   "43628211": {
    "name": "OlDG",
    "guildId": "4330012",
@@ -4872,6 +4921,13 @@
    "power": 9834715,
    "server": 437,
    "guild": "1Shot"
+  },
+  "43719119": {
+   "name": "Ducle",
+   "power": 3106389,
+   "server": 437,
+   "guildId": "4370038",
+   "guild": "TOPVN"
   },
   "43779419": {
    "name": "xhaUwU",

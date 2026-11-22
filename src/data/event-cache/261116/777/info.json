@@ -7258,6 +7258,13 @@
    "server": 777,
    "guild": "KingTop"
   },
+  "77759822": {
+   "name": "TPhuc",
+   "power": 12107385,
+   "server": 777,
+   "guildId": "7770016",
+   "guild": "KingTop"
+  },
   "77769220": {
    "name": "KizzOzz",
    "guildId": "7770016",
@@ -8241,6 +8248,13 @@
    "guildId": "7950016",
    "guild": "ViệtNAM"
   },
+  "79587405": {
+   "name": "GoldmanRingo",
+   "power": 2794400,
+   "server": 795,
+   "guildId": "7950016",
+   "guild": "ViệtNAM"
+  },
   "79597209": {
    "name": "NNHH",
    "power": 998833,
@@ -8934,6 +8948,13 @@
    "server": 806,
    "guild": "VNHOUSE"
   },
+  "80668926": {
+   "name": "DuoT",
+   "power": 268095,
+   "server": 806,
+   "guildId": "8060014",
+   "guild": "VN"
+  },
   "80678409": {
    "name": "VNBinh",
    "guildId": "8060010",
@@ -9121,6 +9142,13 @@
    "guildId": "8110010",
    "power": 6179909,
    "server": 811,
+   "guild": "AE811"
+  },
+  "81163572": {
+   "name": "anhmui2",
+   "power": 3341201,
+   "server": 811,
+   "guildId": "8110010",
    "guild": "AE811"
   },
   "81183572": {
@@ -9781,6 +9809,13 @@
    "server": 825,
    "guild": "VN88"
   },
+  "82547802": {
+   "name": "CaseVallie",
+   "power": 710812,
+   "server": 825,
+   "guildId": "8250010",
+   "guild": "VN88"
+  },
   "82567090": {
    "name": "Arashi",
    "power": 3390232,
@@ -9987,6 +10022,13 @@
   "82880631": {
    "name": "cscd",
    "power": 1315036,
+   "server": 828,
+   "guildId": "8280010",
+   "guild": "VNƠi"
+  },
+  "82890847": {
+   "name": "bonchen",
+   "power": 2387511,
    "server": 828,
    "guildId": "8280010",
    "guild": "VNƠi"
@@ -10722,6 +10764,13 @@
   "84143556": {
    "name": "เจ",
    "power": 684441,
+   "server": 841,
+   "guildId": "8410020",
+   "guild": "一戰義堂一"
+  },
+  "84163759": {
+   "name": "VNSHI",
+   "power": 2626450,
    "server": 841,
    "guildId": "8410020",
    "guild": "一戰義堂一"

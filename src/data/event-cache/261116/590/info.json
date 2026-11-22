@@ -3552,6 +3552,13 @@
    "server": 584,
    "guild": "Mythic"
   },
+  "58426100": {
+   "name": "PHxiff",
+   "power": 7068003,
+   "server": 584,
+   "guildId": "5820011",
+   "guild": "Mythic"
+  },
   "58436789": {
    "name": "MytSữa",
    "guildId": "5820011",
@@ -3789,6 +3796,13 @@
   "58961664": {
    "name": "TOPWOLF",
    "power": 7410512,
+   "server": 589,
+   "guildId": "5890012",
+   "guild": "TOP"
+  },
+  "58961740": {
+   "name": "TOPs589",
+   "power": 5406409,
    "server": 589,
    "guildId": "5890012",
    "guild": "TOP"
@@ -4049,6 +4063,13 @@
    "power": 6990380,
    "server": 590,
    "guild": "Vesper"
+  },
+  "59082251": {
+   "name": "DK×Tyr",
+   "power": 31202167,
+   "server": 590,
+   "guildId": "5900002",
+   "guild": "DUSKERS"
   },
   "59082577": {
    "name": "DKxNOR",
@@ -5485,6 +5506,13 @@
    "server": 619,
    "guild": "GENESIS"
   },
+  "61941552": {
+   "name": "GExJK",
+   "power": 9878598,
+   "server": 619,
+   "guildId": "6190011",
+   "guild": "GENESIS"
+  },
   "61951558": {
    "name": "GEx0000",
    "power": 9978333,
@@ -5602,6 +5630,13 @@
    "guildId": "6230012",
    "power": 13601759,
    "server": 623,
+   "guild": "DEATH"
+  },
+  "62395282": {
+   "name": "DExDoah",
+   "power": 4990734,
+   "server": 623,
+   "guildId": "6230012",
    "guild": "DEATH"
   },
   "62446295": {

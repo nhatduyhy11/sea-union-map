@@ -3799,6 +3799,13 @@
    "server": 656,
    "guild": "VNtop1"
   },
+  "65678625": {
+   "name": "ViThanh",
+   "power": 718776,
+   "server": 656,
+   "guildId": "6560021",
+   "guild": "Nhiiuoi"
+  },
   "65719827": {
    "name": "ABOxRy",
    "guildId": "6600011",
@@ -3897,6 +3904,13 @@
    "guildId": "6600011",
    "guild": "Omega"
   },
+  "66052263": {
+   "name": "LGxKBi",
+   "power": 4082380,
+   "server": 660,
+   "guildId": "6600011",
+   "guild": "Omega"
+  },
   "66072049": {
    "name": "ABOxGạo",
    "guildId": "6600011",
@@ -3965,6 +3979,13 @@
    "guildId": "6610011",
    "power": 12819931,
    "server": 661,
+   "guild": "VNAMESE"
+  },
+  "66183351": {
+   "name": "KhônDuyUyên",
+   "power": 6193705,
+   "server": 661,
+   "guildId": "6610011",
    "guild": "VNAMESE"
   },
   "66183570": {
@@ -4870,6 +4891,13 @@
    "guildId": "6840011",
    "guild": "VNRuRu"
   },
+  "68274662": {
+   "name": "Mal3lue",
+   "power": 10474403,
+   "server": 682,
+   "guildId": "6830024",
+   "guild": "Apex"
+  },
   "68294273": {
    "name": "VNMimie",
    "power": 3907403,
@@ -5717,6 +5745,13 @@
    "guildId": "6970011",
    "guild": "VNcat"
   },
+  "69789729": {
+   "name": "VN",
+   "power": 6380461,
+   "server": 697,
+   "guildId": "6970011",
+   "guild": "VNcat"
+  },
   "69799926": {
    "name": "SummersSydney",
    "power": 1479186,
@@ -5905,6 +5940,13 @@
    "power": 1769080,
    "server": 701,
    "guild": "ĐộiCute"
+  },
+  "70143486": {
+   "name": "Empress",
+   "power": 10429334,
+   "server": 701,
+   "guildId": "7010002",
+   "guild": "EmPIRE"
   },
   "70163064": {
    "name": "EmStubb",
@@ -6121,6 +6163,13 @@
    "guildId": "7040004",
    "power": 18896678,
    "server": 704,
+   "guild": "LaThiên"
+  },
+  "70496397": {
+   "name": "Lalion",
+   "power": 9024449,
+   "server": 704,
+   "guildId": "7040004",
    "guild": "LaThiên"
   }
  }

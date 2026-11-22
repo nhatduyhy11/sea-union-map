@@ -2542,6 +2542,13 @@
    "server": 265,
    "guild": "WraithM"
   },
+  "26577416": {
+   "name": "Wreath",
+   "power": 8536050,
+   "server": 265,
+   "guildId": "2650007",
+   "guild": "WraithM"
+  },
   "26587016": {
    "name": "Wraith",
    "power": 8652196,
@@ -2974,6 +2981,13 @@
    "guildId": "2870009",
    "power": 12192769,
    "server": 283,
+   "guild": "不朽神域"
+  },
+  "28395188": {
+   "name": "Diamond",
+   "power": 13464569,
+   "server": 283,
+   "guildId": "2870009",
    "guild": "不朽神域"
   },
   "28426711": {

@@ -1980,6 +1980,13 @@
    "guildId": "780030",
    "guild": "KYOFU"
   },
+  "8032553": {
+   "name": "LeHuang",
+   "power": 10476245,
+   "server": 80,
+   "guildId": "800011",
+   "guild": "Legends"
+  },
   "8032985": {
    "name": "LeVVIP",
    "guildId": "800011",
@@ -2060,6 +2067,13 @@
   "8133562": {
    "name": "鬼門大開",
    "power": 20035868,
+   "server": 81,
+   "guildId": "810011",
+   "guild": "鬼門"
+  },
+  "8133650": {
+   "name": "鬼門炉伯",
+   "power": 26482637,
    "server": 81,
    "guildId": "810011",
    "guild": "鬼門"
@@ -2163,6 +2177,13 @@
    "guildId": "810011",
    "power": 13773131,
    "server": 81,
+   "guild": "鬼門"
+  },
+  "8183153": {
+   "name": "鬼門沫",
+   "power": 33112032,
+   "server": 81,
+   "guildId": "810011",
    "guild": "鬼門"
   },
   "8193254": {
@@ -2374,6 +2395,13 @@
    "power": 12682373,
    "server": 91,
    "guild": "GARUDA"
+  },
+  "9204971": {
+   "name": "OYZaddy",
+   "power": 3540879,
+   "server": 92,
+   "guildId": "960011",
+   "guild": "OYO"
   },
   "9214074": {
    "name": "GAsanne",
@@ -3039,6 +3067,13 @@
    "power": 13002451,
    "server": 119,
    "guild": "EXILE"
+  },
+  "12002669": {
+   "name": "Ampare",
+   "power": 10626869,
+   "server": 120,
+   "guildId": "1200017",
+   "guild": "Witcher"
   },
   "12062052": {
    "name": "อุไรวรรณ",
