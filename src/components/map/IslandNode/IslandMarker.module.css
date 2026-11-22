@@ -48,15 +48,18 @@
 }
 
 .islandIcon.frontline {
-  background: #3c1f1e;
+  background: var(--frontline-bg, #3c1f1e);
 }
 
 .islandIcon.defend {
   background: color-mix(in srgb, var(--faction) 50%, var(--surface, #ffffff));
 }
 
-/* Quầng trắng giữ icon màu phe dễ đọc trên nền giao tranh tối. */
+/* Quầng trắng giữ icon màu phe dễ đọc trên nền giao tranh tối. Icon phải ghim
+   màu phe: button:hover toàn cục đổi màu chữ nút thành --text-primary, làm
+   icon biến mất vào nền frontline sáng (dark) hoặc tối (light). */
 .islandIcon.frontline svg {
+  color: var(--faction);
   filter: drop-shadow(0 0 1px #ffffff) drop-shadow(0 0 1px #ffffff);
 }
 

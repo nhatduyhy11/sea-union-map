@@ -49,8 +49,8 @@
 }
 
 .centerArt.frontline {
-  --ring: #3c1f1e;
-  --halo: color-mix(in srgb, #3c1f1e 80%, transparent);
+  --ring: var(--frontline-bg, #3c1f1e);
+  --halo: color-mix(in srgb, var(--frontline-bg, #3c1f1e) 80%, transparent);
 }
 
 .centerArt.hovered,

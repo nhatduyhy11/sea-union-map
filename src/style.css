@@ -8,6 +8,10 @@
 
   /* Xanh accent chung cho trạng thái nổi bật: ghim đảo, glow khi filter theo player. */
   --highlight-green: var(--accent, #0d9a6f);
+
+  /* Nền ô kim cương giao tranh (frontline): chocolate đen nổi trên canvas sáng.
+     Dark mode đổi sang đỏ than vì nền tối gần màu canvas làm ô tan vào nền. */
+  --frontline-bg: #3c1f1e;
 }
 
 * {
@@ -107,4 +111,8 @@ i {
   --danger: #ffaaa5;
   --danger-subtle: #482c32;
   --danger-border: #92535a;
+  /* Trắng lợt: đảo nghịch với light mode — ô giao tranh là ô khác biệt hẳn
+     mọi ô thường trên canvas (đen trên sáng / trắng trên tối), viền + icon
+     vẫn màu phe nên không bị nhầm phe. */
+  --frontline-bg: #e2e8ec;
 }
