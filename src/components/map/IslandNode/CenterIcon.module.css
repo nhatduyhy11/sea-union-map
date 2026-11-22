@@ -7,6 +7,8 @@
   width: var(--icon-box);
   height: var(--icon-box);
   padding: 0;
+  /* Mỏ neo cho cụm lửa tranh chấp (CenterFlames phủ kín hộp). */
+  position: relative;
   /* Hộp 240px rộng hơn node 140×85 nên margin auto về 0: tâm hộp lệch
      (+50, +77.5)px so với tâm node; % tính theo chính hộp 240px. */
   transform: translate(-21%, -32%);
@@ -20,6 +22,10 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
+  /* Ảnh đè lên cụm lửa của CenterFlames (z-index 0): lửa chỉ nhô phần vượt
+     khỏi viền đảo (mái vòm). */
+  position: relative;
+  z-index: 1;
   /* Lúc nghỉ mờ để không lấn các node quanh; các trạng thái chỉ sáng thêm một
      nấc, không về 1. */
   opacity: 0.5;
@@ -48,9 +54,41 @@
   --halo: color-mix(in srgb, var(--faction) 60%, transparent);
 }
 
+/* Tranh chấp: quầng lửa màu than đỏ cam thay cho màu frontline-bg của ô
+   kim cương — trên ảnh đảo, cùng một bảng màu chạy cả light lẫn dark canvas.
+   Hình lửa là CenterFlames, riêng module. */
 .centerArt.frontline {
-  --ring: var(--frontline-bg, #3c1f1e);
-  --halo: color-mix(in srgb, var(--frontline-bg, #3c1f1e) 80%, transparent);
+  --ring: #b4491f;
+  --halo: color-mix(in srgb, #e8762c 55%, transparent);
+}
+
+/* Quầng lửa "thở" — chỉ chạy khi frontline là trạng thái mạnh nhất (cùng thứ
+   tự ưu tiên với block .frontline: hovered/linked/active/hot/defend thắng).
+   Keyframes ghi đè filter tĩnh nên bỏ qua media hover:none qua điều kiện
+   hover:hover. Giảm chuyển động thì về quầng tĩnh. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .centerArt.frontline:not(.hovered):not(.linked):not(.active):not(.hot):not(
+      .defend
+    ) {
+    animation: ember-pulse 2.2s ease-in-out infinite;
+  }
+}
+
+@keyframes ember-pulse {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 2px #b4491f)
+      drop-shadow(0 0 10px color-mix(in srgb, #e8762c 40%, transparent))
+      drop-shadow(0 0 22px color-mix(in srgb, #e8762c 25%, transparent))
+      drop-shadow(0 6px 14px var(--drop));
+  }
+
+  50% {
+    filter: drop-shadow(0 0 3px #e8762c)
+      drop-shadow(0 0 16px color-mix(in srgb, #e8762c 70%, transparent))
+      drop-shadow(0 0 30px color-mix(in srgb, #e8762c 45%, transparent))
+      drop-shadow(0 6px 14px var(--drop));
+  }
 }
 
 .centerArt.hovered,

@@ -1,4 +1,5 @@
 import { stateClasses, type MarkerState } from "./markerState";
+import { CenterFlames } from "./CenterFlames";
 import styles from "./CenterIcon.module.css";
 
 // Trung tâm 4: ảnh đảo thay cho ô kim cương, hiệu ứng trạng thái là
@@ -19,6 +20,9 @@ export function CenterIcon({
       onClick={onClick}
       aria-label={ariaLabel}
     >
+      {/* Node giao tranh: cụm lửa đặt sau ảnh (z dưới .centerArt) — lửa nhô
+          lên trên mái vòm, như đảo đang cháy. Unmount khi hết tranh chấp. */}
+      {state.frontline && <CenterFlames />}
       <img
         className={artClass}
         src={`${import.meta.env.BASE_URL}aaa/center.webp`}

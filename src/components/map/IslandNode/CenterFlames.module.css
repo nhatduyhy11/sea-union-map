@@ -1,0 +1,102 @@
+/* Cụm lửa tranh chấp của node trung tâm — render trong nút của CenterIcon,
+   chỉ khi node frontline (CenterIcon mount/unmount theo state). */
+
+/* Phủ kín hộp 240px, đặt dưới ảnh đảo (.centerArt z-index 1): lửa chỉ lộ
+   phần vượt lên trên mái vòm — đảo "cháy" mà không che chi tiết. */
+.flames {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Vòm lửa mờ gốc — nối màu lửa vào mái, không để ngọn lửa "lơ lửng". */
+.flames::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 46px;
+  width: 132px;
+  height: 52px;
+  translate: -50% -50%;
+  background: radial-gradient(
+    closest-side,
+    color-mix(in srgb, #e8762c 55%, transparent),
+    transparent
+  );
+}
+
+/* Ngọn lửa: hình trứng, đuôi trên loang mờ dần. Vị trí theo đỉnh vòm trong
+   hộp (ảnh 360×299 contain vào hộp 240px, đỉnh mái ~y27px). Thuộc tính
+   translate tách khỏi animation transform nên flicker không mất căn giữa. */
+.flame {
+  position: absolute;
+  translate: -50% 0;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: linear-gradient(
+    to top,
+    #93260f 0%,
+    #d85a24 40%,
+    #f2a13d 72%,
+    transparent 100%
+  );
+  filter: blur(0.6px);
+  transform-origin: 50% 100%;
+  animation: flame-flicker 0.8s ease-in-out infinite alternate;
+}
+
+.flame:nth-child(1) {
+  left: calc(50% - 28px);
+  top: 12px;
+  width: 24px;
+  height: 56px;
+  animation-delay: -0.35s;
+}
+
+.flame:nth-child(2) {
+  left: calc(50% - 3px);
+  top: 0;
+  width: 30px;
+  height: 74px;
+  animation-delay: -0.7s;
+}
+
+.flame:nth-child(3) {
+  left: calc(50% + 19px);
+  top: 14px;
+  width: 21px;
+  height: 50px;
+  animation-delay: -0.15s;
+}
+
+@keyframes flame-flicker {
+  0% {
+    transform: scale(0.92, 0.82) rotate(-3deg);
+    opacity: 0.7;
+  }
+
+  45% {
+    transform: scale(1.02, 1.06) rotate(2deg);
+    opacity: 0.95;
+  }
+
+  100% {
+    transform: scale(0.95, 1.14) rotate(-1deg);
+    opacity: 0.82;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flame {
+    animation: none;
+  }
+}
+
+/* Lửa tĩnh trên cảm ứng: flicker tạo layer động liên tục trên WebKit cảm ứng
+   — giữ hình ngọn lửa, bỏ animation (CenterIcon cũng bỏ shadow blur cùng lý
+   do ở media hover:none của nó). */
+@media (hover: none) {
+  .flame {
+    animation: none;
+  }
+}
