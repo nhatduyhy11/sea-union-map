@@ -80,6 +80,7 @@ export const currentMapData = () => useDataset.getState().data;
 // ngoài lịch mà đã qua đợt đầu → chuyển sang snapshot cuối cùng của đợt gần
 // nhất.
 export function syncSourceWithClock() {
+  if (historyLease) return;
   const { server, day, source } = useDataset.getState();
   if (day === null) {
     if (!betweenRounds()) return;
@@ -110,6 +111,40 @@ function resolve(server: string, day: string): DataSource | null {
 
 // Token chống race: click nhanh nhiều ngày thì chỉ response cuối được áp.
 let requestId = 0;
+
+let historyLease: { cancel: () => void } | null = null;
+
+// Playback commits complete snapshots; partial visual states stay on the canvas.
+export function acquireHistoryDataset(onCancel: () => void) {
+  cancelHistoryDataset();
+  ++requestId;
+  const token = { cancel: onCancel };
+  historyLease = token;
+  useDataset.setState({ loading: false });
+  return {
+    valid: () => historyLease === token,
+    commit(server: string, round: string, day: string, data: MapData) {
+      if (historyLease !== token) return;
+      useDataset.setState({
+        server,
+        round,
+        day,
+        source: "snapshot",
+        data,
+        loading: false,
+      });
+    },
+    release() {
+      if (historyLease === token) historyLease = null;
+    },
+  };
+}
+
+function cancelHistoryDataset() {
+  const cancel = historyLease;
+  historyLease = null;
+  cancel?.cancel();
+}
 
 async function apply(server: string, day: string, source: DataSource) {
   const id = ++requestId;
@@ -160,6 +195,7 @@ function applyLatest(server: string, reason: string, upTo = today()) {
 // Click nút ngày (thanh snapshot dưới canvas). Ngày chưa tới bị disable ở UI;
 // ngày thiếu snapshot → toast lỗi, giữ nguyên màn hình hiện tại.
 export function selectDay(day: string) {
+  cancelHistoryDataset();
   const { server } = useDataset.getState();
   if (day > today()) return;
   const source = resolve(server, day);
@@ -181,6 +217,7 @@ export function selectDay(day: string) {
 // không thì fallback (LIVE_SERVER → live hôm nay; cụm khác → snapshot gần
 // nhất). Filter BXH theo guild/player của cụm cũ không còn nghĩa → reset view.
 export function selectServer(server: string) {
+  cancelHistoryDataset();
   const state = useDataset.getState();
   if (state.server === server) return;
   const day = state.day ?? today();
@@ -200,6 +237,7 @@ export function selectServer(server: string) {
 // đó (bản chốt). Đợt chưa tới bị disable ở UI; cụm không có snapshot nào
 // trong đợt → toast lỗi, giữ nguyên màn hình.
 export function selectRound(round: string) {
+  cancelHistoryDataset();
   const { server, round: active } = useDataset.getState();
   if (round === active || round > today()) return;
   if (roundOf(today()) === round) {

@@ -83,6 +83,12 @@ export interface Contribution {
 }
 
 export type IslandNodeData = Island & {
+  historyActive?: boolean;
+  historyFrom?: IslandNodeData;
+  historyDelay?: number;
+  historyDuration?: number;
+  historySlot?: number;
+  historyRetreat?: { delay: number; duration: number };
   canvasIcon?: CanvasIcon;
   factionInfo?: Faction;
   scores?: FactionScore[];

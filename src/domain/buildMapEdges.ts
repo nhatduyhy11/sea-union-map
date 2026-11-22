@@ -1,5 +1,6 @@
 // Translate routes to React Flow edges.
 import type { Edge } from "@xyflow/react";
+import type { CSSProperties } from "react";
 import type { Faction, Island, Route } from "../types";
 
 // Route dẫn đe dọa: độ dài một đoạn màu và khoảng trống giữa hai đoạn.
@@ -10,6 +11,17 @@ export const ROUTE_GAP = ROUTE_DASH * 2;
 // hai màu xen kẽ (hai phe đe dọa lẫn nhau).
 export interface RouteEdgeData extends Record<string, unknown> {
   dashColors?: [string] | [string, string];
+  history?: {
+    previous: {
+      style?: CSSProperties;
+      dashColors?: [string] | [string, string];
+    };
+    delay: number;
+    duration: number;
+    slot: number;
+    reverse: boolean;
+    retreat?: { delay: number; duration: number; reverse: boolean };
+  };
 }
 
 export function buildMapEdges(

@@ -9,6 +9,7 @@ import { useMapView } from "../../stores/mapView";
 import { useSelection } from "../../stores/selection";
 import type { Edge } from "@xyflow/react";
 import type { AppNode } from "../../types";
+import { useHistoryGraph } from "./useHistoryGraph";
 
 // Nodes/edges cho canvas — derived từ mapView (lọc) + debug (màu/overlay) +
 // selection (chọn/ghim). Component nào cần graph tự subscribe hook này, thay
@@ -116,5 +117,5 @@ export function useMapGraph(): { nodes: AppNode[]; edges: Edge[] } {
       attackerByNode,
     ]
   );
-  return { nodes, edges };
+  return useHistoryGraph(nodes, edges);
 }

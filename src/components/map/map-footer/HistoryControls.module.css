@@ -1,0 +1,49 @@
+.play {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 24px;
+  border: 1px solid var(--border, #d8dfe3);
+  border-radius: 5px;
+  color: var(--accent, #0d8a65);
+  background: var(--surface, white);
+}
+.play:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 10px;
+}
+.label {
+  font-variant-numeric: tabular-nums;
+}
+.track {
+  width: 80px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--border, #d8dfe3);
+}
+.track i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--accent, #0d8a65);
+  transform-origin: left;
+}
+.note {
+  color: var(--text-muted, #8b9aa4);
+}
+.speed {
+  font: inherit;
+  color: inherit;
+  background: var(--surface, white);
+  border: 1px solid var(--border, #d8dfe3);
+  border-radius: 4px;
+}

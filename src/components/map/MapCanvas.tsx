@@ -18,6 +18,9 @@ import { IslandNode } from "./IslandNode";
 import { RouteEdge } from "./RouteEdge";
 import { MapBackdrop } from "./map-backdrop";
 import styles from "./MapCanvas.module.css";
+import { useHistoryClock } from "./useHistoryClock";
+import { stopHistory } from "../../stores/historyPlayback";
+import { useEffect } from "react";
 
 const nodeTypes = { island: IslandNode };
 const edgeTypes = { route: RouteEdge };
@@ -32,6 +35,8 @@ function ZoomLabel() {
 }
 
 export function MapCanvas() {
+  useHistoryClock();
+  useEffect(() => () => stopHistory(), []);
   const theme = useTheme((state) => state.theme);
   const { nodes, edges } = useMapGraph();
   // Node đang hover — rê chuột trực tiếp trên canvas hoặc trỏ từ panel
